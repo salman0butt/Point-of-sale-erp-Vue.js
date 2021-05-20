@@ -1,21 +1,16 @@
 <template>
   <b-card-code
-    title="Form Layout Merchant"
+    title="Merchant details"
   >
     <b-form @submit.prevent>
       <b-row>
-        <b-col cols="12">
-          <b-form-group
-            label="First Name"
-            label-for="h-first-name"
-            label-cols-md="4"
-          >
-            <b-form-input
-              id="h-first-name"
-              placeholder="First Name"
-            />
-          </b-form-group>
-        </b-col>
+
+            <b-col cols="12">
+            <b-form-group label="First Name" label-for="h-first-name" label-cols-md="4" >
+                <b-form-input id="h-first-name" placeholder="First Name"/>
+            </b-form-group>
+            </b-col>
+
         <b-col cols="12">
           <b-form-group
             label="Email"

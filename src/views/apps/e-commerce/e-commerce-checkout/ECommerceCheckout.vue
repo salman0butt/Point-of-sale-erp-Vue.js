@@ -1,7 +1,7 @@
 <template>
   <form-wizard
     ref="refFormWizard"
-    color="#7367F0"
+    color="#55b947"
     :title="null"
     :subtitle="null"
     finish-button-text="Submit"

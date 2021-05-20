@@ -9,7 +9,7 @@
 
 <template>
   <v-tour
-    name="vuexyTour"
+    name="SwitcherTour"
     :steps="steps"
   >
     <template slot-scope="tour">
