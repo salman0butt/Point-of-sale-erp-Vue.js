@@ -34,16 +34,7 @@
             />
           </b-form-group>
         </b-col>
-        <b-col md="6">
-          <b-form-group
-            label="Subdomain"
-            label-for="mc-last-name"
-          >
-            <b-form-input
-              id="mc-last-name"
-            />
-          </b-form-group>
-        </b-col>
+    
         <b-col md="6">
           <b-form-group
             label="Owner Name"
@@ -77,19 +68,7 @@
             </div>
           </b-form-group>
         </b-col>
-        <b-col md="6">
-          <b-form-group
-            label-for="mc-email"
-            label="Email"
-          >
-            <div class="form-label-group">
-              <b-form-input
-                id="mc-email"
-                placeholder="Email"
-              />
-            </div>
-          </b-form-group>
-        </b-col>
+       
 
           <b-col md="6">
           <b-form-group
