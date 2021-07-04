@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { mount, shallowMount } from '@vue/test-utils';
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Switches from '@/views/base/Switches'
 
 Vue.use(CoreuiVue)
@@ -14,11 +14,11 @@ describe('Switches.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = mount(Switches)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Switches', () => {
     const wrapper = mount(Switches)
-    expect(wrapper.findComponent(Switches)).toBeTruthy()
+    expect(wrapper.is(Switches)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Switches)

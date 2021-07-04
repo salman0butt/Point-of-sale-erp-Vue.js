@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import ListGroups from '@/views/base/ListGroups'
 
 Vue.use(CoreuiVue)
@@ -11,11 +11,11 @@ describe('ListGroups.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(ListGroups)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is ListGroups', () => {
     const wrapper = shallowMount(ListGroups)
-    expect(wrapper.findComponent(ListGroups)).toBeTruthy()
+    expect(wrapper.is(ListGroups)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(ListGroups)

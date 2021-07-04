@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Modals from '@/views/notifications/Modals'
 
 Vue.use(CoreuiVue)
@@ -19,11 +19,11 @@ describe('Modals.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Modals)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Modals', () => {
     const wrapper = shallowMount(Modals)
-    expect(wrapper.findComponent(Modals)).toBeTruthy()
+    expect(wrapper.is(Modals)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Modals)

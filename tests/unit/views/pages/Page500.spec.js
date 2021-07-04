@@ -1,40 +1,28 @@
-import {createLocalVue, shallowMount} from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
-import Vuex from 'vuex'
-
+import Vue from 'vue'
+import { shallowMount } from '@vue/test-utils'
+import CoreuiVue from '@coreui/vue'
 import Page500 from '@/views/pages/Page500'
 
-const localVue = createLocalVue()
-localVue.use(CoreuiVue)
-localVue.use(Vuex)
-
-const store = new Vuex.Store({
-  state: {
-    sidebarShow: 'responsive',
-    sidebarMinimize: false,
-    asideShow: false,
-    darkMode: false
-  }
-})
+Vue.use(CoreuiVue)
 
 describe('Page500.vue', () => {
   it('has a name', () => {
     expect(Page500.name).toBe('Page500')
   })
   it('is Vue instance', () => {
-    const wrapper = shallowMount(Page500, { store, localVue })
-    expect(wrapper.vm).toBeTruthy()
+    const wrapper = shallowMount(Page500)
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Page500', () => {
-    const wrapper = shallowMount(Page500, { store, localVue })
-    expect(wrapper.findComponent(Page500)).toBeTruthy()
+    const wrapper = shallowMount(Page500)
+    expect(wrapper.is(Page500)).toBe(true)
   })
   it('should render correct content', () => {
-    const wrapper = shallowMount(Page500, { store, localVue })
+    const wrapper = shallowMount(Page500)
     expect(wrapper.find('h1').text()).toMatch('500')
   })
   test('renders correctly', () => {
-    const wrapper = shallowMount(Page500, { store, localVue })
+    const wrapper = shallowMount(Page500)
     expect(wrapper.element).toMatchSnapshot()
   })
 })

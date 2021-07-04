@@ -1,4 +1,4 @@
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
@@ -8,13 +8,12 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 localVue.use(VueRouter)
 localVue.use(CoreuiVue)
-
 const store = new Vuex.Store({
   state: {
+    darkMode: false,
     sidebarShow: 'responsive',
     sidebarMinimize: false,
-    asideShow: false,
-    darkMode: false
+    asideShow: false
   }
 })
 
@@ -38,6 +37,6 @@ describe('TheContainer.vue', () => {
       localVue,
       router
     })
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
 })

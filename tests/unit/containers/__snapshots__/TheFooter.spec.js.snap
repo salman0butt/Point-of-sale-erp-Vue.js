@@ -20,17 +20,17 @@ exports[`TheFooter.vue renders correctly 1`] = `
   </div>
    
   <div
-    class="mfs-auto"
+    class="ml-auto"
   >
     <span
       class="mr-1"
-      target="_blank"
     >
       Powered by
     </span>
      
     <a
       href="https://coreui.io/vue"
+      target="_blank"
     >
       CoreUI for Vue
     </a>

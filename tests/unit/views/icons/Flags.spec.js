@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Flags from '@/views/icons/Flags'
 
 Vue.use(CoreuiVue)
@@ -11,10 +11,10 @@ describe('Flags.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Flags)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Flags', () => {
     const wrapper = shallowMount(Flags)
-    expect(wrapper.findComponent(Flags)).toBeTruthy()
+    expect(wrapper.is(Flags)).toBe(true)
   })
 })

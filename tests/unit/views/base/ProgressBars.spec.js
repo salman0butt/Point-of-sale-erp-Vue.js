@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { mount, shallowMount } from '@vue/test-utils';
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import ProgressBars from '@/views/base/ProgressBars'
 
 Vue.use(CoreuiVue)
@@ -19,11 +19,11 @@ describe('ProgressBars.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = mount(ProgressBars)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is ProgressBars', () => {
     const wrapper = mount(ProgressBars)
-    expect(wrapper.findComponent(ProgressBars)).toBeTruthy()
+    expect(wrapper.is(ProgressBars)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(ProgressBars)

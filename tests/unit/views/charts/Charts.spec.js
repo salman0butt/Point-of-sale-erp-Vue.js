@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils';
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Charts from '@/views/charts/Charts'
 
 Vue.use(CoreuiVue)
@@ -11,11 +11,11 @@ describe('Charts.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Charts)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Charts', () => {
     const wrapper = shallowMount(Charts)
-    expect(wrapper.findComponent(Charts)).toBeTruthy()
+    expect(wrapper.is(Charts)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Charts)

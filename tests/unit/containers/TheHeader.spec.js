@@ -1,25 +1,13 @@
-import CoreuiVue from '@coreui/vue-pro'
+import Vue from 'vue'
+import CoreuiVue from '@coreui/vue'
 import TheHeader from '@/containers/TheHeader'
-import Vuex from 'vuex'
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 
-const localVue = createLocalVue()
-localVue.use(CoreuiVue)
-
-localVue.use(Vuex)
-
-const store = new Vuex.Store({
-  state: {
-    sidebarShow: 'responsive',
-    sidebarMinimize: false,
-    asideShow: false,
-    darkMode: false
-  }
-})
+Vue.use(CoreuiVue)
 
 describe('TheHeader.vue', () => {
   test('renders correctly', () => {
-    const wrapper = shallowMount(TheHeader, { localVue, store })
+    const wrapper = shallowMount(TheHeader)
     expect(wrapper.element).toMatchSnapshot()
   })
 })

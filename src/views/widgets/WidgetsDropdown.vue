@@ -1,7 +1,7 @@
 <template>
   <CRow>
     <CCol sm="6" lg="3">
-      <CWidgetDropdown color="gradient-primary" header="9.823" text="Members online">
+      <CWidgetDropdown color="primary" header="9.823" text="Members online">
         <template #default>
           <CDropdown
             color="transparent p-0"
@@ -30,7 +30,7 @@
       </CWidgetDropdown>
     </CCol>
     <CCol sm="6" lg="3">
-      <CWidgetDropdown color="gradient-info" header="9.823" text="Members online">
+      <CWidgetDropdown color="info" header="9.823" text="Members online">
         <template #default>
           <CDropdown
             color="transparent p-0"
@@ -62,7 +62,7 @@
     </CCol>
     <CCol sm="6" lg="3">
       <CWidgetDropdown
-        color="gradient-warning"
+        color="warning"
         header="9.823"
         text="Members online"
       >
@@ -96,7 +96,7 @@
     </CCol>
     <CCol sm="6" lg="3">
       <CWidgetDropdown
-        color="gradient-danger"
+        color="danger"
         header="9.823"
         text="Members online"
       >

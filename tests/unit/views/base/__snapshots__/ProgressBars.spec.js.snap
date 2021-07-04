@@ -47,21 +47,21 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         value="0"
       >
         <cprogressbar-stub
-          color="gradient-success"
+          color="success"
           max="100"
           precision="0"
           value="43.8"
         />
          
         <cprogressbar-stub
-          color="gradient-warning"
+          color="warning"
           max="100"
           precision="0"
           value="18.25"
         />
          
         <cprogressbar-stub
-          color="gradient-danger"
+          color="danger"
           max="100"
           precision="0"
           value="10.95"
@@ -249,44 +249,26 @@ exports[`ProgressBars.vue renders correctly 1`] = `
        
       <cprogress-stub
         class="mb-2"
+        height="2rem"
         max="100"
         precision="0"
         showpercentage="true"
-        size="xs"
         value="75"
       />
        
       <cprogress-stub
         class="mb-2"
+        height="20px"
         max="100"
         precision="0"
         showpercentage="true"
-        size="sm"
         value="75"
       />
        
       <cprogress-stub
-        class="mb-2"
+        height="2px"
         max="100"
         precision="0"
-        showpercentage="true"
-        style="height: 2rem;"
-        value="75"
-      />
-       
-      <cprogress-stub
-        class="mb-2"
-        max="100"
-        precision="0"
-        showpercentage="true"
-        style="height: 20px;"
-        value="75"
-      />
-       
-      <cprogress-stub
-        max="100"
-        precision="0"
-        style="height: 2px;"
         value="75"
       />
     </ccardbody-stub>
@@ -314,14 +296,14 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         <div
           class="col-sm-2"
         >
-          gradient-success:
+          success:
         </div>
          
         <div
           class="col-sm-10 pt-1"
         >
           <cprogress-stub
-            color="gradient-success"
+            color="success"
             max="100"
             precision="0"
             value="75"
@@ -334,14 +316,14 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         <div
           class="col-sm-2"
         >
-          gradient-info:
+          info:
         </div>
          
         <div
           class="col-sm-10 pt-1"
         >
           <cprogress-stub
-            color="gradient-info"
+            color="info"
             max="100"
             precision="0"
             value="75"
@@ -354,14 +336,14 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         <div
           class="col-sm-2"
         >
-          gradient-warning:
+          warning:
         </div>
          
         <div
           class="col-sm-10 pt-1"
         >
           <cprogress-stub
-            color="gradient-warning"
+            color="warning"
             max="100"
             precision="0"
             value="75"
@@ -374,14 +356,14 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         <div
           class="col-sm-2"
         >
-          gradient-danger:
+          danger:
         </div>
          
         <div
           class="col-sm-10 pt-1"
         >
           <cprogress-stub
-            color="gradient-danger"
+            color="danger"
             max="100"
             precision="0"
             value="75"
@@ -394,14 +376,14 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         <div
           class="col-sm-2"
         >
-          gradient-primary:
+          primary:
         </div>
          
         <div
           class="col-sm-10 pt-1"
         >
           <cprogress-stub
-            color="gradient-primary"
+            color="primary"
             max="100"
             precision="0"
             value="75"
@@ -414,14 +396,14 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         <div
           class="col-sm-2"
         >
-          gradient-secondary:
+          secondary:
         </div>
          
         <div
           class="col-sm-10 pt-1"
         >
           <cprogress-stub
-            color="gradient-secondary"
+            color="secondary"
             max="100"
             precision="0"
             value="75"
@@ -434,14 +416,14 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         <div
           class="col-sm-2"
         >
-          gradient-dark:
+          dark:
         </div>
          
         <div
           class="col-sm-10 pt-1"
         >
           <cprogress-stub
-            color="gradient-dark"
+            color="dark"
             max="100"
             precision="0"
             value="75"
@@ -613,21 +595,21 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         value="0"
       >
         <cprogressbar-stub
-          color="gradient-primary"
+          color="primary"
           max="100"
           precision="0"
           value="15"
         />
          
         <cprogressbar-stub
-          color="gradient-success"
+          color="success"
           max="100"
           precision="0"
           value="30"
         />
          
         <cprogressbar-stub
-          color="gradient-info"
+          color="info"
           max="100"
           precision="0"
           value="20"
@@ -642,21 +624,21 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         value="0"
       >
         <cprogressbar-stub
-          color="gradient-primary"
+          color="primary"
           max="100"
           precision="0"
           value="15"
         />
          
         <cprogressbar-stub
-          color="gradient-success"
+          color="success"
           max="100"
           precision="0"
           value="30"
         />
          
         <cprogressbar-stub
-          color="gradient-info"
+          color="info"
           max="100"
           precision="0"
           value="20"
@@ -672,21 +654,21 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         value="0"
       >
         <cprogressbar-stub
-          color="gradient-primary"
+          color="primary"
           max="100"
           precision="0"
           value="15"
         />
          
         <cprogressbar-stub
-          color="gradient-success"
+          color="success"
           max="100"
           precision="0"
           value="30"
         />
          
         <cprogressbar-stub
-          color="gradient-info"
+          color="info"
           max="100"
           precision="0"
           value="20"
@@ -700,7 +682,7 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         value="0"
       >
         <cprogressbar-stub
-          color="gradient-primary"
+          color="primary"
           max="100"
           precision="0"
           showpercentage="true"
@@ -717,7 +699,7 @@ exports[`ProgressBars.vue renders correctly 1`] = `
         />
          
         <cprogressbar-stub
-          color="gradient-info"
+          color="info"
           max="100"
           precision="0"
           showpercentage="true"

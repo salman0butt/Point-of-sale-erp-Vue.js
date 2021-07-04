@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { mount, shallowMount } from '@vue/test-utils';
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Tabs from '@/views/base/Tabs'
 
 Vue.use(CoreuiVue)
@@ -17,11 +17,11 @@ describe('Tabs.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = mount(Tabs)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Tabs', () => {
     const wrapper = mount(Tabs)
-    expect(wrapper.findComponent(Tabs)).toBeTruthy()
+    expect(wrapper.is(Tabs)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Tabs)

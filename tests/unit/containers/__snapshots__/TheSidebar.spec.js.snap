@@ -8,7 +8,6 @@ exports[`TheSidebar.vue renders correctly 1`] = `
   fixed="true"
   hideonmobileclick="true"
   show="responsive"
-  unfoldable="true"
 >
   <csidebarbrand-stub
     activeclass="router-link-active"
@@ -25,7 +24,7 @@ exports[`TheSidebar.vue renders correctly 1`] = `
       height="35"
       name="logo"
       size="custom-size"
-      viewbox="0 0 642 134"
+      viewbox="0 0 556 134"
     />
      
     <cicon-stub
@@ -43,7 +42,7 @@ exports[`TheSidebar.vue renders correctly 1`] = `
   />
    
   <csidebarminimizer-stub
-    class="c-d-md-down-none"
+    class="d-md-down-none"
   />
 </csidebar-stub>
 `;

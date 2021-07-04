@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Jumbotrons from '@/views/base/Jumbotrons'
 
 Vue.use(CoreuiVue)
@@ -11,11 +11,11 @@ describe('Jumbotrons.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Jumbotrons)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Jumbotrons', () => {
     const wrapper = shallowMount(Jumbotrons)
-    expect(wrapper.findComponent(Jumbotrons)).toBeTruthy()
+    expect(wrapper.is(Jumbotrons)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Jumbotrons)

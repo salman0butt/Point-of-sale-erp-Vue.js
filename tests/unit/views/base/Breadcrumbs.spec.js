@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount, mount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Breadcrumbs from '@/views/base/Breadcrumbs'
 
 Vue.use(CoreuiVue)
@@ -19,11 +19,11 @@ describe('Breadcrumbs.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Breadcrumbs)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Breadcrumbs', () => {
     const wrapper = shallowMount(Breadcrumbs)
-    expect(wrapper.findComponent(Breadcrumbs)).toBeTruthy()
+    expect(wrapper.is(Breadcrumbs)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = mount(Breadcrumbs)

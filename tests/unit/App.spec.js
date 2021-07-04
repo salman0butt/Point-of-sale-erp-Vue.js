@@ -1,6 +1,6 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import App from '@/App'
 
 const localVue = createLocalVue()
@@ -19,13 +19,13 @@ describe('App.vue', () => {
       localVue,
       router
     })
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is App', () => {
     const wrapper = shallowMount(App, {
       localVue,
       router
     })
-    expect(wrapper.findComponent(App)).toBeTruthy()
+    expect(wrapper.is(App)).toBe(true)
   })
 })

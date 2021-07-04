@@ -1,51 +1,25 @@
 <template>
-  <CHeader class=" headerStyle" with-subheader>
-  <img src="icon.png" class="mx-3" v-if="iconflag" />  
+  <CHeader class="headerStyle" fixed with-subheader light>
     <CToggler
       in-header
-      class="ml-3 d-lg-none headerFont"
+      class="ml-3 d-lg-none"
       @click="$store.commit('toggleSidebarMobile')"
     />
     <CToggler
       in-header
-      class="ml-3 d-md-down-none headerFont"
+      class="ml-3 d-md-down-none"
       @click="$store.commit('toggleSidebarDesktop')"
     />
-    {{show}}
-    <CHeaderBrand class="mx-auto d-lg-none" to="/">
-       <img src="logo.png"  class="c-sidebar-brand-minimized" style="width:50%"/>         
-    </CHeaderBrand>
+    
     <CHeaderNav class="d-md-down-none mr-auto">
-      <CHeaderNavItem class="px-3">
-        <CHeaderNavLink class="headerFont">          
-        </CHeaderNavLink>
-      </CHeaderNavItem>
-      <CHeaderNavItem class="px-3">
-        <CHeaderNavLink  class="headerFont" exact>       
-        </CHeaderNavLink>
-      </CHeaderNavItem>
-      <CHeaderNavItem class="px-3">
-        <CHeaderNavLink  class="headerFont" >        
-        </CHeaderNavLink>
-      </CHeaderNavItem>
+      
     </CHeaderNav>
-    <CHeaderNav  >
-      <CHeaderNavItem class="px-3 c-d-legacy-none headerFont">
-        <button
-          @click="() => $store.commit('toggle', 'darkMode')"
-          class="c-header-nav-btn headerFont"
-        >
-          <CIcon  class="headerFont" v-if="$store.state.darkMode" name="cil-sun"/>
-          <CIcon  class="headerFont" v-else name="cil-moon"/>
-        </button>
-      </CHeaderNavItem>
-      <TheHeaderDropdownNotif />
+    <CHeaderNav class="mr-4">
+      <!-- <CHeaderNavItem class="d-md-down-none mx-0"> -->
+        <NotificationBell/>
+      <!-- </CHeaderNavItem> -->
       <TheHeaderDropdownAccnt/>
-      <CHeaderNavItem class="px-3">
-        
-      </CHeaderNavItem>
     </CHeaderNav>
-
     <CSubheader class="px-3">
       <CBreadcrumbRouter class="border-0 mb-0"/>
     </CSubheader>
@@ -54,35 +28,28 @@
 
 <script>
 import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt'
-import TheHeaderDropdownNotif from './TheHeaderDropdownNotif'
-import TheHeaderDropdownTasks from './TheHeaderDropdownTasks'
-import TheHeaderDropdownMssgs from './TheHeaderDropdownMssgs'
+import NotificationBell from './NotificationDropdown'
 
 export default {
   name: 'TheHeader',
   components: {
-    TheHeaderDropdownAccnt,
-    TheHeaderDropdownNotif,
-    TheHeaderDropdownTasks,
-    TheHeaderDropdownMssgs
+    TheHeaderDropdownAccnt, NotificationBell
   },
   data(){
     return{
-      iconflag:false
-    }    
+      isalert:false
+    }
+    
   },
-  computed: {
-    show () {
-      if(this.$store.state.sidebarShow){
-        this.iconflag=false
-        return '';
-      }
-      this.iconflag=true
-      return '';
-    },
+  methods:{
+    Notification(){
+      this.isalert = true;
+    }
   }
 }
 </script>
-<style lang="scss">
-  @import '../assets/scss/style';
+<style scoped>
+.c-header-toggler:focus{
+  outline: 0!important;
+}
 </style>

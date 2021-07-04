@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Navbars from '@/views/base/Navbars'
 
 Vue.use(CoreuiVue)
@@ -11,11 +11,11 @@ describe('Navbars.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Navbars)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Navbars', () => {
     const wrapper = shallowMount(Navbars)
-    expect(wrapper.findComponent(Navbars)).toBeTruthy()
+    expect(wrapper.is(Navbars)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Navbars)

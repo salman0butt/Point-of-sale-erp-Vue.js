@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount, mount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Dropdowns from '@/views/buttons/Dropdowns'
 
 Vue.use(CoreuiVue)
@@ -11,11 +11,11 @@ describe('Dropdowns.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Dropdowns)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Dropdowns', () => {
     const wrapper = shallowMount(Dropdowns)
-    expect(wrapper.findComponent(Dropdowns)).toBeTruthy()
+    expect(wrapper.is(Dropdowns)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = mount(Dropdowns)

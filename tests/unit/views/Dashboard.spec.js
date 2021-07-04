@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Dashboard from '@/views/Dashboard'
 
 
@@ -20,11 +20,11 @@ describe('Dashboard.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Dashboard)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Dashboard', () => {
     const wrapper = shallowMount(Dashboard)
-    expect(wrapper.findComponent(Dashboard)).toBeTruthy()
+    expect(wrapper.is(Dashboard)).toBe(true)
   })
   it('should render correct content', () => {
     const wrapper = shallowMount(Dashboard)

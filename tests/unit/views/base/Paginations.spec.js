@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue-pro'
+import CoreuiVue from '@coreui/vue'
 import Paginations from '@/views/base/Paginations'
 
 Vue.use(CoreuiVue)
@@ -19,11 +19,11 @@ describe('Paginations.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Paginations)
-    expect(wrapper.vm).toBeTruthy()
+    expect(wrapper.isVueInstance()).toBe(true)
   })
   it('is Paginations', () => {
     const wrapper = shallowMount(Paginations)
-    expect(wrapper.findComponent(Paginations)).toBeTruthy()
+    expect(wrapper.is(Paginations)).toBe(true)
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Paginations)

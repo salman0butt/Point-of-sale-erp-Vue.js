@@ -154,8 +154,18 @@
     </CRow>
     <CRow>
       <CCol sm="6" md="4">
+        <CCard color="primary" class="text-center" body-wrapper text-color="white">
+          <blockquote class="card-blockquote">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+            <footer>Someone famous in
+              <cite title="Source Title">Source Title</cite>
+            </footer>
+          </blockquote>
+        </CCard>
+      </CCol>
+      <CCol sm="6" md="4">
         <CCard 
-          color="gradient-primary" 
+          color="success" 
           class="text-center" 
           body-wrapper
           text-color="white"
@@ -169,12 +179,7 @@
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-success" 
-          class="text-center" 
-          body-wrapper
-          text-color="white"
-        >
+        <CCard color="info" class="text-center" body-wrapper text-color="white">
           <blockquote class="card-blockquote">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
             <footer>Someone famous in
@@ -184,12 +189,7 @@
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-info" 
-          class="text-center" 
-          body-wrapper
-          text-color="white"
-        >
+        <CCard color="warning" class="text-center" body-wrapper text-color="white">
           <blockquote class="card-blockquote">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
             <footer>Someone famous in
@@ -199,12 +199,7 @@
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-warning" 
-          class="text-center" 
-          body-wrapper
-          text-color="white"
-        >
+        <CCard color="danger" class="text-center" body-wrapper text-color="white">
           <blockquote class="card-blockquote">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
             <footer>Someone famous in
@@ -214,26 +209,7 @@
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-danger" 
-          class="text-center" 
-          body-wrapper
-          text-color="white"
-        >
-          <blockquote class="card-blockquote">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-            <footer>Someone famous in
-              <cite title="Source Title">Source Title</cite>
-            </footer>
-          </blockquote>
-        </CCard>
-      </CCol>
-      <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-secondary" 
-          class="text-center" 
-          body-wrapper
-        >
+        <CCard color="secondary" class="text-center" body-wrapper>
           <blockquote class="card-blockquote">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
             <footer>Someone famous in
@@ -245,53 +221,33 @@
     </CRow>
     <CRow>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-primary" 
-          body-wrapper
-          text-color="white"
-        >
+        <CCard color="primary" body-wrapper text-color="white">
           {{loremIpsum}}
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-success" 
-          body-wrapper
-          text-color="white"
-        >
+        <CCard color="success" body-wrapper text-color="white">
           {{loremIpsum}}
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-info" 
-          body-wrapper          
-          text-color="white"
-        >
+        <CCard color="info" body-wrapper text-color="white">
           {{loremIpsum}}
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-warning" 
-          body-wrapper
-          text-color="white"
-        >
+        <CCard color="warning" body-wrapper text-color="white">
           {{loremIpsum}}
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
-        <CCard 
-          color="gradient-danger" 
-          body-wrapper 
-          text-color="white"
-        >
+        <CCard color="danger" body-wrapper text-color="white">
           {{loremIpsum}}
         </CCard>
       </CCol>
       <CCol sm="6" md="4">
         <transition name="fade">
-          <CCard v-if="show" color="gradient-secondary">
+          <CCard v-if="show" color="secondary">
             <CCardHeader>
               Card with header actions
               <div class="card-header-actions">

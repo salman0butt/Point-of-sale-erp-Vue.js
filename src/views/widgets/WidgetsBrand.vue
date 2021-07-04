@@ -73,7 +73,7 @@
           right-footer="events"
           left-header="4"
           left-footer="meetings"
-          color="gradient-warning"
+          color="warning"
         >
           <CIcon
             name="cil-calendar"
@@ -142,7 +142,7 @@
           right-footer="events"
           left-header="4"
           left-footer="meetings"
-          color="gradient-warning"
+          color="warning"
         >
           <CIcon
             name="cil-calendar"
