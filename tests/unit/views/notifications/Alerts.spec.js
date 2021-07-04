@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue'
+import CoreuiVue from '@coreui/vue-pro'
 import Alerts from '@/views/notifications/Alerts'
 
 Vue.use(CoreuiVue)
@@ -17,11 +17,11 @@ describe('Alerts.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(Alerts)
-    expect(wrapper.isVueInstance()).toBe(true)
+    expect(wrapper.vm).toBeTruthy()
   })
   it('is Alerts', () => {
     const wrapper = shallowMount(Alerts)
-    expect(wrapper.is(Alerts)).toBe(true)
+    expect(wrapper.findComponent(Alerts)).toBeTruthy()
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Alerts)
@@ -32,7 +32,5 @@ describe('Alerts.vue', () => {
     expect(Alerts.methods.showAlert()).toBeUndefined()
     expect(typeof Alerts.methods.countDownChanged ).toEqual('function')
     expect(Alerts.methods.countDownChanged(10)).toBeUndefined()
-    expect(typeof Alerts.methods.showDismissibleAlerts ).toEqual('function')
-    expect(Alerts.methods.showDismissibleAlerts()).toBeUndefined()
   })
 })

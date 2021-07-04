@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import CoreuiVue from '@coreui/vue'
+import CoreuiVue from '@coreui/vue-pro'
 import User from '@/views/users/User'
 import appRouter from '@/router'
 
@@ -23,10 +23,10 @@ describe('User.vue', () => {
     expect(User.name).toBe('User')
   })
   it('is Vue instance', () => {
-    expect(wrapper.isVueInstance()).toBe(true)
+    expect(wrapper.vm).toBeTruthy()
   })
   it('is User', () => {
-    expect(wrapper.is(User)).toBe(true)
+    expect(wrapper.findComponent(User)).toBeTruthy()
   })
   it('should have methods', () => {
     expect(typeof User.methods.goBack).toEqual('function')

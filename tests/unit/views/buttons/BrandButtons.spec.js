@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { shallowMount, mount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue'
+import CoreuiVue from '@coreui/vue-pro'
 import BrandButtons from '@/views/buttons/BrandButtons'
 
 Vue.use(CoreuiVue)
@@ -11,11 +11,11 @@ describe('BrandButtons.vue', () => {
   })
   it('is Vue instance', () => {
     const wrapper = shallowMount(BrandButtons)
-    expect(wrapper.isVueInstance()).toBe(true)
+    expect(wrapper.vm).toBeTruthy()
   })
   it('is BrandButtons', () => {
     const wrapper = shallowMount(BrandButtons)
-    expect(wrapper.is(BrandButtons)).toBe(true)
+    expect(wrapper.findComponent(BrandButtons)).toBeTruthy()
   })
   test('renders correctly', () => {
     const wrapper = mount(BrandButtons)

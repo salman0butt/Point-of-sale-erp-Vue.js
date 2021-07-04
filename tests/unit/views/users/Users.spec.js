@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import CoreuiVue from '@coreui/vue'
+import CoreuiVue from '@coreui/vue-pro'
 import Users from '@/views/users/Users'
 import VueRouter from 'vue-router';
 
@@ -21,14 +21,14 @@ describe('Users.vue', () => {
       localVue,
       router
     })
-    expect(wrapper.isVueInstance()).toBe(true)
+    expect(wrapper.vm).toBeTruthy()
   })
   it('is Users', () => {
     const wrapper = shallowMount(Users,{
       localVue,
       router
     })
-    expect(wrapper.is(Users)).toBe(true)
+    expect(wrapper.findComponent(Users)).toBeTruthy()
   })
   test('renders correctly', () => {
     const wrapper = shallowMount(Users, {

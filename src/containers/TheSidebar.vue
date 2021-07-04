@@ -1,41 +1,39 @@
 <template>
-  <CSidebar 
-    fixed 
+  <CSidebar
     :minimize="minimize"
     :show="show"
     @update:show="(value) => $store.commit('set', ['sidebarShow', value])"
   >
     <CSidebarBrand class="d-md-down-none" to="/">
-      <img src="logo.png" v-if="!minimize"  class="c-sidebar-brand-full" style="width:70%"/> 
+      <img src="logo.png" v-if="!minimize" class="c-sidebar-brand-full" style="width:70%"/>
       <img src="icon.png" v-if="minimize"  /> 
     </CSidebarBrand>
-
-    <CRenderFunction flat :content-to-render="$options.nav"/>
-    <CSidebarMinimizer 
-      class="d-md-down-none"
-      @click.native="$store.commit('set', ['sidebarMinimize', !minimize])"
+  
+    <CRenderFunction class="headerFont" flat :contentToRender="sidebarItems"/>
+    
+    <CSidebarMinimizer
+      class="c-d-md-down-none"
+      @click.native="$store.commit('toggle', 'sidebarMinimize')"
     />
   </CSidebar>
 </template>
-<style scoped lang="scss">
-@import '../assets/scss/style';
-.c-sidebar-minimizer::before {
-  margin-right: 110px;
-}
-</style>
-<script>
-import nav from './_nav'
 
+<script>
+import SidebarItems from './menu'
 export default {
   name: 'TheSidebar',
-  nav,
+  extends: SidebarItems,
   computed: {
     show () {
-      return this.$store.state.sidebarShow 
+      return this.$store.state.sidebarShow
     },
     minimize () {
-      return this.$store.state.sidebarMinimize 
+      return this.$store.state.sidebarMinimize
     }
   }
 }
 </script>
+
+<style lang="scss">
+  @import '../assets/scss/style';
+</style>

@@ -2,7 +2,7 @@
 
 exports[`Register.vue renders correctly 1`] = `
 <div
-  class="d-flex align-items-center min-vh-100"
+  class="c-app d-flex align-items-center min-vh-100"
 >
   <ccontainer-stub
     fluid="true"

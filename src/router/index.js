@@ -12,11 +12,10 @@ const Typography = () => import('@/views/theme/Typography')
 
 const Charts = () => import('@/views/charts/Charts')
 const Widgets = () => import('@/views/widgets/Widgets')
+
 // Views - Components
 const Cards = () => import('@/views/base/Cards')
-const Forms = () => import('@/views/base/Forms')
 const Switches = () => import('@/views/base/Switches')
-const Tables = () => import('@/views/base/Tables')
 const Tabs = () => import('@/views/base/Tabs')
 const Breadcrumbs = () => import('@/views/base/Breadcrumbs')
 const Carousels = () => import('@/views/base/Carousels')
@@ -28,6 +27,8 @@ const Navbars = () => import('@/views/base/Navbars')
 const Paginations = () => import('@/views/base/Paginations')
 const Popovers = () => import('@/views/base/Popovers')
 const ProgressBars = () => import('@/views/base/ProgressBars')
+const Tables = () => import('@/views/tables/Tables')
+const AdvancedTables = () => import('@/views/tables/AdvancedTables')
 const Tooltips = () => import('@/views/base/Tooltips')
 
 // Views - Buttons
@@ -35,6 +36,20 @@ const StandardButtons = () => import('@/views/buttons/StandardButtons')
 const ButtonGroups = () => import('@/views/buttons/ButtonGroups')
 const Dropdowns = () => import('@/views/buttons/Dropdowns')
 const BrandButtons = () => import('@/views/buttons/BrandButtons')
+const LoadingButtons = () => import('@/views/buttons/LoadingButtons')
+
+// Views - Editors
+const TextEditors = () => import('@/views/editors/TextEditors')
+const CodeEditors = () => import('@/views/editors/CodeEditors')
+
+// Views - Forms
+const BasicForms = () => import('@/views/forms/Forms')
+const AdvancedForms = () => import('@/views/forms/AdvancedForms')
+const ValidationForms = () => import('@/views/forms/ValidationForms')
+const MultiSelect = () => import('@/views/forms/MultiSelect')
+
+// Views GoogleMaps
+const GoogleMaps = () => import('@/views/GoogleMaps')
 
 // Views - Icons
 const CoreUIIcons = () => import('@/views/icons/CoreUIIcons')
@@ -45,6 +60,8 @@ const Flags = () => import('@/views/icons/Flags')
 const Alerts = () => import('@/views/notifications/Alerts')
 const Badges = () => import('@/views/notifications/Badges')
 const Modals = () => import('@/views/notifications/Modals')
+const Toaster = () => import('@/views/notifications/Toaster')
+
 
 // Views - Pages
 const Page404 = () => import('@/views/pages/Page404')
@@ -56,20 +73,30 @@ const Register = () => import('@/views/pages/Register')
 const Users = () => import('@/views/users/Users')
 const User = () => import('@/views/users/User')
 
+// Plugins
+const Draggable = () => import('@/views/plugins/Draggable')
+const Calendar = () => import('@/views/plugins/Calendar')
+const Spinners = () => import('@/views/plugins/Spinners')
+
+// Apps -> Invoice
+const Invoice = () => import('@/views/apps/invoicing/Invoice')
+
+// Apps -> Email
+const EmailApp = () => import('@/views/apps/email/EmailApp')
+const Compose = () => import('@/views/apps/email/Compose')
+const Inbox = () => import('@/views/apps/email/Inbox')
+const Message = () => import('@/views/apps/email/Message')
+
 Vue.use(Router)
 
 export default new Router({
   mode: 'hash', // https://router.vuejs.org/api/#mode
-  linkActiveClass: 'active',
+  linkActiveClass: 'open active',
   scrollBehavior: () => ({ y: 0 }),
-  routes: configRoutes()
-})
-
-function configRoutes () {
-  return [
+  routes: [
     {
       path: '/',
-      redirect: '/machine',
+      redirect: '/dashboard',
       name: 'Home',
       component: TheContainer,
       children: [
@@ -103,7 +130,26 @@ function configRoutes () {
           name: 'Charts',
           component: Charts
         },
-        
+        {
+          path: 'tables',
+          redirect: '/tables/tables',
+          name: 'Tables',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'tables',
+              name: 'Basic tables',
+              component: Tables
+            },
+            {
+              path: 'advanced-tables',
+              name: 'Advanced tables',
+              component: AdvancedTables
+            }
+          ]
+        },
         {
           path: 'widgets',
           name: 'Widgets',
@@ -111,13 +157,9 @@ function configRoutes () {
         },
         {
           path: 'users',
-          meta: {
-            label: 'Users'
-          },
+          meta: { label: 'Users'},
           component: {
-            render(c) {
-              return c('router-view')
-            }
+            render (c) { return c('router-view') }
           },
           children: [
             {
@@ -144,34 +186,14 @@ function configRoutes () {
           },
           children: [
             {
-              path: 'cards',
-              name: 'Cards',
-              component: Cards
-            },
-            {
-              path: 'forms',
-              name: 'Forms',
-              component: Forms
-            },
-            {
-              path: 'switches',
-              name: 'Switches',
-              component: Switches
-            },
-            {
-              path: 'tables',
-              name: 'Tables',
-              component: Tables
-            },
-            {
-              path: 'tabs',
-              name: 'Tabs',
-              component: Tabs
-            },
-            {
               path: 'breadcrumbs',
               name: 'Breadcrumbs',
               component: Breadcrumbs
+            },
+            {
+              path: 'cards',
+              name: 'Cards',
+              component: Cards
             },
             {
               path: 'carousels',
@@ -219,6 +241,16 @@ function configRoutes () {
               component: ProgressBars
             },
             {
+              path: 'switches',
+              name: 'Switches',
+              component: Switches
+            },
+            {
+              path: 'tabs',
+              name: 'Tabs',
+              component: Tabs
+            },
+            {
               path: 'tooltips',
               name: 'Tooltips',
               component: Tooltips
@@ -252,31 +284,91 @@ function configRoutes () {
               path: 'brand-buttons',
               name: 'Brand Buttons',
               component: BrandButtons
+            },
+            {
+              path: 'loading-buttons',
+              name: 'Loading Buttons',
+              component: LoadingButtons
             }
           ]
         },
         {
+          path: 'editors',
+          redirect: '/editors/text-editors',
+          name: 'Editors',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'text-editors',
+              name: 'Text Editors',
+              component: TextEditors
+            },
+            {
+              path: 'code-editors',
+              name: 'Code Editors',
+              component: CodeEditors
+            }
+          ]
+        },
+        {
+          path: 'forms',
+          redirect: '/forms/basic-forms',
+          name: 'Forms',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'basic-forms',
+              name: 'Basic Forms',
+              component: BasicForms
+            },
+            {
+              path: 'advanced-forms',
+              name: 'Advanced Forms',
+              component: AdvancedForms
+            },
+            {
+              path: 'validation-forms',
+              name: 'Form Validation',
+              component: ValidationForms
+            },
+            {
+              path: 'multi-select',
+              name: 'Multiselect',
+              component: MultiSelect
+            },
+          ]
+        },
+        {
+          path: 'google-maps',
+          name: 'Google Maps',
+          component: GoogleMaps
+        },
+        {
           path: 'icons',
-          redirect: '/icons/coreui-icons',
-          name: 'CoreUI Icons',
+          redirect: '/icons/font-awesome',
+          name: 'Icons',
           component: {
             render (c) { return c('router-view') }
           },
           children: [
             {
               path: 'coreui-icons',
-              name: 'Icons library',
+              name: 'CoreUI Icons',
               component: CoreUIIcons
-            },
-            {
-              path: 'brands',
-              name: 'Brands',
-              component: Brands
             },
             {
               path: 'flags',
               name: 'Flags',
               component: Flags
+            },
+            {
+              path: 'brands',
+              name: 'Brands',
+              component: Brands
             }
           ]
         },
@@ -302,8 +394,86 @@ function configRoutes () {
               path: 'modals',
               name: 'Modals',
               component: Modals
+            },
+            {
+              path: 'toaster',
+              name: 'Toaster',
+              component: Toaster
             }
           ]
+        },
+        {
+          path: 'plugins',
+          redirect: '/plugins/draggable',
+          name: 'Plugins',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'draggable',
+              name: 'Draggable Cards',
+              component: Draggable
+            },
+            {
+              path: 'calendar',
+              name: 'Calendar',
+              component: Calendar
+            },
+            {
+              path: 'spinners',
+              name: 'Spinners',
+              component: Spinners
+            }
+          ]
+        },
+       
+        {
+          path: 'apps',
+          name: 'Apps',
+          redirect: '/apps/invoicing/invoice',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'invoicing',
+              redirect: '/apps/invoicing/invoice',
+              name: 'Invoicing',
+              component: {
+                render (c) { return c('router-view') }
+              },
+              children: [
+                {
+                  path: 'invoice',
+                  name: 'Invoice',
+                  component: Invoice
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/apps/email',
+      redirect: '/apps/email/inbox',
+      name: 'Email',
+      component: EmailApp,
+      children: [{
+          path: 'compose',
+          name: 'Compose',
+          component: Compose
+        },
+        {
+          path: 'inbox',
+          name: 'Inbox',
+          component: Inbox
+        },
+        {
+          path: 'message',
+          name: 'Message',
+          component: Message
         }
       ]
     },
@@ -338,5 +508,4 @@ function configRoutes () {
       ]
     }
   ]
-}
-
+})
