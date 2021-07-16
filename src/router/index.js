@@ -42,6 +42,11 @@ const LoadingButtons = () => import('@/views/buttons/LoadingButtons')
 const TextEditors = () => import('@/views/editors/TextEditors')
 const CodeEditors = () => import('@/views/editors/CodeEditors')
 
+// views - Merchant
+const Merchant = () => import('@/views/merchant/merchant')
+
+// Views - Branches
+const Branche = () => import('@/views/branches/branche')
 // Views - Forms
 const BasicForms = () => import('@/views/forms/Forms')
 const AdvancedForms = () => import('@/views/forms/AdvancedForms')
@@ -104,6 +109,16 @@ export default new Router({
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard
+        },
+        {
+          path: 'merchant',
+          name: 'Merchant',
+          component: Merchant
+        },
+        {
+          path: 'branches',
+          name: 'Branche',
+          component: Branche
         },
         {
           path: 'theme',
@@ -478,6 +493,16 @@ export default new Router({
       ]
     },
     {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register
+    },
+    {
       path: '/pages',
       redirect: '/pages/404',
       name: 'Pages',
@@ -495,16 +520,16 @@ export default new Router({
           name: 'Page500',
           component: Page500
         },
-        {
-          path: 'login',
-          name: 'Login',
-          component: Login
-        },
-        {
-          path: 'register',
-          name: 'Register',
-          component: Register
-        }
+        // {
+        //   path: 'login',
+        //   name: 'Login',
+        //   component: Login
+        // },
+        // {
+        //   path: 'register',
+        //   name: 'Register',
+        //   component: Register
+        // }
       ]
     }
   ]

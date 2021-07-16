@@ -16,16 +16,22 @@ export default {
           //   _name: 'CSidebarNavTitle',
           //   _children: ['Theme']
           // },
+          // {
+          //   _name: 'CSidebarNavItem',
+          //   name: 'Merchant',
+          //   to: '/merchant',
+          //   icon: 'cil-institution'
+          // },
           {
             _name: 'CSidebarNavItem',
             name: 'Merchant',
-            to: '/dashboard',
+            to: '/merchant',
             icon: 'cil-institution'
           },
           {
             _name: 'CSidebarNavItem',
             name: 'Branches',
-            to: '/dashboard',
+            to: '/branches',
             icon: 'cil-lan'
           },
           // {

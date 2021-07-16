@@ -527,6 +527,13 @@ export default {
         { key: 'activity' },
       ]
     }
+  },  
+  created(){
+    const username = localStorage.getItem('username');
+    const password = localStorage.getItem('password');
+    if(username == undefined || password == undefined ){
+      this.$router.push("/login")
+    }
   },
   methods: {
     color (value) {

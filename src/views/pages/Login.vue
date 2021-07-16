@@ -12,6 +12,7 @@
                   <CInput
                     placeholder="Username"
                     autocomplete="username email"
+                    v-model="username"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
@@ -19,12 +20,13 @@
                     placeholder="Password"
                     type="password"
                     autocomplete="curent-password"
+                     v-model="password"
                   >
                     <template #prepend-content><CIcon name="cil-lock-locked"/></template>
                   </CInput>
                   <CRow>
                     <CCol col="6" class="text-left">
-                      <CButton color="primary" class="px-4">Login</CButton>
+                      <CButton style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
                       <CButton color="link" class="px-0">Forgot password?</CButton>
@@ -35,32 +37,45 @@
               </CCardBody>
             </CCard>
             <CCard
-              color="primary"
+              color="default"
               text-color="white"
               class="text-center py-5 d-md-down-none"
               body-wrapper
             >
               <CCardBody>
-                <h2>Sign up</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                <CButton
-                  color="light"
-                  variant="outline"
-                  size="lg"
-                >
-                  Register Now!
-                </CButton>
+                <CImg
+                    src="login.PNG"
+                    block
+                    class="mb-2"
+                    width="80%"
+                />
               </CCardBody>
             </CCard>
           </CCardGroup>
         </CCol>
       </CRow>
+      <CCardBody class="text-center"><p class="h5">Powered by Switcher Solutions</p></CCardBody>
     </CContainer>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Login'
+  name: 'Login',
+  data(){
+    return{
+      username:'',
+      password:''
+    }    
+  },
+  methods:{
+    login(){
+         localStorage.setItem('username', this.username);
+         localStorage.setItem('password', this.password);
+         if(localStorage.getItem('username') != '' && localStorage.getItem('username') != undefined && localStorage.getItem('password') != undefined && localStorage.getItem('password') != ''){
+           this.$router.push('/dashboard')
+         }
+    }
+  }
 }
 </script>
