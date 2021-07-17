@@ -1,7 +1,7 @@
 <template>
   <CFooter :fixed="false">
     <div>
-      <a href="#" target="_blank">Switcher Solutions</a>
+      <a href="#" target="_blank">BMS v2.8</a>
       <span class="ml-1">&copy; {{new Date().getFullYear()}} </span>
     </div>
     <div class="mfs-auto">

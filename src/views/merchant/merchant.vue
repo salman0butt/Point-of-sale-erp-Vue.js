@@ -23,11 +23,13 @@
                                     label="Bussiness Name : "
                                     horizontal
                                     autocomplete="name"
+                                    plaintext
                                 />
                                 <CInput
                                     label="Bussiness Activity : "
                                     horizontal
                                     autocomplete="name"
+                                    plaintext
                                 />
                             </CForm>
                         </CCardBody>    
@@ -40,6 +42,7 @@
                                     label="Name : "
                                     horizontal
                                     autocomplete="name"
+                                    disabled
                                 />
                                 <CInput
                                     label="Email : "
@@ -55,6 +58,7 @@
                                     label="Country : "
                                     horizontal
                                     autocomplete="name"
+                                    disabled
                                 />
                             </CForm>
                         </CCardBody>                                   
@@ -94,11 +98,13 @@
                                     label="Expire Date : "
                                     horizontal
                                     autocomplete="name"
+                                    disabled
                                 />
                                 <CInput
                                     label="Remaing : "
                                     horizontal
                                     autocomplete="name"
+                                    plaintext
                                 />
                             </CForm>
                         </CCardBody>    
@@ -111,6 +117,7 @@
                                     label="Package Name : "
                                     horizontal
                                     autocomplete="name"
+                                    plaintext
                                 />
                             </CForm>
                         </CCardBody>    
@@ -123,6 +130,7 @@
                                     label="Plugin Name : "
                                     horizontal
                                     autocomplete="name"
+                                    plaintext
                                 />
                             </CForm>
                         </CCardBody>      
@@ -132,6 +140,7 @@
                                     label="Total : "
                                     horizontal
                                     autocomplete="name"
+                                    plaintext
                                 />
                             </CForm>
                         </CCardBody>                           
@@ -144,7 +153,7 @@
                                 <CCard 
                                 v-for="item in InvoiceLst"
                                 :key="item.InvoiceNum"
-                                color="gradient-secondary" 
+                                color="default" 
                                 class="text-center" 
                                 body-wrapper
                                 >
@@ -167,11 +176,32 @@
                 </CCardHeader>
                 <CCardBody>
                     <CRow>                   
-                        <CCol sm="6" md="4" class="pt-2"> <strong>Featured Popular Active</strong>
+                        <CCol sm="6" md="8" class="pt-2">                         
+                            <CTabs add-tab-classes="mt-1">
+                                <CTab active>
+                                    <template slot="title">
+                                      Featured
+                                    </template>
+                                    <CCardBody>
+                                    </CCardBody>
+                                </CTab>
+                                <CTab >
+                                    <template slot="title">
+                                      Popular
+                                    </template>
+                                    <CCardBody>
+                                    </CCardBody>
+                                </CTab>
+                                <CTab >
+                                    <template slot="title">
+                                      Active
+                                    </template>
+                                    <CCardBody>
+                                    </CCardBody>
+                                </CTab>
+                            </CTabs>                            
                         </CCol>
-                        <CCol sm="6" md="4">
-                        </CCol>
-                        <CCol sm="6" md="4"> <CInput placeholder="plugin" v-on:keyup="PluginSeach" v-model="pluginname">
+                        <CCol sm="6" md="4" style="padding-top:12px"> <CInput placeholder="plugin" v-on:keyup="PluginSeach" v-model="pluginname">
                             <template #prepend>
                                 <CButton style="background:#10163a;color:white">
                                 <CIcon name="cil-magnifying-glass"/> Search
@@ -188,14 +218,15 @@
                         <CCardBody>
                                 <CRow>
                                 <CCol  sm="12" md="4">
-                                        <CCardBody class="p-0">
+                                    
                                             <CImg
                                                 :src="item.imgUrl"
                                                 block
                                                 class="mb-2"
                                                 width="100%"
+                                                height="100%"
                                             />
-                                        </CCardBody>
+                                    
                                 </CCol>
                                 <CCol  sm="12" md="8">
                                         <CCardBody>{{item.content}}</CCardBody>
