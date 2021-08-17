@@ -529,9 +529,7 @@ export default {
     }
   },  
   created(){
-    const username = localStorage.getItem('username');
-    const password = localStorage.getItem('password');
-    if(username == undefined || password == undefined ){
+    if(!this.$store.getters.isLoggedIn){
       this.$router.push("/login")
     }
   },

@@ -16,8 +16,8 @@
       </CHeaderNavLink>
     </template>
     
-    <CDropdownItem>
-      <CIcon name="cil-user" /> Profile
+    <CDropdownItem @click="profile">
+      <CIcon name="cil-user"/> Profile
     </CDropdownItem>
     <CDropdownDivider/>
     <CDropdownItem>
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import http from '../http-common'
+
 export default {
   name: 'TheHeaderDropdownAccnt',
   data () {
@@ -39,8 +41,13 @@ export default {
   },
   methods:{
      logout(){
-        localStorage.clear();
-        this.$router.push('/login')
+        this.$store.dispatch('logout')
+        return this.$router.push('/login');
+      },
+      profile() {
+        http.get('/me')
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
       }
   }
  
