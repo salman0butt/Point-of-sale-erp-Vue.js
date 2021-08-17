@@ -6,13 +6,14 @@
           <CCardGroup>
             <CCard class="p-4">
               <CCardBody>
-                <CForm>
+                <CForm @submit.prevent="login">
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
+
                   <CInput
-                    placeholder="Username"
-                    autocomplete="username email"
-                    v-model="username"
+                    placeholder="email"
+                    autocomplete="email"
+                    v-model="email"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
@@ -24,6 +25,12 @@
                   >
                     <template #prepend-content><CIcon name="cil-lock-locked"/></template>
                   </CInput>
+                  <p v-if="this.$store.state.errors.length">
+                  <b>Please correct the following error(s):</b>
+                  <ul>
+                    <li class="error" v-for="(error, index) in this.$store.state.errors" v-bind:key="index">{{ error }}</li>
+                  </ul>
+                </p>
                   <CRow>
                     <CCol col="6" class="text-left">
                       <CButton style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
@@ -60,22 +67,44 @@
 </template>
 
 <script>
+// import http from '../../http-common'
+import { mapActions } from 'vuex'
+
 export default {
   name: 'Login',
   data(){
     return{
-      username:'',
+      email:'',
       password:''
     }    
   },
+  created(){
+    if(this.$store.getters.isLoggedIn){
+      this.$router.push("/dashboard")
+    }
+  },
   methods:{
+    ...mapActions(["set_errors"]),
     login(){
-         localStorage.setItem('username', this.username);
-         localStorage.setItem('password', this.password);
-         if(localStorage.getItem('username') != '' && localStorage.getItem('username') != undefined && localStorage.getItem('password') != undefined && localStorage.getItem('password') != ''){
-           this.$router.push('/dashboard')
-         }
+      let email = this.email;
+      let password = this.password
+      if(email != '' && email != undefined && password != undefined && password != ''){
+        this.$store.dispatch('login', { email, password })
+        .then(() =>{ 
+          localStorage.setItem('email', this.email);
+          this.$router.push({path: '/dashboard'});
+        }).catch(() => {
+         this.set_errors('Username Or Password Incorrect');
+        });
+      }
     }
   }
 }
 </script>
+
+
+<style scope>
+.error {
+  color:red !important;
+}
+</style>
