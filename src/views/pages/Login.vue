@@ -78,6 +78,11 @@ export default {
       password:''
     }    
   },
+  created(){
+    if(this.$store.getters.isLoggedIn){
+      this.$router.push("/dashboard")
+    }
+  },
   methods:{
     ...mapActions(["set_errors"]),
     login(){
