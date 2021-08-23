@@ -6,25 +6,18 @@
           <CCardGroup>
             <CCard class="p-4">
               <CCardBody>
-                <CForm @submit.prevent="login">
-                  <h1>Login</h1>
-                  <p class="text-muted">Sign In to your account</p>
+                <CForm @submit.prevent="forget">
+                  <h1>Forget Password</h1>
+                  <p class="text-muted">We will send you a reset token</p>
 
                   <CInput
-                    placeholder="username or email or Employee ID"
-                    autocomplete="username"
-                    v-model="username"
+                    placeholder="Email"
+                    autocomplete="email"
+                    v-model="email"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
-                  <CInput
-                    placeholder="Password"
-                    type="password"
-                    autocomplete="curent-password"
-                     v-model="password"
-                  >
-                    <template #prepend-content><CIcon name="cil-lock-locked"/></template>
-                  </CInput>
+                <p v-if="successMsg" class="successMsg">{{ successMsg }}</p>
                   <p v-if="this.$store.state.errors.length">
                   <b>Please correct the following error(s):</b>
                   <ul>
@@ -33,11 +26,11 @@
                 </p>
                   <CRow>
                     <CCol col="6" class="text-left">
-                      <CButton style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
+                      <CButton style="background-color:#52b947;color:white" @click="forget" class="px-4">Reset</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
-                      <router-link to="/forget-password"  color="link" class="px-0">Forgot password?</router-link>
-                      <CButton color="link" class="d-lg-none">Register now!</CButton>
+                      <router-link to="/login" color="link" class="px-0">Login?</router-link>
+                      <!-- <CButton color="link" class="d-lg-none">Register now!</CButton> -->
                     </CCol>
                   </CRow>
                 </CForm>
@@ -67,36 +60,31 @@
 </template>
 
 <script>
-// import http from '../../http-common'
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'Login',
+  name: 'ForgetPassword',
   data(){
     return{
-      username:'',
-      password:''
+      email:'',
+      successMsg:''
     }
   },
   created(){
-    if(this.$store.getters.isLoggedIn){
-      this.$router.push("/dashboard")
-    }
-     this.$store.commit('remove_errors');
+    this.$store.commit('remove_errors');
   },
   methods:{
     ...mapActions(["set_errors"]),
-    login(){
-      let username = this.username;
-      let password = this.password
-      if(username != '' && username != undefined && password != undefined && password != ''){
-        this.$store.dispatch('login', { username, password })
+      forget(){
+      let email = this.email;
+      if(email != '' && email != undefined){
+        this.$http.post('forget-password', { email })
         .then(() =>{
-          localStorage.setItem('username', this.username);
-          this.$store.commit('remove_errors');
-          this.$router.push({path: '/dashboard'});
+          this.successMsg= "Successfully Sent the Link, check your inbox...";
+           this.$store.commit('remove_errors');
         }).catch(() => {
-         this.set_errors('Username Or Password Incorrect');
+           this.successMsg = "";
+         this.set_errors('invalid Email');
         });
       }
     }
@@ -104,9 +92,11 @@ export default {
 }
 </script>
 
-
 <style scope>
 .error {
   color:red !important;
+}
+.successMsg {
+  color: green;
 }
 </style>

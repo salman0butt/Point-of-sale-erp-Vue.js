@@ -255,6 +255,14 @@ export default {
     return {
         pluginlist:[],
       pluginname:'',
+      general_items: {
+          business_name: "",
+          business_activity: "",
+          name: "",
+          email: "",
+          mobile: "",
+          country: ""
+      },
       tabs: [
         'General',
         'Billing',
