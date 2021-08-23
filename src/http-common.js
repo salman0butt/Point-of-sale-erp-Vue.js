@@ -1,8 +1,9 @@
 import axios from "axios";
 
 export default axios.create({
-  baseURL: "http://switcher.one/api",
+  baseURL: "http://sw-backend.test",
   headers: {
-    "Content-type": "application/json"
+    "Content-type": "application/json",
+    "X-Tenant": window.location.hostname
   }
 });

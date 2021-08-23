@@ -528,11 +528,6 @@ export default {
       ]
     }
   },  
-  created(){
-    if(!this.$store.getters.isLoggedIn){
-      this.$router.push("/login")
-    }
-  },
   methods: {
     color (value) {
       let $color

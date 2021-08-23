@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import auth from '../middleware/auth'
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -101,14 +101,15 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard',
+      redirect: '/login',
       name: 'Home',
       component: TheContainer,
       children: [
         {
           path: 'dashboard',
           name: 'Dashboard',
-          component: Dashboard
+          component: Dashboard,
+          beforeEnter: auth
         },
         {
           path: 'merchant',
@@ -534,17 +535,5 @@ const router = new Router({
     }
   ]
 })
-
-router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.requiresAuth)) {
-    if (this.$store.getters.isLoggedIn) {
-      next();
-      return;
-    }
-    next('/login');
-  } else {
-    next();
-  }
-});
 
 export default router;

@@ -22,7 +22,7 @@ if (token) {
 http.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
-  console.log(error.response.data);
+  // console.log(error.response.data);
   if (error.response.status === 401) {
     store.dispatch('logout');
     router.push('/login');
