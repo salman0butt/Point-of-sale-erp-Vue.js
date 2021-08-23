@@ -243,7 +243,17 @@ export default {
   name: 'Tabs',
   data () {
     return {
-      form:[],
+      form:{
+          name: "",
+          address: "",
+          area: "",
+          telephone: "",
+          mobile: "",
+          location: "",
+          opening_date: "",
+          closing_date: "",
+          status: ""
+      },
       timelst:[
           {day:'Sunday', status:false,time:[]},
           {day:'Monday', status:true,time:[]},

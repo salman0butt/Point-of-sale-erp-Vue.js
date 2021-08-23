@@ -6,6 +6,8 @@ const TheContainer = () => import('@/containers/TheContainer')
 
 // Views
 const Dashboard = () => import('@/views/Dashboard')
+const ForgetPassword = () => import('@/views/pages/ForgetPassword')
+const ResetPassword = () => import('@/views/pages/ResetPassword')
 
 const Colors = () => import('@/views/theme/Colors')
 const Typography = () => import('@/views/theme/Typography')
@@ -443,7 +445,7 @@ const router = new Router({
             }
           ]
         },
-       
+
         {
           path: 'apps',
           name: 'Apps',
@@ -497,6 +499,16 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/forget-password',
+      name: 'ForgetPassword',
+      component: ForgetPassword
+    },
+    {
+      path: '/reset-password/:token/:email',
+      name: 'ResetPassword',
+      component: ResetPassword
     },
     {
       path: '/register',

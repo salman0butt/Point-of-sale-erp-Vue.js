@@ -11,9 +11,9 @@
                   <p class="text-muted">Sign In to your account</p>
 
                   <CInput
-                    placeholder="email"
-                    autocomplete="email"
-                    v-model="email"
+                    placeholder="username or email or Employee ID"
+                    autocomplete="username"
+                    v-model="username"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
@@ -36,7 +36,7 @@
                       <CButton style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
-                      <CButton color="link" class="px-0">Forgot password?</CButton>
+                      <router-link to="/forget-password"  color="link" class="px-0">Forgot password?</router-link>
                       <CButton color="link" class="d-lg-none">Register now!</CButton>
                     </CCol>
                   </CRow>
@@ -74,24 +74,26 @@ export default {
   name: 'Login',
   data(){
     return{
-      email:'',
+      username:'',
       password:''
-    }    
+    }
   },
   created(){
     if(this.$store.getters.isLoggedIn){
       this.$router.push("/dashboard")
     }
+     this.$store.commit('remove_errors');
   },
   methods:{
     ...mapActions(["set_errors"]),
     login(){
-      let email = this.email;
+      let username = this.username;
       let password = this.password
-      if(email != '' && email != undefined && password != undefined && password != ''){
-        this.$store.dispatch('login', { email, password })
-        .then(() =>{ 
-          localStorage.setItem('email', this.email);
+      if(username != '' && username != undefined && password != undefined && password != ''){
+        this.$store.dispatch('login', { username, password })
+        .then(() =>{
+          localStorage.setItem('username', this.username);
+          this.$store.commit('remove_errors');
           this.$router.push({path: '/dashboard'});
         }).catch(() => {
          this.set_errors('Username Or Password Incorrect');
