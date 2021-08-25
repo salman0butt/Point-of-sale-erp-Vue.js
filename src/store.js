@@ -54,17 +54,20 @@ const actions = {
   login({commit}, user){
     return new Promise((resolve, reject) => {
       commit('remove_errors');
-      http.post('/auth/login', user).then(res => {
-        const token = res.data.token;
-        localStorage.setItem('token', token);
-        http.defaults.headers.common['Authorization'] = token;
-        commit('auth_success', token);
-        resolve(res);
-      }).catch(err => {
-        commit('auth_error');
-        localStorage.removeItem('token');
-        reject(err);
-      });
+        http.post('/auth/login', user).then(res => {
+          const token = res.data.token;
+          const business_id = res.data.business_id;
+          localStorage.setItem('token', token);
+          localStorage.setItem('business_id', business_id);
+          http.defaults.headers.common['Authorization'] = "Bearer "+token;
+          commit('auth_success', token);
+          resolve(res);
+        }).catch(err => {
+          commit('auth_error');
+          localStorage.removeItem('token');
+          reject(err);
+        });
+
     })
 },
 logout({commit}){
