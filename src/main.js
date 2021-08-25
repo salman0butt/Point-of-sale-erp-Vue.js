@@ -10,13 +10,13 @@ import i18n from './i18n.js'
 // import axios from 'axios'
 import http from '../src/http-common'
 
-Vue.use(CoreuiVuePro)
-Vue.prototype.$log = console.log.bind(console)
+Vue.use(CoreuiVuePro);
+Vue.prototype.$log = console.log.bind(console);
 
 Vue.prototype.$http = http;
-const token = localStorage.getItem('token')
+const token = 'Bearer '+localStorage.getItem('token');
 if (token) {
-  Vue.prototype.$http.defaults.headers.common['Authorization'] = token
+  Vue.prototype.$http.defaults.headers.common['Authorization'] = token;
 }
 
 http.interceptors.response.use(function (response) {

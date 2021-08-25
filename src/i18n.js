@@ -22,7 +22,7 @@ const messages = {
 }
 
 export default new VueI18n({
-  locale: getBrowserLocale(),
+  locale:getBrowserLocale(),
   fallbackLocale: 'en',
   messages,
 })
@@ -36,6 +36,6 @@ function getBrowserLocale() {
   if (!navigatorLocale) {
     return undefined
   }
-  
+
   return navigatorLocale.trim().split(/-|_/)[0]
 }
