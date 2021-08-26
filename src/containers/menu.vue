@@ -1,7 +1,7 @@
 <script>
 export default {
   name: 'nav',
-  computed: { 
+  computed: {
     sidebarItems () {
       return [{
         _name: 'CSidebarNav',
@@ -10,7 +10,7 @@ export default {
             name: this.$t('menu.dashboard'),
             to: '/dashboard',
             icon: 'cil-speedometer',
-            
+
           },
           // {
           //   _name: 'CSidebarNavTitle',
@@ -32,6 +32,12 @@ export default {
             _name: 'CSidebarNavItem',
             name: 'Branches',
             to: '/branches',
+            icon: 'cil-lan'
+          },
+           {
+            _name: 'CSidebarNavItem',
+            name: 'Employees',
+            to: '/employees',
             icon: 'cil-lan'
           },
           // {

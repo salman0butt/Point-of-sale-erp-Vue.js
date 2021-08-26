@@ -9,6 +9,9 @@ const Dashboard = () => import('@/views/Dashboard')
 const ForgetPassword = () => import('@/views/pages/ForgetPassword')
 const ResetPassword = () => import('@/views/pages/ResetPassword')
 
+//Employee
+const Employee = () => import('@/views/employees/Employee')
+
 const Colors = () => import('@/views/theme/Colors')
 const Typography = () => import('@/views/theme/Typography')
 
@@ -116,12 +119,20 @@ const router = new Router({
         {
           path: 'merchant',
           name: 'Merchant',
-          component: Merchant
+          component: Merchant,
+          beforeEnter: auth
         },
         {
           path: 'branches',
           name: 'Branche',
-          component: Branche
+          component: Branche,
+          beforeEnter: auth
+        },
+        {
+          path: 'employees',
+          name: 'Employee',
+          component: Employee,
+          beforeEnter: auth
         },
         {
           path: 'theme',
