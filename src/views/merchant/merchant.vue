@@ -42,13 +42,11 @@
                         <CInput
                           label="Email : "
                           horizontal
-                          disabled
                           v-model="general_items.email"
                         />
                         <CInput
                           label="Mobile : "
                           horizontal
-                          disabled
                           v-model="general_items.mobile"
                         />
                         <CInput
@@ -57,6 +55,26 @@
                           disabled
                           v-model="general_items.country"
                         />
+               <div>
+                  <p v-if="this.$store.state.msgs.length">
+                  <ul>
+                    <li class="success" v-for="(msg, index) in this.$store.state.msgs" v-bind:key="index">{{ msg }}</li>
+                  </ul>
+                </p>
+                 <p v-if="this.$store.state.errors.length">
+                  <b>Please correct the following error(s):</b>
+                  <ul>
+                    <li class="error" v-for="(error, index) in this.$store.state.errors" v-bind:key="index">{{ error }}</li>
+                  </ul>
+                </p>
+               </div>
+                        <CButton
+                          block
+                          color="success"
+                          @click.prevent="updateDetail"
+                          style="float: right; width: 100px"
+                          >Update</CButton
+                        >
                       </CForm>
                     </CCardBody>
                   </CCol>
@@ -64,18 +82,20 @@
                     <CCardBody>
                       <div class="mb-2" style="padding: 5px; background: #f7e9e9">
                         <CImg
-                          v-bind:src="general_items.logo"
+                          v-bind:src="general_items.previewImage"
                           block
                           class="mb-2"
                           width="100%"
                         />
                       </div>
-                      <CInputFile
+                      <!-- <CInputFile
                         label="Change Logo"
                         horizontal
                         custom
                         class="logoupload"
-                      />
+                        @click.prevent="selectImage"
+                      /> -->
+                      <input type="file" @change="pickFile" />
                     </CCardBody>
                   </CCol>
                 </CRow>
@@ -258,6 +278,9 @@
 
 <script>
 import $ from "jquery";
+// import { cibHtmlacademy } from "@coreui/icons";
+import { mapActions } from 'vuex'
+
 export default {
   name: "Tabs",
   data() {
@@ -271,8 +294,10 @@ export default {
         email: "",
         mobile: "",
         country: "",
-        logo: "https://picsum.photos/1024/480/?image=54",
+        previewImage: "https://picsum.photos/1024/480/?image=54",
+        logo: null,
       },
+      imageData: "",
       tabs: ["General", "Billing", "Plugins"],
       InvoiceLst: [
         { InvoiceNum: "#123122", InvoiceDate: "07/04/2021", action: "Paid" },
@@ -337,8 +362,8 @@ export default {
         this.general_items.email = data.business_email;
         this.general_items.mobile = data.business_mobile_no;
         this.general_items.country = data.country;
-        if (data.logo) {
-          this.general_items.logo = data.logo;
+        if (data.logo != '') {
+          this.general_items.previewImage = data.logo;
         }
       })
       .catch((err) => {
@@ -346,6 +371,7 @@ export default {
       });
   },
   methods: {
+    ...mapActions(["set_errors"]),
     PluginSeach() {
       var data = [];
       var initial = this.PluginLst;
@@ -360,6 +386,49 @@ export default {
         this.pluginlist = initial;
       }
     },
+    updateDetail() {
+      let business_id = localStorage.getItem("business_id");
+      let formData = new FormData();
+      formData.append("business_email", this.general_items.email);
+      formData.append("business_mobile_no", this.general_items.mobile);
+      if(this.general_items.logo != ''){
+        formData.append("logo", this.general_items.logo);
+      }
+      formData.append("_method", "PATCH");
+
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+
+      this.$store.commit('remove_errors');
+      this.$store.commit('remove_msgs');
+      this.$http
+        .post("/business/" + business_id, formData, config)
+        .then(() => {
+          this.$store.commit('post_msgs', 'Detail Updated Successfully');
+        })
+        .catch((error) => {
+
+          if (error.response.status == 422){
+            let errors = error.response.data.errors;
+            for (const err in errors) {
+              this.set_errors(errors[err][0]);
+            }
+
+            }
+        });
+    },
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.general_items.logo = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.general_items.previewImage = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+      }
+    },
   },
 };
 </script>
@@ -368,5 +437,11 @@ export default {
 .nav-pills .show > .nav-link {
   color: #fff;
   background-color: #10163a !important;
+}
+.success {
+  color:green;
+}
+.error {
+  color:red;
 }
 </style>

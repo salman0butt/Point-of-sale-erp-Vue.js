@@ -12,7 +12,8 @@ const state = {
   status: '',
   token: localStorage.getItem('token') || '',
   user: {},
-  errors: []
+  errors: [],
+  msgs: []
 }
 
 const mutations = {
@@ -45,8 +46,14 @@ const mutations = {
   post_errors(state, errors) {
     state.errors.push(errors);
   },
+  post_msgs(state, msg) {
+    state.msgs.push(msg);
+  },
   remove_errors(state) {
     state.errors = [];
+  },
+  remove_msgs(state) {
+    state.msgs = [];
   }
 }
 
@@ -89,6 +96,7 @@ const getters = {
   isLoggedIn: state => !!state.token,
   authStatus: state => state.status,
   errors: state => state.errors,
+  msgs: state => state.msgs,
 }
 
 export default new Vuex.Store({
