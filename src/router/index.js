@@ -51,7 +51,7 @@ const CodeEditors = () => import('@/views/editors/CodeEditors')
 const Merchant = () => import('@/views/merchant/merchant')
 
 // Views - Branches
-const Branche = () => import('@/views/branches/branche')
+const Branche = () => import('@/views/branches/branches')
 // Views - Forms
 const BasicForms = () => import('@/views/forms/Forms')
 const AdvancedForms = () => import('@/views/forms/AdvancedForms')
@@ -114,13 +114,13 @@ const router = new Router({
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard,
-          beforeEnter: auth
+          // beforeEnter: auth
         },
         {
           path: 'merchant',
           name: 'Merchant',
           component: Merchant,
-          beforeEnter: auth
+          // beforeEnter: auth
         },
         {
           path: 'branches',
@@ -132,14 +132,14 @@ const router = new Router({
           path: 'employees',
           name: 'Employee',
           component: Employee,
-          beforeEnter: auth
+          // beforeEnter: auth
         },
         {
           path: 'theme',
           redirect: '/theme/colors',
           name: 'Theme',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -164,7 +164,7 @@ const router = new Router({
           redirect: '/tables/tables',
           name: 'Tables',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -186,9 +186,9 @@ const router = new Router({
         },
         {
           path: 'users',
-          meta: { label: 'Users'},
+          meta: { label: 'Users' },
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -211,7 +211,7 @@ const router = new Router({
           redirect: '/base/cards',
           name: 'Base',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -291,7 +291,7 @@ const router = new Router({
           redirect: '/buttons/standard-buttons',
           name: 'Buttons',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -326,7 +326,7 @@ const router = new Router({
           redirect: '/editors/text-editors',
           name: 'Editors',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -346,7 +346,7 @@ const router = new Router({
           redirect: '/forms/basic-forms',
           name: 'Forms',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -381,7 +381,7 @@ const router = new Router({
           redirect: '/icons/font-awesome',
           name: 'Icons',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -406,7 +406,7 @@ const router = new Router({
           redirect: '/notifications/alerts',
           name: 'Notifications',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -436,7 +436,7 @@ const router = new Router({
           redirect: '/plugins/draggable',
           name: 'Plugins',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -462,7 +462,7 @@ const router = new Router({
           name: 'Apps',
           redirect: '/apps/invoicing/invoice',
           component: {
-            render (c) { return c('router-view') }
+            render(c) { return c('router-view') }
           },
           children: [
             {
@@ -470,7 +470,7 @@ const router = new Router({
               redirect: '/apps/invoicing/invoice',
               name: 'Invoicing',
               component: {
-                render (c) { return c('router-view') }
+                render(c) { return c('router-view') }
               },
               children: [
                 {
@@ -490,20 +490,20 @@ const router = new Router({
       name: 'Email',
       component: EmailApp,
       children: [{
-          path: 'compose',
-          name: 'Compose',
-          component: Compose
-        },
-        {
-          path: 'inbox',
-          name: 'Inbox',
-          component: Inbox
-        },
-        {
-          path: 'message',
-          name: 'Message',
-          component: Message
-        }
+        path: 'compose',
+        name: 'Compose',
+        component: Compose
+      },
+      {
+        path: 'inbox',
+        name: 'Inbox',
+        component: Inbox
+      },
+      {
+        path: 'message',
+        name: 'Message',
+        component: Message
+      }
       ]
     },
     {
@@ -531,7 +531,7 @@ const router = new Router({
       redirect: '/pages/404',
       name: 'Pages',
       component: {
-        render (c) { return c('router-view') }
+        render(c) { return c('router-view') }
       },
       children: [
         {
