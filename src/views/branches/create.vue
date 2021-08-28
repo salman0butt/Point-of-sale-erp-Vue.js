@@ -6,24 +6,6 @@
           <CCardHeader> Branches </CCardHeader>
           <CCardBody>
             <CTabs add-tab-classes="mt-1">
-              <CTab active>
-                <template slot="title">
-                  {{ tabs[4] }}
-                </template>
-                <CCardBody>
-                  <CDataTable
-                    :items="usersData"
-                    items-per-page-select
-                    :items-per-page="5"
-                    hover
-                    sorter
-                    pagination
-                    table-filter
-                    cleaner
-                  >
-                  </CDataTable>
-                </CCardBody>
-              </CTab>
               <CTab>
                 <template slot="title">
                   {{ tabs[0] }}
@@ -321,7 +303,7 @@ export default {
       ],
       mediaLst: [],
       mediaitem: { channel: "", name: "", amount: "" },
-      tabs: ["Add Branch", "Timing", "Traget", "Social media", "Branches"],
+      tabs: ["General", "Timing", "Traget", "Social media"],
       activeTab: 1,
       usersData: [],
       fields,
