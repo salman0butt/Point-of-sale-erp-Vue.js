@@ -42,13 +42,11 @@
                         <CInput
                           label="Email : "
                           horizontal
-                          disabled
                           v-model="general_items.email"
                         />
                         <CInput
                           label="Mobile : "
                           horizontal
-                          disabled
                           v-model="general_items.mobile"
                         />
                         <CInput
@@ -57,6 +55,13 @@
                           disabled
                           v-model="general_items.country"
                         />
+                        <CButton
+                          block
+                          color="success"
+                          @click.prevent="updateDetail"
+                          style="float: right; width: 100px"
+                          >Update</CButton
+                        >
                       </CForm>
                     </CCardBody>
                   </CCol>
@@ -64,18 +69,20 @@
                     <CCardBody>
                       <div class="mb-2" style="padding: 5px; background: #f7e9e9">
                         <CImg
-                          v-bind:src="general_items.logo"
+                          v-bind:src="general_items.previewImage"
                           block
                           class="mb-2"
                           width="100%"
                         />
                       </div>
-                      <CInputFile
+                      <!-- <CInputFile
                         label="Change Logo"
                         horizontal
                         custom
                         class="logoupload"
-                      />
+                        @click.prevent="selectImage"
+                      /> -->
+                      <input type="file" @change="pickFile" />
                     </CCardBody>
                   </CCol>
                 </CRow>
@@ -271,8 +278,10 @@ export default {
         email: "",
         mobile: "",
         country: "",
-        logo: "https://picsum.photos/1024/480/?image=54",
+        previewImage: "https://picsum.photos/1024/480/?image=54",
+        logo: null,
       },
+      imageData: "",
       tabs: ["General", "Billing", "Plugins"],
       InvoiceLst: [
         { InvoiceNum: "#123122", InvoiceDate: "07/04/2021", action: "Paid" },
@@ -338,7 +347,7 @@ export default {
         this.general_items.mobile = data.business_mobile_no;
         this.general_items.country = data.country;
         if (data.logo) {
-          this.general_items.logo = data.logo;
+          this.general_items.previewImage = data.logo;
         }
       })
       .catch((err) => {
@@ -358,6 +367,45 @@ export default {
         this.pluginlist = data;
       } else if (this.pluginname == "") {
         this.pluginlist = initial;
+      }
+    },
+    updateDetail() {
+      let business_id = localStorage.getItem("business_id");
+
+      // var data12 = new FormData();
+      // data12.append("business_email", this.general_items.email);
+      // data12.append("business_mobile_no", this.general_items.mobile);
+      // data.append("logo", this.general_items.logo);
+      // console.log(this.general_items);
+
+
+      // console.log(data);
+      let data = {
+        business_email: this.general_items.email,
+        business_mobile_no: this.general_items.mobile,
+        logo: this.general_items.logo,
+      };
+
+      this.$http
+        .patch("/business/" + business_id, data)
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+    },
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.general_items.logo = file[0];
+        console.log(this.general_items.logo);
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.general_items.previewImage = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
       }
     },
   },
