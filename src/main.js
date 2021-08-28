@@ -14,7 +14,7 @@ Vue.use(CoreuiVuePro);
 Vue.prototype.$log = console.log.bind(console);
 
 Vue.prototype.$http = http;
-const token = 'Bearer '+localStorage.getItem('token');
+const token = 'Bearer ' + localStorage.getItem('token');
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = token;
 }
