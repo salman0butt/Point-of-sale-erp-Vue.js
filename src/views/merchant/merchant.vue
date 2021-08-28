@@ -55,6 +55,19 @@
                           disabled
                           v-model="general_items.country"
                         />
+               <div>
+                  <p v-if="this.$store.state.msgs.length">
+                  <ul>
+                    <li class="success" v-for="(msg, index) in this.$store.state.msgs" v-bind:key="index">{{ msg }}</li>
+                  </ul>
+                </p>
+                 <p v-if="this.$store.state.errors.length">
+                  <b>Please correct the following error(s):</b>
+                  <ul>
+                    <li class="error" v-for="(error, index) in this.$store.state.errors" v-bind:key="index">{{ error }}</li>
+                  </ul>
+                </p>
+               </div>
                         <CButton
                           block
                           color="success"
@@ -265,6 +278,9 @@
 
 <script>
 import $ from "jquery";
+// import { cibHtmlacademy } from "@coreui/icons";
+import { mapActions } from 'vuex'
+
 export default {
   name: "Tabs",
   data() {
@@ -346,7 +362,7 @@ export default {
         this.general_items.email = data.business_email;
         this.general_items.mobile = data.business_mobile_no;
         this.general_items.country = data.country;
-        if (data.logo) {
+        if (data.logo != '') {
           this.general_items.previewImage = data.logo;
         }
       })
@@ -355,6 +371,7 @@ export default {
       });
   },
   methods: {
+    ...mapActions(["set_errors"]),
     PluginSeach() {
       var data = [];
       var initial = this.PluginLst;
@@ -371,36 +388,40 @@ export default {
     },
     updateDetail() {
       let business_id = localStorage.getItem("business_id");
+      let formData = new FormData();
+      formData.append("business_email", this.general_items.email);
+      formData.append("business_mobile_no", this.general_items.mobile);
+      if(this.general_items.logo != ''){
+        formData.append("logo", this.general_items.logo);
+      }
+      formData.append("_method", "PATCH");
 
-      // var data12 = new FormData();
-      // data12.append("business_email", this.general_items.email);
-      // data12.append("business_mobile_no", this.general_items.mobile);
-      // data.append("logo", this.general_items.logo);
-      // console.log(this.general_items);
-
-
-      // console.log(data);
-      let data = {
-        business_email: this.general_items.email,
-        business_mobile_no: this.general_items.mobile,
-        logo: this.general_items.logo,
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
       };
 
+      this.$store.commit('remove_errors');
+      this.$store.commit('remove_msgs');
       this.$http
-        .patch("/business/" + business_id, data)
-        .then((res) => {
-          // console.log(res);
+        .post("/business/" + business_id, formData, config)
+        .then(() => {
+          this.$store.commit('post_msgs', 'Detail Updated Successfully');
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((error) => {
 
+          if (error.response.status == 422){
+            let errors = error.response.data.errors;
+            for (const err in errors) {
+              this.set_errors(errors[err][0]);
+            }
+
+            }
+        });
     },
     pickFile(e) {
       let file = e.target.files;
       if (file && file[0]) {
         this.general_items.logo = file[0];
-        console.log(this.general_items.logo);
         let reader = new FileReader();
         reader.onload = (e) => {
           this.general_items.previewImage = e.target.result;
@@ -416,5 +437,11 @@ export default {
 .nav-pills .show > .nav-link {
   color: #fff;
   background-color: #10163a !important;
+}
+.success {
+  color:green;
+}
+.error {
+  color:red;
 }
 </style>

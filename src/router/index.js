@@ -10,7 +10,8 @@ const ForgetPassword = () => import('@/views/pages/ForgetPassword')
 const ResetPassword = () => import('@/views/pages/ResetPassword')
 
 //Employee
-const Employee = () => import('@/views/employees/Employee')
+const IndexEmployee = () => import('@/views/employees/Index')
+const CreateEmployee = () => import('@/views/employees/Create')
 
 const Colors = () => import('@/views/theme/Colors')
 const Typography = () => import('@/views/theme/Typography')
@@ -130,9 +131,24 @@ const router = new Router({
         },
         {
           path: 'employees',
+          redirect: '/employees/index',
           name: 'Employee',
-          component: Employee,
-          beforeEnter: auth
+          component: {
+            render (c) { return c('router-view') }
+          },
+          beforeEnter: auth,
+          children: [
+            {
+              path: 'index',
+              name: 'Index',
+              component: IndexEmployee
+            },
+            {
+              path: 'create',
+              name: 'Create',
+              component: CreateEmployee
+            }
+          ]
         },
         {
           path: 'theme',
