@@ -3,72 +3,81 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Branches </CCardHeader>
+          <CCardHeader> New Branch </CCardHeader>
           <CCardBody>
             <CTabs add-tab-classes="mt-1">
               <CTab>
                 <template slot="title">
                   {{ tabs[0] }}
                 </template>
-                <CCardBody>
-                  <CRow>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Name" />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Adress" />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Area" />
-                    </CCol>
-                  </CRow>
-                  <CRow>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Telephone" />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Mobile" />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Google Location">
-                        <template #append>
-                          <CButton type="submit" color="default">
-                            <svg
-                              height="15pt"
-                              viewBox="0 0 512 512"
-                              width="15pt"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="m8.828125 282.484375h45.902344c12.0625 91.066406 83.71875 162.722656 174.785156 174.785156v45.902344c.015625 4.871094 3.960937 8.8125 8.828125 8.828125h35.3125c4.867188-.015625 8.8125-3.957031 8.828125-8.828125v-45.902344c91.066406-12.0625 162.722656-83.71875 174.785156-174.785156h45.902344c4.871094-.015625 8.8125-3.960937 8.828125-8.828125v-35.3125c-.015625-4.867188-3.957031-8.8125-8.828125-8.828125h-45.902344c-12.0625-91.066406-83.71875-162.722656-174.785156-174.785156v-45.902344c-.015625-4.871094-3.960937-8.8125-8.828125-8.828125h-35.3125c-4.867188.015625-8.8125 3.957031-8.828125 8.828125v45.902344c-91.066406 12.0625-162.722656 83.71875-174.785156 174.785156h-45.902344c-4.871094.015625-8.8125 3.960937-8.828125 8.828125v35.3125c.015625 4.867188 3.957031 8.8125 8.828125 8.828125zm247.171875-176.554687c82.878906 0 150.070312 67.191406 150.070312 150.070312s-67.191406 150.070312-150.070312 150.070312-150.070312-67.191406-150.070312-150.070312c.117187-82.832031 67.238281-149.953125 150.070312-150.070312zm0 0"
-                              />
-                              <path
-                                d="m326.621094 256c0 39.003906-31.617188 70.621094-70.621094 70.621094s-70.621094-31.617188-70.621094-70.621094 31.617188-70.621094 70.621094-70.621094 70.621094 31.617188 70.621094 70.621094zm0 0"
-                              />
-                            </svg>
-                          </CButton>
-                        </template>
-                      </CInput>
-                    </CCol>
-                  </CRow>
-                  <CRow>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Opening Date" type="date" />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Closing Date" type="date" />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Status" />
-                    </CCol>
-                  </CRow>
-                  <CButton
-                    block
-                    color="success"
-                    style="float: right; width: 100px"
-                    >Save</CButton
-                  >
-                </CCardBody>
+                <form id="app1" @submit="checkForm">
+                  <CCardBody>
+                    <CRow>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Name" v-model="form.name" />
+
+                        <!-- <p>{{ errors[0]["name"] }}</p> -->
+                      </CCol>
+
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Adress" v-model="form.address" />
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Area" v-model="form.area" />
+                      </CCol>
+                    </CRow>
+                    <CRow>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Telephone" v-model="form.telephone" />
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Mobile" />
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Google Location">
+                          <template #append>
+                            <CButton type="submit" color="default">
+                              <svg
+                                height="15pt"
+                                viewBox="0 0 512 512"
+                                width="15pt"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="m8.828125 282.484375h45.902344c12.0625 91.066406 83.71875 162.722656 174.785156 174.785156v45.902344c.015625 4.871094 3.960937 8.8125 8.828125 8.828125h35.3125c4.867188-.015625 8.8125-3.957031 8.828125-8.828125v-45.902344c91.066406-12.0625 162.722656-83.71875 174.785156-174.785156h45.902344c4.871094-.015625 8.8125-3.960937 8.828125-8.828125v-35.3125c-.015625-4.867188-3.957031-8.8125-8.828125-8.828125h-45.902344c-12.0625-91.066406-83.71875-162.722656-174.785156-174.785156v-45.902344c-.015625-4.871094-3.960937-8.8125-8.828125-8.828125h-35.3125c-4.867188.015625-8.8125 3.957031-8.828125 8.828125v45.902344c-91.066406 12.0625-162.722656 83.71875-174.785156 174.785156h-45.902344c-4.871094.015625-8.8125 3.960937-8.828125 8.828125v35.3125c.015625 4.867188 3.957031 8.8125 8.828125 8.828125zm247.171875-176.554687c82.878906 0 150.070312 67.191406 150.070312 150.070312s-67.191406 150.070312-150.070312 150.070312-150.070312-67.191406-150.070312-150.070312c.117187-82.832031 67.238281-149.953125 150.070312-150.070312zm0 0"
+                                />
+                                <path
+                                  d="m326.621094 256c0 39.003906-31.617188 70.621094-70.621094 70.621094s-70.621094-31.617188-70.621094-70.621094 31.617188-70.621094 70.621094-70.621094 70.621094 31.617188 70.621094 70.621094zm0 0"
+                                />
+                              </svg>
+                            </CButton>
+                          </template>
+                        </CInput>
+                      </CCol>
+                    </CRow>
+                    <CRow>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Opening Date" type="date" />
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Closing Date" type="date" />
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Status" />
+                      </CCol>
+                    </CRow>
+
+                    <CLoadingButton
+                      progress
+                      timeout="2000"
+                      block
+                      color="success"
+                      style="float: right; width: 100px"
+                      type="submit"
+                      >Save</CLoadingButton
+                    >
+                  </CCardBody>
+                </form>
               </CTab>
               <CTab>
                 <template slot="title">
@@ -267,17 +276,8 @@
 
 <script>
 import Table from "../tables/Table.vue";
-const fields = [
-  { key: "Name", _style: "min-width:40%" },
-  { key: "Area", _style: "min-width:20%;" },
-  { key: "Address", _style: "min-width:20%;" },
-  { key: "Telephone", _style: "min-width:20%;" },
-  { key: "status", _style: "min-width:20%;" },
-  { key: "show_details", label: "", _style: "min-width:1%" },
-];
 
 export default {
-  components: { Table },
   name: "Tabs",
   data() {
     return {
@@ -306,23 +306,12 @@ export default {
       tabs: ["General", "Timing", "Traget", "Social media"],
       activeTab: 1,
       usersData: [],
-      fields,
       details: [],
       collapseDuration: 0,
+      errors: [],
     };
   },
-  created() {
-    this.$http
-      .get("/branches")
-      .then(({ data }) => {
-        data.data.forEach((element) => {
-          this.usersData.push(element);
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+  created() {},
 
   methods: {
     Addtiming(index, from, to) {
@@ -353,26 +342,15 @@ export default {
     DelMedia(index) {
       this.mediaLst.splice(index, 1);
     },
-    getBadge(status) {
-      switch (status) {
-        case "Active":
-          return "success";
-        case "Inactive":
-          return "secondary";
-        case "Pending":
-          return "warning";
-        case "Banned":
-          return "danger";
-        default:
-          "primary";
+    checkForm(e) {
+      this.errors = [];
+      e.preventDefault();
+      if (!this.form.name) {
+        this.errors.push({ name: "Name is required" });
       }
-    },
-    toggleDetails(item) {
-      this.$set(this.usersData[item.id], "_toggled", !item._toggled);
-      this.collapseDuration = 300;
-      this.$nextTick(() => {
-        this.collapseDuration = 0;
-      });
+      if (!this.form.address) {
+        this.errors.push({ address: "Address is required" });
+      }
     },
   },
 };
