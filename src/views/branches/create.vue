@@ -6,7 +6,7 @@
           <CCardHeader> New Branch </CCardHeader>
           <CCardBody>
             <CTabs add-tab-classes="mt-1">
-              <CTab>
+              <CTab active>
                 <template slot="title">
                   {{ tabs[0] }}
                 </template>
@@ -28,10 +28,10 @@
                     </CRow>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Telephone" v-model="form.telephone" />
+                        <CInput label="Telephone" v-model="form.tel" />
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Mobile" />
+                        <CInput label="Mobile" v-model="form.mob" />
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="Google Location">
@@ -57,13 +57,21 @@
                     </CRow>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Opening Date" type="date" />
+                        <CInput
+                          label="Opening Date"
+                          type="date"
+                          v-model="form.opening_date"
+                        />
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Closing Date" type="date" />
+                        <CInput
+                          label="Closing Date"
+                          type="date"
+                          v-model="form.closing_date"
+                        />
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Status" />
+                        <CInput label="Status" v-model="form.status" />
                       </CCol>
                     </CRow>
 
@@ -72,14 +80,22 @@
                       timeout="2000"
                       block
                       color="success"
-                      style="float: right; width: 100px"
+                      style="float: right; width: 140px"
                       type="submit"
-                      >Save</CLoadingButton
+                      >Save & Continue</CLoadingButton
+                    >
+                    <CLoadingButton
+                      timeout="2000"
+                      block
+                      color="secondary"
+                      style="float: right; width: 140px; margin-right: 20px"
+                      type="submit"
+                      >Save & Exit</CLoadingButton
                     >
                   </CCardBody>
                 </form>
               </CTab>
-              <CTab>
+              <CTab disabled>
                 <template slot="title">
                   {{ tabs[1] }}
                 </template>
@@ -164,7 +180,7 @@
                   >
                 </CCardBody>
               </CTab>
-              <CTab>
+              <CTab disabled>
                 <template slot="title">
                   {{ tabs[2] }}
                 </template>
@@ -204,7 +220,7 @@
                   >
                 </CCardBody>
               </CTab>
-              <CTab>
+              <CTab disabled>
                 <template slot="title">
                   {{ tabs[3] }}
                 </template>
@@ -275,8 +291,7 @@
 </template>
 
 <script>
-import Table from "../tables/Table.vue";
-
+import Swal from "sweetalert2";
 export default {
   name: "Tabs",
   data() {
@@ -285,8 +300,8 @@ export default {
         name: "",
         address: "",
         area: "",
-        telephone: "",
-        mobile: "",
+        tel: "",
+        mob: "",
         location: "",
         opening_date: "",
         closing_date: "",
@@ -343,7 +358,7 @@ export default {
       this.mediaLst.splice(index, 1);
     },
     checkForm(e) {
-      this.errors = [];
+      // this.errors = [];
       e.preventDefault();
       if (!this.form.name) {
         this.errors.push({ name: "Name is required" });
@@ -351,6 +366,16 @@ export default {
       if (!this.form.address) {
         this.errors.push({ address: "Address is required" });
       }
+      this.$http.post("branches", this.form).then((response) => {
+        if (response.status == 201) {
+          Swal.fire({
+            icon: "success",
+            title: "Successfully Added",
+            text: "New Branch Information has Been Added",
+            timer: 1600,
+          });
+        }
+      });
     },
   },
 };
