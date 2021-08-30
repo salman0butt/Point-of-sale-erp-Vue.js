@@ -4,6 +4,15 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardHeader> Branches </CCardHeader>
+          <CCol col="6" sm="4" md="2" xl class="mb-0 mt-3 mb-xl-0">
+            <CButton
+              block
+              variant="outline"
+              @click="addBranchBtn()"
+              color="primary"
+              >Add Branch</CButton
+            >
+          </CCol>
           <CCardBody>
             <CCardBody>
               <CDataTable
@@ -60,19 +69,7 @@ export default {
       fields,
     };
   },
-  created() {
-    this.$http
-      .get("/branches")
-      .then(({ data }) => {
-        data.data.map((item, id) => {
-          this.Branches.push({ ...item, id });
-        });
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+  created() {},
   computed: {
     branches() {
       return this.Branches;
@@ -88,6 +85,25 @@ export default {
       const val = Boolean(this.Branches[item.id]._selected);
       this.$set(this.Branches[item.id], "_selected", !val);
     },
+    dataCall() {
+      this.$http
+        .get("/branches")
+        .then(({ data }) => {
+          data.data.map((item, id) => {
+            this.Branches.push({ ...item, id });
+          });
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    addBranchBtn() {
+      this.$router.push({ name: "Create Branch" });
+    },
+  },
+  mounted() {
+    this.dataCall();
   },
 };
 </script>
