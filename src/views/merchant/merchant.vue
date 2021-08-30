@@ -408,14 +408,12 @@ export default {
           this.$store.commit('post_msgs', 'Detail Updated Successfully');
         })
         .catch((error) => {
-
           if (error.response.status == 422){
             let errors = error.response.data.errors;
             for (const err in errors) {
               this.set_errors(errors[err][0]);
             }
-
-            }
+          }
         });
     },
     pickFile(e) {

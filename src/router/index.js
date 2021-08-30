@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import auth from '../middleware/auth'
+import employeeRoutes from '@/router/employees/employeeRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -10,8 +11,8 @@ const ForgetPassword = () => import('@/views/pages/ForgetPassword')
 const ResetPassword = () => import('@/views/pages/ResetPassword')
 
 //Employee
-const IndexEmployee = () => import('@/views/employees/Index')
-const CreateEmployee = () => import('@/views/employees/Create')
+// const employeeRoutes = () => import('@/router/employees/employeeRoutes')
+
 
 const Colors = () => import('@/views/theme/Colors')
 const Typography = () => import('@/views/theme/Typography')
@@ -136,28 +137,7 @@ const router = new Router({
           component: CreateBranch,
           beforeEnter: auth
         },
-
-        {
-          path: 'employees',
-          redirect: '/employees/index',
-          name: 'Employee',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          beforeEnter: auth,
-          children: [
-            {
-              path: 'index',
-              name: 'Index',
-              component: IndexEmployee
-            },
-            {
-              path: 'create',
-              name: 'Create',
-              component: CreateEmployee
-            }
-          ]
-        },
+        employeeRoutes,
         {
           path: 'theme',
           redirect: '/theme/colors',

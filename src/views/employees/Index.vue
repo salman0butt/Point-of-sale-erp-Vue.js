@@ -6,6 +6,9 @@
           <CCardHeader> Employee </CCardHeader>
           <CCardBody>
             <CCardBody>
+              <router-link class="btn btn-success" to="/employees/create"
+                >Create Employee</router-link
+              >
               <CDataTable
                 :items="users"
                 :fields="fields"
@@ -17,6 +20,7 @@
                 pagination
                 clickable-rows
                 hover
+                :loading="loading"
                 @row-clicked="rowClicked"
               >
                 <template #select="{ item }">
@@ -59,20 +63,23 @@ const fields = [
 ];
 
 export default {
-  name: "Employee",
+  name: "IndexEmployee",
   data() {
     return {
       usersData: [],
       fields,
+      loading: false,
     };
   },
   created() {
+    this.loading = true;
     this.$http
       .get("/employees")
       .then(({ data }) => {
         data.data.map((item, id) => {
           this.usersData.push({ ...item, id });
         });
+        this.loading = false;
       })
       .catch((err) => {
         console.log(err);
