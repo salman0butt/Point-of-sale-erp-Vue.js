@@ -8,10 +8,16 @@ import { iconsSet as icons } from './assets/icons/icons.js'
 import store from './store'
 import i18n from './i18n.js'
 // import axios from 'axios'
-import http from '../src/http-common'
+import http from '../src/http-common';
+import Swal from "sweetalert2";
+import Vuelidate from 'vuelidate'
+
+Vue.use(Vuelidate);
 
 Vue.use(CoreuiVuePro);
 Vue.prototype.$log = console.log.bind(console);
+
+Vue.prototype.$swal = Swal;
 
 Vue.prototype.$http = http;
 const token = 'Bearer ' + localStorage.getItem('token');
@@ -30,6 +36,9 @@ http.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
+// Vue.config.errorHandler = err => {
+//   console.log('Exception: ', err)
+// }
 
 new Vue({
   el: '#app',

@@ -35,11 +35,27 @@ export default {
               to: "/branches",
               icon: "cil-lan",
             },
+            // {
+            //   _name: "CSidebarNavItem",
+            //   name: "Employees",
+            //   to: "/employees",
+            //   icon: "cil-lan",
+            // },
             {
-              _name: "CSidebarNavItem",
+              _name: "CSidebarNavDropdown",
               name: "Employees",
-              to: "/employees",
+              route: "/employees",
               icon: "cil-lan",
+              items: [
+                {
+                  name: "All Employees",
+                  to: "/employees/index",
+                },
+                {
+                  name: "Create Employee",
+                  to: "/employees/create",
+                },
+              ],
             },
             // {
             //   _name: 'CSidebarNavTitle',
