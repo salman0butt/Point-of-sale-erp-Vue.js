@@ -55,6 +55,8 @@ const Merchant = () => import('@/views/merchant/merchant')
 // Views - Branches
 const CreateBranch = () => import('@/views/branches/create')
 const Branches = () => import('@/views/branches/index')
+const EditBranch = () => import('@/views/branches/edit')
+
 // Views - Forms
 const BasicForms = () => import('@/views/forms/Forms')
 const AdvancedForms = () => import('@/views/forms/AdvancedForms')
@@ -135,6 +137,12 @@ const router = new Router({
           path: 'branch/create',
           name: 'Create Branch',
           component: CreateBranch,
+          beforeEnter: auth
+        },
+        {
+          path: 'branch/:id',
+          name: 'Edit Branch',
+          component: EditBranch,
           beforeEnter: auth
         },
         employeeRoutes,
