@@ -8,54 +8,47 @@
     <template #toggler>
       <CHeaderNavLink>
         <div class="c-avatar">
-          <img
-            src="img/avatars/6.jpg"
-            class="c-avatar-img "
-          />
+          <img src="/img/avatars/6.jpg" class="c-avatar-img" />
         </div>
       </CHeaderNavLink>
     </template>
-    
-    <CDropdownItem @click="profile">
-      <CIcon name="cil-user"/> Profile
-    </CDropdownItem>
-    <CDropdownDivider/>
-    <CDropdownItem>
-      <CIcon name="cil-shield-alt" /> Lock Account
-    </CDropdownItem>
-    <CDropdownItem @click="logout" >
+
+    <CDropdownItem @click="profile"> <CIcon name="cil-user" /> Profile </CDropdownItem>
+    <CDropdownDivider />
+    <CDropdownItem> <CIcon name="cil-shield-alt" /> Lock Account </CDropdownItem>
+    <CDropdownItem @click="logout">
       <CIcon name="cil-lock-locked" /> Logout
     </CDropdownItem>
   </CDropdown>
 </template>
 
 <script>
-import http from '../http-common'
+import http from "../http-common";
 
 export default {
-  name: 'TheHeaderDropdownAccnt',
-  data () {
-    return { 
-      itemsCount: 42
-    }
+  name: "TheHeaderDropdownAccnt",
+  data() {
+    return {
+      itemsCount: 42,
+    };
   },
-  methods:{
-     logout(){
-        this.$store.dispatch('logout')
-        return this.$router.push('/login');
-      },
-      profile() {
-        http.get('/me')
-        .then(res => console.log(res))
-        .catch(err => console.log(err))
-      }
-  }
- 
-}
+  methods: {
+    logout() {
+      this.$store.dispatch("logout");
+      return this.$router.push("/login");
+    },
+    profile() {
+      http
+        .get("/me")
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .c-icon {
-    margin-right: 0.3rem;
-  }
+.c-icon {
+  margin-right: 0.3rem;
+}
 </style>

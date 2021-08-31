@@ -56,11 +56,6 @@
                           v-model="general_items.country"
                         />
                <div>
-                  <p v-if="this.$store.state.msgs.length">
-                  <ul>
-                    <li class="success" v-for="(msg, index) in this.$store.state.msgs" v-bind:key="index">{{ msg }}</li>
-                  </ul>
-                </p>
                  <p v-if="this.$store.state.errors.length">
                   <b>Please correct the following error(s):</b>
                   <ul>
@@ -348,6 +343,7 @@ export default {
   mounted: function () {
     $(".col-sm-4").removeClass("col-sm-4").addClass("col-sm-2");
     $(".col-sm-8").removeClass("col-sm-8").addClass("col-sm-10");
+     this.$store.commit('remove_errors');
   },
   created() {
     this.pluginlist = this.PluginLst;
@@ -399,13 +395,19 @@ export default {
       const config = {
         headers: { "Content-Type": "multipart/form-data" },
       };
-
       this.$store.commit('remove_errors');
-      this.$store.commit('remove_msgs');
+
       this.$http
         .post("/business/" + business_id, formData, config)
-        .then(() => {
-          this.$store.commit('post_msgs', 'Detail Updated Successfully');
+        .then((response) => {
+          if (response.status == 200) {
+          this.$swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Detail Updated Successfully",
+            timer: 3600,
+          });
+        }
         })
         .catch((error) => {
           if (error.response.status == 422){
