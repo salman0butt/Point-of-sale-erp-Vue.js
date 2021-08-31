@@ -10,7 +10,7 @@
                 <template slot="title">
                   {{ tabs[0] }}
                 </template>
-                <form id="app1" @submit.prevent="saveBranch">
+                <form id="app1" @submit.prevent="updateBranch">
                   <CCardBody>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
@@ -116,6 +116,13 @@
                           label="Closing Date"
                           type="date"
                           v-model="form.closing_date"
+                        />
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CSelect
+                          label="Status"
+                          :options="status"
+                          :value="form.status"
                         />
                       </CCol>
                     </CRow>
@@ -348,7 +355,7 @@ import BranchServices from "@/services/branches/BranchServices";
 import { required, minLength, numeric } from "vuelidate/lib/validators";
 
 export default {
-  name: "createBranch",
+  name: "updateBranch",
 
   data() {
     return {
@@ -361,7 +368,12 @@ export default {
         location: "",
         opening_date: "",
         closing_date: "",
+        status: "",
       },
+      status: [
+        { value: "active", label: "Active" },
+        { value: "inactive", label: "InActive" },
+      ],
       url_data: null,
       timelst: [
         { day: "Sunday", status: false, time: [] },
@@ -394,26 +406,31 @@ export default {
     };
   },
   created() {
-    this.url_data = this.$route.params.id;
-
-    this.$http
-      .get("/branches/" + this.url_data)
-      .then(({ data }) => {
-        this.form.name = data.name;
-        this.form.address = data.address;
-        this.form.area = data.area;
-        this.form.tel = data.tel;
-        this.form.mob = data.mob;
-        this.form.location = data.location;
-        this.form.opening_date = data.opening_date;
-        this.form.closing_date = data.closing_date;
-      })
-      .catch((err) => {
-        this.$router.push({ path: "/branches" });
-      });
+    this.getGeneralDetail();
   },
 
   methods: {
+    getGeneralDetail() {
+      this.url_data = this.$route.params.id;
+      this.$http
+        .get("/branches/" + this.url_data)
+        .then(({ data }) => {
+          this.form.name = data.name;
+          this.form.address = data.address;
+          this.form.area = data.area;
+          this.form.tel = data.tel;
+          this.form.mob = data.mob;
+          this.form.location = data.location;
+          this.form.opening_date = data.opening_date;
+          this.form.closing_date = data.closing_date;
+          this.form.status = data.status;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.push({ path: "/branches" });
+        });
+    },
+
     Addtiming(index, from, to) {
       if (from == undefined || to == undefined) {
         return false;
@@ -443,28 +460,30 @@ export default {
       this.mediaLst.splice(index, 1);
     },
 
-    saveBranch() {
+    updateBranch() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        BranchServices.create(data)
-          .then((res) => {
-            this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Branch Created Successfully",
-              timer: 3600,
-            });
-            if (this.saveAndExit) {
-              this.$router.push({ path: "/branches" });
-            } else {
-              alert("next page");
-            }
-            console.log(res);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        console.log(data.status);
+        // this.$http
+        //   .put("branches/cc64f7f2-eb6d-4ba3-94af-081516f80bbf", data)
+        //   .then((res) => {
+        //     this.$swal.fire({
+        //       icon: "success",
+        //       title: "Success",
+        //       text: "Branch Updated Successfully",
+        //       timer: 3600,
+        //     });
+        //     if (this.saveAndExit) {
+        //       this.$router.push({ path: "/branches" });
+        //     } else {
+        //       alert("next page");
+        //     }
+        //     console.log(res);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //   });
       }
     },
   },
