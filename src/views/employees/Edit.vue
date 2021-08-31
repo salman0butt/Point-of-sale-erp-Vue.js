@@ -3,9 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Create Employee </CCardHeader>
+          <CCardHeader>Edit Employee </CCardHeader>
           <CCardBody>
-            <form @submit.prevent="saveEmployee">
+            <form @submit.prevent="updateEmployee">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -222,6 +222,7 @@
               <CInputCheckbox
                 @change="toggleUserSection"
                 custom
+                :checked="form.create_user"
                 label="Create Username"
               />
               <div v-if="form.create_user">
@@ -354,6 +355,7 @@ export default {
   data: () => ({
     isEditing: false,
     saveAndExit: false,
+    empId: null,
     form: {
       full_name: "",
       gender: "",
@@ -443,6 +445,8 @@ export default {
   },
   created() {
     this.getDetail();
+    this.getEmployee();
+    console.log(this.form);
   },
   methods: {
     getDetail() {
@@ -461,17 +465,47 @@ export default {
           console.log(error);
         });
     },
-    saveEmployee() {
+    getEmployee() {
+      this.empId = this.$route.params.id;
+      EmployeeService.get(this.empId)
+        .then(({ data }) => {
+          this.form.full_name = data.full_name;
+          this.form.gender = data.gender;
+          this.form.marital_status = data.marital_status;
+          this.form.phone_number = data.phone_number;
+          this.form.email = data.email;
+          this.form.dob = data.dob;
+          this.form.nationality = data.nationality;
+          this.form.address = data.address;
+          this.form.cpr_no = data.cpr_no;
+          this.form.cpr_no_expiry = data.cpr_no_expiry;
+          this.form.passport_no = data.passport_no;
+          this.form.passport_expiry = data.passport_expiry;
+          this.form.branch_id = data.branch[0];
+          this.form.manager_id = data.manager_id;
+          this.form.status = data.status;
+          this.form.create_user = data.create_user === "on" ? true : false;
+          this.form.user_name = data.user.name;
+          this.form.user_email = data.user.email;
+          this.form.user_role = data.user.role[0];
+          this.form.user_status = data.user.status.toString();
+          this.form.user_language = data.user.user_language;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    updateEmployee() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeService.create(data)
+        EmployeeService.update(this.empId, data)
           .then((res) => {
-            if (res.status == 201) {
+            if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Employee Created Successfully",
+                text: "Employee Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -479,10 +513,6 @@ export default {
                 this.$router.push({ path: "/employees/index" });
               } else {
                 this.$router.push({ path: "/employees/edit/" + res.data.uuid });
-                // let fields = this.form;
-                // for (let field in fields) {
-                //   this.form[field] = "";
-                // }
               }
             }
           })
@@ -491,7 +521,7 @@ export default {
             this.$swal.fire({
               icon: "error",
               title: "Error",
-              text: "Employee not Created Successfully",
+              text: "Employee not Updated Successfully",
               timer: 3600,
             });
           });
