@@ -55,6 +55,8 @@ const Merchant = () => import('@/views/merchant/merchant')
 // Views - Branches
 const CreateBranch = () => import('@/views/branches/create')
 const Branches = () => import('@/views/branches/index')
+const EditBranch = () => import('@/views/branches/edit')
+
 // Views - Forms
 const BasicForms = () => import('@/views/forms/Forms')
 const AdvancedForms = () => import('@/views/forms/AdvancedForms')
@@ -99,6 +101,7 @@ const EmailApp = () => import('@/views/apps/email/EmailApp')
 const Compose = () => import('@/views/apps/email/Compose')
 const Inbox = () => import('@/views/apps/email/Inbox')
 const Message = () => import('@/views/apps/email/Message')
+const test = () => import('@/views/Testing')
 
 Vue.use(Router)
 
@@ -137,6 +140,20 @@ const router = new Router({
           component: CreateBranch,
           beforeEnter: auth
         },
+        {
+          path: 'branch/:id',
+          name: 'Edit Branch',
+          component: EditBranch,
+          beforeEnter: auth
+        },
+        {
+          path: 'test',
+          name: 'test',
+          component: test,
+          beforeEnter: auth
+        },
+
+
         employeeRoutes,
         {
           path: 'theme',

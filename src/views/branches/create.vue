@@ -10,33 +10,81 @@
                 <template slot="title">
                   {{ tabs[0] }}
                 </template>
-                <form id="app1" @submit="checkForm">
+                <form id="app1" @submit.prevent="saveBranch">
                   <CCardBody>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Name" v-model="form.name" />
-
-                        <!-- <p>{{ errors[0]["name"] }}</p> -->
+                        <CInput
+                          label="Name"
+                          v-model="form.name"
+                          :class="{ error: $v.form.name.$error }"
+                        />
+                        <div v-if="$v.form.name.$error">
+                          <p v-if="!$v.form.name.required" class="errorMsg">
+                            Fullname is required
+                          </p>
+                          <p v-if="!$v.form.name.minLength" class="errorMsg">
+                            Fullname should be at least 4 character
+                          </p>
+                        </div>
                       </CCol>
 
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="Adress" v-model="form.address" />
+                        <div v-if="$v.form.address.$error">
+                          <p v-if="!$v.form.address.required" class="errorMsg">
+                            Address is required
+                          </p>
+                          <p v-if="!$v.form.address.minLength" class="errorMsg">
+                            Address should be at least 4 character
+                          </p>
+                        </div>
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="Area" v-model="form.area" />
+                        <div v-if="$v.form.area.$error">
+                          <p v-if="!$v.form.area.required" class="errorMsg">
+                            Area is required
+                          </p>
+                          <p v-if="!$v.form.area.minLength" class="errorMsg">
+                            Area should be at least 4 character
+                          </p>
+                        </div>
                       </CCol>
                     </CRow>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="Telephone" v-model="form.tel" />
+                        <div v-if="$v.form.tel.$error">
+                          <p v-if="!$v.form.tel.required" class="errorMsg">
+                            Telephone is required
+                          </p>
+                          <p v-if="!$v.form.tel.numeric" class="errorMsg">
+                            Telephone must be numeric
+                          </p>
+                          <p v-if="!$v.form.tel.minLength" class="errorMsg">
+                            Telephone should be at least 8 character
+                          </p>
+                        </div>
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="Mobile" v-model="form.mob" />
+                        <div v-if="$v.form.mob.$error">
+                          <p v-if="!$v.form.mob.required" class="errorMsg">
+                            Mobile Number is required
+                          </p>
+                          <p v-if="!$v.form.mob.numeric" class="errorMsg">
+                            Mobile Number must be numeric
+                          </p>
+                          <p v-if="!$v.form.mob.minLength" class="errorMsg">
+                            Mobile Number should be at least 8 character
+                          </p>
+                        </div>
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Google Location">
+                        <CInput label="Google Location" v-model="form.location">
                           <template #append>
-                            <CButton type="submit" color="default">
+                            <CButton type="button" color="default">
                               <svg
                                 height="15pt"
                                 viewBox="0 0 512 512"
@@ -70,27 +118,31 @@
                           v-model="form.closing_date"
                         />
                       </CCol>
-                      <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Status" v-model="form.status" />
-                      </CCol>
                     </CRow>
 
-                    <CLoadingButton
+                    <CButton
                       progress
                       timeout="2000"
                       block
                       color="success"
-                      style="float: right; width: 140px"
+                      style="float: right; width: 200px"
                       type="submit"
-                      >Save & Continue</CLoadingButton
+                      @click="saveAndExit = false"
+                      >Save & Continue</CButton
                     >
-                    <CLoadingButton
+                    <CButton
                       timeout="2000"
                       block
-                      color="secondary"
-                      style="float: right; width: 140px; margin-right: 20px"
+                      color="danger"
+                      style="
+                        float: right;
+                        width: 140px;
+                        margin-right: 20px;
+                        margin-top: 0;
+                      "
+                      @click="saveAndExit = true"
                       type="submit"
-                      >Save & Exit</CLoadingButton
+                      >Save & Exit</CButton
                     >
                   </CCardBody>
                 </form>
@@ -291,9 +343,11 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
+import BranchServices from "@/services/branches/BranchServices";
+
+import { required, minLength, numeric } from "vuelidate/lib/validators";
 export default {
-  name: "Tabs",
+  name: "createBranch",
   data() {
     return {
       form: {
@@ -305,7 +359,6 @@ export default {
         location: "",
         opening_date: "",
         closing_date: "",
-        status: "",
       },
       timelst: [
         { day: "Sunday", status: false, time: [] },
@@ -324,6 +377,17 @@ export default {
       details: [],
       collapseDuration: 0,
       errors: [],
+    };
+  },
+  validations() {
+    return {
+      form: {
+        name: { required, minLength: minLength(4) },
+        address: { required, minLength: minLength(4) },
+        area: { required, minLength: minLength(4) },
+        tel: { required, numeric, minLength: minLength(8) },
+        mob: { required, minLength: minLength(8) },
+      },
     };
   },
   created() {},
@@ -357,26 +421,35 @@ export default {
     DelMedia(index) {
       this.mediaLst.splice(index, 1);
     },
-    checkForm(e) {
-      // this.errors = [];
-      e.preventDefault();
-      if (!this.form.name) {
-        this.errors.push({ name: "Name is required" });
-      }
-      if (!this.form.address) {
-        this.errors.push({ address: "Address is required" });
-      }
-      this.$http.post("branches", this.form).then((response) => {
-        if (response.status == 201) {
-          Swal.fire({
-            icon: "success",
-            title: "Successfully Added",
-            text: "New Branch Information has Been Added",
-            timer: 1600,
+
+    saveBranch() {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let data = this.form;
+        BranchServices.create(data)
+          .then((res) => {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Branch Created Successfully",
+              timer: 3600,
+            });
+            if (this.saveAndExit) {
+              this.$router.push({ path: "/branches" });
+            } else {
+              this.$router.push({ path: "/branch/" + res.data.uuid });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
           });
-        }
-      });
+      }
     },
   },
 };
 </script>
+<style scoped>
+.errorMsg {
+  color: red;
+}
+</style>
