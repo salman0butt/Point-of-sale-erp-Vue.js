@@ -17,6 +17,11 @@ export default {
     return {
       dropzoneOptions: {
         autoProcessQueue: false,
+        //////code for sending data
+        // if data successfull added call this method
+        // myDropzone.processQueue();
+
+        //
         url: "https://httpbin.org/post",
         thumbnailWidth: 150,
         maxFilesize: 0.5,
