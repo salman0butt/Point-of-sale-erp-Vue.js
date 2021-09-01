@@ -8,7 +8,7 @@ const EditEmployee = () => import('@/views/employees/Edit')
 const employeeRoutes =  {
     path: 'employees',
     redirect: '/employees/index',
-    name: 'Employee',
+    name: 'Employees',
     component: {
       render (c) { return c('router-view') }
     },
