@@ -3,6 +3,7 @@ import auth from '@/middleware/auth'
 //Employee
 const IndexEmployee = () => import('@/views/employees/Index')
 const CreateEmployee = () => import('@/views/employees/Create')
+const EditEmployee = () => import('@/views/employees/Edit')
 
 const employeeRoutes =  {
     path: 'employees',
@@ -22,6 +23,11 @@ const employeeRoutes =  {
         path: 'create',
         name: 'Create',
         component: CreateEmployee
+      },
+      {
+        path: 'edit/:id',
+        name: 'Edit',
+        component: EditEmployee
       }
     ]
 };
