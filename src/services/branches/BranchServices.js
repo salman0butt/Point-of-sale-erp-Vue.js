@@ -18,7 +18,7 @@ class BranchServices {
     }
 
     update(id, data) {
-        return http.put(`/employees/${id}`, data);
+        return http.put(`/branches/${id}`, data);
     }
 
     delete(id) {
