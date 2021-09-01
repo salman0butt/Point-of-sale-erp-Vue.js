@@ -430,6 +430,26 @@ export default {
           this.$router.push({ path: "/branches" });
         });
     },
+    getTimingDetail() {
+      this.url_data = this.$route.params.id;
+      this.$http
+        .get("/branches/" + this.url_data)
+        .then(({ data }) => {
+          this.form.name = data.name;
+          this.form.address = data.address;
+          this.form.area = data.area;
+          this.form.tel = data.tel;
+          this.form.mob = data.mob;
+          this.form.location = data.location;
+          this.form.opening_date = data.opening_date;
+          this.form.closing_date = data.closing_date;
+          this.form.status = data.status;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.push({ path: "/branches" });
+        });
+    },
 
     Addtiming(index, from, to) {
       if (from == undefined || to == undefined) {
