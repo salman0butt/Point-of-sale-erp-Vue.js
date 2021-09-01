@@ -5,6 +5,10 @@ class EmployeeService {
     return http.get("/employees");
   }
 
+  getTotalCount() {
+    return http.get("/employees-total-counts");
+  }
+
   getCreateDetail() {
     return http.get("/employees-create");
   }
