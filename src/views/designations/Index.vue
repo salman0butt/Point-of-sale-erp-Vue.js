@@ -3,15 +3,15 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> All Departments </CCardHeader>
+          <CCardHeader> All Designations </CCardHeader>
         </CCard>
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/departments/create"
-              >Create Department</router-link
+            <router-link class="btn btn-success" to="/designations/create"
+              >Create Designations</router-link
             >
             <CDataTable
-              :items="departments"
+              :items="designations"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import DepartmentService from "@/services/departments/DepartmentService";
+import DesignationService from "@/services/designations/DesignationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -81,21 +81,20 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "name", label: "DEPARTMENT NAME", _style: "min-width:40%" },
-  { key: "business", label: "BUSINESS", _style: "min-width:15%;" },
-  { key: "parent", label: "PARENT", _style: "min-width:15%;" },
+  { key: "name", label: "DESIGNATION NAME", _style: "min-width:40%" },
+  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "IndexDepartment",
+  name: "IndexDesignation",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      departmentsData: [],
+      designationsData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -103,19 +102,19 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getDepartmentData();
+    this.getDesignationData();
   },
   computed: {
-    departments() {
-      return this.departmentsData;
+    designations() {
+      return this.designationsData;
     },
   },
   methods: {
-    getDepartmentData() {
-      DepartmentService.getAll()
+    getDesignationData() {
+      DesignationService.getAll()
         .then(({ data }) => {
           data.data.map((item, id) => {
-            this.departmentsData.push({ ...item, id });
+            this.designationsData.push({ ...item, id });
           });
           this.loading = false;
         })
@@ -129,14 +128,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.departmentsData[item.id]._selected);
-      this.$set(this.departmentsData[item.id], "_selected", !val);
+      const val = Boolean(this.designationsData[item.id]._selected);
+      this.$set(this.designationsData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/departments/edit/" + uuid });
+      this.$router.push({ path: "/designations/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -151,7 +150,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            DepartmentService.delete(this.deleteRows)
+            DesignationService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -160,7 +159,7 @@ export default {
                     text: "Department Deleted Successfully",
                     timer: 3600,
                   });
-                  this.departmentsData = this.departmentsData.filter(
+                  this.designationsData = this.designationsData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
