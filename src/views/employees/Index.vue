@@ -120,8 +120,8 @@ const fields = [
   { key: "email", label: "EMAIL", _style: "min-width:15%;" },
   { key: "phone_number", label: "MOBILE", _style: "min-width:15%;" },
   { key: "department", label: "DEPARTMENT", _style: "min-width:15%;" },
-  { key: "branch_name", label: "Branch", _style: "min-width:15%;" },
-  { key: "actions", label: "Action", _style: "min-width:15%;" },
+  { key: "branch_name", label: "BRANCH", _style: "min-width:15%;" },
+  { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
@@ -197,8 +197,7 @@ export default {
     },
 
     deleteRow(uuid) {
-      this.deleteRows.push(uuid);
-      this.deleteRows = JSON.stringify(this.deleteRows);
+      this.deleteRows = JSON.stringify([uuid]);
       this.$swal
         .fire({
           title: "Do you want to delete this record",
