@@ -17,8 +17,8 @@ class EmployeeService {
     return http.get(`/employees/${id}`);
   }
 
-  create(data) {
-    return http.post("/employees", data);
+  create(data, config) {
+    return http.post("/employees", data, config);
   }
 
   update(id, data) {

@@ -141,6 +141,7 @@ export default {
         departments_count: 0,
         manager_count: 0,
       },
+      deleteRows: [],
     };
   },
   created() {
@@ -189,14 +190,51 @@ export default {
       this.$set(this.usersData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      alert(uuid);
+      alert("page not ready");
     },
     editRow(uuid) {
       this.$router.push({ path: "/employees/edit/" + uuid });
     },
 
     deleteRow(uuid) {
-      alert(uuid);
+      this.deleteRows.push(uuid);
+      this.deleteRows = JSON.stringify(this.deleteRows);
+      this.$swal
+        .fire({
+          title: "Do you want to delete this record",
+          text: "This will be record from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            EmployeeService.delete(this.deleteRows)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Employee Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.usersData = this.usersData.filter(
+                    (employee) => employee.uuid != uuid
+                  );
+                  this.getTotalCardData();
+                }
+              })
+              .catch((error) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+              });
+            this.deleteRows = [];
+          }
+        });
     },
   },
 };

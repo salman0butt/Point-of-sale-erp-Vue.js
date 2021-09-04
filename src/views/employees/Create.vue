@@ -186,12 +186,12 @@
                       <CSelect
                         label="Departments"
                         :options="options.departments"
-                        :value.sync="form.branch_id"
-                        :class="{ error: $v.form.branch_id.$error }"
-                        @input="$v.form.branch_id.$touch()"
+                        :value.sync="form.department_id"
+                        :class="{ error: $v.form.department_id.$error }"
+                        @input="$v.form.department_id.$touch()"
                       />
-                      <div v-if="$v.form.branch_id.$error">
-                        <p v-if="!$v.form.branch_id.required" class="errorMsg">
+                      <div v-if="$v.form.department_id.$error">
+                        <p v-if="!$v.form.department_id.required" class="errorMsg">
                           Department is required
                         </p>
                       </div>
@@ -349,7 +349,28 @@
                       </CCol>
                     </CRow>
                   </div>
-
+                  <CRow>
+                    <CCol sm="6" md="3" class="pt-2">
+                      <CCardBody>
+                        <div class="mb-2" style="padding: 5px; background: #f7e9e9">
+                          <CImg
+                            v-bind:src="form.previewImage"
+                            block
+                            class="mb-2"
+                            width="100%"
+                          />
+                        </div>
+                        <div>
+                          Choose Profile:
+                          <input
+                            type="file"
+                            @change="pickFile"
+                            accept="image/png, image/gif, image/jpeg"
+                          />
+                        </div>
+                      </CCardBody>
+                    </CCol>
+                  </CRow>
                   <p v-if="$v.$anyError" class="errorMsg">
                     Please Fill the required data
                   </p>
@@ -433,10 +454,9 @@ export default {
       department_id: "",
       designation_id: "",
       status: "",
-      // personal_photo: "",
-      // documents: "",
-      // previewImage: "",
-      // previewDocuments: "",
+      personal_photo: "",
+      documents: "",
+      previewImage: "https://picsum.photos/1024/480/?image=54",
       create_user: false,
       user_name: "",
       user_email: "",
@@ -540,8 +560,37 @@ export default {
     saveEmployee() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        EmployeeService.create(data)
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        let formData = new FormData();
+        formData.append("full_name", this.form.full_name);
+        formData.append("gender", this.form.gender);
+        formData.append("marital_status", this.form.marital_status);
+        formData.append("phone_number", this.form.phone_number);
+        formData.append("email", this.form.email);
+        formData.append("dob", this.form.dob);
+        formData.append("nationality", this.form.nationality);
+        formData.append("address", this.form.address);
+        formData.append("cpr_no", this.form.cpr_no);
+        formData.append("cpr_no_expiry", this.form.cpr_no_expiry);
+        formData.append("passport_no", this.form.passport_no);
+        formData.append("passport_expiry", this.form.passport_expiry);
+        formData.append("branch_id", this.form.branch_id);
+        formData.append("department_id", this.form.department_id);
+        formData.append("designation_id", this.form.designation_id);
+        formData.append("status", this.form.status);
+        formData.append("personal_photo", this.form.personal_photo);
+        formData.append("documents", this.form.documents);
+        formData.append("create_user", this.form.create_user);
+        formData.append("user_name", this.form.user_name);
+        formData.append("user_email", this.form.user_email);
+        formData.append("user_pass", this.form.user_pass);
+        formData.append("user_role", this.form.user_role);
+        formData.append("user_status", this.form.user_status);
+        formData.append("user_language", this.form.user_language);
+
+        EmployeeService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -575,6 +624,17 @@ export default {
     },
     toggleUserSection() {
       this.form.create_user = !this.form.create_user;
+    },
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.form.personal_photo = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.form.previewImage = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+      }
     },
   },
 };
