@@ -272,7 +272,6 @@
 </template>
 
 <script>
-import $ from "jquery";
 // import { cibHtmlacademy } from "@coreui/icons";
 import { mapActions } from 'vuex'
 
@@ -341,8 +340,12 @@ export default {
   },
 
   mounted: function () {
-    $(".col-sm-4").removeClass("col-sm-4").addClass("col-sm-2");
-    $(".col-sm-8").removeClass("col-sm-8").addClass("col-sm-10");
+    this.$el.querySelector(".col-sm-4").classList.add("col-sm-2");
+    this.$el.querySelector(".col-sm-4").classList.remove("col-sm-4");
+
+    this.$el.querySelector(".col-sm-8").classList.add("col-sm-10");
+    this.$el.querySelector(".col-sm-8").classList.remove("col-sm-8");
+
      this.$store.commit('remove_errors');
   },
   created() {
