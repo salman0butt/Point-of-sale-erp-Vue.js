@@ -83,7 +83,6 @@
                 @click.prevent="changeActiveTab('target_tab')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Targets</a
               >
-              >
             </div>
           </CCardBody>
         </CCard>
