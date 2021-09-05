@@ -30,10 +30,25 @@
                 <template #select="{ item }">
                   <td>
                     <CInputCheckbox
-                      :checked="item._selected"
                       @update:checked="() => check(item)"
                       custom
                     />
+                  </td>
+                </template>
+
+                <template #actions="{ item }">
+                  <td>
+                    <CButtonGroup>
+                      <CButton @click="viewRow(item.uuid)" color="success"
+                        >View</CButton
+                      >
+                      <CButton @click="editRow(item.uuid)" color="warning"
+                        >Edit</CButton
+                      >
+                      <CButton @click="deleteRow(item.uuid)" color="danger"
+                        >Delete</CButton
+                      >
+                    </CButtonGroup>
                   </td>
                 </template>
               </CDataTable>
@@ -58,7 +73,8 @@ const fields = [
   { key: "area", label: "Area", _style: "min-width:10%;" },
   { key: "address", label: "Address", _style: "min-width:15%;" },
   { key: "status", label: "Status", _style: "min-width:15%;" },
-  { key: "closing_date", label: "Action", _style: "min-width:15%;" },
+  { key: "actions", label: "Action", _style: "min-width:15%;" },
+  // { key: "uuid", label: "uuid", _style: "min-width:15%; " },
 ];
 
 export default {
@@ -80,6 +96,7 @@ export default {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
       }
+      console.log(item);
     },
     check(item) {
       const val = Boolean(this.Branches[item.id]._selected);
@@ -92,7 +109,6 @@ export default {
           data.data.map((item, id) => {
             this.Branches.push({ ...item, id });
           });
-          console.log(data);
         })
         .catch((err) => {
           console.log(err);
@@ -100,6 +116,16 @@ export default {
     },
     addBranchBtn() {
       this.$router.push({ name: "Create Branch" });
+    },
+    viewRow(uuid) {
+      alert("Page not ready sorry");
+    },
+    editRow(uuid) {
+      this.$router.push({ path: "/branch/" + uuid });
+    },
+
+    deleteRow(uuid) {
+      alert("Page not ready sorry");
     },
   },
   mounted() {
