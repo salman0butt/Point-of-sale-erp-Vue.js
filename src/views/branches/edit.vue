@@ -164,12 +164,13 @@
                   @click="
                     collapse = !collapse;
                     collapse_table = !collapse_table;
+                    shiftToggleMethod();
                   "
                   color="primary"
                   class="mb-2 mt-3"
                   style="float: right"
                 >
-                  Add New Shift
+                  {{ shiftToggle }}
                 </CButton>
                 <CCollapse :show="collapse_table">
                   <CCardBody>
@@ -487,6 +488,7 @@ export default {
       url_data: null,
 
       // Timing tab
+      shiftToggle: "Add New Shift",
       shifts: [],
       fields,
       collapse: false,
@@ -585,6 +587,13 @@ export default {
     },
 
     // Timing
+    shiftToggleMethod() {
+      if (this.shiftToggle == "Add New Shift") {
+        this.shiftToggle = "Go To Shifts";
+      } else if (this.shiftToggle == "Go To Shifts") {
+        this.shiftToggle = "Add New Shift";
+      }
+    },
     Addtiming(index, from, to) {
       if (from == undefined || to == undefined) {
         return false;
