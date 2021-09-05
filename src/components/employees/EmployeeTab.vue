@@ -403,10 +403,17 @@
               </CTab>
               <CTab>
                 <template slot="title">
+                  {{ tabs.address }}
+                </template>
+                <EmployeeAddressTab />
+              </CTab>
+              <CTab>
+                <template slot="title">
                   {{ tabs.detail }}
                 </template>
                 Deatil tab
               </CTab>
+
               <CTab>
                 <template slot="title">
                   {{ tabs.salary }}
@@ -429,9 +436,13 @@
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
 import { required, email, numeric } from "vuelidate/lib/validators";
+import EmployeeAddressTab from "@/components/employees/partials/EmployeeAddressTab";
 
 export default {
   name: "EmployeeTab",
+  components: {
+    EmployeeAddressTab,
+  },
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -440,6 +451,7 @@ export default {
       detail: "Detail",
       salary: "Salary",
       target: "Traget",
+      address: "Address",
     },
     form: {
       full_name: "",
