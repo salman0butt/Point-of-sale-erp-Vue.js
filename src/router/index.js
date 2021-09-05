@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import auth from '../middleware/auth'
 import employeeRoutes from '@/router/employees/employeeRoutes';
+import departmentRoutes from '@/router/departments/departmentRoutes';
+import designationRoutes from '@/router/designations/designationRoutes';
+
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -10,8 +13,6 @@ const Dashboard = () => import('@/views/Dashboard')
 const ForgetPassword = () => import('@/views/pages/ForgetPassword')
 const ResetPassword = () => import('@/views/pages/ResetPassword')
 
-//Employee
-// const employeeRoutes = () => import('@/router/employees/employeeRoutes')
 
 
 const Colors = () => import('@/views/theme/Colors')
@@ -150,11 +151,13 @@ const router = new Router({
           path: 'test',
           name: 'test',
           component: test,
-          beforeEnter: auth
+          // beforeEnter: auth
         },
 
-
         employeeRoutes,
+        departmentRoutes,
+        designationRoutes,
+
         {
           path: 'theme',
           redirect: '/theme/colors',

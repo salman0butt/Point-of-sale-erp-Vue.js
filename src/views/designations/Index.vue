@@ -3,60 +3,15 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> All Employees </CCardHeader>
+          <CCardHeader> All Designations </CCardHeader>
         </CCard>
-        <CRow>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Total Employees</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>{{ cards.employees_count }}</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Total Departments</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>{{ cards.departments_count }}</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Genders</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong
-                    ><span>Man {{ cards.male_count }}</span> |
-                    <span>Women {{ cards.female_count }}</span></strong
-                  >
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Total Managers</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>{{ cards.manager_count }}</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        </CRow>
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/employees/create"
-              >Create Employee</router-link
+            <router-link class="btn btn-success" to="/designations/create"
+              >Create Designations</router-link
             >
             <CDataTable
-              :items="users"
+              :items="designations"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -75,6 +30,16 @@
                     @update:checked="() => check(item)"
                     custom
                   />
+                </td>
+              </template>
+              <template #business="{ item }">
+                <td>
+                  {{ item.name }}
+                </td>
+              </template>
+              <template #parent="{ item }">
+                <td>
+                  {{ item.name }}
                 </td>
               </template>
               <template #actions="{ item }">
@@ -105,7 +70,7 @@
 </template>
 
 <script>
-import EmployeeService from "@/services/employees/EmployeeService";
+import DesignationService from "@/services/designations/DesignationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -116,65 +81,42 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "full_name", label: "EMPLOYEE NAME", _style: "min-width:40%" },
-  { key: "email", label: "EMAIL", _style: "min-width:15%;" },
-  { key: "phone_number", label: "MOBILE", _style: "min-width:15%;" },
-  { key: "department", label: "DEPARTMENT", _style: "min-width:15%;" },
-  { key: "branch_name", label: "BRANCH", _style: "min-width:15%;" },
+  { key: "name", label: "DESIGNATION NAME", _style: "min-width:40%" },
+  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
+  { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "IndexEmployee",
+  name: "IndexDesignation",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      usersData: [],
+      designationsData: [],
       fields,
       loading: false,
-      cards: {
-        employees_count: 0,
-        female_count: 0,
-        male_count: 0,
-        departments_count: 0,
-        manager_count: 0,
-      },
       deleteRows: [],
     };
   },
   created() {
     this.loading = true;
-    this.getTotalCardData();
-    this.getEmployeeData();
+    this.getDesignationData();
   },
   computed: {
-    users() {
-      return this.usersData;
+    designations() {
+      return this.designationsData;
     },
   },
   methods: {
-    getEmployeeData() {
-      EmployeeService.getAll()
+    getDesignationData() {
+      DesignationService.getAll()
         .then(({ data }) => {
           data.data.map((item, id) => {
-            this.usersData.push({ ...item, id });
+            this.designationsData.push({ ...item, id });
           });
           this.loading = false;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    getTotalCardData() {
-      EmployeeService.getTotalCount()
-        .then(({ data }) => {
-          this.cards.employees_count = data.employees_count;
-          this.cards.female_count = data.female_count;
-          this.cards.male_count = data.male_count;
-          this.cards.departments_count = data.departments_count;
-          this.cards.manager_count = data.manager_count;
         })
         .catch((err) => {
           console.log(err);
@@ -186,14 +128,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.usersData[item.id]._selected);
-      this.$set(this.usersData[item.id], "_selected", !val);
+      const val = Boolean(this.designationsData[item.id]._selected);
+      this.$set(this.designationsData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/employees/edit/" + uuid });
+      this.$router.push({ path: "/designations/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -208,19 +150,19 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeService.delete(this.deleteRows)
+            DesignationService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Employee Deleted Successfully",
+                    text: "Department Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter(
-                    (employee) => employee.uuid != uuid
+                  this.designationsData = this.designationsData.filter(
+                    (department) => department.uuid != uuid
                   );
-                  this.getTotalCardData();
+                  this.deleteRows = [];
                 }
               })
               .catch((error) => {
@@ -231,7 +173,6 @@ export default {
                   timer: 3600,
                 });
               });
-            this.deleteRows = [];
           }
         });
     },

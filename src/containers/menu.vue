@@ -43,6 +43,38 @@ export default {
             // },
             {
               _name: "CSidebarNavDropdown",
+              name: "Departments",
+              route: "/departments",
+              icon: "cil-lan",
+              items: [
+                {
+                  name: "All Departments",
+                  to: "/departments/index",
+                },
+                {
+                  name: "Create Departments",
+                  to: "/departments/create",
+                },
+              ],
+            },
+            {
+              _name: "CSidebarNavDropdown",
+              name: "Designations",
+              route: "/designations",
+              icon: "cil-lan",
+              items: [
+                {
+                  name: "All Designations",
+                  to: "/designations/index",
+                },
+                {
+                  name: "Create Designations",
+                  to: "/designations/create",
+                },
+              ],
+            },
+            {
+              _name: "CSidebarNavDropdown",
               name: "Employees",
               route: "/employees",
               icon: "cil-lan",

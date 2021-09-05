@@ -3,14 +3,14 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>New Employee </CCardHeader>
+          <CCardHeader>Edit Employee</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1">
-              <CTab active>
+            <CTabs add-tab-classes="mt-1" variant="pills" fade>
+              <CTab active id="show">
                 <template slot="title">
                   {{ tabs.employee }}
                 </template>
-                <form @submit.prevent="saveEmployee">
+                <form @submit.prevent="updateEmployee">
                   <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CInput
@@ -259,6 +259,7 @@
                   <CInputCheckbox
                     @change="toggleUserSection"
                     custom
+                    :checked="form.create_user"
                     label="Create Username"
                   />
                   <div v-if="form.create_user">
@@ -371,6 +372,7 @@
                       </CCardBody>
                     </CCol>
                   </CRow>
+
                   <p v-if="$v.$anyError" class="errorMsg">
                     Please Fill the required data
                   </p>
@@ -399,20 +401,23 @@
                   </CRow>
                 </form>
               </CTab>
-              <CTab disabled>
+              <CTab>
                 <template slot="title">
                   {{ tabs.detail }}
                 </template>
+                Deatil tab
               </CTab>
-              <CTab disabled>
+              <CTab>
                 <template slot="title">
                   {{ tabs.salary }}
                 </template>
+                Deatil salary
               </CTab>
-              <CTab disabled>
+              <CTab>
                 <template slot="title">
                   {{ tabs.target }}
                 </template>
+                Deatil target
               </CTab>
             </CTabs>
           </CCardBody>
@@ -421,13 +426,12 @@
     </CRow>
   </div>
 </template>
-
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
 import { required, email, numeric } from "vuelidate/lib/validators";
 
 export default {
-  name: "CreateEmployee",
+  name: "EmployeeTab",
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -465,6 +469,7 @@ export default {
       user_status: null,
       user_language: "",
     },
+    empId: null,
     options: {
       branches: [{ value: "", label: "Choose Branch" }],
       managers: [{ value: "", label: "Choose Manager" }],
@@ -531,6 +536,7 @@ export default {
   },
   created() {
     this.getDetail();
+    this.getEmployee();
   },
   methods: {
     getDetail() {
@@ -557,46 +563,50 @@ export default {
           console.log(error);
         });
     },
-    saveEmployee() {
+    getEmployee() {
+      this.empId = this.$route.params.id;
+      EmployeeService.get(this.empId)
+        .then(({ data }) => {
+          this.form.full_name = data.full_name;
+          this.form.gender = data.gender;
+          this.form.marital_status = data.marital_status;
+          this.form.phone_number = data.phone_number;
+          this.form.email = data.email;
+          this.form.dob = data.dob;
+          this.form.nationality = data.nationality;
+          this.form.address = data.address;
+          this.form.cpr_no = data.cpr_no;
+          this.form.cpr_no_expiry = data.cpr_no_expiry;
+          this.form.passport_no = data.passport_no;
+          this.form.passport_expiry = data.passport_expiry;
+          this.form.branch_id = data.branch_id[0];
+          this.form.department_id = data.department_id;
+          this.form.designation_id = data.designation_id;
+          this.form.manager_id = data.manager_id;
+          this.form.personal_photo = data.personal_photo;
+          this.form.status = data.status;
+          this.form.create_user = data.create_user == "true" ? true : false;
+          this.form.user_name = data.user.name;
+          this.form.user_email = data.user.email;
+          this.form.user_role = data.user.role[0];
+          this.form.user_status = data.user.status.toString();
+          this.form.user_language = data.user.user_language;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    updateEmployee() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        const config = {
-          headers: { "Content-Type": "multipart/form-data" },
-        };
-        let formData = new FormData();
-        formData.append("full_name", this.form.full_name);
-        formData.append("gender", this.form.gender);
-        formData.append("marital_status", this.form.marital_status);
-        formData.append("phone_number", this.form.phone_number);
-        formData.append("email", this.form.email);
-        formData.append("dob", this.form.dob);
-        formData.append("nationality", this.form.nationality);
-        formData.append("address", this.form.address);
-        formData.append("cpr_no", this.form.cpr_no);
-        formData.append("cpr_no_expiry", this.form.cpr_no_expiry);
-        formData.append("passport_no", this.form.passport_no);
-        formData.append("passport_expiry", this.form.passport_expiry);
-        formData.append("branch_id", this.form.branch_id);
-        formData.append("department_id", this.form.department_id);
-        formData.append("designation_id", this.form.designation_id);
-        formData.append("status", this.form.status);
-        formData.append("personal_photo", this.form.personal_photo);
-        formData.append("documents", this.form.documents);
-        formData.append("create_user", this.form.create_user);
-        formData.append("user_name", this.form.user_name);
-        formData.append("user_email", this.form.user_email);
-        formData.append("user_pass", this.form.user_pass);
-        formData.append("user_role", this.form.user_role);
-        formData.append("user_status", this.form.user_status);
-        formData.append("user_language", this.form.user_language);
-
-        EmployeeService.create(formData, config)
+        let data = this.form;
+        EmployeeService.update(this.empId, data)
           .then((res) => {
-            if (res.status == 201) {
+            if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Employee Created Successfully",
+                text: "Employee Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -604,10 +614,6 @@ export default {
                 this.$router.push({ path: "/employees/index" });
               } else {
                 this.$router.push({ path: "/employees/edit/" + res.data.uuid });
-                // let fields = this.form;
-                // for (let field in fields) {
-                //   this.form[field] = "";
-                // }
               }
             }
           })
@@ -616,7 +622,7 @@ export default {
             this.$swal.fire({
               icon: "error",
               title: "Error",
-              text: "Employee not Created Successfully",
+              text: "Employee not Updated Successfully",
               timer: 3600,
             });
           });
@@ -640,7 +646,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .errorMsg {
   color: red;
 }

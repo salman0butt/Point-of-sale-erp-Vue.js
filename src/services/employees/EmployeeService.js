@@ -5,6 +5,10 @@ class EmployeeService {
     return http.get("/employees");
   }
 
+  getTotalCount() {
+    return http.get("/employees-total-counts");
+  }
+
   getCreateDetail() {
     return http.get("/employees-create");
   }
@@ -13,8 +17,8 @@ class EmployeeService {
     return http.get(`/employees/${id}`);
   }
 
-  create(data) {
-    return http.post("/employees", data);
+  create(data, config) {
+    return http.post("/employees", data, config);
   }
 
   update(id, data) {
