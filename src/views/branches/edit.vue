@@ -5,8 +5,9 @@
         <CCard>
           <CCardHeader> Branch : {{ form.name }}</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1">
-              <CTab active>
+            <CTabs add-tab-classes="mt-1" :active-tab="activeTab">
+              <!-- General -->
+              <CTab>
                 <template slot="title">
                   {{ tabs[0] }}
                 </template>
@@ -135,12 +136,12 @@
                       style="float: right; width: 200px"
                       type="submit"
                       @click="saveAndExit = false"
-                      >Save & Continue</CButton
-                    >
+                      >Save & Continue
+                    </CButton>
                     <CButton
+                      progress
                       timeout="2000"
                       block
-                      color="danger"
                       style="
                         float: right;
                         width: 140px;
@@ -149,95 +150,189 @@
                       "
                       @click="saveAndExit = true"
                       type="submit"
-                      >Save & Exit</CButton
+                      >Save</CButton
                     >
                   </CCardBody>
                 </form>
               </CTab>
+              <!-- Timing -->
               <CTab>
                 <template slot="title">
                   {{ tabs[1] }}
                 </template>
-                <CCardBody>
+                <CButton
+                  @click="
+                    collapse = !collapse;
+                    collapse_table = !collapse_table;
+                    shiftToggleMethod();
+                  "
+                  color="primary"
+                  class="mb-2 mt-3"
+                  style="float: right"
+                >
+                  {{ shiftToggle }}
+                </CButton>
+                <CCollapse :show="collapse_table">
                   <CCardBody>
-                    <CRow>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <p>Day</p>
-                      </CCol>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <p>Status</p>
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <p>From</p>
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <p>To</p>
-                      </CCol>
-                    </CRow>
-                  </CCardBody>
+                    <CCardBody>
+                      <CDataTable
+                        :items="shifts"
+                        :fields="fields"
+                        table-filter
+                        sorter
+                        pagination:false
+                        clickable-rows
+                        hover
+                      >
+                        <template #select="{ item }">
+                          <td>
+                            <CInputCheckbox
+                              @update:checked="() => check(item)"
+                              custom
+                            />
+                          </td>
+                        </template>
 
-                  <CCardBody v-for="(item, index) in timelst" :key="item.date">
-                    <CRow>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <p>{{ item.day }}</p>
-                      </CCol>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <CSwitch
-                          class="mx-1"
-                          color="success"
-                          :checked="item.status"
-                          shape="pill"
-                        />
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CInput type="time" v-model="form[item.day + 'from']" />
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CInput type="time" v-model="form[item.day + 'to']" />
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CButton
-                          block
-                          color="default"
-                          @click="
-                            Addtiming(
-                              index,
-                              form[item.day + 'from'],
-                              form[item.day + 'to']
-                            )
-                          "
-                          style="width: 39px; border-radius: 35px; margin: auto"
-                          ><CIcon name="cil-plus"
-                        /></CButton>
-                      </CCol>
-                    </CRow>
-                    <CRow v-for="(item, index) in item.time" :key="item.from">
-                      <CCol sm="6" md="3" class="pt-2"> </CCol>
-                      <CCol sm="6" md="3" class="pt-2"> </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        {{ item.from }}
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        {{ item.to }}
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CButton
-                          block
-                          color="default"
-                          style="width: 39px; border-radius: 35px; margin: auto"
-                          @click="DelTiming(item.id, index)"
-                          ><CIcon name="cil-minus"
-                        /></CButton>
-                      </CCol>
-                    </CRow>
+                        <template #actions="{ item }">
+                          <td>
+                            <CButtonGroup>
+                              <CButton
+                                @click="viewRow(item.uuid)"
+                                color="success"
+                                >View</CButton
+                              >
+                              <CButton
+                                @click="editRow(item.uuid)"
+                                color="warning"
+                                >Edit</CButton
+                              >
+                              <CButton
+                                @click="deleteRow(item.uuid)"
+                                color="danger"
+                                >Delete</CButton
+                              >
+                            </CButtonGroup>
+                          </td>
+                        </template>
+                      </CDataTable>
+                    </CCardBody>
                   </CCardBody>
-                  <CButton
-                    block
-                    color="success"
-                    style="float: right; width: 100px; margin-top: 25px"
-                    >Save</CButton
-                  >
-                </CCardBody>
+                </CCollapse>
+
+                <CCollapse :show="collapse">
+                  <form @submit.prevent="storeTimingMethod()">
+                    <CCardBody>
+                      <CRow>
+                        <CCol sm="6" md="4" class="pt-2">
+                          <CInput
+                            label="Name"
+                            ref="shiftname"
+                            v-model="storeTiming.shiftname"
+                            :class="{
+                              error: $v.storeTiming.shiftname.$error,
+                            }"
+                          />
+                          <div v-if="$v.storeTiming.shiftname.$error">
+                            <p
+                              v-if="!$v.storeTiming.shiftname.required"
+                              class="errorMsg"
+                            >
+                              Shift name is required
+                            </p>
+                            <p
+                              v-if="!$v.storeTiming.shiftname.minLength"
+                              class="errorMsg"
+                            >
+                              Shift name should be at least 4 character
+                            </p>
+                          </div>
+                        </CCol>
+                      </CRow>
+                      <CCardBody
+                        v-for="(item, index) in storeTiming.timelist"
+                        :key="item.date"
+                      >
+                        <CRow>
+                          <CCol sm="6" md="3" class="pt-2">
+                            <p>{{ item.day }}</p>
+                          </CCol>
+                          <CCol sm="6" md="3" class="pt-2">
+                            <CSwitch
+                              class="mx-1"
+                              color="success"
+                              :checked="item.status"
+                              shape="pill"
+                            />
+                          </CCol>
+                          <CCol sm="6" md="2" class="pt-2">
+                            <CInput
+                              type="time"
+                              v-model="form[item.day + 'from']"
+                            />
+                          </CCol>
+                          <CCol sm="6" md="2" class="pt-2">
+                            <CInput
+                              type="time"
+                              v-model="form[item.day + 'to']"
+                            />
+                          </CCol>
+                          <CCol sm="6" md="2" class="pt-2">
+                            <CButton
+                              block
+                              color="default"
+                              @click="
+                                Addtiming(
+                                  index,
+                                  form[item.day + 'from'],
+                                  form[item.day + 'to']
+                                )
+                              "
+                              style="
+                                width: 39px;
+                                border-radius: 35px;
+                                margin: auto;
+                              "
+                              ><CIcon name="cil-plus"
+                            /></CButton>
+                          </CCol>
+                        </CRow>
+                        <CRow
+                          v-for="(item, index) in item.time"
+                          :key="item.from"
+                        >
+                          <CCol sm="6" md="3" class="pt-2"> </CCol>
+                          <CCol sm="6" md="3" class="pt-2"> </CCol>
+                          <CCol sm="6" md="2" class="pt-2">
+                            {{ item.from }}
+                          </CCol>
+                          <CCol sm="6" md="2" class="pt-2">
+                            {{ item.to }}
+                          </CCol>
+                          <CCol sm="6" md="2" class="pt-2">
+                            <CButton
+                              block
+                              color="default"
+                              style="
+                                width: 39px;
+                                border-radius: 35px;
+                                margin: auto;
+                              "
+                              @click="DelTiming(item.id, index)"
+                              ><CIcon name="cil-minus"
+                            /></CButton>
+                          </CCol>
+                        </CRow>
+                      </CCardBody>
+                      <CButton
+                        block
+                        color="success"
+                        type="submit"
+                        style="float: right; width: 100px; margin-top: 25px"
+                        >Save</CButton
+                      >
+                    </CCardBody>
+                  </form>
+                </CCollapse>
               </CTab>
               <CTab>
                 <template slot="title">
@@ -353,12 +448,28 @@
 import BranchServices from "@/services/branches/BranchServices";
 
 import { required, minLength, numeric } from "vuelidate/lib/validators";
+const fields = [
+  {
+    key: "select",
+    label: "",
+    _style: "min-width:1%",
+    sorter: false,
+    filter: false,
+  },
+  { key: "name", label: "Shift Name", _style: "min-width:40%" },
+  { key: "actions", label: "Action", _style: "min-width:15%;" },
+];
 
 export default {
   name: "updateBranch",
 
   data() {
     return {
+      //All
+      tabs: ["General", "Timing", "Traget", "Social media"],
+      activeTab: 1,
+
+      // General
       form: {
         name: "",
         address: "",
@@ -375,27 +486,36 @@ export default {
         { value: "inactive", label: "InActive" },
       ],
       url_data: null,
-      timelst: [
-        { day: "Sunday", status: false, time: [] },
-        { day: "Monday", status: true, time: [] },
-        { day: "Tuesday", status: true, time: [] },
-        { day: "Wdnesday", status: true, time: [] },
-        { day: "Thursday", status: true, time: [] },
-        { day: "Friday", status: true, time: [] },
-        { day: "Saturday", status: true, time: [] },
-      ],
+
+      // Timing tab
+      shiftToggle: "Add New Shift",
+      shifts: [],
+      fields,
+      collapse: false,
+      collapse_table: true,
+      storeTiming: {
+        shiftname: "",
+        timelist: [
+          { day: "Sunday", status: false, time: [] },
+          { day: "Monday", status: true, time: [] },
+          { day: "Tuesday", status: true, time: [] },
+          { day: "Wednesday", status: true, time: [] },
+          { day: "Thursday", status: true, time: [] },
+          { day: "Friday", status: true, time: [] },
+          { day: "Saturday", status: true, time: [] },
+        ],
+      },
+
       mediaLst: [],
       mediaitem: { channel: "", name: "", amount: "" },
-      tabs: ["General", "Timing", "Traget", "Social media"],
-      activeTab: 1,
       usersData: [],
       details: [],
-      collapseDuration: 0,
       errors: [],
     };
   },
   validations() {
     return {
+      // General
       form: {
         name: { required, minLength: minLength(4) },
         address: { required, minLength: minLength(4) },
@@ -403,13 +523,26 @@ export default {
         tel: { required, numeric, minLength: minLength(8) },
         mob: { required, minLength: minLength(8) },
       },
+
+      //Timing
+      storeTiming: {
+        shiftname: {
+          required,
+          minLength: minLength(4),
+        },
+      },
     };
   },
   created() {
+    // General
     this.getGeneralDetail();
+
+    // Timing
+    this.getTimingDetail();
   },
 
   methods: {
+    //General
     getGeneralDetail() {
       this.url_data = this.$route.params.id;
       this.$http
@@ -426,41 +559,92 @@ export default {
           this.form.status = data.status;
         })
         .catch((err) => {
-          console.log(err);
           this.$router.push({ path: "/branches" });
         });
+    },
+    updateBranch() {
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
+        let data = this.form;
+
+        this.$http
+          .put("branches/" + this.url_data, data)
+          .then((res) => {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Branch Updated Successfully",
+              timer: 3600,
+            });
+            if (!this.saveAndExit) {
+              this.activeTab = 1;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+
+    // Timing
+    shiftToggleMethod() {
+      if (this.shiftToggle == "Add New Shift") {
+        this.shiftToggle = "Go To Shifts";
+      } else if (this.shiftToggle == "Go To Shifts") {
+        this.shiftToggle = "Add New Shift";
+      }
+    },
+    Addtiming(index, from, to) {
+      if (from == undefined || to == undefined) {
+        return false;
+      }
+      var data = { from: from, to: to, id: index };
+      this.storeTiming.timelist[index].time.push(data);
+    },
+    DelTiming(id, index) {
+      this.storeTiming.timelist[id].time.splice(index, 1);
     },
     getTimingDetail() {
       this.url_data = this.$route.params.id;
       this.$http
-        .get("/branches/" + this.url_data)
+        .get("/branch-shifts")
         .then(({ data }) => {
-          this.form.name = data.name;
-          this.form.address = data.address;
-          this.form.area = data.area;
-          this.form.tel = data.tel;
-          this.form.mob = data.mob;
-          this.form.location = data.location;
-          this.form.opening_date = data.opening_date;
-          this.form.closing_date = data.closing_date;
-          this.form.status = data.status;
+          data.data.map((item, id) => {
+            this.shifts.push({ ...item, id });
+          });
         })
         .catch((err) => {
           console.log(err);
           this.$router.push({ path: "/branches" });
         });
     },
-
-    Addtiming(index, from, to) {
-      if (from == undefined || to == undefined) {
-        return false;
+    storeTimingMethod() {
+      this.$v.storeTiming.$touch();
+      if (!this.$v.storeTiming.$invalid) {
+        let data = this.storeTiming;
+        this.$http
+          .post("branch-shifts", data)
+          .then((res) => {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Timing Added Successfully",
+              timer: 3600,
+            });
+          })
+          .catch((error) => {
+            this.$swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!Try Again",
+              footer: '<a href="">Why do I have this issue?</a>',
+            });
+          });
+      } else {
+        this.submitStatus = "ERROR";
       }
-      var data = { from: from, to: to, id: index };
-      this.timelst[index].time.push(data);
     },
-    DelTiming(id, index) {
-      this.timelst[id].time.splice(index, 1);
-    },
+
     AddMedia() {
       if (
         this.mediaitem.channel == "" ||
@@ -478,33 +662,6 @@ export default {
     },
     DelMedia(index) {
       this.mediaLst.splice(index, 1);
-    },
-
-    updateBranch() {
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
-        let data = this.form;
-        console.log(data.status);
-        // this.$http
-        //   .put("branches/cc64f7f2-eb6d-4ba3-94af-081516f80bbf", data)
-        //   .then((res) => {
-        //     this.$swal.fire({
-        //       icon: "success",
-        //       title: "Success",
-        //       text: "Branch Updated Successfully",
-        //       timer: 3600,
-        //     });
-        //     if (this.saveAndExit) {
-        //       this.$router.push({ path: "/branches" });
-        //     } else {
-        //       alert("next page");
-        //     }
-        //     console.log(res);
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //   });
-      }
     },
   },
 };
