@@ -28,6 +28,13 @@
               >
               <a
                 class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'qualification_tab' }"
+                href="#"
+                @click.prevent="changeActiveTab('qualification_tab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Qualifications</a
+              >
+              <a
+                class="nav-link bborder"
                 v-bind:class="{ active: activeTab === 'detail_tab' }"
                 href="#"
                 @click.prevent="changeActiveTab('detail_tab')"
@@ -69,13 +76,7 @@
                 @click.prevent="changeActiveTab('loans_tab')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Loans</a
               >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'qualification_tab' }"
-                href="#"
-                @click.prevent="changeActiveTab('qualification_tab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Qualifications</a
-              >
+
               <a
                 class="nav-link bborder"
                 v-bind:class="{ active: activeTab === 'target_tab' }"
