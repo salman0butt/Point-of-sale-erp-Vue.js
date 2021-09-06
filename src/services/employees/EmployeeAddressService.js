@@ -2,8 +2,8 @@ import http from "@/http-common";
 
 class EmployeeAddressService {
 
-  getAll() {
-    return http.get("/employee-addresses");
+  getAll(data) {
+    return http.get(`/employee-addresses?id=${data}`);
   }
 
   get(id) {

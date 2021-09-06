@@ -2,7 +2,9 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="saveEmployeeAddress">
+        <form
+          @submit.prevent="isEditing ? updateEmployeeAddress() : saveEmployeeAddress()"
+        >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
@@ -78,8 +80,9 @@ import EmployeeAddressService from "@/services/employees/EmployeeAddressService"
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeAddressTab",
+  name: "EmployeeAddressForm",
   data: () => ({
+    isEditing: false,
     form: {
       address: "",
       address2: "",
@@ -88,6 +91,7 @@ export default {
       set_default: "",
       employee_id: "",
     },
+    empId: null,
     options: {
       set_default: [
         { value: "", label: "Choose Status" },
@@ -105,21 +109,7 @@ export default {
       },
     };
   },
-  created() {
-    // this.getEmployee();
-  },
   methods: {
-    getEmployee() {
-      this.form.employee_id = this.$route.params.id;
-      EmployeeAddressService.get(this.form.employee_id)
-        .then(({ data }) => {
-          console.log(data);
-          // this.form.full_name = data.full_name;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
     saveEmployeeAddress() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
@@ -127,13 +117,14 @@ export default {
         let data = this.form;
         EmployeeAddressService.create(data)
           .then((res) => {
-            if (res.status == 201 || res.status == 200) {
+            if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
                 text: "Address Added Successfully",
                 timer: 3600,
               });
+              this.$emit("employeeAddressCreated");
               this.$v.$reset();
             }
           })
@@ -147,6 +138,63 @@ export default {
             });
           });
       }
+    },
+    updateEmployeeAddress() {
+      this.form.employee_id = this.$route.params.id;
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let data = this.form;
+        EmployeeAddressService.update(this.empId, data)
+          .then((res) => {
+            if (res.status == 200) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Address Updated Successfully",
+                timer: 3600,
+              });
+              this.$emit("employeeAddressCreated");
+              this.$v.$reset();
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Something Went Wrong.",
+              timer: 3600,
+            });
+          });
+      }
+    },
+    getEmployeeAddress() {
+      EmployeeAddressService.get(this.empId)
+        .then(({ data }) => {
+          console.log(data);
+          this.empId = data.uuid;
+          this.form.address = data.address;
+          this.form.address2 = data.address2;
+          this.form.city = data.city;
+          this.form.postal_code = data.postal_code;
+          this.form.set_default = data.set_default;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getEditData(uuid) {
+      this.isEditing = true;
+      this.empId = uuid;
+      this.getEmployeeAddress();
+    },
+    resetForm() {
+      this.form.address = "";
+      this.form.address2 = "";
+      this.form.city = "";
+      this.form.postal_code = "";
+      this.form.set_default = "";
+      this.form.employee_id = "";
     },
   },
 };
