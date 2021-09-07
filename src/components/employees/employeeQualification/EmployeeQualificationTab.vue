@@ -10,13 +10,7 @@
                 <template slot="title">
                   {{ tabs.qualification }}
                 </template>
-                <EmployeeQualificationForm />
-              </CTab>
-              <CTab>
-                <template slot="title">
-                  {{ tabs.detail }}
-                </template>
-                Detail tab
+                <EmployeeQualificationToggle />
               </CTab>
             </CTabs>
           </CCardBody>
@@ -26,11 +20,11 @@
   </div>
 </template>
 <script>
-import EmployeeQualificationForm from "@/components/employees/employeeQualification/EmployeeQualificationForm";
+import EmployeeQualificationToggle from "@/components/employees/employeeQualification/EmployeeQualificationToggle";
 
 export default {
   name: "EmployeeQualificationTab",
-  components: { EmployeeQualificationForm },
+  components: { EmployeeQualificationToggle },
   data: () => ({
     tabs: {
       qualification: "Qualification",

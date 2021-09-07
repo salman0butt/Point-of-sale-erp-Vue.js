@@ -96,6 +96,7 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
+              this.getEmployeeSalary();
             }
           })
           .catch((error) => {
@@ -107,7 +108,6 @@ export default {
               timer: 3600,
             });
           });
-        this.getEmployeeDetail();
       }
     },
     updateEmployeeSalary() {
@@ -141,10 +141,12 @@ export default {
     getEmployeeSalary() {
       EmployeeSalaryService.get(this.empId)
         .then(({ data }) => {
-          this.isEditing = true;
-          this.form.id = data.uuid;
-          this.form.salary_type = data.salary_type;
-          this.form.basic_salary = data.basic_salary;
+          if (data != null && data != "") {
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.salary_type = data.salary_type;
+            this.form.basic_salary = data.basic_salary;
+          }
         })
         .catch((error) => {
           console.log(error);

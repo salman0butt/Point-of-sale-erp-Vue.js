@@ -28,7 +28,6 @@
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Organization"
-                type="number"
                 v-model="form.organization"
                 :class="{ error: $v.form.organization.$error }"
                 @input="$v.form.organization.$touch()"
@@ -121,7 +120,6 @@ export default {
   },
   created() {
     this.empId = this.empId = this.$route.params.id;
-    this.getEmployeeQualification();
     this.generateArrayOfYears();
   },
   methods: {
@@ -140,7 +138,8 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.getEmployeeQualification();
+              this.$emit("employeeQualificationCreated");
+              this.resetForm();
             }
           })
           .catch((error) => {
@@ -188,6 +187,11 @@ export default {
           this.isEditing = true;
           this.form.id = data.uuid;
           this.form.employee_id = data.employee_id;
+          this.form.name = data.name;
+          this.form.type = data.type;
+          this.form.organization = data.organization;
+          this.form.marks = data.marks;
+          this.form.year = data.year;
         })
         .catch((error) => {
           console.log(error);
@@ -200,6 +204,18 @@ export default {
       for (let i = max; i >= min; i--) {
         this.options.year.push(i);
       }
+    },
+    getEditData(uuid) {
+      this.isEditing = true;
+      this.empId = uuid;
+      this.getEmployeeQualification();
+    },
+    resetForm() {
+      this.form.name = "";
+      this.form.type = "";
+      this.form.organization = "";
+      this.form.marks = "";
+      this.form.year = "";
     },
   },
 };

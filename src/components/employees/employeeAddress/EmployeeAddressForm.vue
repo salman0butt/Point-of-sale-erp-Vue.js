@@ -126,6 +126,7 @@ export default {
               });
               this.$emit("employeeAddressCreated");
               this.$v.$reset();
+              this.resetForm();
             }
           })
           .catch((error) => {

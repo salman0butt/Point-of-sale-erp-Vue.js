@@ -35,11 +35,11 @@
               >
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'detail_tab' }"
+                v-bind:class="{ active: activeTab === 'allowances_tab' }"
                 href="#"
-                @click.prevent="changeActiveTab('detail_tab')"
+                @click.prevent="changeActiveTab('allowances_tab')"
               >
-                <CIcon :content="$options.cilUser" />&nbsp; Detail</a
+                <CIcon :content="$options.cilUser" />&nbsp; Allowances</a
               >
               <a
                 class="nav-link bborder"

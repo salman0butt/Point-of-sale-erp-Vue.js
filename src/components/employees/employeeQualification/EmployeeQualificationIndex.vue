@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeAddresses"
+              :items="employeeQualification"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,9 +74,9 @@
 </template>
 
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import EmployeeQualificationService from "@/services/employees/EmployeeQualificationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-//TODO error in employee address
+
 const fields = [
   {
     key: "select",
@@ -85,22 +85,22 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "address", label: "ADDRESS", _style: "min-width:40%" },
-  { key: "address2", label: "SECOND ADDRESS", _style: "min-width:15%;" },
-  { key: "city", label: "CITY", _style: "min-width:15%;" },
-  { key: "postal_code", label: "POSTAL CODE", _style: "min-width:15%;" },
-  { key: "set_default", label: "DEFAULT", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "organization", label: "ORGANIZATION", _style: "min-width:15%;" },
+  { key: "marks", label: "MARKS", _style: "min-width:15%;" },
+  { key: "year", label: "Year", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeAddressIndex",
+  name: "EmployeeQualificationIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAddressesData: [],
+      employeeQualificationData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -112,19 +112,19 @@ export default {
     this.getEmployeeAddressData();
   },
   computed: {
-    employeeAddresses() {
-      return this.employeeAddressesData;
+    employeeQualification() {
+      return this.employeeQualificationData;
     },
   },
   methods: {
     getEmployeeAddressData() {
-      this.employeeAddressesData = [];
+      this.employeeQualificationData = [];
       this.empId = this.$route.params.id;
 
-      EmployeeAddressService.getAll(this.empId)
+      EmployeeQualificationService.getAll(this.empId)
         .then(({ data }) => {
           data.data.map((item, id) => {
-            this.employeeAddressesData.push({ ...item, id });
+            this.employeeQualificationData.push({ ...item, id });
           });
           this.loading = false;
         })
@@ -138,8 +138,8 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAddressesData[item.id]._selected);
-      this.$set(this.employeeAddressesData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeQualificationData[item.id]._selected);
+      this.$set(this.employeeQualificationData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
@@ -160,7 +160,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAddressService.delete(this.deleteRows)
+            EmployeeQualificationService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -169,7 +169,7 @@ export default {
                     text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAddressesData = this.employeeAddressesData.filter(
+                  this.employeeQualificationData = this.employeeQualificationData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
