@@ -6,6 +6,6 @@ export default axios.create({
   headers: {
     "Content-type": "application/json",
     // "X-Tenant": window.location.hostname
-    "X-Tenant": "demo1.sw-backend.test"
+    "X-Tenant": "demo1.sw-backend.test",
   }
 });

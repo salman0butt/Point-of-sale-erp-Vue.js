@@ -678,6 +678,9 @@ export default {
 
     // Timing
     this.getAllShifts();
+
+    // Social Meida
+    this.getAllMedia();
   },
 
   methods: {
@@ -839,6 +842,32 @@ export default {
       }
     },
 
+    // Get Social Media
+    getAllMedia() {
+      this.url_data = this.$route.params.id;
+
+      this.$http
+        .get("/branch-social-media", {
+          headers: {
+            branchid: this.url_data,
+          },
+        })
+        .then(({ data }) => {
+          data.data.forEach((value, index) => {
+            var data = {
+              channel: value.type,
+              name: value.name,
+              link: value.link,
+            };
+            this.mediaLst.push(data);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.push({ path: "/branches" });
+        });
+    },
+
     AddMedia() {
       if (
         this.mediaitem.channel == "" ||
@@ -860,7 +889,11 @@ export default {
     storeMedia() {
       let data = this.mediaLst;
       this.$http
-        .post("branch-social-media", data)
+        .post("branch-social-media", data, {
+          headers: {
+            branchid: this.url_data,
+          },
+        })
         .then((res) => {
           this.$swal.fire({
             icon: "success",
