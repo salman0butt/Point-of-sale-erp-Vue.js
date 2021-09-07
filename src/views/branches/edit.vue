@@ -123,7 +123,7 @@
                         <CSelect
                           label="Status"
                           :options="status"
-                          :value="form.status"
+                          :value.sync="form.status"
                         />
                       </CCol>
                     </CRow>
@@ -166,6 +166,7 @@
                     collapse_table = !collapse_table;
                     shiftToggleMethod();
                   "
+                  ref="shiftToggleRef"
                   color="primary"
                   class="mb-2 mt-3"
                   style="float: right"
@@ -197,12 +198,7 @@
                           <td>
                             <CButtonGroup>
                               <CButton
-                                @click="viewRow(item.uuid)"
-                                color="success"
-                                >View</CButton
-                              >
-                              <CButton
-                                @click="editRow(item.uuid)"
+                                @click="editShift(item.uuid)"
                                 color="warning"
                                 >Edit</CButton
                               >
@@ -220,118 +216,239 @@
                 </CCollapse>
 
                 <CCollapse :show="collapse">
-                  <form @submit.prevent="storeTimingMethod()">
-                    <CCardBody>
-                      <CRow>
-                        <CCol sm="6" md="4" class="pt-2">
-                          <CInput
-                            label="Name"
-                            ref="shiftname"
-                            v-model="storeTiming.shiftname"
-                            :class="{
-                              error: $v.storeTiming.shiftname.$error,
-                            }"
-                          />
-                          <div v-if="$v.storeTiming.shiftname.$error">
-                            <p
-                              v-if="!$v.storeTiming.shiftname.required"
-                              class="errorMsg"
-                            >
-                              Shift name is required
-                            </p>
-                            <p
-                              v-if="!$v.storeTiming.shiftname.minLength"
-                              class="errorMsg"
-                            >
-                              Shift name should be at least 4 character
-                            </p>
-                          </div>
-                        </CCol>
-                      </CRow>
-                      <CCardBody
-                        v-for="(item, index) in storeTiming.timelist"
-                        :key="item.date"
-                      >
+                  <div v-if="!isEditing">
+                    store column
+                    <form @submit.prevent="storeShift()">
+                      <CCardBody>
                         <CRow>
-                          <CCol sm="6" md="3" class="pt-2">
-                            <p>{{ item.day }}</p>
-                          </CCol>
-                          <CCol sm="6" md="3" class="pt-2">
-                            <CSwitch
-                              class="mx-1"
-                              color="success"
-                              :checked="item.status"
-                              shape="pill"
-                            />
-                          </CCol>
-                          <CCol sm="6" md="2" class="pt-2">
+                          <CCol sm="6" md="4" class="pt-2">
                             <CInput
-                              type="time"
-                              v-model="form[item.day + 'from']"
+                              label="Name"
+                              ref="shiftname"
+                              v-model="storeTiming.shiftname"
+                              :class="{
+                                error: $v.storeTiming.shiftname.$error,
+                              }"
                             />
-                          </CCol>
-                          <CCol sm="6" md="2" class="pt-2">
-                            <CInput
-                              type="time"
-                              v-model="form[item.day + 'to']"
-                            />
-                          </CCol>
-                          <CCol sm="6" md="2" class="pt-2">
-                            <CButton
-                              block
-                              color="default"
-                              @click="
-                                Addtiming(
-                                  index,
-                                  form[item.day + 'from'],
-                                  form[item.day + 'to']
-                                )
-                              "
-                              style="
-                                width: 39px;
-                                border-radius: 35px;
-                                margin: auto;
-                              "
-                              ><CIcon name="cil-plus"
-                            /></CButton>
+                            <div v-if="$v.storeTiming.shiftname.$error">
+                              <p
+                                v-if="!$v.storeTiming.shiftname.required"
+                                class="errorMsg"
+                              >
+                                Shift name is required
+                              </p>
+                              <p
+                                v-if="!$v.storeTiming.shiftname.minLength"
+                                class="errorMsg"
+                              >
+                                Shift name should be at least 4 character
+                              </p>
+                            </div>
                           </CCol>
                         </CRow>
-                        <CRow
-                          v-for="(item, index) in item.time"
-                          :key="item.from"
+                        <CCardBody
+                          v-for="(item, index) in storeTiming.timelist"
+                          :key="item.date"
                         >
-                          <CCol sm="6" md="3" class="pt-2"> </CCol>
-                          <CCol sm="6" md="3" class="pt-2"> </CCol>
-                          <CCol sm="6" md="2" class="pt-2">
-                            {{ item.from }}
-                          </CCol>
-                          <CCol sm="6" md="2" class="pt-2">
-                            {{ item.to }}
-                          </CCol>
-                          <CCol sm="6" md="2" class="pt-2">
-                            <CButton
-                              block
-                              color="default"
-                              style="
-                                width: 39px;
-                                border-radius: 35px;
-                                margin: auto;
-                              "
-                              @click="DelTiming(item.id, index)"
-                              ><CIcon name="cil-minus"
-                            /></CButton>
+                          <CRow>
+                            <CCol sm="6" md="3" class="pt-2">
+                              <p>{{ item.day }}</p>
+                            </CCol>
+                            <CCol sm="6" md="3" class="pt-2">
+                              <CSwitch
+                                class="mx-1"
+                                color="success"
+                                :checked="item.status"
+                                @update:checked="item.status = !item.status"
+                                shape="pill"
+                              />
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CInput
+                                type="time"
+                                v-model="form[item.day + 'from']"
+                              />
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CInput
+                                type="time"
+                                v-model="form[item.day + 'to']"
+                              />
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CButton
+                                block
+                                color="default"
+                                @click="
+                                  Addtiming(
+                                    index,
+                                    form[item.day + 'from'],
+                                    form[item.day + 'to']
+                                  )
+                                "
+                                style="
+                                  width: 39px;
+                                  border-radius: 35px;
+                                  margin: auto;
+                                "
+                                ><CIcon name="cil-plus"
+                              /></CButton>
+                            </CCol>
+                          </CRow>
+                          <CRow
+                            v-for="(item, index) in item.time"
+                            :key="item.from"
+                          >
+                            <CCol sm="6" md="3" class="pt-2"> </CCol>
+                            <CCol sm="6" md="3" class="pt-2"> </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              {{ item.from }}
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              {{ item.to }}
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CButton
+                                block
+                                color="default"
+                                style="
+                                  width: 39px;
+                                  border-radius: 35px;
+                                  margin: auto;
+                                "
+                                @click="DelTiming(item.id, index)"
+                                ><CIcon name="cil-minus"
+                              /></CButton>
+                            </CCol>
+                          </CRow>
+                        </CCardBody>
+                        <CButton
+                          block
+                          color="success"
+                          type="submit"
+                          style="float: right; width: 100px; margin-top: 25px"
+                          >Save</CButton
+                        >
+                      </CCardBody>
+                    </form>
+                  </div>
+                  <div v-else>
+                    update column
+                    <form @submit.prevent="updateShift()">
+                      <CInput v-model="updateTimingUuid" type="hidden" />
+                      <CCardBody>
+                        <CRow>
+                          <CCol sm="6" md="4" class="pt-2">
+                            <CInput
+                              label="Name"
+                              ref="shiftname"
+                              v-model="storeTiming.shiftname"
+                              :class="{
+                                error: $v.storeTiming.shiftname.$error,
+                              }"
+                            />
+                            <div v-if="$v.storeTiming.shiftname.$error">
+                              <p
+                                v-if="!$v.storeTiming.shiftname.required"
+                                class="errorMsg"
+                              >
+                                Shift name is required
+                              </p>
+                              <p
+                                v-if="!$v.storeTiming.shiftname.minLength"
+                                class="errorMsg"
+                              >
+                                Shift name should be at least 4 character
+                              </p>
+                            </div>
                           </CCol>
                         </CRow>
+                        <CCardBody
+                          v-for="(item, index) in storeTiming.timelist"
+                          :key="item.date"
+                        >
+                          <CRow>
+                            <CCol sm="6" md="3" class="pt-2">
+                              <p>{{ item.day }}</p>
+                            </CCol>
+                            <CCol sm="6" md="3" class="pt-2">
+                              <CSwitch
+                                class="mx-1"
+                                color="success"
+                                :checked="item.status"
+                                @update:checked="item.status = !item.status"
+                                shape="pill"
+                              />
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CInput
+                                type="time"
+                                v-model="form[item.day + 'from']"
+                              />
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CInput
+                                type="time"
+                                v-model="form[item.day + 'to']"
+                              />
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CButton
+                                block
+                                color="default"
+                                @click="
+                                  Addtiming(
+                                    index,
+                                    form[item.day + 'from'],
+                                    form[item.day + 'to']
+                                  )
+                                "
+                                style="
+                                  width: 39px;
+                                  border-radius: 35px;
+                                  margin: auto;
+                                "
+                                ><CIcon name="cil-plus"
+                              /></CButton>
+                            </CCol>
+                          </CRow>
+                          <CRow
+                            v-for="(item, index) in item.time"
+                            :key="item.from"
+                          >
+                            <CCol sm="6" md="3" class="pt-2"> </CCol>
+                            <CCol sm="6" md="3" class="pt-2"> </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              {{ item.from }}
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              {{ item.to }}
+                            </CCol>
+                            <CCol sm="6" md="2" class="pt-2">
+                              <CButton
+                                block
+                                color="default"
+                                style="
+                                  width: 39px;
+                                  border-radius: 35px;
+                                  margin: auto;
+                                "
+                                @click="DelTiming(item.id, index)"
+                                ><CIcon name="cil-minus"
+                              /></CButton>
+                            </CCol>
+                          </CRow>
+                        </CCardBody>
+                        <CButton
+                          block
+                          color="success"
+                          type="submit"
+                          style="float: right; width: 100px; margin-top: 25px"
+                          >Update</CButton
+                        >
                       </CCardBody>
-                      <CButton
-                        block
-                        color="success"
-                        type="submit"
-                        style="float: right; width: 100px; margin-top: 25px"
-                        >Save</CButton
-                      >
-                    </CCardBody>
-                  </form>
+                    </form>
+                  </div>
                 </CCollapse>
               </CTab>
               <CTab>
@@ -374,67 +491,82 @@
                   >
                 </CCardBody>
               </CTab>
+              <!-- Social Media -->
               <CTab>
                 <template slot="title">
                   {{ tabs[3] }}
                 </template>
-                <CCardBody>
-                  <CRow>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CSelect
-                        label="Channel"
-                        :options="['option1', 'option2', 'option3', 'option4']"
-                        :value.sync="mediaitem.channel"
-                      />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Name/Account" v-model="mediaitem.name" />
-                    </CCol>
-                    <CCol sm="6" md="3" class="pt-2">
-                      <CInput label="Amount" v-model="mediaitem.amount" />
-                    </CCol>
-                    <CCol sm="6" md="1" class="pt-2">
-                      <CButton
-                        block
-                        color="default"
-                        @click="AddMedia"
-                        style="
-                          width: 39px;
-                          border-radius: 35px;
-                          margin: auto;
-                          margin-top: 25px;
-                        "
-                        ><CIcon name="cil-plus"
-                      /></CButton>
-                    </CCol>
-                  </CRow>
-                  <CRow v-for="(item, index) in mediaLst" :key="item.channel">
-                    <CCol sm="6" md="4" class="pt-2">
-                      {{ item.channel }}
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      {{ item.name }}
-                    </CCol>
-                    <CCol sm="6" md="3" class="pt-2">
-                      {{ item.amount }}
-                    </CCol>
-                    <CCol sm="6" md="1" class="pt-2">
-                      <CButton
-                        block
-                        color="default"
-                        style="width: 39px; border-radius: 35px; margin: auto"
-                        @click="DelMedia(index)"
-                        ><CIcon name="cil-minus"
-                      /></CButton>
-                    </CCol>
-                  </CRow>
-                  <CButton
-                    block
-                    color="success"
-                    style="float: right; width: 100px; margin-top: 25px"
-                    >Save</CButton
-                  >
-                </CCardBody>
+                <form @submit.prevent="storeMedia()">
+                  <CCardBody>
+                    <CRow>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CSelect
+                          label="Channel"
+                          :options="[
+                            {
+                              label: 'Choose Channel',
+                              disabled: true,
+                              selected: '',
+                              value: '',
+                            },
+                            'Facebook',
+                            'Instagram',
+                            'Twitter',
+                            'Whatsapp',
+                          ]"
+                          :value.sync="mediaitem.channel"
+                        />
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        <CInput label="Name" v-model="mediaitem.name" />
+                      </CCol>
+                      <CCol sm="6" md="3" class="pt-2">
+                        <CInput label="Link" v-model="mediaitem.link" />
+                      </CCol>
+                      <CCol sm="6" md="1" class="pt-2">
+                        <CButton
+                          block
+                          color="default"
+                          @click="AddMedia"
+                          style="
+                            width: 39px;
+                            border-radius: 35px;
+                            margin: auto;
+                            margin-top: 25px;
+                          "
+                          ><CIcon name="cil-plus"
+                        /></CButton>
+                      </CCol>
+                    </CRow>
+                    <CRow v-for="(item, index) in mediaLst" :key="item.channel">
+                      <CCol sm="6" md="4" class="pt-2">
+                        {{ item.channel }}
+                      </CCol>
+                      <CCol sm="6" md="4" class="pt-2">
+                        {{ item.name }}
+                      </CCol>
+                      <CCol sm="6" md="3" class="pt-2">
+                        {{ item.link }}
+                      </CCol>
+                      <CCol sm="6" md="1" class="pt-2">
+                        <CButton
+                          block
+                          color="default"
+                          style="width: 39px; border-radius: 35px; margin: auto"
+                          @click="DelMedia(index)"
+                          ><CIcon name="cil-minus"
+                        /></CButton>
+                      </CCol>
+                    </CRow>
+                    <CButton
+                      block
+                      color="success"
+                      style="float: right; width: 100px; margin-top: 25px"
+                      type="submit"
+                      >Save</CButton
+                    >
+                  </CCardBody>
+                </form>
               </CTab>
             </CTabs>
           </CCardBody>
@@ -466,8 +598,9 @@ export default {
   data() {
     return {
       //All
-      tabs: ["General", "Timing", "Traget", "Social media"],
-      activeTab: 1,
+      tabs: ["General", "Timing", "Target", "Social media"],
+      activeTab: 3,
+      isEditing: false,
 
       // General
       form: {
@@ -483,7 +616,7 @@ export default {
       },
       status: [
         { value: "active", label: "Active" },
-        { value: "inactive", label: "InActive" },
+        { value: "inactive", label: "Inactive" },
       ],
       url_data: null,
 
@@ -497,7 +630,7 @@ export default {
         shiftname: "",
         timelist: [
           { day: "Sunday", status: false, time: [] },
-          { day: "Monday", status: true, time: [] },
+          { day: "Monday", status: false, time: [] },
           { day: "Tuesday", status: true, time: [] },
           { day: "Wednesday", status: true, time: [] },
           { day: "Thursday", status: true, time: [] },
@@ -505,9 +638,12 @@ export default {
           { day: "Saturday", status: true, time: [] },
         ],
       },
+      updateTimingUuid: "",
+
+      // Social Media
 
       mediaLst: [],
-      mediaitem: { channel: "", name: "", amount: "" },
+      mediaitem: { channel: "", name: "", link: "" },
       usersData: [],
       details: [],
       errors: [],
@@ -531,6 +667,9 @@ export default {
           minLength: minLength(4),
         },
       },
+
+      // socaial media
+      storeSocialMedia() {},
     };
   },
   created() {
@@ -538,10 +677,12 @@ export default {
     this.getGeneralDetail();
 
     // Timing
-    this.getTimingDetail();
+    this.getAllShifts();
   },
 
   methods: {
+    // All
+
     //General
     getGeneralDetail() {
       this.url_data = this.$route.params.id;
@@ -586,10 +727,25 @@ export default {
       }
     },
 
-    // Timing
+    // Timing.
+    getAllShifts() {
+      this.url_data = this.$route.params.id;
+      this.$http
+        .get("/branch-shifts")
+        .then(({ data }) => {
+          data.data.map((item, id) => {
+            this.shifts.push({ ...item, id });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.push({ path: "/branches" });
+        });
+    },
     shiftToggleMethod() {
       if (this.shiftToggle == "Add New Shift") {
         this.shiftToggle = "Go To Shifts";
+        this.isEditing = false;
       } else if (this.shiftToggle == "Go To Shifts") {
         this.shiftToggle = "Add New Shift";
       }
@@ -604,21 +760,7 @@ export default {
     DelTiming(id, index) {
       this.storeTiming.timelist[id].time.splice(index, 1);
     },
-    getTimingDetail() {
-      this.url_data = this.$route.params.id;
-      this.$http
-        .get("/branch-shifts")
-        .then(({ data }) => {
-          data.data.map((item, id) => {
-            this.shifts.push({ ...item, id });
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$router.push({ path: "/branches" });
-        });
-    },
-    storeTimingMethod() {
+    storeShift() {
       this.$v.storeTiming.$touch();
       if (!this.$v.storeTiming.$invalid) {
         let data = this.storeTiming;
@@ -629,6 +771,58 @@ export default {
               icon: "success",
               title: "Success",
               text: "Timing Added Successfully",
+              timer: 3600,
+            });
+            this.$router.go();
+          })
+          .catch((error) => {
+            this.$swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!Try Again",
+              footer: '<a href="">Why do I have this issue?</a>',
+            });
+          });
+      } else {
+        this.submitStatus = "ERROR";
+      }
+    },
+    editShift(uuid) {
+      this.isEditing = true;
+      this.$http
+        .get("/branch-shifts/" + uuid)
+        .then((res) => {
+          this.$refs["shiftToggleRef"].click();
+          this.isEditing = true;
+          this.updateTimingUuid = uuid;
+          this.storeTiming.shiftname = res.data.name;
+          let timings = res.data.timings;
+          timings.forEach((value, index) => {
+            this.storeTiming.timelist[index].day = value.day;
+            this.storeTiming.timelist[index].status = value.status;
+            this.storeTiming.timelist[index].time = value.time;
+          });
+        })
+        .catch((error) => {
+          this.$swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: error,
+            footer: '<a href="">Why do I have this issue?</a>',
+          });
+        });
+    },
+    updateShift() {
+      this.$v.storeTiming.$touch();
+      if (!this.$v.storeTiming.$invalid) {
+        let data = this.storeTiming;
+        this.$http
+          .put("branch-shifts/" + this.updateTimingUuid, data)
+          .then((res) => {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Timing Updated Successfully",
               timer: 3600,
             });
           })
@@ -649,19 +843,40 @@ export default {
       if (
         this.mediaitem.channel == "" ||
         this.mediaitem.name == "" ||
-        this.mediaitem.amount == ""
+        this.mediaitem.link == ""
       ) {
         return false;
       }
       var data = {
         channel: this.mediaitem.channel,
         name: this.mediaitem.name,
-        amount: this.mediaitem.amount,
+        link: this.mediaitem.link,
       };
       this.mediaLst.push(data);
     },
     DelMedia(index) {
       this.mediaLst.splice(index, 1);
+    },
+    storeMedia() {
+      let data = this.mediaLst;
+      this.$http
+        .post("branch-social-media", data)
+        .then((res) => {
+          this.$swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Timing Added Successfully",
+            timer: 3600,
+          });
+        })
+        .catch((error) => {
+          this.$swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!Try Again",
+            footer: '<a href="">Why do I have this issue?</a>',
+          });
+        });
     },
   },
 };
