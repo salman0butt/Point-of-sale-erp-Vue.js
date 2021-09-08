@@ -126,6 +126,7 @@ export default {
               });
               this.$emit("employeeAddressCreated");
               this.$v.$reset();
+              this.resetForm();
             }
           })
           .catch((error) => {
@@ -195,6 +196,7 @@ export default {
       this.form.postal_code = "";
       this.form.set_default = "";
       this.form.employee_id = "";
+      this.isEditing = false;
     },
   },
 };

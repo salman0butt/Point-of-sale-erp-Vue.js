@@ -2,6 +2,10 @@ import http from "@/http-common";
 
 class EmployeeQualificationService {
 
+  getAll(data) {
+    return http.get(`/employee-qualifications?id=${data}`);
+  }
+
   get(id) {
     return http.get(`/employee-qualifications/${id}`);
   }

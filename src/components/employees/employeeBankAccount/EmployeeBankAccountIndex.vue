@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeAddresses"
+              :items="employeeBankAccount"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,9 +74,9 @@
 </template>
 
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import EmployeeBankAccountService from "@/services/employees/EmployeeBankAccountService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-//TODO error in employee address
+
 const fields = [
   {
     key: "select",
@@ -85,22 +85,22 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "address", label: "ADDRESS", _style: "min-width:40%" },
-  { key: "address2", label: "SECOND ADDRESS", _style: "min-width:15%;" },
-  { key: "city", label: "CITY", _style: "min-width:15%;" },
-  { key: "postal_code", label: "POSTAL CODE", _style: "min-width:15%;" },
-  { key: "set_default", label: "DEFAULT", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "iban", label: "IBAN NUMBER", _style: "min-width:15%;" },
+  { key: "account_number", label: "ACCOUNT NUMBER", _style: "min-width:15%;" },
+  { key: "bank_name", label: "BANK NAME", _style: "min-width:15%;" },
+  { key: "swift", label: "SWIFT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeAddressIndex",
+  name: "EmployeeBankAccountIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAddressesData: [],
+      employeeBankAccountData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,22 +109,22 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAddressData();
+    this.getEmployeeBankAccount();
   },
   computed: {
-    employeeAddresses() {
-      return this.employeeAddressesData;
+    employeeBankAccount() {
+      return this.employeeBankAccountData;
     },
   },
   methods: {
-    getEmployeeAddressData() {
+    getEmployeeBankAccount() {
       this.empId = this.$route.params.id;
 
-      EmployeeAddressService.getAll(this.empId)
+      EmployeeBankAccountService.getAll(this.empId)
         .then(({ data }) => {
-          this.employeeAddressesData = [];
+          this.employeeBankAccountData = [];
           data.data.map((item, id) => {
-            this.employeeAddressesData.push({ ...item, id });
+            this.employeeBankAccountData.push({ ...item, id });
           });
           this.loading = false;
         })
@@ -138,14 +138,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAddressesData[item.id]._selected);
-      this.$set(this.employeeAddressesData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeBankAccountData[item.id]._selected);
+      this.$set(this.employeeBankAccountData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAddressEdit", uuid);
+      this.$emit("employeeBankAccountEdit", uuid);
     },
 
     deleteRow(uuid) {
@@ -160,7 +160,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAddressService.delete(this.deleteRows)
+            EmployeeBankAccountService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -169,7 +169,7 @@ export default {
                     text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAddressesData = this.employeeAddressesData.filter(
+                  this.employeeBankAccountData = this.employeeBankAccountData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];

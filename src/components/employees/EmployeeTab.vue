@@ -32,12 +32,12 @@
                 </template>
                 <EmployeeSalaryTab />
               </CTab>
-              <CTab>
+              <!-- <CTab>
                 <template slot="title">
                   {{ tabs.target }}
                 </template>
                 Deatil target
-              </CTab>
+              </CTab> -->
             </CTabs>
           </CCardBody>
         </CCard>
