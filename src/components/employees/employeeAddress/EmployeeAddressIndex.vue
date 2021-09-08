@@ -145,7 +145,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeQualificationEdit", uuid);
+      this.$emit("employeeAddressEdit", uuid);
     },
 
     deleteRow(uuid) {

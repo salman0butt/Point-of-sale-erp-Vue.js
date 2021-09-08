@@ -91,6 +91,7 @@
       <CCol xs="12" lg="9">
         <EmployeeTab v-show="activeTab === 'general_tab'" />
         <EmployeeQualificationTab v-show="activeTab === 'qualification_tab'" />
+        <EmployeeAllowanceTab v-show="activeTab === 'allowances_tab'" />
       </CCol>
     </CRow>
   </div>
@@ -98,6 +99,7 @@
 <script>
 import EmployeeTab from "@/components/employees/EmployeeTab";
 import EmployeeQualificationTab from "@/components/employees/employeeQualification/EmployeeQualificationTab";
+import EmployeeAllowanceTab from "@/components/employees/employeeAllowance/EmployeeAllowanceTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -107,6 +109,7 @@ export default {
   components: {
     EmployeeTab,
     EmployeeQualificationTab,
+    EmployeeAllowanceTab,
   },
   data() {
     return {

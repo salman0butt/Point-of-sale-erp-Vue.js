@@ -168,6 +168,7 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
+              this.$emit("employeeQualificationCreated");
             }
           })
           .catch((error) => {
@@ -184,6 +185,7 @@ export default {
     getEmployeeQualification() {
       EmployeeQualificationService.get(this.empId)
         .then(({ data }) => {
+          console.log(data);
           this.isEditing = true;
           this.form.id = data.uuid;
           this.form.employee_id = data.employee_id;
@@ -191,7 +193,7 @@ export default {
           this.form.type = data.type;
           this.form.organization = data.organization;
           this.form.marks = data.marks;
-          this.form.year = data.year;
+          this.form.year = parseInt(data.year);
         })
         .catch((error) => {
           console.log(error);

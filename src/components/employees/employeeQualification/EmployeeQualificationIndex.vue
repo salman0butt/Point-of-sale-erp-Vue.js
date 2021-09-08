@@ -109,7 +109,7 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAddressData();
+    this.getEmployeeQualification();
   },
   computed: {
     employeeQualification() {
@@ -117,7 +117,7 @@ export default {
     },
   },
   methods: {
-    getEmployeeAddressData() {
+    getEmployeeQualification() {
       this.employeeQualificationData = [];
       this.empId = this.$route.params.id;
 
