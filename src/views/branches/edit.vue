@@ -217,7 +217,6 @@
 
                 <CCollapse :show="collapse">
                   <div v-if="!isEditing">
-                    store column
                     <form @submit.prevent="storeShift()">
                       <CCardBody>
                         <CRow>
@@ -451,45 +450,177 @@
                   </div>
                 </CCollapse>
               </CTab>
+              <!-- Targets -->
               <CTab>
                 <template slot="title">
                   {{ tabs[2] }}
                 </template>
-                <CCardBody>
-                  <CRow>
-                    <CCol sm="6" md="6" class="pt-2">
-                      <CInput label="Name" />
-                    </CCol>
-                    <CCol sm="6" md="6" class="pt-2">
-                      <CSelect
-                        label="Period"
-                        :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
-                      />
-                    </CCol>
-                  </CRow>
-                  <CRow>
-                    <CCol sm="6" md="6" class="pt-2">
-                      <CSelect
-                        label="Type"
-                        :options="['option1', 'option2', 'option3', 'option4']"
-                      />
-                    </CCol>
-                    <CCol sm="6" md="6" class="pt-2">
-                      <CInput label="Amount" placeholder="0.000" />
-                    </CCol>
-                  </CRow>
-                  <CRow>
-                    <CCol sm="12" md="12">
-                      <CTextarea label="Note" placeholder="Content..." />
-                    </CCol>
-                  </CRow>
+
+                <div>
                   <CButton
-                    block
-                    color="success"
-                    style="float: right; width: 100px"
-                    >Save</CButton
+                    @click="
+                      collapse_target = !collapse_target;
+                      collapse_target_table = !collapse_target_table;
+                      targetToggleMethod();
+                    "
+                    ref="targetToggleRef"
+                    color="primary"
+                    class="mb-2 mt-3"
+                    style="float: right"
                   >
-                </CCardBody>
+                    {{ targetToggle }}
+                  </CButton>
+                </div>
+                <CCollapse :show="collapse_target_table">
+                  <CCardBody>
+                    <CCardBody>
+                      <CDataTable
+                        :items="targetList"
+                        :fields="fields2"
+                        table-filter
+                        sorter
+                        pagination:false
+                        clickable-rows
+                        hover
+                      >
+                        <template #select="{ item }">
+                          <td>
+                            <CInputCheckbox
+                              @update:checked="() => check(item)"
+                              custom
+                            />
+                          </td>
+                        </template>
+
+                        <template #actions="{ item }">
+                          <td>
+                            <CButtonGroup>
+                              <CButton
+                                @click="editShift(item.uuid)"
+                                color="warning"
+                                >Edit</CButton
+                              >
+                              <CButton
+                                @click="deleteRow(item.uuid)"
+                                color="danger"
+                                >Delete</CButton
+                              >
+                            </CButtonGroup>
+                          </td>
+                        </template>
+                      </CDataTable>
+                    </CCardBody>
+                  </CCardBody>
+                </CCollapse>
+                <CCollapse :show="collapse_target">
+                  <form @submit.prevent="storeTarget()">
+                    <CCardBody>
+                      <CRow>
+                        <CCol sm="6" md="6" class="pt-2">
+                          <CInput
+                            label="Name"
+                            v-model="target.name"
+                            :class="{ error: $v.target.name.$error }"
+                          />
+                          <div v-if="$v.target.name.$error">
+                            <p v-if="!$v.target.name.required" class="errorMsg">
+                              Name is required
+                            </p>
+                            <p
+                              v-if="!$v.target.name.minLength"
+                              class="errorMsg"
+                            >
+                              Name should be at least 4 character
+                            </p>
+                          </div>
+                        </CCol>
+                        <CCol sm="6" md="6" class="pt-2">
+                          <CSelect
+                            label="Period"
+                            :options="[
+                              {
+                                label: 'Choose Period',
+                                value: '',
+                                selected: '',
+                                disabled: true,
+                              },
+                              'Daily',
+                              'Weekly',
+                              '14 Days',
+                              'Monthly',
+                              'Quarterly',
+                              'Yearly',
+                            ]"
+                            :value.sync="target.period"
+                            :class="{ error: $v.target.period.$error }"
+                          />
+                          <div v-if="$v.target.period.$error">
+                            <p
+                              v-if="!$v.target.period.required"
+                              class="errorMsg"
+                            >
+                              Period is required
+                            </p>
+                          </div>
+                        </CCol>
+                      </CRow>
+                      <CRow>
+                        <CCol sm="6" md="6" class="pt-2">
+                          <CSelect
+                            label="Type"
+                            :value.sync="target.type"
+                            :options="[
+                              {
+                                label: 'Choose Severity',
+                                value: '',
+                                selected: '',
+                                disabled: true,
+                              },
+                              'option2',
+                              'option3',
+                              'option4',
+                            ]"
+                            :class="{ error: $v.target.type.$error }"
+                          />
+                        </CCol>
+                        <div v-if="$v.target.type.$error">
+                          <p v-if="!$v.target.type.required" class="errorMsg">
+                            Type is required
+                          </p>
+                        </div>
+                        <CCol sm="6" md="6" class="pt-2">
+                          <CInput
+                            label="Amount"
+                            placeholder="0.000"
+                            v-model="target.amount"
+                            :class="{ error: $v.target.amount.$error }"
+                          />
+                        </CCol>
+                        <div v-if="$v.target.amount.$error">
+                          <p v-if="!$v.target.amount.required" class="errorMsg">
+                            Amount is required
+                          </p>
+                        </div>
+                      </CRow>
+                      <CRow>
+                        <CCol sm="12" md="12">
+                          <CTextarea
+                            label="Note"
+                            placeholder="Content..."
+                            v-model="target.detail"
+                          />
+                        </CCol>
+                      </CRow>
+                      <CButton
+                        block
+                        color="success"
+                        style="float: right; width: 100px"
+                        type="submit"
+                        >Save</CButton
+                      >
+                    </CCardBody>
+                  </form>
+                </CCollapse>
               </CTab>
               <!-- Social Media -->
               <CTab>
@@ -591,6 +722,21 @@ const fields = [
   { key: "name", label: "Shift Name", _style: "min-width:40%" },
   { key: "actions", label: "Action", _style: "min-width:15%;" },
 ];
+const fields2 = [
+  {
+    key: "select",
+    label: "",
+    _style: "min-width:1%",
+    sorter: false,
+    filter: false,
+  },
+  { key: "name", label: "Name", _style: "min-width:40%" },
+  { key: "periodic", label: "Periodic", _style: "min-width:15%;" },
+  { key: "type", label: "Type", _style: "min-width:15%;" },
+  { key: "amount", label: "Amount", _style: "min-width:15%;" },
+  { key: "detail", label: "Detail", _style: "min-width:15%;" },
+  { key: "actions", label: "Action", _style: "min-width:15%;" },
+];
 
 export default {
   name: "updateBranch",
@@ -599,7 +745,7 @@ export default {
     return {
       //All
       tabs: ["General", "Timing", "Target", "Social media"],
-      activeTab: 3,
+      activeTab: 0,
       isEditing: false,
 
       // General
@@ -640,6 +786,20 @@ export default {
       },
       updateTimingUuid: "",
 
+      // Target
+      fields2,
+      collapse_target: false,
+      collapse_target_table: true,
+      targetToggle: "Add New Target",
+      targetList: [],
+      target: {
+        name: "",
+        type: "",
+        period: "",
+        amount: "",
+        detail: "",
+      },
+
       // Social Media
 
       mediaLst: [],
@@ -667,6 +827,12 @@ export default {
           minLength: minLength(4),
         },
       },
+      target: {
+        name: { required, minLength: minLength(4) },
+        period: { required },
+        type: { required },
+        amount: { required },
+      },
 
       // socaial media
       storeSocialMedia() {},
@@ -678,6 +844,9 @@ export default {
 
     // Timing
     this.getAllShifts();
+
+    // Targets
+    this.getAllTargets();
 
     // Social Meida
     this.getAllMedia();
@@ -842,6 +1011,73 @@ export default {
       }
     },
 
+    // Target
+    getAllTargets() {
+      this.url_data = this.$route.params.id;
+
+      this.$http
+        .get("/branch-target", {
+          headers: {
+            branchid: this.url_data,
+          },
+        })
+        .then(({ data }) => {
+          data.data.forEach((value, index) => {
+            var data = {
+              name: value.name,
+              periodic: value.periodic,
+              type: value.type,
+              amount: value.amount,
+              detail: value.detail,
+            };
+            this.targetList.push(data);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.push({ path: "/branches" });
+        });
+    },
+    storeTarget() {
+      this.$v.target.$touch();
+      if (!this.$v.target.$invalid) {
+        let data = this.target;
+        this.$http
+          .post("branch-target", data, {
+            headers: {
+              branchid: this.url_data,
+            },
+          })
+          .then((res) => {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Timing Added Successfully",
+              timer: 3600,
+            });
+            this.$router.go();
+          })
+          .catch((error) => {
+            this.$swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!Try Again",
+              footer: '<a href="">Why do I have this issue?</a>',
+            });
+          });
+      } else {
+        this.submitStatus = "ERROR";
+      }
+    },
+    targetToggleMethod() {
+      if (this.targetToggle == "Add New Target") {
+        this.targetToggle = "Go To Targets";
+        this.isEditing = false;
+      } else if (this.targetToggle == "Go To Targets") {
+        this.targetToggle = "Add New Target";
+      }
+    },
+
     // Get Social Media
     getAllMedia() {
       this.url_data = this.$route.params.id;
@@ -888,28 +1124,37 @@ export default {
     },
     storeMedia() {
       let data = this.mediaLst;
-      this.$http
-        .post("branch-social-media", data, {
-          headers: {
-            branchid: this.url_data,
-          },
-        })
-        .then((res) => {
-          this.$swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Timing Added Successfully",
-            timer: 3600,
+      if (data.length > 0) {
+        this.$http
+          .post("branch-social-media", data, {
+            headers: {
+              branchid: this.url_data,
+            },
+          })
+          .then((res) => {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Timing Added Successfully",
+              timer: 3600,
+            });
+          })
+          .catch((error) => {
+            this.$swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!Try Again",
+              footer: '<a href="">Why do I have this issue?</a>',
+            });
           });
-        })
-        .catch((error) => {
-          this.$swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Something went wrong!Try Again",
-            footer: '<a href="">Why do I have this issue?</a>',
-          });
+      } else {
+        this.$swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Please Add By Pressing Plus Button",
+          footer: '<a href="">Why do I have this issue?</a>',
         });
+      }
     },
   },
 };
