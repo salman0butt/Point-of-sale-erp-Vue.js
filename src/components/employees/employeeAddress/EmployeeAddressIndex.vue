@@ -118,11 +118,11 @@ export default {
   },
   methods: {
     getEmployeeAddressData() {
-      this.employeeAddressesData = [];
       this.empId = this.$route.params.id;
 
       EmployeeAddressService.getAll(this.empId)
         .then(({ data }) => {
+          this.employeeAddressesData = [];
           data.data.map((item, id) => {
             this.employeeAddressesData.push({ ...item, id });
           });

@@ -196,6 +196,7 @@ export default {
       this.form.postal_code = "";
       this.form.set_default = "";
       this.form.employee_id = "";
+      this.isEditing = false;
     },
   },
 };

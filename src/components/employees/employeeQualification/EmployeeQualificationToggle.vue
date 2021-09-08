@@ -54,6 +54,7 @@ export default {
       }
     },
     employeeQualificationCreatedSend() {
+      this.ToggleEmployeeQualification();
       this.$refs.employeeQualificationRef.getEmployeeQualification();
     },
     employeeQualificationEdited(uuid) {

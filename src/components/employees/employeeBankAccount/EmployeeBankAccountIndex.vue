@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeQualification"
+              :items="employeeBankAccount"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import EmployeeQualificationService from "@/services/employees/EmployeeQualificationService";
+import EmployeeBankAccountService from "@/services/employees/EmployeeBankAccountService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -86,21 +86,21 @@ const fields = [
     filter: false,
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "organization", label: "ORGANIZATION", _style: "min-width:15%;" },
-  { key: "marks", label: "MARKS", _style: "min-width:15%;" },
-  { key: "year", label: "Year", _style: "min-width:15%;" },
+  { key: "iban", label: "IBAN NUMBER", _style: "min-width:15%;" },
+  { key: "account_number", label: "ACCOUNT NUMBER", _style: "min-width:15%;" },
+  { key: "bank_name", label: "BANK NAME", _style: "min-width:15%;" },
+  { key: "swift", label: "SWIFT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeQualificationIndex",
+  name: "EmployeeBankAccountIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeQualificationData: [],
+      employeeBankAccountData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,22 +109,22 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeQualification();
+    this.getEmployeeBankAccount();
   },
   computed: {
-    employeeQualification() {
-      return this.employeeQualificationData;
+    employeeBankAccount() {
+      return this.employeeBankAccountData;
     },
   },
   methods: {
-    getEmployeeQualification() {
+    getEmployeeBankAccount() {
       this.empId = this.$route.params.id;
 
-      EmployeeQualificationService.getAll(this.empId)
+      EmployeeBankAccountService.getAll(this.empId)
         .then(({ data }) => {
-          this.employeeQualificationData = [];
+          this.employeeBankAccountData = [];
           data.data.map((item, id) => {
-            this.employeeQualificationData.push({ ...item, id });
+            this.employeeBankAccountData.push({ ...item, id });
           });
           this.loading = false;
         })
@@ -138,14 +138,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeQualificationData[item.id]._selected);
-      this.$set(this.employeeQualificationData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeBankAccountData[item.id]._selected);
+      this.$set(this.employeeBankAccountData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeQualificationEdit", uuid);
+      this.$emit("employeeBankAccountEdit", uuid);
     },
 
     deleteRow(uuid) {
@@ -160,7 +160,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeQualificationService.delete(this.deleteRows)
+            EmployeeBankAccountService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -169,7 +169,7 @@ export default {
                     text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeQualificationData = this.employeeQualificationData.filter(
+                  this.employeeBankAccountData = this.employeeBankAccountData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];

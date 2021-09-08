@@ -8,10 +8,9 @@
             <CTabs add-tab-classes="mt-1" variant="pills" fade>
               <CTab active id="show">
                 <template slot="title">
-                  {{ tabs.allowance }}
+                  {{ tabs.bank }}
                 </template>
-
-                <EmployeeAllowanceToggle />
+                <EmployeeBankAccountToggle />
               </CTab>
             </CTabs>
           </CCardBody>
@@ -21,14 +20,14 @@
   </div>
 </template>
 <script>
-import EmployeeAllowanceToggle from "@/components/employees/employeeAllowance/EmployeeAllowanceToggle";
+import EmployeeBankAccountToggle from "@/components/employees/employeeBankAccount/EmployeeBankAccountToggle";
 
 export default {
-  name: "EmployeeAllowanceTab",
-  components: { EmployeeAllowanceToggle },
+  name: "EmployeeBankAccountTab",
+  components: { EmployeeBankAccountToggle },
   data: () => ({
     tabs: {
-      allowance: "Allowances",
+      bank: "Bank Accounts",
     },
   }),
 };
