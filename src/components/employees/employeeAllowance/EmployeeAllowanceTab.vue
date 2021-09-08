@@ -8,9 +8,10 @@
             <CTabs add-tab-classes="mt-1" variant="pills" fade>
               <CTab active id="show">
                 <template slot="title">
-                  {{ tabs.qualification }}
+                  {{ tabs.allowance }}
                 </template>
-                <EmployeeQualificationToggle />
+
+                <EmployeeAllowanceToggle />
               </CTab>
             </CTabs>
           </CCardBody>
@@ -20,15 +21,14 @@
   </div>
 </template>
 <script>
-import EmployeeQualificationToggle from "@/components/employees/employeeQualification/EmployeeQualificationToggle";
+import EmployeeAllowanceToggle from "@/components/employees/employeeAllowance/EmployeeAllowanceToggle";
 
 export default {
-  name: "EmployeeQualificationTab",
-  components: { EmployeeQualificationToggle },
+  name: "EmployeeAllowanceTab",
+  components: { EmployeeAllowanceToggle },
   data: () => ({
     tabs: {
-      qualification: "Qualification",
-      detail: "Detail",
+      allowance: "Allowances",
     },
   }),
 };

@@ -148,11 +148,11 @@ export default {
   },
   created() {
     this.empId = this.empId = this.$route.params.id;
+    this.form.employee_id = this.$route.params.id;
     this.getEmployeeDetail();
   },
   methods: {
     saveEmployeeDetail() {
-      this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -211,16 +211,18 @@ export default {
     getEmployeeDetail() {
       EmployeeDetailService.get(this.empId)
         .then(({ data }) => {
-          this.isEditing = true;
-          this.form.id = data.uuid;
-          this.form.employee_id = data.employee_id;
-          this.form.join_date = data.join_date;
-          this.form.end_date = data.end_date;
-          this.form.leave_days = data.leave_days;
-          this.form.sick_leave_days = data.sick_leave_days;
-          this.form.tot_days_off = data.tot_days_off;
-          this.form.working_hours = data.working_hours;
-          this.form.employee_ref = data.employee_ref;
+          if (data != null && data != "") {
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.employee_id = data.employee_id;
+            this.form.join_date = data.join_date;
+            this.form.end_date = data.end_date;
+            this.form.leave_days = data.leave_days;
+            this.form.sick_leave_days = data.sick_leave_days;
+            this.form.tot_days_off = data.tot_days_off;
+            this.form.working_hours = data.working_hours;
+            this.form.employee_ref = data.employee_ref;
+          }
         })
         .catch((error) => {
           console.log(error);

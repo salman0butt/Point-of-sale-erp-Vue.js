@@ -54,6 +54,7 @@ export default {
       }
     },
     employeeAddressCreatedSend() {
+      this.ToggleEmployeeAddress();
       this.$refs.employeeAddressRef.getEmployeeAddressData();
     },
     employeeAddressEdited(uuid) {

@@ -13,8 +13,11 @@
                 <form @submit.prevent="saveEmployee">
                   <CRow>
                     <CCol sm="6" md="4" class="pt-2">
+                      <CInput label="Serial No" v-model="form.serial_no" />
+                    </CCol>
+                    <CCol sm="6" md="4" class="pt-2">
                       <CInput
-                        label="Fullname"
+                        label="Full Name"
                         v-model="form.full_name"
                         :class="{ error: $v.form.full_name.$error }"
                         @input="$v.form.full_name.$touch()"
@@ -40,6 +43,8 @@
                         </p>
                       </div>
                     </CCol>
+                  </CRow>
+                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CSelect
                         label="Martial Status"
@@ -54,8 +59,6 @@
                         </p>
                       </div>
                     </CCol>
-                  </CRow>
-                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CInput
                         label="Phone"
@@ -87,6 +90,8 @@
                         </p>
                       </div>
                     </CCol>
+                  </CRow>
+                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CInput
                         label="DOB"
@@ -101,8 +106,6 @@
                         </p>
                       </div>
                     </CCol>
-                  </CRow>
-                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CInput
                         label="Nationality"
@@ -129,6 +132,8 @@
                         </p>
                       </div>
                     </CCol>
+                  </CRow>
+                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CSelect
                         label="Manager"
@@ -136,8 +141,6 @@
                         :value.sync="form.manager_id"
                       />
                     </CCol>
-                  </CRow>
-                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CInput
                         label="CPR No"
@@ -166,6 +169,8 @@
                         </p>
                       </div>
                     </CCol>
+                  </CRow>
+                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CSelect
                         label="Branches"
@@ -180,8 +185,6 @@
                         </p>
                       </div>
                     </CCol>
-                  </CRow>
-                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CSelect
                         label="Departments"
@@ -210,6 +213,8 @@
                         </p>
                       </div>
                     </CCol>
+                  </CRow>
+                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CInput
                         label="Passport Expiry"
@@ -224,8 +229,6 @@
                         </p>
                       </div>
                     </CCol>
-                  </CRow>
-                  <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CSelect
                         label="Designation"
@@ -438,6 +441,7 @@ export default {
       target: "Traget",
     },
     form: {
+      serial_no: "",
       full_name: "",
       gender: "",
       marital_status: "",

@@ -35,44 +35,50 @@ export default {
               to: "/branches",
               icon: "cil-lan",
             },
+            {
+              _name: "CSidebarNavItem",
+              name: "Departments",
+              to: "/departments/index",
+              icon: "cil-lan",
+            },
             // {
-            //   _name: "CSidebarNavItem",
-            //   name: "Employees",
-            //   to: "/employees",
+            //   _name: "CSidebarNavDropdown",
+            //   name: "Departments",
+            //   to: "/departments/index",
             //   icon: "cil-lan",
+            //   items: [
+            //     {
+            //       name: "All Departments",
+            //       to: "/departments/index",
+            //     },
+            //     {
+            //       name: "Create Departments",
+            //       to: "/departments/create",
+            //     },
+            //   ],
             // },
             {
-              _name: "CSidebarNavDropdown",
-              name: "Departments",
-              route: "/departments",
-              icon: "cil-lan",
-              items: [
-                {
-                  name: "All Departments",
-                  to: "/departments/index",
-                },
-                {
-                  name: "Create Departments",
-                  to: "/departments/create",
-                },
-              ],
-            },
-            {
-              _name: "CSidebarNavDropdown",
+              _name: "CSidebarNavItem",
               name: "Designations",
-              route: "/designations",
+              to: "/designations/index",
               icon: "cil-lan",
-              items: [
-                {
-                  name: "All Designations",
-                  to: "/designations/index",
-                },
-                {
-                  name: "Create Designations",
-                  to: "/designations/create",
-                },
-              ],
             },
+            // {
+            //   _name: "CSidebarNavDropdown",
+            //   name: "Designations",
+            //   route: "/designations",
+            //   icon: "cil-lan",
+            //   items: [
+            //     {
+            //       name: "All Designations",
+            //       to: "/designations/index",
+            //     },
+            //     {
+            //       name: "Create Designations",
+            //       to: "/designations/create",
+            //     },
+            //   ],
+            // },
             {
               _name: "CSidebarNavDropdown",
               name: "Employees",

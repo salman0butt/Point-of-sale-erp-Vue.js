@@ -8,6 +8,9 @@
             <form @submit.prevent="updateEmployee">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
+                  <CInput label="Serial No" v-model="form.serial_no" />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Fullname"
                     v-model="form.full_name"
@@ -35,6 +38,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Martial Status"
@@ -49,8 +54,6 @@
                     </p>
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Phone"
@@ -82,6 +85,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="DOB"
@@ -94,8 +99,6 @@
                     <p v-if="!$v.form.dob.required" class="errorMsg">DOB is required</p>
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Nationality"
@@ -122,6 +125,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Manager"
@@ -129,8 +134,6 @@
                     :value.sync="form.manager_id"
                   />
                 </CCol>
-              </CRow>
-              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="CPR No"
@@ -159,6 +162,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Branches"
@@ -173,8 +178,6 @@
                     </p>
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Departments"
@@ -203,6 +206,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Passport Expiry"
@@ -217,8 +222,6 @@
                     </p>
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Designation"
@@ -408,6 +411,7 @@ export default {
     saveAndExit: false,
 
     form: {
+      serial_no: "",
       full_name: "",
       gender: "",
       marital_status: "",
@@ -533,6 +537,7 @@ export default {
       this.empId = this.$route.params.id;
       EmployeeService.get(this.empId)
         .then(({ data }) => {
+          this.form.serial_no = data.serial_no;
           this.form.full_name = data.full_name;
           this.form.gender = data.gender;
           this.form.marital_status = data.marital_status;
@@ -588,7 +593,7 @@ export default {
             this.$swal.fire({
               icon: "error",
               title: "Error",
-              text: "Employee not Updated Successfully",
+              text: "Something went Wrong",
               timer: 3600,
             });
           });
