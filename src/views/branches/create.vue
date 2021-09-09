@@ -124,7 +124,7 @@
                       </CCol>
                     </CRow>
 
-                    <CButton
+                    <CLoadingButton
                       progress
                       timeout="2000"
                       block
@@ -132,9 +132,9 @@
                       style="float: right; width: 200px"
                       type="submit"
                       @click="saveAndExit = false"
-                      >Save & Continue</CButton
+                      >Save & Continue</CLoadingButton
                     >
-                    <CButton
+                    <CLoadingButton
                       timeout="2000"
                       block
                       color="danger"
@@ -146,7 +146,7 @@
                       "
                       @click="saveAndExit = true"
                       type="submit"
-                      >Save & Exit</CButton
+                      >Save & Exit</CLoadingButton
                     >
                   </CCardBody>
                 </form>
@@ -227,17 +227,7 @@ export default {
         opening_date: "",
         closing_date: "",
       },
-      timelst: [
-        { day: "Sunday", status: false, time: [] },
-        { day: "Monday", status: true, time: [] },
-        { day: "Tuesday", status: true, time: [] },
-        { day: "Wdnesday", status: true, time: [] },
-        { day: "Thursday", status: true, time: [] },
-        { day: "Friday", status: true, time: [] },
-        { day: "Saturday", status: true, time: [] },
-      ],
-      mediaLst: [],
-      mediaitem: { channel: "", name: "", amount: "" },
+
       tabs: ["General", "Timing", "Traget", "Social media"],
       activeTab: 1,
       usersData: [],
@@ -270,35 +260,6 @@ export default {
           console.log(error.message);
         }
       );
-    },
-
-    Addtiming(index, from, to) {
-      if (from == undefined || to == undefined) {
-        return false;
-      }
-      var data = { from: from, to: to, id: index };
-      this.timelst[index].time.push(data);
-    },
-    DelTiming(id, index) {
-      this.timelst[id].time.splice(index, 1);
-    },
-    AddMedia() {
-      if (
-        this.mediaitem.channel == "" ||
-        this.mediaitem.name == "" ||
-        this.mediaitem.amount == ""
-      ) {
-        return false;
-      }
-      var data = {
-        channel: this.mediaitem.channel,
-        name: this.mediaitem.name,
-        amount: this.mediaitem.amount,
-      };
-      this.mediaLst.push(data);
-    },
-    DelMedia(index) {
-      this.mediaLst.splice(index, 1);
     },
 
     saveBranch() {

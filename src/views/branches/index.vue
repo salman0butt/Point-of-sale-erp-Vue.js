@@ -24,6 +24,7 @@
                 sorter
                 pagination:false
                 clickable-rows
+                :loading="loading"
                 hover
                 @row-clicked="rowClicked"
               >
@@ -81,6 +82,7 @@ export default {
   name: "Branches",
   data() {
     return {
+      loading: true,
       Branches: [],
       fields,
     };
@@ -96,7 +98,6 @@ export default {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
       }
-      console.log(item);
     },
     check(item) {
       const val = Boolean(this.Branches[item.id]._selected);
@@ -109,6 +110,7 @@ export default {
           data.data.map((item, id) => {
             this.Branches.push({ ...item, id });
           });
+          this.loading = false;
         })
         .catch((err) => {
           console.log(err);
