@@ -122,11 +122,13 @@ export default {
 
       EmployeeAddressService.getAll(this.empId)
         .then(({ data }) => {
-          this.employeeAddressesData = [];
-          data.data.map((item, id) => {
-            this.employeeAddressesData.push({ ...item, id });
-          });
           this.loading = false;
+          if (data != null && data != "") {
+            this.employeeAddressesData = [];
+            data.data.map((item, id) => {
+              this.employeeAddressesData.push({ ...item, id });
+            });
+          }
         })
         .catch((err) => {
           console.log(err);

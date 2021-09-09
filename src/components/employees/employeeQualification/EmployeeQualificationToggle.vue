@@ -8,7 +8,7 @@
           class="mb-2 mt-3"
           style="float: right"
         >
-          {{ addressToggle }}
+          {{ toggleName }}
         </CButton>
       </CCol>
     </CRow>
@@ -38,7 +38,7 @@ export default {
   name: "EmployeeQualificationTab",
   components: { EmployeeQualificationIndex, EmployeeQualificationForm },
   data: () => ({
-    addressToggle: "Add New Qualification",
+    toggleName: "Add New Qualification",
     collapse: false,
     collapse_table: true,
   }),
@@ -47,10 +47,10 @@ export default {
       this.resetEmployeeQualificationForm();
       this.collapse = !this.collapse;
       this.collapse_table = !this.collapse_table;
-      if (this.addressToggle == "Add New Qualification") {
-        this.addressToggle = "Go To Qualificationes";
-      } else if (this.addressToggle == "Go To Qualificationes") {
-        this.addressToggle = "Add New Qualification";
+      if (this.toggleName == "Add New Qualification") {
+        this.toggleName = "Go To Qualificationes";
+      } else if (this.toggleName == "Go To Qualificationes") {
+        this.toggleName = "Add New Qualification";
       }
     },
     employeeQualificationCreatedSend() {

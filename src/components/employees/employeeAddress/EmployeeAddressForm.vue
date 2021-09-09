@@ -172,13 +172,14 @@ export default {
     getEmployeeAddress() {
       EmployeeAddressService.get(this.empId)
         .then(({ data }) => {
-          console.log(data);
-          this.empId = data.uuid;
-          this.form.address = data.address;
-          this.form.address2 = data.address2;
-          this.form.city = data.city;
-          this.form.postal_code = data.postal_code;
-          this.form.set_default = data.set_default;
+          if (data != null && data != "") {
+            this.empId = data.uuid;
+            this.form.address = data.address;
+            this.form.address2 = data.address2;
+            this.form.city = data.city;
+            this.form.postal_code = data.postal_code;
+            this.form.set_default = data.set_default;
+          }
         })
         .catch((error) => {
           console.log(error);

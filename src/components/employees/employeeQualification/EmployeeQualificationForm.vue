@@ -185,15 +185,16 @@ export default {
     getEmployeeQualification() {
       EmployeeQualificationService.get(this.empId)
         .then(({ data }) => {
-          console.log(data);
-          this.isEditing = true;
-          this.form.id = data.uuid;
-          this.form.employee_id = data.employee_id;
-          this.form.name = data.name;
-          this.form.type = data.type;
-          this.form.organization = data.organization;
-          this.form.marks = data.marks;
-          this.form.year = parseInt(data.year);
+          if (data != null && data != "") {
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.employee_id = data.employee_id;
+            this.form.name = data.name;
+            this.form.type = data.type;
+            this.form.organization = data.organization;
+            this.form.marks = data.marks;
+            this.form.year = parseInt(data.year);
+          }
         })
         .catch((error) => {
           console.log(error);

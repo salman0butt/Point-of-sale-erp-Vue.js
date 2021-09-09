@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeQualification"
+              :items="employeeLicense"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import EmployeeQualificationService from "@/services/employees/EmployeeQualificationService";
+import EmployeeLicenseService from "@/services/employees/EmployeeLicenseService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -87,20 +87,19 @@ const fields = [
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "organization", label: "ORGANIZATION", _style: "min-width:15%;" },
-  { key: "marks", label: "MARKS", _style: "min-width:15%;" },
-  { key: "year", label: "Year", _style: "min-width:15%;" },
+  { key: "issuance", label: "ISSUANCE", _style: "min-width:15%;" },
+  { key: "expiry", label: "EXPIRY", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeQualificationIndex",
+  name: "EmployeeLicenseIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeQualificationData: [],
+      employeeLicenseData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,24 +108,24 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeQualification();
+    this.getEmployeeLicense();
   },
   computed: {
-    employeeQualification() {
-      return this.employeeQualificationData;
+    employeeLicense() {
+      return this.employeeLicenseData;
     },
   },
   methods: {
-    getEmployeeQualification() {
+    getEmployeeLicense() {
       this.empId = this.$route.params.id;
 
-      EmployeeQualificationService.getAll(this.empId)
+      EmployeeLicenseService.getAll(this.empId)
         .then(({ data }) => {
           this.loading = false;
           if (data != null && data != "") {
-            this.employeeQualificationData = [];
+            this.employeeLicenseData = [];
             data.data.map((item, id) => {
-              this.employeeQualificationData.push({ ...item, id });
+              this.employeeLicenseData.push({ ...item, id });
             });
           }
         })
@@ -140,14 +139,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeQualificationData[item.id]._selected);
-      this.$set(this.employeeQualificationData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeLicenseData[item.id]._selected);
+      this.$set(this.employeeLicenseData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeQualificationEdit", uuid);
+      this.$emit("employeeLicenseEdit", uuid);
     },
 
     deleteRow(uuid) {
@@ -162,7 +161,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeQualificationService.delete(this.deleteRows)
+            EmployeeLicenseService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -171,7 +170,7 @@ export default {
                     text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeQualificationData = this.employeeQualificationData.filter(
+                  this.employeeLicenseData = this.employeeLicenseData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];

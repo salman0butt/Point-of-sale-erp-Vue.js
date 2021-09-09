@@ -122,11 +122,13 @@ export default {
 
       EmployeeBankAccountService.getAll(this.empId)
         .then(({ data }) => {
-          this.employeeBankAccountData = [];
-          data.data.map((item, id) => {
-            this.employeeBankAccountData.push({ ...item, id });
-          });
           this.loading = false;
+          if (data != null && data != "") {
+            this.employeeBankAccountData = [];
+            data.data.map((item, id) => {
+              this.employeeBankAccountData.push({ ...item, id });
+            });
+          }
         })
         .catch((err) => {
           console.log(err);

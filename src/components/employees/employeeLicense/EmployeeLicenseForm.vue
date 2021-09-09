@@ -3,9 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="
-            isEditing ? updateEmployeeBankAccount() : saveEmployeeBankAccount()
-          "
+          @submit.prevent="isEditing ? updateEmployeeLicense() : saveEmployeeLicense()"
         >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
@@ -21,28 +19,22 @@
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="IBAN Number"
-                v-model="form.iban"
-                :class="{ error: $v.form.iban.$error }"
-                @input="$v.form.iban.$touch()"
-              />
-              <div v-if="$v.form.iban.$error">
-                <p v-if="!$v.form.iban.required" class="errorMsg">
-                  IBAN Number is required
-                </p>
+              <CSelect label="Type" :options="options.type" :value.sync="form.type" />
+              <div v-if="$v.form.type.$error">
+                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Account Number"
-                v-model="form.account_number"
-                :class="{ error: $v.form.account_number.$error }"
-                @input="$v.form.account_number.$touch()"
+                label="Issuance Date"
+                type="date"
+                v-model="form.issuance"
+                :class="{ error: $v.form.issuance.$error }"
+                @input="$v.form.issuance.$touch()"
               />
-              <div v-if="$v.form.account_number.$error">
-                <p v-if="!$v.form.account_number.required" class="errorMsg">
-                  Account Number is required
+              <div v-if="$v.form.issuance.$error">
+                <p v-if="!$v.form.issuance.required" class="errorMsg">
+                  Issuance Date is required
                 </p>
               </div>
             </CCol>
@@ -50,26 +42,14 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Bank Name"
-                v-model="form.bank_name"
-                :class="{ error: $v.form.bank_name.$error }"
-                @input="$v.form.bank_name.$touch()"
+                label="Expiry"
+                type="date"
+                v-model="form.expiry"
+                :class="{ error: $v.form.expiry.$error }"
+                @input="$v.form.expiry.$touch()"
               />
-              <div v-if="$v.form.bank_name.$error">
-                <p v-if="!$v.form.bank_name.required" class="errorMsg">
-                  Bank Name is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Swift"
-                v-model="form.swift"
-                :class="{ error: $v.form.swift.$error }"
-                @input="$v.form.swift.$touch()"
-              />
-              <div v-if="$v.form.swift.$error">
-                <p v-if="!$v.form.swift.required" class="errorMsg">Swift is required</p>
+              <div v-if="$v.form.expiry.$error">
+                <p v-if="!$v.form.expiry.required" class="errorMsg">Expiry is required</p>
               </div>
             </CCol>
           </CRow>
@@ -93,32 +73,37 @@
   </div>
 </template>
 <script>
-import EmployeeBankAccountService from "@/services/employees/EmployeeBankAccountService";
+import EmployeeLicenseService from "@/services/employees/EmployeeLicenseService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeBankAccountForm",
+  name: "EmployeeLicenseForm",
   data: () => ({
     isEditing: false,
     form: {
       id: null,
       employee_id: "",
       name: "",
-      iban: "",
-      account_number: "",
-      bank_name: "",
-      swift: "",
+      type: "",
+      issuance: "",
+      expiry: "",
     },
     empId: null,
+    options: {
+      type: [
+        { value: "", label: "Choose Type" },
+        { value: "type1", label: "Type1" },
+        { value: "type2", label: "Type2" },
+      ],
+    },
   }),
   validations() {
     return {
       form: {
         name: { required },
-        iban: { required },
-        account_number: { required },
-        bank_name: { required },
-        swift: { required },
+        type: { required },
+        issuance: { required },
+        expiry: { required },
       },
     };
   },
@@ -126,22 +111,22 @@ export default {
     this.empId = this.empId = this.$route.params.id;
   },
   methods: {
-    saveEmployeeBankAccount() {
+    saveEmployeeLicense() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeBankAccountService.create(data)
+        EmployeeLicenseService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "BankAccount Added Successfully",
+                text: "License Added Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employeeBankAccountCreated");
+              this.$emit("employeeLicenseCreated");
               this.resetForm();
             }
           })
@@ -156,22 +141,22 @@ export default {
           });
       }
     },
-    updateEmployeeBankAccount() {
+    updateEmployeeLicense() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeBankAccountService.update(this.form.id, data)
+        EmployeeLicenseService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "BankAccount Updated Successfully",
+                text: "License Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employeeBankAccountCreated");
+              this.$emit("employeeLicenseCreated");
             }
           })
           .catch((error) => {
@@ -185,18 +170,17 @@ export default {
           });
       }
     },
-    getEmployeeBankAccount() {
-      EmployeeBankAccountService.get(this.empId)
+    getEmployeeLicense() {
+      EmployeeLicenseService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.employee_id = data.employee_id;
             this.form.name = data.name;
-            this.form.iban = data.iban;
-            this.form.account_number = data.account_number;
-            this.form.bank_name = data.bank_name;
-            this.form.swift = data.swift;
+            this.form.type = data.type;
+            this.form.issuance = data.issuance;
+            this.form.expiry = data.expiry;
           }
         })
         .catch((error) => {
@@ -207,14 +191,13 @@ export default {
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeBankAccount();
+      this.getEmployeeLicense();
     },
     resetForm() {
       this.form.name = "";
-      this.form.iban = "";
-      this.form.account_number = "";
-      this.form.bank_name = "";
-      this.form.swift = "";
+      this.form.type = "";
+      this.form.issuance = "";
+      this.form.expiry = "";
       this.isEditing = false;
     },
   },

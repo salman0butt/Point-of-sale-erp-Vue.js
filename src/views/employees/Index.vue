@@ -170,11 +170,13 @@ export default {
     getTotalCardData() {
       EmployeeService.getTotalCount()
         .then(({ data }) => {
-          this.cards.employees_count = data.employees_count;
-          this.cards.female_count = data.female_count;
-          this.cards.male_count = data.male_count;
-          this.cards.departments_count = data.departments_count;
-          this.cards.manager_count = data.manager_count;
+          if (data != null && data != "") {
+            this.cards.employees_count = data.employees_count;
+            this.cards.female_count = data.female_count;
+            this.cards.male_count = data.male_count;
+            this.cards.departments_count = data.departments_count;
+            this.cards.manager_count = data.manager_count;
+          }
         })
         .catch((err) => {
           console.log(err);

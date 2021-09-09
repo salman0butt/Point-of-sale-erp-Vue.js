@@ -122,12 +122,14 @@ export default {
 
       EmployeeAllowanceService.getAll(this.empId)
         .then(({ data }) => {
-          this.employeeAllowanceData = [];
-          data.data.map((item, id) => {
-            this.employeeAllowanceData.push({ ...item, id });
-          });
-          console.log(this.employeeAllowanceData);
           this.loading = false;
+          if (data != null && data != "") {
+            this.employeeAllowanceData = [];
+            data.data.map((item, id) => {
+              this.employeeAllowanceData.push({ ...item, id });
+            });
+            console.log(this.employeeAllowanceData);
+          }
         })
         .catch((err) => {
           console.log(err);
