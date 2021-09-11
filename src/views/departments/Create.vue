@@ -60,7 +60,6 @@
                   style="float: right; width: 200px; margin-left: 20px"
                   type="submit"
                   @click="saveAndExit = false"
-                  :disabled="$v.$invalid"
                   >Save & Continue</CButton
                 >
                 <CButton
@@ -70,7 +69,6 @@
                   style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                   @click="saveAndExit = true"
                   type="submit"
-                  :disabled="$v.$invalid"
                   >Save & Exit</CButton
                 >
               </CRow>
@@ -98,10 +96,14 @@ export default {
       status: "",
     },
     options: {
-      departments: [{ value: "", label: "Choose Departments" }],
-      business: [{ value: "", label: "Choose Departments" }],
+      departments: [
+        { value: "", label: "Choose Departments", disabled: true, selected: "" },
+      ],
+      business: [
+        { value: "", label: "Choose Departments", disabled: true, selected: "" },
+      ],
       status: [
-        { value: "", label: "Choose Status" },
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],

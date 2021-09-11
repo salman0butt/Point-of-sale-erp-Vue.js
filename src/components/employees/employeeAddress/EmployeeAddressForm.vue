@@ -66,7 +66,6 @@
               color="success"
               style="float: right; width: 150px; margin-right: 20px"
               type="submit"
-              :disabled="$v.$invalid"
               >Save</CButton
             >
           </CRow>
@@ -94,7 +93,7 @@ export default {
     empId: null,
     options: {
       set_default: [
-        { value: "", label: "Choose Status" },
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "yes", label: "Yes" },
         { value: "no", label: "No" },
       ],

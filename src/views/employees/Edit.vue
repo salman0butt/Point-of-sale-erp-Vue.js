@@ -71,10 +71,10 @@
               >
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'loans_tab' }"
+                v-bind:class="{ active: activeTab === 'EmployeeExpenseTab' }"
                 href="#"
-                @click.prevent="changeActiveTab('loans_tab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Loans</a
+                @click.prevent="changeActiveTab('EmployeeExpenseTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Expenses</a
               >
 
               <a
@@ -104,6 +104,7 @@ import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/E
 import EmployeeLicenseTab from "@/components/employees/employeeLicense/EmployeeLicenseTab";
 import EmployeeContractTab from "@/components/employees/employeeContract/EmployeeContractTab";
 import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergencyContact/EmployeeEmergencyContactTab";
+import EmployeeExpenseTab from "@/components/employees/employeeExpense/EmployeeExpenseTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -118,6 +119,7 @@ export default {
     EmployeeLicenseTab,
     EmployeeContractTab,
     EmployeeEmergencyContactTab,
+    EmployeeExpenseTab,
   },
   data() {
     return {
