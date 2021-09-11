@@ -168,7 +168,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "Bank Account Deleted Successfully",
                     timer: 3600,
                   });
                   this.employeeBankAccountData = this.employeeBankAccountData.filter(

@@ -2,9 +2,6 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CCard>
-          <CCardHeader> All Employees </CCardHeader>
-        </CCard>
         <CRow>
           <CCol sm="6" md="3" class="pt-2">
             <CCard>

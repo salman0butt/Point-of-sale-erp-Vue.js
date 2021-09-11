@@ -35,12 +35,12 @@ export default {
               to: "/branches",
               icon: "cil-lan",
             },
-            {
-              _name: "CSidebarNavItem",
-              name: "Departments",
-              to: "/departments/index",
-              icon: "cil-lan",
-            },
+            // {
+            //   _name: "CSidebarNavItem",
+            //   name: "Departments",
+            //   to: "/departments/index",
+            //   icon: "cil-lan",
+            // },
             // {
             //   _name: "CSidebarNavDropdown",
             //   name: "Departments",
@@ -57,12 +57,12 @@ export default {
             //     },
             //   ],
             // },
-            {
-              _name: "CSidebarNavItem",
-              name: "Designations",
-              to: "/designations/index",
-              icon: "cil-lan",
-            },
+            // {
+            //   _name: "CSidebarNavItem",
+            //   name: "Designations",
+            //   to: "/designations/index",
+            //   icon: "cil-lan",
+            // },
             // {
             //   _name: "CSidebarNavDropdown",
             //   name: "Designations",
@@ -81,17 +81,25 @@ export default {
             // },
             {
               _name: "CSidebarNavDropdown",
-              name: "Employees",
-              route: "/employees",
+              name: "HR",
               icon: "cil-lan",
               items: [
                 {
-                  name: "All Employees",
-                  to: "/employees/index",
+                  _name: "CSidebarNavItem",
+                  name: "Departments",
+                  to: "/departments/index",
+                  icon: "cil-lan",
                 },
                 {
-                  name: "Create Employee",
-                  to: "/employees/create",
+                  _name: "CSidebarNavItem",
+                  name: "Designations",
+                  to: "/designations/index",
+                  icon: "cil-lan",
+                },
+                {
+                  name: "Employees",
+                  to: "/employees/index",
+                  icon: "cil-lan",
                 },
               ],
             },

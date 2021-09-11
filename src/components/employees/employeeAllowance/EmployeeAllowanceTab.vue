@@ -3,17 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Employee</CCardHeader>
+          <CCardHeader>Allowances</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1" variant="pills" fade>
-              <CTab active id="show">
-                <template slot="title">
-                  {{ tabs.allowance }}
-                </template>
-
-                <EmployeeAllowanceToggle />
-              </CTab>
-            </CTabs>
+            <EmployeeAllowanceToggle />
           </CCardBody>
         </CCard>
       </CCol>
@@ -26,10 +18,6 @@ import EmployeeAllowanceToggle from "@/components/employees/employeeAllowance/Em
 export default {
   name: "EmployeeAllowanceTab",
   components: { EmployeeAllowanceToggle },
-  data: () => ({
-    tabs: {
-      allowance: "Allowances",
-    },
-  }),
+  data: () => ({}),
 };
 </script>

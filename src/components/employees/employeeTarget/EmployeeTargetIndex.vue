@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeEmergencyContact"
+              :items="employeeTarget"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import EmployeeEmergencyContactService from "@/services/employees/EmployeeEmergencyContactService";
+import EmployeeTargetService from "@/services/employees/EmployeeTargetService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -86,19 +86,19 @@ const fields = [
     filter: false,
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "relationship", label: "RELATION", _style: "min-width:15%;" },
-  { key: "phone_number", label: "PHONE NUMBER", _style: "min-width:15%;" },
-  { key: "address", label: "ADDRESS", _style: "min-width:15%;" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "periodic", label: "PERIODIC", _style: "min-width:15%;" },
+  { key: "detail", label: "DETAIL", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 export default {
-  name: "EmployeeEmergencyContactIndex",
+  name: "EmployeeTargetIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeEmergencyContactData: [],
+      employeeTargetData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -107,24 +107,24 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeEmergencyContact();
+    this.getEmployeeTarget();
   },
   computed: {
-    employeeEmergencyContact() {
-      return this.employeeEmergencyContactData;
+    employeeTarget() {
+      return this.employeeTargetData;
     },
   },
   methods: {
-    getEmployeeEmergencyContact() {
+    getEmployeeTarget() {
       this.empId = this.$route.params.id;
 
-      EmployeeEmergencyContactService.getAll(this.empId)
+      EmployeeTargetService.getAll(this.empId)
         .then(({ data }) => {
           this.loading = false;
           if (data != null && data != "") {
-            this.employeeEmergencyContactData = [];
+            this.employeeTargetData = [];
             data.data.map((item, id) => {
-              this.employeeEmergencyContactData.push({ ...item, id });
+              this.employeeTargetData.push({ ...item, id });
             });
           }
         })
@@ -135,15 +135,15 @@ export default {
     updateTableData(obj) {
       if (obj.type === "create") {
         let arr = Object.values(
-          this.employeeEmergencyContactData.map(function (item) {
+          this.employeeTargetData.map(function (item) {
             return item.id;
           })
         );
         let max = Math.max(...arr);
         obj.data.id = max + 1;
-        this.employeeEmergencyContactData.push(obj.data);
+        this.employeeTargetData.push(obj.data);
       } else {
-        this.employeeEmergencyContactData.map(function (item) {
+        this.employeeTargetData.map(function (item) {
           if (item.uuid === obj.data.uuid) {
             obj.data.id = item.id;
             return Object.assign(item, obj.data);
@@ -157,14 +157,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeEmergencyContactData[item.id]._selected);
-      this.$set(this.employeeEmergencyContactData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeTargetData[item.id]._selected);
+      this.$set(this.employeeTargetData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-emergency-contact-edit", uuid);
+      this.$emit("employee-target-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -179,17 +179,17 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeEmergencyContactService.delete(this.deleteRows)
+            EmployeeTargetService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Emergency Contact Deleted Successfully",
+                    text: "Target Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeEmergencyContactData = this.employeeEmergencyContactData.filter(
-                    (department) => department.uuid != uuid
+                  this.employeeTargetData = this.employeeTargetData.filter(
+                    (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
                 }

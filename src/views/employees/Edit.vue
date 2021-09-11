@@ -79,9 +79,9 @@
 
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'target_tab' }"
+                v-bind:class="{ active: activeTab === 'EmployeeTargetTab' }"
                 href="#"
-                @click.prevent="changeActiveTab('target_tab')"
+                @click.prevent="changeActiveTab('EmployeeTargetTab')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Targets</a
               >
             </div>
@@ -105,6 +105,7 @@ import EmployeeLicenseTab from "@/components/employees/employeeLicense/EmployeeL
 import EmployeeContractTab from "@/components/employees/employeeContract/EmployeeContractTab";
 import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergencyContact/EmployeeEmergencyContactTab";
 import EmployeeExpenseTab from "@/components/employees/employeeExpense/EmployeeExpenseTab";
+import EmployeeTargetTab from "@/components/employees/employeeTarget/EmployeeTargetTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -120,6 +121,7 @@ export default {
     EmployeeContractTab,
     EmployeeEmergencyContactTab,
     EmployeeExpenseTab,
+    EmployeeTargetTab,
   },
   data() {
     return {

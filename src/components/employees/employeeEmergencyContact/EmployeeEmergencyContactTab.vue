@@ -3,16 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Employee</CCardHeader>
+          <CCardHeader>Emergency Contacts</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1" variant="pills" fade>
-              <CTab active id="show">
-                <template slot="title">
-                  {{ tabs.contacts }}
-                </template>
-                <EmployeeEmergencyContactToggle />
-              </CTab>
-            </CTabs>
+            <EmployeeEmergencyContactToggle />
           </CCardBody>
         </CCard>
       </CCol>
@@ -25,10 +18,6 @@ import EmployeeEmergencyContactToggle from "@/components/employees/employeeEmerg
 export default {
   name: "EmployeeEmergencyContactTab",
   components: { EmployeeEmergencyContactToggle },
-  data: () => ({
-    tabs: {
-      contacts: "Emergency Contacts",
-    },
-  }),
+  data: () => ({}),
 };
 </script>

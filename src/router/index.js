@@ -4,7 +4,7 @@ import auth from '../middleware/auth'
 import employeeRoutes from '@/router/employees/employeeRoutes';
 import departmentRoutes from '@/router/departments/departmentRoutes';
 import designationRoutes from '@/router/designations/designationRoutes';
-
+import store from '@/store'
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -121,13 +121,13 @@ const router = new Router({
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard,
-          // beforeEnter: auth
+          beforeEnter: auth
         },
         {
           path: 'merchant',
           name: 'Merchant',
           component: Merchant,
-          // beforeEnter: auth
+          beforeEnter: auth
         },
         {
           path: '/branches',

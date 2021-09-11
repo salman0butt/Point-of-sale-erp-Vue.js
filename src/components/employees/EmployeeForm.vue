@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Employee</CCardHeader>
+          <CCardHeader>General</CCardHeader>
           <CCardBody>
             <form @submit.prevent="updateEmployee">
               <CRow>

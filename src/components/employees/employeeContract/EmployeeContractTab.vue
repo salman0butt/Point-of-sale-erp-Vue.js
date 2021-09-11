@@ -3,16 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Employee</CCardHeader>
+          <CCardHeader>Contracts</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1" variant="pills" fade>
-              <CTab active id="show">
-                <template slot="title">
-                  {{ tabs.contract }}
-                </template>
-                <EmployeeContractToggle />
-              </CTab>
-            </CTabs>
+            <EmployeeContractToggle />
           </CCardBody>
         </CCard>
       </CCol>
@@ -25,10 +18,6 @@ import EmployeeContractToggle from "@/components/employees/employeeContract/Empl
 export default {
   name: "EmployeeContractTab",
   components: { EmployeeContractToggle },
-  data: () => ({
-    tabs: {
-      contract: "Contracts",
-    },
-  }),
+  data: () => ({}),
 };
 </script>

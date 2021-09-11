@@ -189,7 +189,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "Contact Deleted Successfully",
                     timer: 3600,
                   });
                   this.employeeContractData = this.employeeContractData.filter(

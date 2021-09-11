@@ -3,16 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Employee</CCardHeader>
+          <CCardHeader>Licenses</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1" variant="pills" fade>
-              <CTab active id="show">
-                <template slot="title">
-                  {{ tabs.license }}
-                </template>
-                <EmployeeLicenseToggle />
-              </CTab>
-            </CTabs>
+            <EmployeeLicenseToggle />
           </CCardBody>
         </CCard>
       </CCol>
@@ -25,10 +18,6 @@ import EmployeeLicenseToggle from "@/components/employees/employeeLicense/Employ
 export default {
   name: "EmployeeLicenseTab",
   components: { EmployeeLicenseToggle },
-  data: () => ({
-    tabs: {
-      license: "Licenses",
-    },
-  }),
+  data: () => ({}),
 };
 </script>

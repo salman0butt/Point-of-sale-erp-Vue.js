@@ -129,7 +129,7 @@ export default {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Emergency Contact Added Successfully",
+                text: "Expense Added Successfully",
                 timer: 3600,
               });
               this.$emit("employee-expense-update", {
@@ -162,7 +162,7 @@ export default {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Emergency Contact Updated Successfully",
+                text: "Expense Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();

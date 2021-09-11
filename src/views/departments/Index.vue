@@ -3,9 +3,6 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> All Departments </CCardHeader>
-        </CCard>
-        <CCard>
           <CCardBody>
             <router-link class="btn btn-success" to="/departments/create"
               >Create Department</router-link

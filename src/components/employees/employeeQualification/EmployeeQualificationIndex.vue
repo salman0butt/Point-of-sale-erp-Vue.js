@@ -168,7 +168,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "Qualification Deleted Successfully",
                     timer: 3600,
                   });
                   this.employeeQualificationData = this.employeeQualificationData.filter(

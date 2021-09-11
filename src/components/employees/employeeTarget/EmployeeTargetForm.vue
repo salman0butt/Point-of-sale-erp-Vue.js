@@ -2,11 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form
-          @submit.prevent="
-            isEditing ? updateEmployeeBankAccount() : saveEmployeeBankAccount()
-          "
-        >
+        <form @submit.prevent="isEditing ? updateEmployeeTarget() : saveEmployeeTarget()">
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
@@ -19,58 +15,28 @@
                 <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
               </div>
             </CCol>
-
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="IBAN Number"
-                v-model="form.iban"
-                :class="{ error: $v.form.iban.$error }"
-                @input="$v.form.iban.$touch()"
-              />
-              <div v-if="$v.form.iban.$error">
-                <p v-if="!$v.form.iban.required" class="errorMsg">
-                  IBAN Number is required
-                </p>
+              <CSelect label="Type" :options="options.type" :value.sync="form.type" />
+              <div v-if="$v.form.type.$error">
+                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Account Number"
-                v-model="form.account_number"
-                :class="{ error: $v.form.account_number.$error }"
-                @input="$v.form.account_number.$touch()"
+              <CSelect
+                label="Repeat"
+                :options="options.periodic"
+                :value.sync="form.periodic"
               />
-              <div v-if="$v.form.account_number.$error">
-                <p v-if="!$v.form.account_number.required" class="errorMsg">
-                  Account Number is required
+              <div v-if="$v.form.periodic.$error">
+                <p v-if="!$v.form.periodic.required" class="errorMsg">
+                  Periodic is required
                 </p>
               </div>
             </CCol>
           </CRow>
           <CRow>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Bank Name"
-                v-model="form.bank_name"
-                :class="{ error: $v.form.bank_name.$error }"
-                @input="$v.form.bank_name.$touch()"
-              />
-              <div v-if="$v.form.bank_name.$error">
-                <p v-if="!$v.form.bank_name.required" class="errorMsg">
-                  Bank Name is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Swift"
-                v-model="form.swift"
-                :class="{ error: $v.form.swift.$error }"
-                @input="$v.form.swift.$touch()"
-              />
-              <div v-if="$v.form.swift.$error">
-                <p v-if="!$v.form.swift.required" class="errorMsg">Swift is required</p>
-              </div>
+            <CCol sm="6" md="6">
+              <CTextarea label="Note" placeholder="Content..." v-model="form.detail" />
             </CCol>
           </CRow>
 
@@ -92,32 +58,43 @@
   </div>
 </template>
 <script>
-import EmployeeBankAccountService from "@/services/employees/EmployeeBankAccountService";
+import EmployeeTargetService from "@/services/employees/EmployeeTargetService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeBankAccountForm",
+  name: "EmployeeTargetForm",
   data: () => ({
     isEditing: false,
     form: {
       id: null,
       employee_id: "",
       name: "",
-      iban: "",
-      account_number: "",
-      bank_name: "",
-      swift: "",
+      type: "",
+      periodic: "",
+      detail: "",
     },
     empId: null,
+    options: {
+      type: [
+        { value: "", label: "Choose Type", disabled: true, selected: "" },
+        { value: "type1", label: "Type1" },
+        { value: "type2", label: "Type2" },
+      ],
+      periodic: [
+        { value: "", label: "Choose repeat", disabled: true, selected: "" },
+        { value: "daily", label: "Daily" },
+        { value: "weekly", label: "Weekly" },
+        { value: "monthly", label: "Monthly" },
+        { value: "yearly", label: "Yearly" },
+      ],
+    },
   }),
   validations() {
     return {
       form: {
         name: { required },
-        iban: { required },
-        account_number: { required },
-        bank_name: { required },
-        swift: { required },
+        type: { required },
+        periodic: { required },
       },
     };
   },
@@ -125,22 +102,25 @@ export default {
     this.empId = this.empId = this.$route.params.id;
   },
   methods: {
-    saveEmployeeBankAccount() {
+    saveEmployeeTarget() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeBankAccountService.create(data)
+        EmployeeTargetService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Bank Account Added Successfully",
+                text: "Target Added Successfully",
                 timer: 3600,
               });
+              this.$emit("employee-target-update", {
+                type: "create",
+                data: res.data,
+              });
               this.$v.$reset();
-              this.$emit("employeeBankAccountCreated");
               this.resetForm();
             }
           })
@@ -155,22 +135,25 @@ export default {
           });
       }
     },
-    updateEmployeeBankAccount() {
+    updateEmployeeTarget() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeBankAccountService.update(this.form.id, data)
+        EmployeeTargetService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Bank Account Updated Successfully",
+                text: "Target Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employeeBankAccountCreated");
+              this.$emit("employee-target-update", {
+                type: "edit",
+                data: res.data,
+              });
             }
           })
           .catch((error) => {
@@ -184,18 +167,17 @@ export default {
           });
       }
     },
-    getEmployeeBankAccount() {
-      EmployeeBankAccountService.get(this.empId)
+    getEmployeeTarget() {
+      EmployeeTargetService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.employee_id = data.employee_id;
             this.form.name = data.name;
-            this.form.iban = data.iban;
-            this.form.account_number = data.account_number;
-            this.form.bank_name = data.bank_name;
-            this.form.swift = data.swift;
+            this.form.type = data.type;
+            this.form.periodic = data.periodic;
+            this.form.detail = data.detail;
           }
         })
         .catch((error) => {
@@ -206,14 +188,13 @@ export default {
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeBankAccount();
+      this.getEmployeeTarget();
     },
     resetForm() {
       this.form.name = "";
-      this.form.iban = "";
-      this.form.account_number = "";
-      this.form.bank_name = "";
-      this.form.swift = "";
+      this.form.type = "";
+      this.form.periodic = "";
+      this.form.detail = "";
       this.isEditing = false;
     },
   },
