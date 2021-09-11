@@ -147,7 +147,6 @@
         </form>
       </div>
       <div v-else>
-        update column
         <form @submit.prevent="updateShift()">
           <CInput v-model="updateTimingUuid" type="hidden" />
           <CCardBody>
@@ -249,13 +248,13 @@
 <script>
 import { required, minLength, numeric } from "vuelidate/lib/validators";
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "name", label: "Shift Name", _style: "min-width:40%" },
   { key: "actions", label: "Action", _style: "min-width:15%;" },
 ];
@@ -311,13 +310,13 @@ export default {
       storeTiming: {
         shiftname: "",
         timelist: [
-          { day: "Sunday", status: false, time: [] },
-          { day: "Monday", status: false, time: [] },
+          { day: "Sunday", status: true, time: [] },
+          { day: "Monday", status: true, time: [] },
           { day: "Tuesday", status: true, time: [] },
           { day: "Wednesday", status: true, time: [] },
           { day: "Thursday", status: true, time: [] },
-          { day: "Friday", status: true, time: [] },
-          { day: "Saturday", status: true, time: [] },
+          { day: "Friday", status: false, time: [] },
+          { day: "Saturday", status: false, time: [] },
         ],
       },
       updateTimingUuid: "",
@@ -402,13 +401,14 @@ export default {
         this.$http
           .post("branch-shifts", data)
           .then((res) => {
+            this.shifts.push(res.data);
+            this.$refs["shiftToggleRef"].click();
             this.$swal.fire({
               icon: "success",
               title: "Success",
               text: "Timing Added Successfully",
               timer: 3600,
             });
-            this.$router.go();
           })
           .catch((error) => {
             this.$swal.fire({
@@ -454,11 +454,17 @@ export default {
         this.$http
           .put("branch-shifts/" + this.updateTimingUuid, data)
           .then((res) => {
+            this.$refs["shiftToggleRef"].click();
             this.$swal.fire({
               icon: "success",
               title: "Success",
               text: "Timing Updated Successfully",
               timer: 3600,
+            });
+            this.shifts.map((item, id) => {
+              if (item.uuid == this.updateTimingUuid) {
+                item.name = res.data.name;
+              }
             });
           })
           .catch((error) => {
@@ -485,30 +491,29 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            // EmployeeService.delete(this.deleteRows)
-            // .then((res) => {
-            //   if (res.status == 200) {
-            //     this.$swal.fire({
-            //       icon: "success",
-            //       title: "Success",
-            //       text: "Employee Deleted Successfully",
-            //       timer: 3600,
-            //     });
-            //     this.usersData = this.usersData.filter(
-            //       (employee) => employee.uuid != uuid
-            //     );
-            //     this.getTotalCardData();
-            //   }
-            // })
-            // .catch((error) => {
-            //   this.$swal.fire({
-            //     icon: "error",
-            //     title: "Error",
-            //     text: "Something went Wrong",
-            //     timer: 3600,
-            //   });
-            // });
-            // this.deleteRows = [];
+            this.$http
+              .delete("branch-shifts/" + this.deleteRows)
+              .then((res) => {
+                this.$swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: "Shift Deleted Successfully",
+                  timer: 3600,
+                });
+                this.shifts.map((item, id) => {
+                  if (item.uuid == uuid) {
+                    this.shifts.splice(id, 1);
+                  }
+                });
+              })
+              .catch((error) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+              });
           }
         });
     },
