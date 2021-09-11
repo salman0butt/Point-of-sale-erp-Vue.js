@@ -3,46 +3,63 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeContract() : saveEmployeeContract()"
+          @submit.prevent="
+            isEditing ? updateEmployeeEmergencyContact() : saveEmployeeEmergencyContact()
+          "
         >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Contract Name"
+                label="Emergency Contact Name"
                 v-model="form.name"
                 :class="{ error: $v.form.name.$error }"
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
                 <p v-if="!$v.form.name.required" class="errorMsg">
-                  Contract Name is required
+                  Emergency Contact Name is required
                 </p>
               </div>
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Value"
-                v-model="form.value"
-                :class="{ error: $v.form.value.$error }"
-                @input="$v.form.value.$touch()"
+                label="Relationship"
+                v-model="form.relationship"
+                :class="{ error: $v.form.relationship.$error }"
+                @input="$v.form.relationship.$touch()"
               />
-              <div v-if="$v.form.value.$error">
-                <p v-if="!$v.form.value.required" class="errorMsg">Value is required</p>
+              <div v-if="$v.form.relationship.$error">
+                <p v-if="!$v.form.relationship.required" class="errorMsg">
+                  Relationship is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CTextarea
-                label="Terms & Conditions"
-                placeholder="Content..."
-                v-model="form.additional_terms_and_conditions"
+              <CInput
+                label="Phone Number"
+                v-model="form.phone_number"
+                :class="{ error: $v.form.phone_number.$error }"
+                @input="$v.form.phone_number.$touch()"
               />
-              <div v-if="$v.form.additional_terms_and_conditions.$error">
-                <p
-                  v-if="!$v.form.additional_terms_and_conditions.required"
-                  class="errorMsg"
-                >
-                  Terms & Conditions is required
+              <div v-if="$v.form.phone_number.$error">
+                <p v-if="!$v.form.phone_number.required" class="errorMsg">
+                  Phone Number is required
+                </p>
+              </div>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Address"
+                v-model="form.address"
+                :class="{ error: $v.form.address.$error }"
+                @input="$v.form.address.$touch()"
+              />
+              <div v-if="$v.form.address.$error">
+                <p v-if="!$v.form.address.required" class="errorMsg">
+                  Address is required
                 </p>
               </div>
             </CCol>
@@ -67,19 +84,20 @@
   </div>
 </template>
 <script>
-import EmployeeContractService from "@/services/employees/EmployeeContractService";
+import EmployeeEmergencyContactService from "@/services/employees/EmployeeEmergencyContactService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeContractForm",
+  name: "EmployeeEmergencyContactForm",
   data: () => ({
     isEditing: false,
     form: {
       id: null,
       employee_id: "",
       name: "",
-      value: "",
-      additional_terms_and_conditions: "",
+      relationship: "",
+      phone_number: "",
+      address: "",
     },
     empId: null,
   }),
@@ -87,8 +105,9 @@ export default {
     return {
       form: {
         name: { required },
-        value: { required },
-        additional_terms_and_conditions: { required },
+        relationship: { required },
+        phone_number: { required },
+        address: { required },
       },
     };
   },
@@ -96,21 +115,24 @@ export default {
     this.empId = this.empId = this.$route.params.id;
   },
   methods: {
-    saveEmployeeContract() {
+    saveEmployeeEmergencyContact() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeContractService.create(data)
+        EmployeeEmergencyContactService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Contract Added Successfully",
+                text: "Emergency Contact Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-contract-update", { type: "create", data: res.data });
+              this.$emit("employee-emergency-contact-update", {
+                type: "create",
+                data: res.data,
+              });
               this.$v.$reset();
               this.resetForm();
             }
@@ -126,22 +148,25 @@ export default {
           });
       }
     },
-    updateEmployeeContract() {
+    updateEmployeeEmergencyContact() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeContractService.update(this.form.id, data)
+        EmployeeEmergencyContactService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Contract Updated Successfully",
+                text: "Emergency Contact Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-contract-update", { type: "edit", data: res.data });
+              this.$emit("employee-emergency-contact-update", {
+                type: "edit",
+                data: res.data,
+              });
             }
           })
           .catch((error) => {
@@ -155,17 +180,17 @@ export default {
           });
       }
     },
-    getEmployeeContract() {
-      EmployeeContractService.get(this.empId)
+    getEmployeeEmergencyContact() {
+      EmployeeEmergencyContactService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.employee_id = data.employee_id;
             this.form.name = data.name;
-            this.form.value = data.value;
-            this.form.additional_terms_and_conditions =
-              data.additional_terms_and_conditions;
+            this.form.relationship = data.relationship;
+            this.form.phone_number = data.phone_number;
+            this.form.address = data.address;
           }
         })
         .catch((error) => {
@@ -176,12 +201,13 @@ export default {
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeContract();
+      this.getEmployeeEmergencyContact();
     },
     resetForm() {
       this.form.name = "";
-      this.form.value = "";
-      this.form.additional_terms_and_conditions = "";
+      this.form.relationship = "";
+      this.form.phone_number = "";
+      this.form.address = "";
       this.isEditing = false;
     },
   },

@@ -17,13 +17,13 @@
         <CCollapse :show="collapse_table">
           <EmployeeContractIndex
             ref="employeeContractRef"
-            @employeeContractEdit="employeeContractEdited"
+            @employee-contract-edit="employeeContractEdit"
           />
         </CCollapse>
         <CCollapse :show="collapse">
           <EmployeeContractForm
             ref="employeeContractEditRef"
-            @employeeContractCreated="employeeContractCreatedSend"
+            @employee-contract-update="employeeContractUpdate"
           />
         </CCollapse>
       </CCol>
@@ -53,11 +53,11 @@ export default {
         this.toggleName = "Add New Contract";
       }
     },
-    employeeContractCreatedSend() {
+    employeeContractUpdate(data) {
       this.ToggleEmployeeContract();
-      this.$refs.employeeContractRef.getEmployeeContract();
+      this.$refs.employeeContractRef.updateTableData(data);
     },
-    employeeContractEdited(uuid) {
+    employeeContractEdit(uuid) {
       this.ToggleEmployeeContract();
       this.$refs.employeeContractEditRef.getEditData(uuid);
     },

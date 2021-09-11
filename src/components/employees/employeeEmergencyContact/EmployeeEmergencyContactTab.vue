@@ -8,9 +8,9 @@
             <CTabs add-tab-classes="mt-1" variant="pills" fade>
               <CTab active id="show">
                 <template slot="title">
-                  {{ tabs.contract }}
+                  {{ tabs.contacts }}
                 </template>
-                <EmployeeContractToggle />
+                <EmployeeEmergencyContactToggle />
               </CTab>
             </CTabs>
           </CCardBody>
@@ -20,14 +20,14 @@
   </div>
 </template>
 <script>
-import EmployeeContractToggle from "@/components/employees/employeeContract/EmployeeContractToggle";
+import EmployeeEmergencyContactToggle from "@/components/employees/employeeEmergencyContact/EmployeeEmergencyContactToggle";
 
 export default {
-  name: "EmployeeContractTab",
-  components: { EmployeeContractToggle },
+  name: "EmployeeEmergencyContactTab",
+  components: { EmployeeEmergencyContactToggle },
   data: () => ({
     tabs: {
-      contract: "Contracts",
+      contacts: "Emergency Contacts",
     },
   }),
 };

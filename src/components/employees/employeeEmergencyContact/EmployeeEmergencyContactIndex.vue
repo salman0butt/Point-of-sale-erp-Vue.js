@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeContract"
+              :items="employeeEmergencyContact"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import EmployeeContractService from "@/services/employees/EmployeeContractService";
+import EmployeeEmergencyContactService from "@/services/employees/EmployeeEmergencyContactService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -86,23 +86,19 @@ const fields = [
     filter: false,
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "value", label: "VALUE", _style: "min-width:15%;" },
-  {
-    key: "additional_terms_and_conditions",
-    label: "TERMS & CONDITIONS",
-    _style: "min-width:15%;",
-  },
+  { key: "relationship", label: "RELATION", _style: "min-width:15%;" },
+  { key: "phone_number", label: "PHONE NUMBER", _style: "min-width:15%;" },
+  { key: "address", label: "ADDRESS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
-
 export default {
-  name: "EmployeeContractIndex",
+  name: "EmployeeEmergencyContactIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeContractData: [],
+      employeeEmergencyContactData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -111,24 +107,24 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeContract();
+    this.getEmployeeEmergencyContact();
   },
   computed: {
-    employeeContract() {
-      return this.employeeContractData;
+    employeeEmergencyContact() {
+      return this.employeeEmergencyContactData;
     },
   },
   methods: {
-    getEmployeeContract() {
+    getEmployeeEmergencyContact() {
       this.empId = this.$route.params.id;
 
-      EmployeeContractService.getAll(this.empId)
+      EmployeeEmergencyContactService.getAll(this.empId)
         .then(({ data }) => {
           this.loading = false;
           if (data != null && data != "") {
-            this.employeeContractData = [];
+            this.employeeEmergencyContactData = [];
             data.data.map((item, id) => {
-              this.employeeContractData.push({ ...item, id });
+              this.employeeEmergencyContactData.push({ ...item, id });
             });
           }
         })
@@ -139,15 +135,15 @@ export default {
     updateTableData(obj) {
       if (obj.type === "create") {
         let arr = Object.values(
-          this.employeeContractData.map(function (item) {
+          this.employeeEmergencyContactData.map(function (item) {
             return item.id;
           })
         );
         let max = Math.max(...arr);
         obj.data.id = max + 1;
-        this.employeeContractData.push(obj.data);
+        this.employeeEmergencyContactData.push(obj.data);
       } else {
-        this.employeeContractData.map(function (item) {
+        this.employeeEmergencyContactData.map(function (item) {
           if (item.uuid === obj.data.uuid) {
             obj.data.id = item.id;
             return Object.assign(item, obj.data);
@@ -161,14 +157,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeContractData[item.id]._selected);
-      this.$set(this.employeeContractData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeEmergencyContactData[item.id]._selected);
+      this.$set(this.employeeEmergencyContactData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-contract-edit", uuid);
+      this.$emit("employee-emergency-contact-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -183,7 +179,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeContractService.delete(this.deleteRows)
+            EmployeeEmergencyContactService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -192,7 +188,7 @@ export default {
                     text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeContractData = this.employeeContractData.filter(
+                  this.employeeEmergencyContactData = this.employeeEmergencyContactData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
