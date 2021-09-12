@@ -80,9 +80,13 @@ const actions = {
 logout({commit}){
   return new Promise((resolve) => {
     commit('logout');
+    http.post('/auth/logout').then((res) => {
     localStorage.clear();
     delete http.defaults.headers.common['Authorization'];
     resolve();
+    }).catch((err) => {
+        console.log(err);
+    });
   })
 },
 set_errors({commit}, errorMsg){
