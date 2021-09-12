@@ -84,7 +84,11 @@
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="Google Location" v-model="form.location">
                           <template #append>
-                            <CButton type="button" color="default">
+                            <CButton
+                              type="button"
+                              color="default"
+                              @click="locatorButtonPressed"
+                            >
                               <svg
                                 height="15pt"
                                 viewBox="0 0 512 512"
@@ -120,7 +124,7 @@
                       </CCol>
                     </CRow>
 
-                    <CButton
+                    <CLoadingButton
                       progress
                       timeout="2000"
                       block
@@ -128,9 +132,9 @@
                       style="float: right; width: 200px"
                       type="submit"
                       @click="saveAndExit = false"
-                      >Save & Continue</CButton
+                      >Save & Continue</CLoadingButton
                     >
-                    <CButton
+                    <CLoadingButton
                       timeout="2000"
                       block
                       color="danger"
@@ -142,7 +146,7 @@
                       "
                       @click="saveAndExit = true"
                       type="submit"
-                      >Save & Exit</CButton
+                      >Save & Exit</CLoadingButton
                     >
                   </CCardBody>
                 </form>
@@ -151,86 +155,6 @@
                 <template slot="title">
                   {{ tabs[1] }}
                 </template>
-                <CCardBody>
-                  <CCardBody>
-                    <CRow>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <p>Day</p>
-                      </CCol>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <p>Status</p>
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <p>From</p>
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <p>To</p>
-                      </CCol>
-                    </CRow>
-                  </CCardBody>
-
-                  <CCardBody v-for="(item, index) in timelst" :key="item.date">
-                    <CRow>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <p>{{ item.day }}</p>
-                      </CCol>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <CSwitch
-                          class="mx-1"
-                          color="success"
-                          :checked="item.status"
-                          shape="pill"
-                        />
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CInput type="time" v-model="form[item.day + 'from']" />
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CInput type="time" v-model="form[item.day + 'to']" />
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CButton
-                          block
-                          color="default"
-                          @click="
-                            Addtiming(
-                              index,
-                              form[item.day + 'from'],
-                              form[item.day + 'to']
-                            )
-                          "
-                          style="width: 39px; border-radius: 35px; margin: auto"
-                          ><CIcon name="cil-plus"
-                        /></CButton>
-                      </CCol>
-                    </CRow>
-                    <CRow v-for="(item, index) in item.time" :key="item.from">
-                      <CCol sm="6" md="3" class="pt-2"> </CCol>
-                      <CCol sm="6" md="3" class="pt-2"> </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        {{ item.from }}
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        {{ item.to }}
-                      </CCol>
-                      <CCol sm="6" md="2" class="pt-2">
-                        <CButton
-                          block
-                          color="default"
-                          style="width: 39px; border-radius: 35px; margin: auto"
-                          @click="DelTiming(item.id, index)"
-                          ><CIcon name="cil-minus"
-                        /></CButton>
-                      </CCol>
-                    </CRow>
-                  </CCardBody>
-                  <CButton
-                    block
-                    color="success"
-                    style="float: right; width: 100px; margin-top: 25px"
-                    >Save</CButton
-                  >
-                </CCardBody>
               </CTab>
               <CTab disabled>
                 <template slot="title">
@@ -276,63 +200,6 @@
                 <template slot="title">
                   {{ tabs[3] }}
                 </template>
-                <CCardBody>
-                  <CRow>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CSelect
-                        label="Channel"
-                        :options="['option1', 'option2', 'option3', 'option4']"
-                        :value.sync="mediaitem.channel"
-                      />
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      <CInput label="Name/Account" v-model="mediaitem.name" />
-                    </CCol>
-                    <CCol sm="6" md="3" class="pt-2">
-                      <CInput label="Amount" v-model="mediaitem.amount" />
-                    </CCol>
-                    <CCol sm="6" md="1" class="pt-2">
-                      <CButton
-                        block
-                        color="default"
-                        @click="AddMedia"
-                        style="
-                          width: 39px;
-                          border-radius: 35px;
-                          margin: auto;
-                          margin-top: 25px;
-                        "
-                        ><CIcon name="cil-plus"
-                      /></CButton>
-                    </CCol>
-                  </CRow>
-                  <CRow v-for="(item, index) in mediaLst" :key="item.channel">
-                    <CCol sm="6" md="4" class="pt-2">
-                      {{ item.channel }}
-                    </CCol>
-                    <CCol sm="6" md="4" class="pt-2">
-                      {{ item.name }}
-                    </CCol>
-                    <CCol sm="6" md="3" class="pt-2">
-                      {{ item.amount }}
-                    </CCol>
-                    <CCol sm="6" md="1" class="pt-2">
-                      <CButton
-                        block
-                        color="default"
-                        style="width: 39px; border-radius: 35px; margin: auto"
-                        @click="DelMedia(index)"
-                        ><CIcon name="cil-minus"
-                      /></CButton>
-                    </CCol>
-                  </CRow>
-                  <CButton
-                    block
-                    color="success"
-                    style="float: right; width: 100px; margin-top: 25px"
-                    >Save</CButton
-                  >
-                </CCardBody>
               </CTab>
             </CTabs>
           </CCardBody>
@@ -360,17 +227,7 @@ export default {
         opening_date: "",
         closing_date: "",
       },
-      timelst: [
-        { day: "Sunday", status: false, time: [] },
-        { day: "Monday", status: true, time: [] },
-        { day: "Tuesday", status: true, time: [] },
-        { day: "Wdnesday", status: true, time: [] },
-        { day: "Thursday", status: true, time: [] },
-        { day: "Friday", status: true, time: [] },
-        { day: "Saturday", status: true, time: [] },
-      ],
-      mediaLst: [],
-      mediaitem: { channel: "", name: "", amount: "" },
+
       tabs: ["General", "Timing", "Traget", "Social media"],
       activeTab: 1,
       usersData: [],
@@ -393,33 +250,16 @@ export default {
   created() {},
 
   methods: {
-    Addtiming(index, from, to) {
-      if (from == undefined || to == undefined) {
-        return false;
-      }
-      var data = { from: from, to: to, id: index };
-      this.timelst[index].time.push(data);
-    },
-    DelTiming(id, index) {
-      this.timelst[id].time.splice(index, 1);
-    },
-    AddMedia() {
-      if (
-        this.mediaitem.channel == "" ||
-        this.mediaitem.name == "" ||
-        this.mediaitem.amount == ""
-      ) {
-        return false;
-      }
-      var data = {
-        channel: this.mediaitem.channel,
-        name: this.mediaitem.name,
-        amount: this.mediaitem.amount,
-      };
-      this.mediaLst.push(data);
-    },
-    DelMedia(index) {
-      this.mediaLst.splice(index, 1);
+    locatorButtonPressed() {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log(position.coords.latitude);
+          console.log(position.coords.longitude);
+        },
+        (error) => {
+          console.log(error.message);
+        }
+      );
     },
 
     saveBranch() {
