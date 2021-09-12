@@ -20,60 +20,38 @@
               >
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeQualificationTab' }"
+                v-bind:class="{ active: activeTab === 'HrSettingForm' }"
                 href="#"
-                @click.prevent="changeActiveTab('EmployeeQualificationTab')"
+                @click.prevent="changeActiveTab('HrSettingForm')"
                 ><CIcon :content="$options.cilUser" />&nbsp; HR</a
               >
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeAllowanceTab' }"
+                v-bind:class="{ active: activeTab === '' }"
                 href="#"
-                @click.prevent="changeActiveTab('EmployeeAllowanceTab')"
+                @click.prevent="changeActiveTab('')"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; Other</a
               >
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeBankAccountTab' }"
+                v-bind:class="{ active: activeTab === '' }"
                 href="#"
-                @click.prevent="changeActiveTab('EmployeeBankAccountTab')"
+                @click.prevent="changeActiveTab('')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Other</a
               >
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeLicenseTab' }"
+                v-bind:class="{ active: activeTab === '' }"
                 href="#"
-                @click.prevent="changeActiveTab('EmployeeLicenseTab')"
+                @click.prevent="changeActiveTab('')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Other</a
               >
               <a
                 class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeContractTab' }"
+                v-bind:class="{ active: activeTab === '' }"
                 href="#"
-                @click.prevent="changeActiveTab('EmployeeContractTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Other</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeEmergencyContactTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeEmergencyContactTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Other</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeExpenseTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeExpenseTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Other</a
-              >
-
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeTargetTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeTargetTab')"
+                @click.prevent="changeActiveTab('')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Other</a
               >
             </div>
@@ -89,7 +67,7 @@
   </div>
 </template>
 <script>
-import EmployeeQualificationTab from "@/components/employees/employeeQualification/EmployeeQualificationTab";
+import HrSettingForm from "@/components/settings/HrSettingForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -97,11 +75,11 @@ export default {
   cilUser,
   cisCircle,
   components: {
-    EmployeeQualificationTab,
+    HrSettingForm,
   },
   data() {
     return {
-      activeTab: "EmployeeTab",
+      activeTab: "HrSettingForm",
     };
   },
   created() {},

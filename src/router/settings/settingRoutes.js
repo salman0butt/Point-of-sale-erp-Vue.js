@@ -14,7 +14,7 @@ const settingRoutes =  {
     children: [
       {
         path: '/settings/index',
-        name: 'IndexSettings',
+        name: 'Setting',
         component: Setting
       },
     ]
