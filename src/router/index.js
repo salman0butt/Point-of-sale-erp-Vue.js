@@ -4,6 +4,7 @@ import auth from '../middleware/auth'
 import employeeRoutes from '@/router/employees/employeeRoutes';
 import departmentRoutes from '@/router/departments/departmentRoutes';
 import designationRoutes from '@/router/designations/designationRoutes';
+import settingRoutes from '@/router/settings/settingRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
@@ -159,6 +160,7 @@ const router = new Router({
         departmentRoutes,
         designationRoutes,
         attendanceRoutes,
+        settingRoutes,
 
         {
           path: 'theme',
@@ -535,7 +537,15 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      // beforeEnter:(to, from, next) => {
+      //   if(store.getters.isLoggedIn){
+      //      next({ path: '/dashboard' });
+      //   }else {
+      //     next({ path: '/login' });
+      //   }
+      //   next();
+      // },
     },
     {
       path: '/forget-password',
