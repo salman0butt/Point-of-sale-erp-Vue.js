@@ -5,6 +5,7 @@ import employeeRoutes from '@/router/employees/employeeRoutes';
 import departmentRoutes from '@/router/departments/departmentRoutes';
 import designationRoutes from '@/router/designations/designationRoutes';
 import store from '@/store'
+import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -157,6 +158,7 @@ const router = new Router({
         employeeRoutes,
         departmentRoutes,
         designationRoutes,
+        attendanceRoutes,
 
         {
           path: 'theme',
@@ -584,7 +586,7 @@ const router = new Router({
 })
 
 const originalPush = Router.prototype.push
-Router.prototype.push = function push (location) {
+Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 
