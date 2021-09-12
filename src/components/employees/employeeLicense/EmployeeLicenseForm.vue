@@ -3,57 +3,54 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeAddress() : saveEmployeeAddress()"
+          @submit.prevent="isEditing ? updateEmployeeLicense() : saveEmployeeLicense()"
         >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Address"
-                v-model="form.address"
-                :class="{ error: $v.form.address.$error }"
-                @input="$v.form.address.$touch()"
+                label="Name"
+                v-model="form.name"
+                :class="{ error: $v.form.name.$error }"
+                @input="$v.form.name.$touch()"
               />
-              <div v-if="$v.form.address.$error">
-                <p v-if="!$v.form.address.required" class="errorMsg">
-                  Address is required
-                </p>
+              <div v-if="$v.form.name.$error">
+                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+              </div>
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect label="Type" :options="options.type" :value.sync="form.type" />
+              <div v-if="$v.form.type.$error">
+                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Second Address (Optional)" v-model="form.address2" />
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="City"
-                v-model="form.city"
-                :class="{ error: $v.form.city.$error }"
-                @input="$v.form.city.$touch()"
+                label="Issuance Date"
+                type="date"
+                v-model="form.issuance"
+                :class="{ error: $v.form.issuance.$error }"
+                @input="$v.form.issuance.$touch()"
               />
-              <div v-if="$v.form.city.$error">
-                <p v-if="!$v.form.city.required" class="errorMsg">City is required</p>
+              <div v-if="$v.form.issuance.$error">
+                <p v-if="!$v.form.issuance.required" class="errorMsg">
+                  Issuance Date is required
+                </p>
               </div>
             </CCol>
           </CRow>
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Postal Code"
-                v-model="form.postal_code"
-                :class="{ error: $v.form.postal_code.$error }"
-                @input="$v.form.postal_code.$touch()"
+                label="Expiry"
+                type="date"
+                v-model="form.expiry"
+                :class="{ error: $v.form.expiry.$error }"
+                @input="$v.form.expiry.$touch()"
               />
-              <div v-if="$v.form.postal_code.$error">
-                <p v-if="!$v.form.postal_code.required" class="errorMsg">
-                  Postal Code is required
-                </p>
+              <div v-if="$v.form.expiry.$error">
+                <p v-if="!$v.form.expiry.required" class="errorMsg">Expiry is required</p>
               </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Is Default"
-                :options="options.set_default"
-                :value.sync="form.set_default"
-              />
             </CCol>
           </CRow>
 
@@ -75,56 +72,60 @@
   </div>
 </template>
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import EmployeeLicenseService from "@/services/employees/EmployeeLicenseService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeAddressForm",
+  name: "EmployeeLicenseForm",
   data: () => ({
     isEditing: false,
     form: {
-      address: "",
-      address2: "",
-      city: "",
-      postal_code: "",
-      set_default: "",
+      id: null,
       employee_id: "",
+      name: "",
+      type: "",
+      issuance: "",
+      expiry: "",
     },
     empId: null,
     options: {
-      set_default: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "yes", label: "Yes" },
-        { value: "no", label: "No" },
+      type: [
+        { value: "", label: "Choose Type", disabled: true, selected: "" },
+        { value: "type1", label: "Type1" },
+        { value: "type2", label: "Type2" },
       ],
     },
   }),
   validations() {
     return {
       form: {
-        address: { required },
-        city: { required },
-        postal_code: { required },
+        name: { required },
+        type: { required },
+        issuance: { required },
+        expiry: { required },
       },
     };
   },
+  created() {
+    this.empId = this.empId = this.$route.params.id;
+  },
   methods: {
-    saveEmployeeAddress() {
+    saveEmployeeLicense() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeAddressService.create(data)
+        EmployeeLicenseService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Address Added Successfully",
+                text: "License Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employeeAddressCreated");
               this.$v.$reset();
+              this.$emit("employeeLicenseCreated");
               this.resetForm();
             }
           })
@@ -139,22 +140,22 @@ export default {
           });
       }
     },
-    updateEmployeeAddress() {
+    updateEmployeeLicense() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeAddressService.update(this.empId, data)
+        EmployeeLicenseService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Address Updated Successfully",
+                text: "License Updated Successfully",
                 timer: 3600,
               });
-              this.$emit("employeeAddressCreated");
               this.$v.$reset();
+              this.$emit("employeeLicenseCreated");
             }
           })
           .catch((error) => {
@@ -168,34 +169,34 @@ export default {
           });
       }
     },
-    getEmployeeAddress() {
-      EmployeeAddressService.get(this.empId)
+    getEmployeeLicense() {
+      EmployeeLicenseService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
-            this.empId = data.uuid;
-            this.form.address = data.address;
-            this.form.address2 = data.address2;
-            this.form.city = data.city;
-            this.form.postal_code = data.postal_code;
-            this.form.set_default = data.set_default;
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.employee_id = data.employee_id;
+            this.form.name = data.name;
+            this.form.type = data.type;
+            this.form.issuance = data.issuance;
+            this.form.expiry = data.expiry;
           }
         })
         .catch((error) => {
           console.log(error);
+          this.isEditing = false;
         });
     },
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeAddress();
+      this.getEmployeeLicense();
     },
     resetForm() {
-      this.form.address = "";
-      this.form.address2 = "";
-      this.form.city = "";
-      this.form.postal_code = "";
-      this.form.set_default = "";
-      this.form.employee_id = "";
+      this.form.name = "";
+      this.form.type = "";
+      this.form.issuance = "";
+      this.form.expiry = "";
       this.isEditing = false;
     },
   },

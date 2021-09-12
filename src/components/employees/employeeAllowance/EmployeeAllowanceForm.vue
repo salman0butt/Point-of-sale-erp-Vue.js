@@ -63,7 +63,6 @@
               color="success"
               style="float: right; width: 150px; margin-right: 20px"
               type="submit"
-              :disabled="$v.$invalid"
               >Save</CButton
             >
           </CRow>
@@ -92,12 +91,12 @@ export default {
     empId: null,
     options: {
       type: [
-        { value: "", label: "Choose Type" },
+        { value: "", label: "Choose Type", disabled: true, selected: "" },
         { value: "type1", label: "Type1" },
         { value: "type2", label: "Type2" },
       ],
       repeat: [
-        { value: "", label: "Choose repeat" },
+        { value: "", label: "Choose repeat", disabled: true, selected: "" },
         { value: "daily", label: "Daily" },
         { value: "weekly", label: "Weekly" },
         { value: "monthly", label: "Monthly" },
@@ -181,15 +180,16 @@ export default {
     getEmployeeAllowance() {
       EmployeeAllowanceService.get(this.empId)
         .then(({ data }) => {
-          console.log(data);
-          this.isEditing = true;
-          this.form.id = data.uuid;
-          this.form.employee_id = data.employee_id;
-          this.form.name = data.name;
-          this.form.type = data.type;
-          this.form.amount = data.amount;
-          this.form.repeat = data.repeat;
-          this.form.detail = data.detail;
+          if (data != null && data != "") {
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.employee_id = data.employee_id;
+            this.form.name = data.name;
+            this.form.type = data.type;
+            this.form.amount = data.amount;
+            this.form.repeat = data.repeat;
+            this.form.detail = data.detail;
+          }
         })
         .catch((error) => {
           console.log(error);

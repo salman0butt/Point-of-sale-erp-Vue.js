@@ -3,9 +3,6 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> All Designations </CCardHeader>
-        </CCard>
-        <CCard>
           <CCardBody>
             <router-link class="btn btn-success" to="/designations/create"
               >Create Designations</router-link

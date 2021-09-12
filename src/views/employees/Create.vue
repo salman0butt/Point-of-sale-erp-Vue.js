@@ -386,7 +386,6 @@
                       style="float: right; width: 200px; margin-left: 20px"
                       type="submit"
                       @click="saveAndExit = false"
-                      :disabled="$v.$invalid"
                       >Save & Continue</CButton
                     >
                     <CButton
@@ -396,7 +395,6 @@
                       style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       @click="saveAndExit = true"
                       type="submit"
-                      :disabled="$v.$invalid"
                       >Save & Exit</CButton
                     >
                   </CRow>
@@ -470,36 +468,40 @@ export default {
       user_language: "",
     },
     options: {
-      branches: [{ value: "", label: "Choose Branch" }],
-      managers: [{ value: "", label: "Choose Manager" }],
-      departments: [{ value: "", label: "Choose Departments" }],
-      designations: [{ value: "", label: "Choose Designations" }],
+      branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
+      managers: [{ value: "", label: "Choose Manager", disabled: true, selected: "" }],
+      departments: [
+        { value: "", label: "Choose Departments", disabled: true, selected: "" },
+      ],
+      designations: [
+        { value: "", label: "Choose Designations", disabled: true, selected: "" },
+      ],
       gender: [
-        { value: "", label: "Choose Gender" },
+        { value: "", label: "Choose Gender", disabled: true, selected: "" },
         { value: "male", label: "Male" },
         { value: "female", label: "Female" },
       ],
       marital_status: [
-        { value: "", label: "Choose Status" },
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "single", label: "Single" },
         { value: "married", label: "Married" },
       ],
       status: [
-        { value: "", label: "Choose Status" },
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
       user_role: [
-        { value: "", label: "Choose Status" },
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "super-admin", label: "Super Admin" },
       ],
       user_status: [
-        { value: "", label: "Choose Status" },
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },
         { value: "0", label: "InActive" },
       ],
       user_language: [
-        { value: "", label: "Choose Language" },
+        { value: "", label: "Choose Language", disabled: true, selected: "" },
         { value: "eng", label: "English" },
         { value: "ar", label: "Arabic" },
       ],

@@ -8,7 +8,7 @@
           class="mb-2 mt-3"
           style="float: right"
         >
-          {{ addressToggle }}
+          {{ toggleName }}
         </CButton>
       </CCol>
     </CRow>
@@ -38,7 +38,7 @@ export default {
   name: "EmployeeBankAccountTab",
   components: { EmployeeBankAccountIndex, EmployeeBankAccountForm },
   data: () => ({
-    addressToggle: "Add New Bank Account",
+    toggleName: "Add New Bank Account",
     collapse: false,
     collapse_table: true,
   }),
@@ -47,10 +47,10 @@ export default {
       this.resetEmployeeBankAccountForm();
       this.collapse = !this.collapse;
       this.collapse_table = !this.collapse_table;
-      if (this.addressToggle == "Add New Bank Account") {
-        this.addressToggle = "Go To Bank Accounts";
-      } else if (this.addressToggle == "Go To Bank Accounts") {
-        this.addressToggle = "Add New Bank Account";
+      if (this.toggleName == "Add New Bank Account") {
+        this.toggleName = "Go To Bank Accounts";
+      } else if (this.toggleName == "Go To Bank Accounts") {
+        this.toggleName = "Add New Bank Account";
       }
     },
     employeeBankAccountCreatedSend() {

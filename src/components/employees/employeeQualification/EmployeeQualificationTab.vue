@@ -3,16 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Employee</CCardHeader>
+          <CCardHeader>Qualifications</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1" variant="pills" fade>
-              <CTab active id="show">
-                <template slot="title">
-                  {{ tabs.qualification }}
-                </template>
-                <EmployeeQualificationToggle />
-              </CTab>
-            </CTabs>
+            <EmployeeQualificationToggle />
           </CCardBody>
         </CCard>
       </CCol>
@@ -25,11 +18,6 @@ import EmployeeQualificationToggle from "@/components/employees/employeeQualific
 export default {
   name: "EmployeeQualificationTab",
   components: { EmployeeQualificationToggle },
-  data: () => ({
-    tabs: {
-      qualification: "Qualification",
-      detail: "Detail",
-    },
-  }),
+  data: () => ({}),
 };
 </script>

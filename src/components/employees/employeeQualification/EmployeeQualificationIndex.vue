@@ -122,11 +122,13 @@ export default {
 
       EmployeeQualificationService.getAll(this.empId)
         .then(({ data }) => {
-          this.employeeQualificationData = [];
-          data.data.map((item, id) => {
-            this.employeeQualificationData.push({ ...item, id });
-          });
           this.loading = false;
+          if (data != null && data != "") {
+            this.employeeQualificationData = [];
+            data.data.map((item, id) => {
+              this.employeeQualificationData.push({ ...item, id });
+            });
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -166,7 +168,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "Qualification Deleted Successfully",
                     timer: 3600,
                   });
                   this.employeeQualificationData = this.employeeQualificationData.filter(
