@@ -3,9 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="
-            isEditing ? updateEmployeeQualification() : saveEmployeeQualification()
-          "
+          @submit.prevent="isEditing ? updateEmployeeExpense() : saveEmployeeExpense()"
         >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
@@ -27,36 +25,32 @@
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Organization"
-                v-model="form.organization"
-                :class="{ error: $v.form.organization.$error }"
-                @input="$v.form.organization.$touch()"
+                label="Amount"
+                type="number"
+                v-model="form.amount"
+                :class="{ error: $v.form.amount.$error }"
+                @input="$v.form.amount.$touch()"
               />
-              <div v-if="$v.form.organization.$error">
-                <p v-if="!$v.form.organization.required" class="errorMsg">
-                  Organization is required
-                </p>
+              <div v-if="$v.form.amount.$error">
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
             </CCol>
           </CRow>
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Marks"
-                type="number"
-                v-model="form.marks"
-                :class="{ error: $v.form.marks.$error }"
-                @input="$v.form.marks.$touch()"
+              <CSelect
+                label="Repeat"
+                :options="options.periodic"
+                :value.sync="form.periodic"
               />
-              <div v-if="$v.form.marks.$error">
-                <p v-if="!$v.form.marks.required" class="errorMsg">Marks is required</p>
+              <div v-if="$v.form.periodic.$error">
+                <p v-if="!$v.form.periodic.required" class="errorMsg">
+                  Periodic is required
+                </p>
               </div>
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Year" :options="options.year" :value.sync="form.year" />
-              <div v-if="$v.form.year.$error">
-                <p v-if="!$v.form.year.required" class="errorMsg">Year is required</p>
-              </div>
+            <CCol sm="6" md="6">
+              <CTextarea label="Note" placeholder="Content..." v-model="form.detail" />
             </CCol>
           </CRow>
 
@@ -78,11 +72,11 @@
   </div>
 </template>
 <script>
-import EmployeeQualificationService from "@/services/employees/EmployeeQualificationService";
+import EmployeeExpenseService from "@/services/employees/EmployeeExpenseService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeQualificationForm",
+  name: "EmployeeExpenseForm",
   data: () => ({
     isEditing: false,
     form: {
@@ -90,20 +84,24 @@ export default {
       employee_id: "",
       name: "",
       type: "",
-      organization: "",
-      marks: "",
-      year: "",
+      periodic: "",
+      amount: "",
+      detail: "",
     },
     empId: null,
     options: {
       type: [
         { value: "", label: "Choose Type", disabled: true, selected: "" },
-        { value: "metric", label: "Metric" },
-        { value: "inter", label: "Inter-mediate" },
-        { value: "bachler", label: "Bachlors" },
-        { value: "master", label: "Masters" },
+        { value: "type1", label: "Type1" },
+        { value: "type2", label: "Type2" },
       ],
-      year: [{ value: "", label: "Choose Year" }],
+      periodic: [
+        { value: "", label: "Choose repeat", disabled: true, selected: "" },
+        { value: "daily", label: "Daily" },
+        { value: "weekly", label: "Weekly" },
+        { value: "monthly", label: "Monthly" },
+        { value: "yearly", label: "Yearly" },
+      ],
     },
   }),
   validations() {
@@ -111,33 +109,34 @@ export default {
       form: {
         name: { required },
         type: { required },
-        organization: { required },
-        marks: { required },
-        year: { required },
+        periodic: { required },
+        amount: { required },
       },
     };
   },
   created() {
     this.empId = this.empId = this.$route.params.id;
-    this.generateArrayOfYears();
   },
   methods: {
-    saveEmployeeQualification() {
+    saveEmployeeExpense() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeQualificationService.create(data)
+        EmployeeExpenseService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Qualification Added Successfully",
+                text: "Expense Added Successfully",
                 timer: 3600,
               });
+              this.$emit("employee-expense-update", {
+                type: "create",
+                data: res.data,
+              });
               this.$v.$reset();
-              this.$emit("employeeQualificationCreated");
               this.resetForm();
             }
           })
@@ -152,22 +151,25 @@ export default {
           });
       }
     },
-    updateEmployeeQualification() {
+    updateEmployeeExpense() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeQualificationService.update(this.form.id, data)
+        EmployeeExpenseService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Qualification Updated Successfully",
+                text: "Expense Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employeeQualificationCreated");
+              this.$emit("employee-expense-update", {
+                type: "edit",
+                data: res.data,
+              });
             }
           })
           .catch((error) => {
@@ -181,8 +183,8 @@ export default {
           });
       }
     },
-    getEmployeeQualification() {
-      EmployeeQualificationService.get(this.empId)
+    getEmployeeExpense() {
+      EmployeeExpenseService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
@@ -190,9 +192,9 @@ export default {
             this.form.employee_id = data.employee_id;
             this.form.name = data.name;
             this.form.type = data.type;
-            this.form.organization = data.organization;
-            this.form.marks = data.marks;
-            this.form.year = parseInt(data.year);
+            this.form.periodic = data.periodic;
+            this.form.amount = data.amount;
+            this.form.detail = data.detail;
           }
         })
         .catch((error) => {
@@ -200,24 +202,17 @@ export default {
           this.isEditing = false;
         });
     },
-    generateArrayOfYears() {
-      let max = new Date().getFullYear();
-      let min = max - 15;
-      for (let i = max; i >= min; i--) {
-        this.options.year.push(i);
-      }
-    },
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeQualification();
+      this.getEmployeeExpense();
     },
     resetForm() {
       this.form.name = "";
       this.form.type = "";
-      this.form.organization = "";
-      this.form.marks = "";
-      this.form.year = "";
+      this.form.periodic = "";
+      this.form.amount = "";
+      this.form.detail = "";
       this.isEditing = false;
     },
   },

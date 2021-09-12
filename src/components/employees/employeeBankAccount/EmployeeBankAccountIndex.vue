@@ -122,11 +122,13 @@ export default {
 
       EmployeeBankAccountService.getAll(this.empId)
         .then(({ data }) => {
-          this.employeeBankAccountData = [];
-          data.data.map((item, id) => {
-            this.employeeBankAccountData.push({ ...item, id });
-          });
           this.loading = false;
+          if (data != null && data != "") {
+            this.employeeBankAccountData = [];
+            data.data.map((item, id) => {
+              this.employeeBankAccountData.push({ ...item, id });
+            });
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -166,7 +168,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "Bank Account Deleted Successfully",
                     timer: 3600,
                   });
                   this.employeeBankAccountData = this.employeeBankAccountData.filter(

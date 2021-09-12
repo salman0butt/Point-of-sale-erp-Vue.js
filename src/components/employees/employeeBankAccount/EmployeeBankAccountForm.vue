@@ -83,7 +83,6 @@
               color="success"
               style="float: right; width: 150px; margin-right: 20px"
               type="submit"
-              :disabled="$v.$invalid"
               >Save</CButton
             >
           </CRow>
@@ -137,7 +136,7 @@ export default {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "BankAccount Added Successfully",
+                text: "Bank Account Added Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -167,7 +166,7 @@ export default {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "BankAccount Updated Successfully",
+                text: "Bank Account Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -188,15 +187,16 @@ export default {
     getEmployeeBankAccount() {
       EmployeeBankAccountService.get(this.empId)
         .then(({ data }) => {
-          console.log(data);
-          this.isEditing = true;
-          this.form.id = data.uuid;
-          this.form.employee_id = data.employee_id;
-          this.form.name = data.name;
-          this.form.iban = data.iban;
-          this.form.account_number = data.account_number;
-          this.form.bank_name = data.bank_name;
-          this.form.swift = data.swift;
+          if (data != null && data != "") {
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.employee_id = data.employee_id;
+            this.form.name = data.name;
+            this.form.iban = data.iban;
+            this.form.account_number = data.account_number;
+            this.form.bank_name = data.bank_name;
+            this.form.swift = data.swift;
+          }
         })
         .catch((error) => {
           console.log(error);

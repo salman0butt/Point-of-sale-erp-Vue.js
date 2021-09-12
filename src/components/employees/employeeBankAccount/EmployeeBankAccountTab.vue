@@ -3,16 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Employee</CCardHeader>
+          <CCardHeader>Bank Accounts</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1" variant="pills" fade>
-              <CTab active id="show">
-                <template slot="title">
-                  {{ tabs.bank }}
-                </template>
-                <EmployeeBankAccountToggle />
-              </CTab>
-            </CTabs>
+            <EmployeeBankAccountToggle />
           </CCardBody>
         </CCard>
       </CCol>
@@ -25,10 +18,6 @@ import EmployeeBankAccountToggle from "@/components/employees/employeeBankAccoun
 export default {
   name: "EmployeeBankAccountTab",
   components: { EmployeeBankAccountToggle },
-  data: () => ({
-    tabs: {
-      bank: "Bank Accounts",
-    },
-  }),
+  data: () => ({}),
 };
 </script>

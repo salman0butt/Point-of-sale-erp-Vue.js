@@ -8,7 +8,7 @@
           class="mb-2 mt-3"
           style="float: right"
         >
-          {{ addressToggle }}
+          {{ toggleName }}
         </CButton>
       </CCol>
     </CRow>
@@ -38,7 +38,7 @@ export default {
   name: "EmployeeAddressTab",
   components: { EmployeeAddressIndex, EmployeeAddressForm },
   data: () => ({
-    addressToggle: "Add New Address",
+    toggleName: "Add New Address",
     collapse: false,
     collapse_table: true,
   }),
@@ -47,10 +47,10 @@ export default {
       this.resetEmployeeAddressForm();
       this.collapse = !this.collapse;
       this.collapse_table = !this.collapse_table;
-      if (this.addressToggle == "Add New Address") {
-        this.addressToggle = "Go To Addresses";
-      } else if (this.addressToggle == "Go To Addresses") {
-        this.addressToggle = "Add New Address";
+      if (this.toggleName == "Add New Address") {
+        this.toggleName = "Go To Addresses";
+      } else if (this.toggleName == "Go To Addresses") {
+        this.toggleName = "Add New Address";
       }
     },
     employeeAddressCreatedSend() {

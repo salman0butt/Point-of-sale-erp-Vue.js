@@ -14,17 +14,27 @@
                     placeholder="username or email or Employee ID"
                     autocomplete="username"
                     v-model="username"
+                    :class="{ error: $v.username.$error }"
+                    @input="$v.username.$touch()"
                   >
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
+                  <div v-if="$v.username.$error">
+                <p v-if="!$v.username.required" class="errorMsg">username or email or Employee ID is required</p>
+              </div>
                   <CInput
                     placeholder="Password"
                     type="password"
                     autocomplete="curent-password"
                      v-model="password"
+                     :class="{ error: $v.password.$error }"
+                    @input="$v.password.$touch()"
                   >
                     <template #prepend-content><CIcon name="cil-lock-locked"/></template>
                   </CInput>
+                  <div v-if="$v.password.$error">
+                <p v-if="!$v.password.required" class="errorMsg">Password is required</p>
+              </div>
                   <p v-if="this.$store.state.errors.length">
                   <b>Please correct the following error(s):</b>
                   <ul>
@@ -33,7 +43,7 @@
                 </p>
                   <CRow>
                     <CCol col="6" class="text-left">
-                      <CButton style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
+                      <CButton :disabled="$v.$invalid" style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
                       <router-link to="/forget-password"  color="link" class="px-0">Forgot password?</router-link>
@@ -69,6 +79,7 @@
 <script>
 // import http from '../../http-common'
 import { mapActions } from 'vuex'
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: 'Login',
@@ -77,6 +88,12 @@ export default {
       username:'',
       password:''
     }
+  },
+   validations() {
+    return {
+      username: { required },
+      password: { required },
+    };
   },
   created(){
     if(this.$store.getters.isLoggedIn){
@@ -105,8 +122,9 @@ export default {
 </script>
 
 
-<style scope>
-.error {
+<style scoped>
+.error,.errorMsg {
   color:red !important;
 }
 </style>
+

@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeAllowance"
+              :items="employeeTarget"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import EmployeeAllowanceService from "@/services/employees/EmployeeAllowanceService";
+import EmployeeTargetService from "@/services/employees/EmployeeTargetService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -87,20 +87,18 @@ const fields = [
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
-  { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
+  { key: "periodic", label: "PERIODIC", _style: "min-width:15%;" },
   { key: "detail", label: "DETAIL", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
-
 export default {
-  name: "EmployeeAllowanceIndex",
+  name: "EmployeeTargetIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAllowanceData: [],
+      employeeTargetData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,31 +107,49 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAllowance();
+    this.getEmployeeTarget();
   },
   computed: {
-    employeeAllowance() {
-      return this.employeeAllowanceData;
+    employeeTarget() {
+      return this.employeeTargetData;
     },
   },
   methods: {
-    getEmployeeAllowance() {
+    getEmployeeTarget() {
       this.empId = this.$route.params.id;
 
-      EmployeeAllowanceService.getAll(this.empId)
+      EmployeeTargetService.getAll(this.empId)
         .then(({ data }) => {
           this.loading = false;
           if (data != null && data != "") {
-            this.employeeAllowanceData = [];
+            this.employeeTargetData = [];
             data.data.map((item, id) => {
-              this.employeeAllowanceData.push({ ...item, id });
+              this.employeeTargetData.push({ ...item, id });
             });
-            console.log(this.employeeAllowanceData);
           }
         })
         .catch((err) => {
           console.log(err);
         });
+    },
+    updateTableData(obj) {
+      if (obj.type === "create") {
+        let arr = Object.values(
+          this.employeeTargetData.map(function (item) {
+            return item.id;
+          })
+        );
+        let max = Math.max(...arr);
+        obj.data.id = max + 1;
+        this.employeeTargetData.push(obj.data);
+      } else {
+        this.employeeTargetData.map(function (item) {
+          if (item.uuid === obj.data.uuid) {
+            obj.data.id = item.id;
+            return Object.assign(item, obj.data);
+          }
+        });
+      }
     },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
@@ -141,14 +157,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAllowanceData[item.id]._selected);
-      this.$set(this.employeeAllowanceData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeTargetData[item.id]._selected);
+      this.$set(this.employeeTargetData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAllowanceEdit", uuid);
+      this.$emit("employee-target-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -163,17 +179,17 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAllowanceService.delete(this.deleteRows)
+            EmployeeTargetService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Allowance Deleted Successfully",
+                    text: "Target Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAllowanceData = this.employeeAllowanceData.filter(
-                    (department) => department.uuid != uuid
+                  this.employeeTargetData = this.employeeTargetData.filter(
+                    (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
                 }

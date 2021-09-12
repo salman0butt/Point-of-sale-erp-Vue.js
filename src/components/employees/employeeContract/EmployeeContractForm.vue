@@ -3,57 +3,48 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeAddress() : saveEmployeeAddress()"
+          @submit.prevent="isEditing ? updateEmployeeContract() : saveEmployeeContract()"
         >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Address"
-                v-model="form.address"
-                :class="{ error: $v.form.address.$error }"
-                @input="$v.form.address.$touch()"
+                label="Contract Name"
+                v-model="form.name"
+                :class="{ error: $v.form.name.$error }"
+                @input="$v.form.name.$touch()"
               />
-              <div v-if="$v.form.address.$error">
-                <p v-if="!$v.form.address.required" class="errorMsg">
-                  Address is required
+              <div v-if="$v.form.name.$error">
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Contract Name is required
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Second Address (Optional)" v-model="form.address2" />
-            </CCol>
+
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="City"
-                v-model="form.city"
-                :class="{ error: $v.form.city.$error }"
-                @input="$v.form.city.$touch()"
+                label="Value"
+                v-model="form.value"
+                :class="{ error: $v.form.value.$error }"
+                @input="$v.form.value.$touch()"
               />
-              <div v-if="$v.form.city.$error">
-                <p v-if="!$v.form.city.required" class="errorMsg">City is required</p>
+              <div v-if="$v.form.value.$error">
+                <p v-if="!$v.form.value.required" class="errorMsg">Value is required</p>
               </div>
             </CCol>
-          </CRow>
-          <CRow>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Postal Code"
-                v-model="form.postal_code"
-                :class="{ error: $v.form.postal_code.$error }"
-                @input="$v.form.postal_code.$touch()"
+              <CTextarea
+                label="Terms & Conditions"
+                placeholder="Content..."
+                v-model="form.additional_terms_and_conditions"
               />
-              <div v-if="$v.form.postal_code.$error">
-                <p v-if="!$v.form.postal_code.required" class="errorMsg">
-                  Postal Code is required
+              <div v-if="$v.form.additional_terms_and_conditions.$error">
+                <p
+                  v-if="!$v.form.additional_terms_and_conditions.required"
+                  class="errorMsg"
+                >
+                  Terms & Conditions is required
                 </p>
               </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Is Default"
-                :options="options.set_default"
-                :value.sync="form.set_default"
-              />
             </CCol>
           </CRow>
 
@@ -75,55 +66,50 @@
   </div>
 </template>
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import EmployeeContractService from "@/services/employees/EmployeeContractService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeAddressForm",
+  name: "EmployeeContractForm",
   data: () => ({
     isEditing: false,
     form: {
-      address: "",
-      address2: "",
-      city: "",
-      postal_code: "",
-      set_default: "",
+      id: null,
       employee_id: "",
+      name: "",
+      value: "",
+      additional_terms_and_conditions: "",
     },
     empId: null,
-    options: {
-      set_default: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "yes", label: "Yes" },
-        { value: "no", label: "No" },
-      ],
-    },
   }),
   validations() {
     return {
       form: {
-        address: { required },
-        city: { required },
-        postal_code: { required },
+        name: { required },
+        value: { required },
+        additional_terms_and_conditions: { required },
       },
     };
   },
+  created() {
+    this.empId = this.empId = this.$route.params.id;
+  },
   methods: {
-    saveEmployeeAddress() {
+    saveEmployeeContract() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeAddressService.create(data)
+        EmployeeContractService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Address Added Successfully",
+                text: "Contract Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employeeAddressCreated");
+              this.$emit("employee-contract-update", { type: "create", data: res.data });
               this.$v.$reset();
               this.resetForm();
             }
@@ -139,22 +125,22 @@ export default {
           });
       }
     },
-    updateEmployeeAddress() {
+    updateEmployeeContract() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeAddressService.update(this.empId, data)
+        EmployeeContractService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Address Updated Successfully",
+                text: "Contract Updated Successfully",
                 timer: 3600,
               });
-              this.$emit("employeeAddressCreated");
               this.$v.$reset();
+              this.$emit("employee-contract-update", { type: "edit", data: res.data });
             }
           })
           .catch((error) => {
@@ -168,34 +154,33 @@ export default {
           });
       }
     },
-    getEmployeeAddress() {
-      EmployeeAddressService.get(this.empId)
+    getEmployeeContract() {
+      EmployeeContractService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
-            this.empId = data.uuid;
-            this.form.address = data.address;
-            this.form.address2 = data.address2;
-            this.form.city = data.city;
-            this.form.postal_code = data.postal_code;
-            this.form.set_default = data.set_default;
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.employee_id = data.employee_id;
+            this.form.name = data.name;
+            this.form.value = data.value;
+            this.form.additional_terms_and_conditions =
+              data.additional_terms_and_conditions;
           }
         })
         .catch((error) => {
           console.log(error);
+          this.isEditing = false;
         });
     },
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeAddress();
+      this.getEmployeeContract();
     },
     resetForm() {
-      this.form.address = "";
-      this.form.address2 = "";
-      this.form.city = "";
-      this.form.postal_code = "";
-      this.form.set_default = "";
-      this.form.employee_id = "";
+      this.form.name = "";
+      this.form.value = "";
+      this.form.additional_terms_and_conditions = "";
       this.isEditing = false;
     },
   },

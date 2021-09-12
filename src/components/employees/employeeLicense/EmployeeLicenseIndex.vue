@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeAllowance"
+              :items="employeeLicense"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import EmployeeAllowanceService from "@/services/employees/EmployeeAllowanceService";
+import EmployeeLicenseService from "@/services/employees/EmployeeLicenseService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -87,20 +87,19 @@ const fields = [
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
-  { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
-  { key: "detail", label: "DETAIL", _style: "min-width:15%;" },
+  { key: "issuance", label: "ISSUANCE", _style: "min-width:15%;" },
+  { key: "expiry", label: "EXPIRY", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeAllowanceIndex",
+  name: "EmployeeLicenseIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAllowanceData: [],
+      employeeLicenseData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,26 +108,25 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAllowance();
+    this.getEmployeeLicense();
   },
   computed: {
-    employeeAllowance() {
-      return this.employeeAllowanceData;
+    employeeLicense() {
+      return this.employeeLicenseData;
     },
   },
   methods: {
-    getEmployeeAllowance() {
+    getEmployeeLicense() {
       this.empId = this.$route.params.id;
 
-      EmployeeAllowanceService.getAll(this.empId)
+      EmployeeLicenseService.getAll(this.empId)
         .then(({ data }) => {
           this.loading = false;
           if (data != null && data != "") {
-            this.employeeAllowanceData = [];
+            this.employeeLicenseData = [];
             data.data.map((item, id) => {
-              this.employeeAllowanceData.push({ ...item, id });
+              this.employeeLicenseData.push({ ...item, id });
             });
-            console.log(this.employeeAllowanceData);
           }
         })
         .catch((err) => {
@@ -141,14 +139,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAllowanceData[item.id]._selected);
-      this.$set(this.employeeAllowanceData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeLicenseData[item.id]._selected);
+      this.$set(this.employeeLicenseData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAllowanceEdit", uuid);
+      this.$emit("employeeLicenseEdit", uuid);
     },
 
     deleteRow(uuid) {
@@ -163,16 +161,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAllowanceService.delete(this.deleteRows)
+            EmployeeLicenseService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Allowance Deleted Successfully",
+                    text: "License Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAllowanceData = this.employeeAllowanceData.filter(
+                  this.employeeLicenseData = this.employeeLicenseData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];

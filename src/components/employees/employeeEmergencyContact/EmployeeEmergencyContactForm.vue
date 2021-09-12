@@ -3,8 +3,52 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeAddress() : saveEmployeeAddress()"
+          @submit.prevent="
+            isEditing ? updateEmployeeEmergencyContact() : saveEmployeeEmergencyContact()
+          "
         >
+          <CRow>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Emergency Contact Name"
+                v-model="form.name"
+                :class="{ error: $v.form.name.$error }"
+                @input="$v.form.name.$touch()"
+              />
+              <div v-if="$v.form.name.$error">
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Emergency Contact Name is required
+                </p>
+              </div>
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Relationship"
+                v-model="form.relationship"
+                :class="{ error: $v.form.relationship.$error }"
+                @input="$v.form.relationship.$touch()"
+              />
+              <div v-if="$v.form.relationship.$error">
+                <p v-if="!$v.form.relationship.required" class="errorMsg">
+                  Relationship is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Phone Number"
+                v-model="form.phone_number"
+                :class="{ error: $v.form.phone_number.$error }"
+                @input="$v.form.phone_number.$touch()"
+              />
+              <div v-if="$v.form.phone_number.$error">
+                <p v-if="!$v.form.phone_number.required" class="errorMsg">
+                  Phone Number is required
+                </p>
+              </div>
+            </CCol>
+          </CRow>
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
@@ -18,42 +62,6 @@
                   Address is required
                 </p>
               </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Second Address (Optional)" v-model="form.address2" />
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="City"
-                v-model="form.city"
-                :class="{ error: $v.form.city.$error }"
-                @input="$v.form.city.$touch()"
-              />
-              <div v-if="$v.form.city.$error">
-                <p v-if="!$v.form.city.required" class="errorMsg">City is required</p>
-              </div>
-            </CCol>
-          </CRow>
-          <CRow>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Postal Code"
-                v-model="form.postal_code"
-                :class="{ error: $v.form.postal_code.$error }"
-                @input="$v.form.postal_code.$touch()"
-              />
-              <div v-if="$v.form.postal_code.$error">
-                <p v-if="!$v.form.postal_code.required" class="errorMsg">
-                  Postal Code is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Is Default"
-                :options="options.set_default"
-                :value.sync="form.set_default"
-              />
             </CCol>
           </CRow>
 
@@ -75,55 +83,55 @@
   </div>
 </template>
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import EmployeeEmergencyContactService from "@/services/employees/EmployeeEmergencyContactService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeAddressForm",
+  name: "EmployeeEmergencyContactForm",
   data: () => ({
     isEditing: false,
     form: {
-      address: "",
-      address2: "",
-      city: "",
-      postal_code: "",
-      set_default: "",
+      id: null,
       employee_id: "",
+      name: "",
+      relationship: "",
+      phone_number: "",
+      address: "",
     },
     empId: null,
-    options: {
-      set_default: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "yes", label: "Yes" },
-        { value: "no", label: "No" },
-      ],
-    },
   }),
   validations() {
     return {
       form: {
+        name: { required },
+        relationship: { required },
+        phone_number: { required },
         address: { required },
-        city: { required },
-        postal_code: { required },
       },
     };
   },
+  created() {
+    this.empId = this.empId = this.$route.params.id;
+  },
   methods: {
-    saveEmployeeAddress() {
+    saveEmployeeEmergencyContact() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeAddressService.create(data)
+        EmployeeEmergencyContactService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Address Added Successfully",
+                text: "Emergency Contact Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employeeAddressCreated");
+              this.$emit("employee-emergency-contact-update", {
+                type: "create",
+                data: res.data,
+              });
               this.$v.$reset();
               this.resetForm();
             }
@@ -139,22 +147,25 @@ export default {
           });
       }
     },
-    updateEmployeeAddress() {
+    updateEmployeeEmergencyContact() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeAddressService.update(this.empId, data)
+        EmployeeEmergencyContactService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Address Updated Successfully",
+                text: "Emergency Contact Updated Successfully",
                 timer: 3600,
               });
-              this.$emit("employeeAddressCreated");
               this.$v.$reset();
+              this.$emit("employee-emergency-contact-update", {
+                type: "edit",
+                data: res.data,
+              });
             }
           })
           .catch((error) => {
@@ -168,34 +179,34 @@ export default {
           });
       }
     },
-    getEmployeeAddress() {
-      EmployeeAddressService.get(this.empId)
+    getEmployeeEmergencyContact() {
+      EmployeeEmergencyContactService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
-            this.empId = data.uuid;
+            this.isEditing = true;
+            this.form.id = data.uuid;
+            this.form.employee_id = data.employee_id;
+            this.form.name = data.name;
+            this.form.relationship = data.relationship;
+            this.form.phone_number = data.phone_number;
             this.form.address = data.address;
-            this.form.address2 = data.address2;
-            this.form.city = data.city;
-            this.form.postal_code = data.postal_code;
-            this.form.set_default = data.set_default;
           }
         })
         .catch((error) => {
           console.log(error);
+          this.isEditing = false;
         });
     },
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeAddress();
+      this.getEmployeeEmergencyContact();
     },
     resetForm() {
+      this.form.name = "";
+      this.form.relationship = "";
+      this.form.phone_number = "";
       this.form.address = "";
-      this.form.address2 = "";
-      this.form.city = "";
-      this.form.postal_code = "";
-      this.form.set_default = "";
-      this.form.employee_id = "";
       this.isEditing = false;
     },
   },

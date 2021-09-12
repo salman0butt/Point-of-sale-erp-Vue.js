@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeAllowance"
+              :items="employeeEmergencyContact"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import EmployeeAllowanceService from "@/services/employees/EmployeeAllowanceService";
+import EmployeeEmergencyContactService from "@/services/employees/EmployeeEmergencyContactService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -86,21 +86,19 @@ const fields = [
     filter: false,
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
-  { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
-  { key: "detail", label: "DETAIL", _style: "min-width:15%;" },
+  { key: "relationship", label: "RELATION", _style: "min-width:15%;" },
+  { key: "phone_number", label: "PHONE NUMBER", _style: "min-width:15%;" },
+  { key: "address", label: "ADDRESS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
-
 export default {
-  name: "EmployeeAllowanceIndex",
+  name: "EmployeeEmergencyContactIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAllowanceData: [],
+      employeeEmergencyContactData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,31 +107,49 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAllowance();
+    this.getEmployeeEmergencyContact();
   },
   computed: {
-    employeeAllowance() {
-      return this.employeeAllowanceData;
+    employeeEmergencyContact() {
+      return this.employeeEmergencyContactData;
     },
   },
   methods: {
-    getEmployeeAllowance() {
+    getEmployeeEmergencyContact() {
       this.empId = this.$route.params.id;
 
-      EmployeeAllowanceService.getAll(this.empId)
+      EmployeeEmergencyContactService.getAll(this.empId)
         .then(({ data }) => {
           this.loading = false;
           if (data != null && data != "") {
-            this.employeeAllowanceData = [];
+            this.employeeEmergencyContactData = [];
             data.data.map((item, id) => {
-              this.employeeAllowanceData.push({ ...item, id });
+              this.employeeEmergencyContactData.push({ ...item, id });
             });
-            console.log(this.employeeAllowanceData);
           }
         })
         .catch((err) => {
           console.log(err);
         });
+    },
+    updateTableData(obj) {
+      if (obj.type === "create") {
+        let arr = Object.values(
+          this.employeeEmergencyContactData.map(function (item) {
+            return item.id;
+          })
+        );
+        let max = Math.max(...arr);
+        obj.data.id = max + 1;
+        this.employeeEmergencyContactData.push(obj.data);
+      } else {
+        this.employeeEmergencyContactData.map(function (item) {
+          if (item.uuid === obj.data.uuid) {
+            obj.data.id = item.id;
+            return Object.assign(item, obj.data);
+          }
+        });
+      }
     },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
@@ -141,14 +157,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAllowanceData[item.id]._selected);
-      this.$set(this.employeeAllowanceData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeEmergencyContactData[item.id]._selected);
+      this.$set(this.employeeEmergencyContactData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAllowanceEdit", uuid);
+      this.$emit("employee-emergency-contact-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -163,16 +179,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAllowanceService.delete(this.deleteRows)
+            EmployeeEmergencyContactService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Allowance Deleted Successfully",
+                    text: "Emergency Contact Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAllowanceData = this.employeeAllowanceData.filter(
+                  this.employeeEmergencyContactData = this.employeeEmergencyContactData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
