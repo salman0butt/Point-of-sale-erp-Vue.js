@@ -20,7 +20,11 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Type" :options="options.type" :value.sync="form.type" />
+              <CSelect
+                label="Type"
+                :options="options.qualification_type"
+                :value.sync="form.type"
+              />
               <div v-if="$v.form.type.$error">
                 <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
@@ -79,6 +83,7 @@
 </template>
 <script>
 import EmployeeQualificationService from "@/services/employees/EmployeeQualificationService";
+import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
@@ -96,12 +101,8 @@ export default {
     },
     empId: null,
     options: {
-      type: [
+      qualification_type: [
         { value: "", label: "Choose Type", disabled: true, selected: "" },
-        { value: "metric", label: "Metric" },
-        { value: "inter", label: "Inter-mediate" },
-        { value: "bachler", label: "Bachlors" },
-        { value: "master", label: "Masters" },
       ],
       year: [{ value: "", label: "Choose Year" }],
     },
@@ -120,6 +121,7 @@ export default {
   created() {
     this.empId = this.empId = this.$route.params.id;
     this.generateArrayOfYears();
+    this.getOptions();
   },
   methods: {
     saveEmployeeQualification() {
@@ -206,6 +208,26 @@ export default {
       for (let i = max; i >= min; i--) {
         this.options.year.push(i);
       }
+    },
+    getOptions() {
+      let ids = JSON.stringify(["qualification_type"]);
+      HrSettingService.getSettings(ids)
+        .then(({ data }) => {
+          if (data != null && data != "") {
+            const types = this.options;
+            for (let index in data) {
+              let arr = JSON.parse(data[index]);
+              for (let i in arr) {
+                if (types[index]) {
+                  types[index].push({ value: arr[i], label: arr[i] });
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     getEditData(uuid) {
       this.isEditing = true;

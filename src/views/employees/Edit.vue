@@ -14,10 +14,11 @@
                 <img src="/img/avatars/7.jpg" class="c-avatar-img" alt="Profile" />
                 <CIcon :content="$options.cisCircle" class="online" />
                 <div>
-                  <span class="emp-name">Alan Butler </span><br />
-                  <span class="emp-designation">Project Manager</span>
+                  <span class="emp-name">{{ employee_name }} </span><br />
+                  <span class="emp-designation">{{ employee_designation }}</span>
                 </div>
               </div>
+              <br />
               <a
                 class="nav-link bborder"
                 @click.prevent="changeActiveTab('EmployeeTab')"
@@ -107,6 +108,7 @@ import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergenc
 import EmployeeExpenseTab from "@/components/employees/employeeExpense/EmployeeExpenseTab";
 import EmployeeTargetTab from "@/components/employees/employeeTarget/EmployeeTargetTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
+import EmployeeService from "@/services/employees/EmployeeService";
 
 export default {
   name: "EditEmployee",
@@ -125,13 +127,30 @@ export default {
   },
   data() {
     return {
+      employee_name: "Alan Butler",
+      employee_designation: "Project Manager",
       activeTab: "EmployeeTab",
     };
   },
-  created() {},
+  created() {
+    this.getEmployeeDetail();
+  },
   methods: {
     changeActiveTab(value) {
       this.activeTab = value;
+    },
+    getEmployeeDetail() {
+      let id = this.$route.params.id;
+      EmployeeService.get(id)
+        .then(({ data }) => {
+          if (data !== "" && data !== undefined) {
+            this.employee_name = data.full_name;
+            this.employee_designation = data.designation;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };
@@ -170,7 +189,7 @@ a.nav-link.active,
 .online {
   color: #52b947 !important;
   position: absolute;
-  left: 34%;
+  left: 30%;
   top: 18%;
 }
 </style>

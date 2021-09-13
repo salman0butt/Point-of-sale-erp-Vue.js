@@ -19,7 +19,11 @@
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Type" :options="options.type" :value.sync="form.type" />
+              <CSelect
+                label="Type"
+                :options="options.license_type"
+                :value.sync="form.type"
+              />
               <div v-if="$v.form.type.$error">
                 <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
@@ -73,6 +77,7 @@
 </template>
 <script>
 import EmployeeLicenseService from "@/services/employees/EmployeeLicenseService";
+import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
@@ -89,11 +94,7 @@ export default {
     },
     empId: null,
     options: {
-      type: [
-        { value: "", label: "Choose Type", disabled: true, selected: "" },
-        { value: "type1", label: "Type1" },
-        { value: "type2", label: "Type2" },
-      ],
+      license_type: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
     },
   }),
   validations() {
@@ -108,6 +109,7 @@ export default {
   },
   created() {
     this.empId = this.empId = this.$route.params.id;
+    this.getOptions();
   },
   methods: {
     saveEmployeeLicense() {
@@ -185,6 +187,26 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+        });
+    },
+    getOptions() {
+      let ids = JSON.stringify(["license_type"]);
+      HrSettingService.getSettings(ids)
+        .then(({ data }) => {
+          if (data != null && data != "") {
+            const types = this.options;
+            for (let index in data) {
+              let arr = JSON.parse(data[index]);
+              for (let i in arr) {
+                if (types[index]) {
+                  types[index].push({ value: arr[i], label: arr[i] });
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     getEditData(uuid) {
