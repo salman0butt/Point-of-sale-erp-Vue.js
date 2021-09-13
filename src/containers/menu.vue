@@ -103,6 +103,12 @@ export default {
                 },
               ],
             },
+            {
+              _name: "CSidebarNavItem",
+              name: "Settings",
+              to: "/settings",
+              icon: "cil-lan",
+            },
             // {
             //   _name: 'CSidebarNavTitle',
             //   _children: ['Components']
