@@ -3,16 +3,33 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Attendance Report </CCardHeader>
           <CCardBody>
-            <router-link
+            <CRow>
+              <CCol>
+                <CMultiSelect
+                  :search="true"
+                  :selected="[]"
+                  :selection="true"
+                  optionsEmptyPlaceholder="No options placeholder"
+                  searchPlaceholder="Search"
+                  selectionType="tags"
+                >
+                </CMultiSelect>
+              </CCol>
+            </CRow>
+          </CCardBody>
+        </CCard>
+        <CCard>
+          <CCardBody>
+            <!-- <router-link
               class="btn btn-success"
               to="/attendance/create-attendance-by-machine"
               >Create Attendance</router-link
-            >
+            > -->
             <CDataTable
-              :items="designations"
+              :items="attendance"
               :fields="fields"
-              table-filter
               items-per-page-select
               :items-per-page="5"
               sorter
@@ -81,16 +98,17 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
   {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
+    key: "emp_serial",
+    label: "Employee Serial",
+    _style: "min-width:40%",
   },
-  { key: "name", label: "DESIGNATION NAME", _style: "min-width:40%" },
-  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
-  { key: "actions", label: "ACTION", _style: "min-width:15%;" },
+  { key: "name", label: "Employee Name", _style: "min-width:15%;" },
+  { key: "date", label: "Date", _style: "min-width:15%;" },
+  { key: "check_in", label: "In Time", _style: "min-width:15%;" },
+  { key: "check_out", label: "Out Time", _style: "min-width:15%;" },
+  { key: "working_hours", label: "Work Time", _style: "min-width:15%;" },
+  { key: "", label: "Status", _style: "min-width:15%;" },
+  { key: "actions", label: "Actions", _style: "min-width:15%;" },
 ];
 
 export default {
@@ -100,24 +118,49 @@ export default {
   cilEye,
   data() {
     return {
-      designationsData: [],
+      attendance: [],
+      loading: true,
       fields,
       deleteRows: [],
     };
   },
-  created() {},
+  created() {
+    this.getAttendance();
+  },
   computed: {},
   methods: {
-    getDesignationData() {
-      DesignationService.getAll()
-        .then(({ data }) => {
-          data.data.map((item, id) => {
-            this.designationsData.push({ ...item, id });
+    getAttendance() {
+      this.$http
+        .get("attendances", {
+          params: {
+            from_date: "2021-09-12",
+            to_date: "2021-09-18",
+          },
+          headers: {
+            branches: "[1]",
+          },
+        })
+        .then((res) => {
+          res.data.map((item, id) => {
+            // item.working_hours = moment();
+
+            this.attendance.push({ ...item, id });
+
+            // console.log(item.check_in);
+            // console.log(item.check_out);
           });
           this.loading = false;
+          // console.log(res.data);
+
+          // this.$swal.fire({
+          //   icon: "success",
+          //   title: "Success",
+          //   text: "Branch Updated Successfully",
+          //   timer: 3600,
+          // });
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          // console.log(error);
         });
     },
     rowClicked(item, index, column, e) {
