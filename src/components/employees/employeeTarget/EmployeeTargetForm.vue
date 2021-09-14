@@ -16,7 +16,11 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Type" :options="options.type" :value.sync="form.type" />
+              <CSelect
+                label="Type"
+                :options="options.target_types"
+                :value.sync="form.type"
+              />
               <div v-if="$v.form.type.$error">
                 <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
@@ -24,7 +28,7 @@
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Repeat"
-                :options="options.periodic"
+                :options="options.periodic_type"
                 :value.sync="form.periodic"
               />
               <div v-if="$v.form.periodic.$error">
@@ -59,6 +63,7 @@
 </template>
 <script>
 import EmployeeTargetService from "@/services/employees/EmployeeTargetService";
+import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
@@ -75,17 +80,9 @@ export default {
     },
     empId: null,
     options: {
-      type: [
-        { value: "", label: "Choose Type", disabled: true, selected: "" },
-        { value: "type1", label: "Type1" },
-        { value: "type2", label: "Type2" },
-      ],
-      periodic: [
+      target_types: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
+      periodic_type: [
         { value: "", label: "Choose repeat", disabled: true, selected: "" },
-        { value: "daily", label: "Daily" },
-        { value: "weekly", label: "Weekly" },
-        { value: "monthly", label: "Monthly" },
-        { value: "yearly", label: "Yearly" },
       ],
     },
   }),
@@ -100,6 +97,7 @@ export default {
   },
   created() {
     this.empId = this.empId = this.$route.params.id;
+    this.getOptions();
   },
   methods: {
     saveEmployeeTarget() {
@@ -183,6 +181,26 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+        });
+    },
+    getOptions() {
+      let ids = JSON.stringify(["expense_types", "periodic_type"]);
+      HrSettingService.getSettings(ids)
+        .then(({ data }) => {
+          if (data != null && data != "") {
+            const types = this.options;
+            for (let index in data) {
+              let arr = JSON.parse(data[index]);
+              for (let i in arr) {
+                if (types[index]) {
+                  types[index].push({ value: arr[i], label: arr[i] });
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     getEditData(uuid) {

@@ -12,13 +12,15 @@
               :fields="fields"
               table-filter
               items-per-page-select
-              :items-per-page="5"
+              @pagination-change="changePagination"
+              :items-per-page="perPage"
+              :active-page="activePage"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
               @row-clicked="rowClicked"
+              ref="externalAgent"
             >
               <template #select="{ item }">
                 <td>
@@ -59,6 +61,11 @@
                 </td>
               </template>
             </CDataTable>
+            <CPagination
+              v-show="pages > 1"
+              :pages="pages"
+              :active-page.sync="activePage"
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -95,25 +102,49 @@ export default {
       fields,
       loading: false,
       deleteRows: [],
+      activePage: 1,
+      pages: 0,
+      perPage: 10,
     };
   },
   created() {
     this.loading = true;
     this.getDesignationData();
   },
+  watch: {
+    reloadParams() {
+      this.onTableChange();
+    },
+    activePage() {
+      this.getDesignationData(this.activePage, this.perPage);
+    },
+  },
   computed: {
     designations() {
       return this.designationsData;
     },
+    // reloadParams() {
+    //   return [this.activePage];
+    // },
   },
   methods: {
-    getDesignationData() {
-      DesignationService.getAll()
+    getDesignationData(page = "", per_page = "") {
+      DesignationService.getAll(page, per_page)
         .then(({ data }) => {
-          data.data.map((item, id) => {
-            this.designationsData.push({ ...item, id });
-          });
-          this.loading = false;
+          // this.designationsData = [];
+          // console.log(this.designationsData);
+          if (data !== "" && data !== undefined) {
+            data.data.map((item, id) => {
+              this.designationsData.push({ ...item, id });
+            });
+            console.log(this.designationsData);
+
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
+
+            this.loading = false;
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -172,6 +203,24 @@ export default {
               });
           }
         });
+    },
+    setPagination(meta) {
+      this.activePage = parseInt(meta.current_page);
+      this.pages = parseInt(meta.last_page);
+      this.perPage = parseInt(meta.per_page);
+    },
+    onTableChange() {
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+        const agent = this.$refs.externalAgent;
+        this.designationsData = agent.currentItems;
+        this.pages = Math.ceil(agent.sortedItems.length / 5);
+      }, 1000);
+    },
+    changePagination(value) {
+      this.perPage = parseInt(value);
+      this.getDesignationData("", this.perPage);
     },
   },
 };

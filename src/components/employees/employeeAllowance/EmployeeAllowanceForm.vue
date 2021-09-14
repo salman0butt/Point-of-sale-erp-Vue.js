@@ -20,7 +20,11 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Type" :options="options.type" :value.sync="form.type" />
+              <CSelect
+                label="Type"
+                :options="options.allowances_type"
+                :value.sync="form.type"
+              />
               <div v-if="$v.form.type.$error">
                 <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
@@ -42,7 +46,7 @@
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Repeat"
-                :options="options.repeat"
+                :options="options.periodic_type"
                 :value.sync="form.repeat"
               />
               <div v-if="$v.form.repeat.$error">
@@ -73,6 +77,7 @@
 </template>
 <script>
 import EmployeeAllowanceService from "@/services/employees/EmployeeAllowanceService";
+import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
@@ -90,17 +95,11 @@ export default {
     },
     empId: null,
     options: {
-      type: [
+      allowances_type: [
         { value: "", label: "Choose Type", disabled: true, selected: "" },
-        { value: "type1", label: "Type1" },
-        { value: "type2", label: "Type2" },
       ],
-      repeat: [
+      periodic_type: [
         { value: "", label: "Choose repeat", disabled: true, selected: "" },
-        { value: "daily", label: "Daily" },
-        { value: "weekly", label: "Weekly" },
-        { value: "monthly", label: "Monthly" },
-        { value: "yearly", label: "Yearly" },
       ],
     },
   }),
@@ -116,6 +115,7 @@ export default {
   },
   created() {
     this.empId = this.empId = this.$route.params.id;
+    this.getOptions();
   },
   methods: {
     saveEmployeeAllowance() {
@@ -194,6 +194,26 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+        });
+    },
+    getOptions() {
+      let ids = JSON.stringify(["allowances_type", "periodic_type"]);
+      HrSettingService.getSettings(ids)
+        .then(({ data }) => {
+          if (data != null && data != "") {
+            const types = this.options;
+            for (let index in data) {
+              let arr = JSON.parse(data[index]);
+              for (let i in arr) {
+                if (types[index]) {
+                  types[index].push({ value: arr[i], label: arr[i] });
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     getEditData(uuid) {
