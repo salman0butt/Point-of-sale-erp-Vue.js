@@ -1,9 +1,18 @@
 import http from "@/http-common";
+import Helper from "@/helpers/Helper";
 
-class EmployeeQualificationService {
+class EmployeeQualificationService extends Helper {
 
-  getAll(data) {
-    return http.get(`/employee-qualifications?id=${data}`);
+  getAll(data, page, per_page) {
+
+    let url = `/employee-qualifications?id=${data}`;
+    if(page !== '')
+     url = super.updateQueryStringParameter(url,"page",page);
+
+    if(per_page !== '')
+     url = super.updateQueryStringParameter(url,"per_page",per_page);
+
+    return http.get(url);
   }
 
   get(id) {
