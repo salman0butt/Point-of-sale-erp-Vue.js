@@ -1,9 +1,17 @@
 import http from "@/http-common";
+import Helper from "@/helpers/Helper";
 
-class EmployeeAddressService {
+class EmployeeAddressService extends Helper {
 
-  getAll(data) {
-    return http.get(`/employee-addresses?id=${data}`);
+  getAll(data, page, per_page) {
+    let url = `/employee-addresses?id=${data}`;
+    if(page !== '')
+     url = super.updateQueryStringParameter(url,"page",page);
+
+    if(per_page !== '')
+     url = super.updateQueryStringParameter(url,"per_page",per_page);
+
+    return http.get(url);
   }
 
   get(id) {
