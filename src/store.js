@@ -78,15 +78,24 @@ const actions = {
     })
 },
 logout({commit}){
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     commit('logout');
-    http.post('/auth/logout').then((res) => {
     localStorage.clear();
     delete http.defaults.headers.common['Authorization'];
-    resolve();
+    http.post('/auth/logout').then((res) => {
+    resolve(res);
     }).catch((err) => {
-        console.log(err);
+      reject(err);
+        // console.log(err);
     });
+    resolve();
+  })
+},
+auto_logout({commit}){
+  return new Promise((resolve) => {
+    commit('logout');
+    localStorage.clear();
+    resolve();
   })
 },
 set_errors({commit}, errorMsg){
