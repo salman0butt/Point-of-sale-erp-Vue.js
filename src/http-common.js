@@ -7,5 +7,6 @@ export default axios.create({
     "Content-type": "application/json",
     // "X-Tenant": window.location.hostname
     "X-Tenant": "demo1.sw-backend.test",
+    "Cache-Control": "no-cache",
   }
 });

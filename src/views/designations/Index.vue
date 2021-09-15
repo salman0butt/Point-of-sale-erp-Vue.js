@@ -14,7 +14,6 @@
               items-per-page-select
               @pagination-change="changePagination"
               :items-per-page="perPage"
-              :active-page="activePage"
               sorter
               clickable-rows
               hover
@@ -136,15 +135,14 @@ export default {
   },
   methods: {
     getDesignationData(page = "", per_page = "") {
+      this.designationsData = [];
+      this.loading = true;
       DesignationService.getAll(page, per_page)
         .then(({ data }) => {
-          // this.designationsData = [];
-          // console.log(this.designationsData);
           if (data !== "" && data !== undefined) {
             data.data.map((item, id) => {
               this.designationsData.push({ ...item, id });
             });
-            console.log(this.designationsData);
 
             if (data.meta) {
               this.setPagination(data.meta);
@@ -218,6 +216,7 @@ export default {
     },
     onTableChange() {
       this.loading = true;
+      this.designationsData = [];
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
