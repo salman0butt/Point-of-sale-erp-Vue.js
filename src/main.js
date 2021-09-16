@@ -28,9 +28,9 @@ if (token) {
 http.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
-  // console.log(error.response.data);
+  console.log(error.response);
   if (error.response.status === 401) {
-    store.dispatch('logout');
+    store.dispatch('auto_logout');
     router.push('/login');
   }
   return Promise.reject(error);

@@ -536,14 +536,13 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-      // beforeEnter:(to, from, next) => {
-      //   if(store.getters.isLoggedIn){
-      //      next({ path: '/dashboard' });
-      //   }else {
-      //     next({ path: '/login' });
-      //   }
-      //   next();
-      // },
+      beforeEnter:(to, from, next) => {
+        if (store.getters.isLoggedIn) {
+            next({path: "/dashboard"});
+        } else {
+            next();
+        }
+      }
     },
     {
       path: '/forget-password',
@@ -592,6 +591,21 @@ const router = new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!store.getters.isLoggedIn) {
+          next({
+              path: "/login",
+              query: { redirect: to.fullPath }
+          });
+      } else {
+          next();
+      }
+  } else {
+      next();
+  }
+});
 
 const originalPush = Router.prototype.push
 Router.prototype.push = function push (location) {
