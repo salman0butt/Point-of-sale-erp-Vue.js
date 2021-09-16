@@ -55,7 +55,8 @@ export default {
     },
     employeeTargetUpdate(data) {
       this.ToggleEmployeeTarget();
-      this.$refs.employeeTargetRef.updateTableData(data);
+      // this.$refs.employeeTargetRef.updateTableData(data);
+      this.$refs.employeeTargetRef.getEmployeeTarget();
     },
     employeeTargetEdit(uuid) {
       this.ToggleEmployeeTarget();

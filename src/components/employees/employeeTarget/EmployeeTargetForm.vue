@@ -184,7 +184,7 @@ export default {
         });
     },
     getOptions() {
-      let ids = JSON.stringify(["expense_types", "periodic_type"]);
+      let ids = JSON.stringify(["target_types", "periodic_type"]);
       HrSettingService.getSettings(ids)
         .then(({ data }) => {
           if (data != null && data != "") {

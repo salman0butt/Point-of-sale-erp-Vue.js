@@ -9,13 +9,14 @@
               :fields="fields"
               table-filter
               items-per-page-select
-              :items-per-page="5"
+              @pagination-change="changePagination"
+              :items-per-page="perPage"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
               @row-clicked="rowClicked"
+              ref="externalAgent"
             >
               <template #select="{ item }">
                 <td>
@@ -66,6 +67,11 @@
                 </td>
               </template>
             </CDataTable>
+            <CPagination
+              v-show="pages > 1"
+              :pages="pages"
+              :active-page.sync="activePage"
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -103,7 +109,18 @@ export default {
       loading: false,
       deleteRows: [],
       empId: null,
+      activePage: 1,
+      pages: 0,
+      perPage: 10,
     };
+  },
+  watch: {
+    reloadParams() {
+      this.onTableChange();
+    },
+    activePage() {
+      this.getEmployeeEmergencyContact(this.activePage, this.perPage);
+    },
   },
   created() {
     this.loading = true;
@@ -115,17 +132,24 @@ export default {
     },
   },
   methods: {
-    getEmployeeEmergencyContact() {
+    getEmployeeEmergencyContact(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeEmergencyContactService.getAll(this.empId)
+      EmployeeEmergencyContactService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
-          this.loading = false;
           if (data != null && data != "") {
+            this.loading = true;
             this.employeeEmergencyContactData = [];
-            data.data.map((item, id) => {
-              this.employeeEmergencyContactData.push({ ...item, id });
-            });
+            if (data.data) {
+              data.data.map((item, id) => {
+                this.employeeEmergencyContactData.push({ ...item, id });
+              });
+            }
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
+
+            this.loading = false;
           }
         })
         .catch((err) => {
@@ -204,6 +228,23 @@ export default {
               });
           }
         });
+    },
+    setPagination(meta) {
+      this.activePage = parseInt(meta.current_page);
+      this.pages = parseInt(meta.last_page);
+      this.perPage = parseInt(meta.per_page);
+    },
+    onTableChange() {
+      setTimeout(() => {
+        this.loading = false;
+        const agent = this.$refs.externalAgent;
+        this.employeeEmergencyContactData = agent.currentItems;
+        this.pages = Math.ceil(agent.sortedItems.length / 5);
+      }, 1000);
+    },
+    changePagination(value) {
+      this.perPage = parseInt(value);
+      this.getEmployeeEmergencyContact("", this.perPage);
     },
   },
 };

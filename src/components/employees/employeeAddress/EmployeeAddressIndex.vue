@@ -16,6 +16,7 @@
               hover
               :loading="loading"
               @row-clicked="rowClicked"
+              ref="externalAgent"
             >
               <template #select="{ item }">
                 <td>
