@@ -122,20 +122,19 @@ export default {
     designations() {
       return this.designationsData;
     },
-    // reloadParams() {
-    //   return [this.activePage];
-    // },
   },
   methods: {
     getDesignationData(page = "", per_page = "") {
-      this.designationsData = [];
-      this.loading = true;
       DesignationService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            data.data.map((item, id) => {
-              this.designationsData.push({ ...item, id });
-            });
+            this.designationsData = [];
+            this.loading = true;
+            if (data.data) {
+              data.data.map((item, id) => {
+                this.designationsData.push({ ...item, id });
+              });
+            }
 
             if (data.meta) {
               this.setPagination(data.meta);
@@ -208,8 +207,6 @@ export default {
       this.perPage = parseInt(meta.per_page);
     },
     onTableChange() {
-      this.loading = true;
-      this.designationsData = [];
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;

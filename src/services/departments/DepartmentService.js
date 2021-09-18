@@ -1,8 +1,16 @@
 import http from "../../http-common";
+import Helper from "@/helpers/Helper";
 
-class DepartmentService {
-  getAll() {
-    return http.get("/departments");
+class DepartmentService extends Helper {
+  getAll(page, per_page) {
+    let url = "/departments";
+    if(page !== '')
+    url = super.updateQueryStringParameter(url,"page",page);
+
+   if(per_page !== '')
+    url = super.updateQueryStringParameter(url,"per_page",per_page);
+
+    return http.get(url);
   }
 
   getAllDepartments() {

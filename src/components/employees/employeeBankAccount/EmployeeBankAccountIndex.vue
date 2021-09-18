@@ -9,13 +9,14 @@
               :fields="fields"
               table-filter
               items-per-page-select
-              :items-per-page="5"
+              @pagination-change="changePagination"
+              :items-per-page="perPage"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
               @row-clicked="rowClicked"
+              ref="externalAgent"
             >
               <template #select="{ item }">
                 <td>
@@ -66,6 +67,11 @@
                 </td>
               </template>
             </CDataTable>
+            <CPagination
+              v-show="pages > 1"
+              :pages="pages"
+              :active-page.sync="activePage"
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -105,6 +111,9 @@ export default {
       loading: false,
       deleteRows: [],
       empId: null,
+      activePage: 1,
+      pages: 0,
+      perPage: 10,
     };
   },
   created() {
@@ -116,18 +125,33 @@ export default {
       return this.employeeBankAccountData;
     },
   },
+  watch: {
+    reloadParams() {
+      this.onTableChange();
+    },
+    activePage() {
+      this.getEmployeeBankAccount(this.activePage, this.perPage);
+    },
+  },
   methods: {
-    getEmployeeBankAccount() {
+    getEmployeeBankAccount(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeBankAccountService.getAll(this.empId)
+      EmployeeBankAccountService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
-          this.loading = false;
-          if (data != null && data != "") {
+          if (data !== "" && data !== undefined) {
             this.employeeBankAccountData = [];
-            data.data.map((item, id) => {
-              this.employeeBankAccountData.push({ ...item, id });
-            });
+            this.loading = true;
+            if (data.data) {
+              data.data.map((item, id) => {
+                this.employeeBankAccountData.push({ ...item, id });
+              });
+            }
+
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
+            this.loading = false;
           }
         })
         .catch((err) => {
@@ -187,6 +211,23 @@ export default {
               });
           }
         });
+    },
+    setPagination(meta) {
+      this.activePage = parseInt(meta.current_page);
+      this.pages = parseInt(meta.last_page);
+      this.perPage = parseInt(meta.per_page);
+    },
+    onTableChange() {
+      setTimeout(() => {
+        this.loading = false;
+        const agent = this.$refs.externalAgent;
+        this.employeeBankAccountData = agent.currentItems;
+        this.pages = Math.ceil(agent.sortedItems.length / 5);
+      }, 1000);
+    },
+    changePagination(value) {
+      this.perPage = parseInt(value);
+      this.getEmployeeBankAccount("", this.perPage);
     },
   },
 };

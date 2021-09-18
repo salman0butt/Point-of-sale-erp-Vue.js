@@ -55,7 +55,8 @@ export default {
     },
     employeeEmergencyContactUpdate(data) {
       this.ToggleEmployeeEmergencyContact();
-      this.$refs.employeeEmergencyContactRef.updateTableData(data);
+      // this.$refs.employeeEmergencyContactRef.updateTableData(data);
+      this.$refs.employeeEmergencyContactRef.getEmployeeEmergencyContact();
     },
     employeeEmergencyContactEdit(uuid) {
       this.ToggleEmployeeEmergencyContact();

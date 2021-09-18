@@ -9,13 +9,14 @@
               :fields="fields"
               table-filter
               items-per-page-select
-              :items-per-page="5"
+              @pagination-change="changePagination"
+              :items-per-page="perPage"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
               @row-clicked="rowClicked"
+              ref="externalAgent"
             >
               <template #select="{ item }">
                 <td>
@@ -66,6 +67,11 @@
                 </td>
               </template>
             </CDataTable>
+            <CPagination
+              v-show="pages > 1"
+              :pages="pages"
+              :active-page.sync="activePage"
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -76,7 +82,7 @@
 <script>
 import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-//TODO error in employee address
+
 const fields = [
   {
     key: "select",
@@ -105,6 +111,9 @@ export default {
       loading: false,
       deleteRows: [],
       empId: null,
+      activePage: 1,
+      pages: 0,
+      perPage: 10,
     };
   },
   created() {
@@ -116,18 +125,32 @@ export default {
       return this.employeeAddressesData;
     },
   },
+  watch: {
+    reloadParams() {
+      this.onTableChange();
+    },
+    activePage() {
+      this.getEmployeeAddressData(this.activePage, this.perPage);
+    },
+  },
   methods: {
-    getEmployeeAddressData() {
+    getEmployeeAddressData(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeAddressService.getAll(this.empId)
+      EmployeeAddressService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
-          this.loading = false;
-          if (data != null && data != "") {
+          if (data !== "" && data !== undefined) {
             this.employeeAddressesData = [];
-            data.data.map((item, id) => {
-              this.employeeAddressesData.push({ ...item, id });
-            });
+            this.loading = true;
+            if (data.data) {
+              data.data.map((item, id) => {
+                this.employeeAddressesData.push({ ...item, id });
+              });
+            }
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
+            this.loading = false;
           }
         })
         .catch((err) => {
@@ -187,6 +210,23 @@ export default {
               });
           }
         });
+    },
+    setPagination(meta) {
+      this.activePage = parseInt(meta.current_page);
+      this.pages = parseInt(meta.last_page);
+      this.perPage = parseInt(meta.per_page);
+    },
+    onTableChange() {
+      setTimeout(() => {
+        this.loading = false;
+        const agent = this.$refs.externalAgent;
+        this.employeeAddressesData = agent.currentItems;
+        this.pages = Math.ceil(agent.sortedItems.length / 5);
+      }, 1000);
+    },
+    changePagination(value) {
+      this.perPage = parseInt(value);
+      this.getEmployeeAddressData("", this.perPage);
     },
   },
 };

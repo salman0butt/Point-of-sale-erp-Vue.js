@@ -55,7 +55,8 @@ export default {
     },
     employeeExpenseUpdate(data) {
       this.ToggleEmployeeExpense();
-      this.$refs.employeeExpenseRef.updateTableData(data);
+      // this.$refs.employeeExpenseRef.updateTableData(data);
+      this.$refs.employeeExpenseRef.getEmployeeExpense();
     },
     employeeExpenseEdit(uuid) {
       this.ToggleEmployeeExpense();

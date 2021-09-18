@@ -1,13 +1,14 @@
-import http from "../../http-common";
+import http from "@/http-common";
+import Helper from "@/helpers/Helper";
 
-class DesignationService {
+class DesignationService extends Helper {
   getAll(page, per_page) {
     let url = "/designations";
     if(page !== '')
-     url = this.updateQueryStringParameter(url,"page",page);
+     url = super.updateQueryStringParameter(url,"page",page);
 
     if(per_page !== '')
-     url = this.updateQueryStringParameter(url,"per_page",per_page);
+     url = super.updateQueryStringParameter(url,"per_page",per_page);
 
     return http.get(url);
   }
@@ -26,17 +27,6 @@ class DesignationService {
 
   delete(id) {
     return http.delete(`/designations/${id}`);
-  }
-
-  updateQueryStringParameter(uri, key, value) {
-    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-    if (uri.match(re)) {
-      return uri.replace(re, '$1' + key + "=" + value + '$2');
-    }
-    else {
-      return uri + separator + key + "=" + value;
-    }
   }
 
 }

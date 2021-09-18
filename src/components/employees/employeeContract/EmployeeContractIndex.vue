@@ -9,13 +9,14 @@
               :fields="fields"
               table-filter
               items-per-page-select
-              :items-per-page="5"
+              @pagination-change="changePagination"
+              :items-per-page="perPage"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
               @row-clicked="rowClicked"
+              ref="externalAgent"
             >
               <template #select="{ item }">
                 <td>
@@ -66,6 +67,11 @@
                 </td>
               </template>
             </CDataTable>
+            <CPagination
+              v-show="pages > 1"
+              :pages="pages"
+              :active-page.sync="activePage"
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -107,6 +113,9 @@ export default {
       loading: false,
       deleteRows: [],
       empId: null,
+      activePage: 1,
+      pages: 0,
+      perPage: 10,
     };
   },
   created() {
@@ -118,19 +127,34 @@ export default {
       return this.employeeContractData;
     },
   },
+  watch: {
+    // reloadParams() {
+    //   this.onTableChange();
+    // },
+    activePage() {
+      this.getEmployeeContract(this.activePage, this.perPage);
+    },
+  },
   methods: {
-    getEmployeeContract() {
+    getEmployeeContract(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeContractService.getAll(this.empId)
+      EmployeeContractService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
-          this.loading = false;
-          if (data != null && data != "") {
+          if (data !== "" && data !== undefined) {
             this.employeeContractData = [];
-            data.data.map((item, id) => {
-              this.employeeContractData.push({ ...item, id });
-            });
+            this.loading = true;
+            if (data.data) {
+              data.data.map((item, id) => {
+                this.employeeContractData.push({ ...item, id });
+              });
+            }
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
+            this.loading = false;
           }
+          console.log(this.employeeContractData);
         })
         .catch((err) => {
           console.log(err);
@@ -143,8 +167,14 @@ export default {
             return item.id;
           })
         );
-        let max = Math.max(...arr);
-        obj.data.id = max + 1;
+
+        obj.data.id = 1;
+
+        if (arr.length > 0) {
+          let max = Math.max(...arr);
+          obj.data.id = max + 1;
+        }
+        obj.data.selected = true;
         this.employeeContractData.push(obj.data);
       } else {
         this.employeeContractData.map(function (item) {
@@ -154,6 +184,8 @@ export default {
           }
         });
       }
+      console.log(this.employeeContractData);
+      this.onTableChange();
     },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
@@ -193,7 +225,7 @@ export default {
                     timer: 3600,
                   });
                   this.employeeContractData = this.employeeContractData.filter(
-                    (department) => department.uuid != uuid
+                    (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
                 }
@@ -208,6 +240,23 @@ export default {
               });
           }
         });
+    },
+    setPagination(meta) {
+      this.activePage = parseInt(meta.current_page);
+      this.pages = parseInt(meta.last_page);
+      this.perPage = parseInt(meta.per_page);
+    },
+    onTableChange() {
+      setTimeout(() => {
+        this.loading = false;
+        const agent = this.$refs.externalAgent;
+        this.employeeContractData = agent.currentItems;
+        this.pages = Math.ceil(agent.sortedItems.length / 5);
+      }, 1000);
+    },
+    changePagination(value) {
+      this.perPage = parseInt(value);
+      this.getEmployeeContract("", this.perPage);
     },
   },
 };

@@ -36,9 +36,9 @@ http.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
-// Vue.config.errorHandler = err => {
-//   console.log('Exception: ', err)
-// }
+Vue.config.errorHandler = err => {
+  console.log('Exception: ', err)
+}
 
 new Vue({
   el: '#app',

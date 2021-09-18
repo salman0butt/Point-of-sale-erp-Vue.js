@@ -55,7 +55,8 @@ export default {
     },
     employeeContractUpdate(data) {
       this.ToggleEmployeeContract();
-      this.$refs.employeeContractRef.updateTableData(data);
+      // this.$refs.employeeContractRef.updateTableData(data);
+      this.$refs.employeeContractRef.getEmployeeContract();
     },
     employeeContractEdit(uuid) {
       this.ToggleEmployeeContract();
