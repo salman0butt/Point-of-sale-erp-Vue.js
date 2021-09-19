@@ -2,65 +2,16 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CRow>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Total Employees</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>{{ cards.employees_count }}</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Total Departments</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>{{ cards.departments_count }}</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Genders</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong
-                    ><span>Man {{ cards.male_count }}</span> |
-                    <span>Women {{ cards.female_count }}</span></strong
-                  >
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Total Managers</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>{{ cards.manager_count }}</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        </CRow>
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/employees/create"
-              >Create Employee</router-link
-            >
             <CDataTable
-              :items="users"
+              :items="employeeDiscount"
               :fields="fields"
               table-filter
               items-per-page-select
               @pagination-change="changePagination"
               :items-per-page="perPage"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
@@ -76,20 +27,40 @@
                   />
                 </td>
               </template>
+              <template #business="{ item }">
+                <td>
+                  {{ item.name }}
+                </td>
+              </template>
+              <template #parent="{ item }">
+                <td>
+                  {{ item.name }}
+                </td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
+                      title="View"
                       >View</CButton
                     >
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
+                      title="Edit"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                      title="Delete"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -109,7 +80,7 @@
 </template>
 
 <script>
-import EmployeeService from "@/services/employees/EmployeeService";
+import EmployeeDiscountService from "@/services/employees/EmployeeDiscountService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -120,32 +91,23 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "full_name", label: "EMPLOYEE NAME", _style: "min-width:40%" },
-  { key: "email", label: "EMAIL", _style: "min-width:15%;" },
-  { key: "phone_number", label: "MOBILE", _style: "min-width:15%;" },
-  { key: "department", label: "DEPARTMENT", _style: "min-width:15%;" },
-  { key: "branch_name", label: "BRANCH", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
+  { key: "amount_limit", label: "AMOUNT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
-
 export default {
-  name: "IndexEmployee",
+  name: "EmployeeDiscountIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      usersData: [],
+      employeeDiscountData: [],
       fields,
       loading: false,
-      cards: {
-        employees_count: 0,
-        female_count: 0,
-        male_count: 0,
-        departments_count: 0,
-        manager_count: 0,
-      },
       deleteRows: [],
+      empId: null,
       activePage: 1,
       pages: 0,
       perPage: 10,
@@ -153,37 +115,39 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getTotalCardData();
-    this.getEmployeeData();
+    this.getEmployeeDiscount();
+  },
+  computed: {
+    employeeDiscount() {
+      return this.employeeDiscountData;
+    },
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeData(this.activePage, this.perPage);
-    },
-  },
-  computed: {
-    users() {
-      return this.usersData;
+      this.getEmployeeDiscount(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeData(page = "", per_page = "") {
-      EmployeeService.getAll(page, per_page)
+    getEmployeeDiscount(page = "", per_page = "") {
+      this.empId = this.$route.params.id;
+
+      EmployeeDiscountService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.designationsData = [];
+            this.employeeDiscountData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.usersData.push({ ...item, id });
+                this.employeeDiscountData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
+
             this.loading = false;
           }
         })
@@ -191,20 +155,24 @@ export default {
           console.log(err);
         });
     },
-    getTotalCardData() {
-      EmployeeService.getTotalCount()
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            this.cards.employees_count = data.employees_count;
-            this.cards.female_count = data.female_count;
-            this.cards.male_count = data.male_count;
-            this.cards.departments_count = data.departments_count;
-            this.cards.manager_count = data.manager_count;
+    updateTableData(obj) {
+      if (obj.type === "create") {
+        let arr = Object.values(
+          this.employeeDiscountData.map(function (item) {
+            return item.id;
+          })
+        );
+        let max = Math.max(...arr);
+        obj.data.id = max + 1;
+        this.employeeDiscountData.push(obj.data);
+      } else {
+        this.employeeDiscountData.map(function (item) {
+          if (item.uuid === obj.data.uuid) {
+            obj.data.id = item.id;
+            return Object.assign(item, obj.data);
           }
-        })
-        .catch((err) => {
-          console.log(err);
         });
+      }
     },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
@@ -212,14 +180,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.usersData[item.id]._selected);
-      this.$set(this.usersData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeDiscountData[item.id]._selected);
+      this.$set(this.employeeDiscountData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/employees/edit/" + uuid });
+      this.$emit("employee-target-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -234,17 +202,19 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeService.delete(this.deleteRows)
+            EmployeeDiscountService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Employee Deleted Successfully",
+                    text: "Discount Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
-                  this.getTotalCardData();
+                  this.employeeDiscountData = this.employeeDiscountData.filter(
+                    (item) => item.uuid != uuid
+                  );
+                  this.deleteRows = [];
                 }
               })
               .catch((error) => {
@@ -255,7 +225,6 @@ export default {
                   timer: 3600,
                 });
               });
-            this.deleteRows = [];
           }
         });
     },
@@ -274,7 +243,7 @@ export default {
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeData("", this.perPage);
+      this.getEmployeeDiscount("", this.perPage);
     },
   },
 };

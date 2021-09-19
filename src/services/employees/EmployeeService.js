@@ -1,8 +1,15 @@
 import http from "@/http-common";
+import Helper from "@/helpers/Helper";
 
-class EmployeeService {
-  getAll() {
-    return http.get("/employees");
+class EmployeeService extends Helper {
+  getAll(page, per_page) {
+    let url = "/employees";
+    if(page !== '')
+     url = super.updateQueryStringParameter(url,"page",page);
+
+    if(per_page !== '')
+     url = super.updateQueryStringParameter(url,"per_page",per_page);
+    return http.get(url);
   }
 
   getTotalCount() {

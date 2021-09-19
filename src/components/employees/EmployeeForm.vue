@@ -241,14 +241,7 @@
                     label="Status"
                     :options="options.status"
                     :value.sync="form.status"
-                    :class="{ error: $v.form.status.$error }"
-                    @input="$v.form.status.$touch()"
                   />
-                  <div v-if="$v.form.status.$error">
-                    <p v-if="!$v.form.status.required" class="errorMsg">
-                      Status is required
-                    </p>
-                  </div>
                 </CCol>
               </CRow>
 
@@ -261,44 +254,17 @@
               <div v-if="form.create_user">
                 <CRow>
                   <CCol sm="6" md="4" class="pt-2">
-                    <CInput
-                      label="Username"
-                      :value.sync="form.user_name"
-                      :class="{ error: $v.form.user_name.$error }"
-                      @input="$v.form.user_name.$touch()"
-                    />
-                    <div v-if="$v.form.user_name.$error">
-                      <p v-if="!$v.form.user_name.required" class="errorMsg">
-                        Username is required
-                      </p>
-                    </div>
+                    <CInput label="Username" :value.sync="form.user_name" />
                   </CCol>
                   <CCol sm="6" md="4" class="pt-2">
-                    <CInput
-                      label="User Email"
-                      :value.sync="form.user_email"
-                      :class="{ error: $v.form.user_email.$error }"
-                      @input="$v.form.user_email.$touch()"
-                    />
-                    <div v-if="$v.form.user_email.$error">
-                      <p v-if="!$v.form.user_email.required" class="errorMsg">
-                        email is required
-                      </p>
-                    </div>
+                    <CInput label="User Email" :value.sync="form.user_email" />
                   </CCol>
                   <CCol sm="6" md="4" class="pt-2">
                     <CInput
                       label="Password"
                       type="password"
                       :value.sync="form.user_pass"
-                      :class="{ error: $v.form.user_pass.$error }"
-                      @input="$v.form.user_pass.$touch()"
                     />
-                    <div v-if="$v.form.user_pass.$error">
-                      <p v-if="!$v.form.user_pass.required" class="errorMsg">
-                        Password is required
-                      </p>
-                    </div>
                   </CCol>
                 </CRow>
                 <CRow>
@@ -307,42 +273,21 @@
                       label="Role"
                       :options="options.user_role"
                       :value.sync="form.user_role"
-                      :class="{ error: $v.form.user_role.$error }"
-                      @input="$v.form.user_role.$touch()"
                     />
-                    <div v-if="$v.form.user_role.$error">
-                      <p v-if="!$v.form.user_role.required" class="errorMsg">
-                        Role is required
-                      </p>
-                    </div>
                   </CCol>
                   <CCol sm="6" md="4" class="pt-2">
                     <CSelect
                       label="Status"
                       :options="options.user_status"
                       :value.sync="form.user_status"
-                      :class="{ error: $v.form.user_status.$error }"
-                      @input="$v.form.user_status.$touch()"
                     />
-                    <div v-if="$v.form.user_status.$error">
-                      <p v-if="!$v.form.user_status.required" class="errorMsg">
-                        Status is required
-                      </p>
-                    </div>
                   </CCol>
                   <CCol sm="6" md="4" class="pt-2">
                     <CSelect
                       label="Select Language"
                       :options="options.user_language"
                       :value.sync="form.user_language"
-                      :class="{ error: $v.form.user_language.$error }"
-                      @input="$v.form.user_language.$touch()"
                     />
-                    <div v-if="$v.form.user_language.$error">
-                      <p v-if="!$v.form.user_language.required" class="errorMsg">
-                        Language is required
-                      </p>
-                    </div>
                   </CCol>
                 </CRow>
               </div>
@@ -492,13 +437,6 @@ export default {
         branch_id: { required },
         department_id: { required },
         designation_id: { required },
-        status: { required },
-        user_name: { required },
-        user_email: { required },
-        user_pass: { required },
-        user_role: { required },
-        user_status: { required },
-        user_language: { required },
       },
     };
   },
