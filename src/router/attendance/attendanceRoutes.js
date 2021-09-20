@@ -4,6 +4,7 @@ import auth from '@/middleware/auth'
 //Department
 const IndexAttendance = () => import('@/views/hr/attendance/Index')
 const CreateAttendanceByMachine = () => import('@/views/hr/attendance/CreateAttendanceByMachine')
+const EditAttendance = () => import('@/views/hr/attendance/Edit')
 
 const attendanceRoutes = {
     path: 'attendance',
@@ -24,11 +25,14 @@ const attendanceRoutes = {
             name: 'CreateAttendanceByMachine',
             component: CreateAttendanceByMachine
         },
-        // {
-        //     path: 'edit/:id',
-        //     name: 'EditDepartment',
-        //     component: EditDepartment
-        // }
-    ]
+        {
+            path: 'edit/:id',
+            name: 'editAttendance',
+            component: EditAttendance
+        },
+
+
+    ],
+
 };
 export default attendanceRoutes;

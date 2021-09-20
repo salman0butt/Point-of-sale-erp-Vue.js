@@ -28,13 +28,29 @@
                     hover
                     :loading="loading"
                   >
-                    <template #spreadsheet_column="{ item }">
+                    <template #database_fields="{ item }">
                       <td>
                         <CCol sm="6" md="6" class="pt-2">
                           <CSelect
-                            :value="item.spreadsheet_column"
+                            :value="item.database_fields"
                             @change="onChange($event, item)"
-                            :options="options"
+                            :options="[
+                              {
+                                label: 'Choose Database field',
+                                value: '',
+                                selected: true,
+                                disabled: true,
+                              },
+                              {
+                                label: 'Employee Serial',
+                                value: 'employee_id',
+                              },
+                              // Dont change the pattern
+                              'date',
+                              'time',
+                              'status',
+                              'state',
+                            ]"
                           />
                         </CCol>
                       </td>
@@ -74,24 +90,12 @@
 <script >
 const fields = [
   {
-    key: "database_fields",
-    label: "Database Columns",
-    _style: "min-width:15%;",
-  },
-  {
     key: "spreadsheet_column",
-    label: "SpreadSheet Columns",
+    label: "Spreadsheet Column",
     _style: "min-width:15%;",
   },
+  { key: "database_fields", label: "Database Field", _style: "min-width:15%;" },
 ];
-const items = [
-  { database_fields: "employee_id", spreadsheet_column: "" },
-  { database_fields: "date", spreadsheet_column: "" },
-  { database_fields: "time", spreadsheet_column: "" },
-  { database_fields: "status", spreadsheet_column: "" },
-  { database_fields: "state", spreadsheet_column: "" },
-];
-
 export default {
   name: "ImportAttendance",
   data() {
@@ -99,18 +103,10 @@ export default {
       tabs: ["Upload File", "Mapping", "Validate and Complete Import"],
       activeTab: 0,
       fields,
+      items: [],
       loading: false,
-      items: items.map((item, id) => {
-        return { ...item, id };
-      }),
-      options: [
-        {
-          label: "Choose SpreadSheet fields",
-          value: "",
-          selected: true,
-          disabled: true,
-        },
-      ],
+      spreadsheet_column: [],
+      database_fields: [],
 
       form: {
         file: "",
@@ -134,7 +130,10 @@ export default {
           });
           let spreadsheet = res.data[0][0];
           spreadsheet.forEach((element) => {
-            this.options.push(element);
+            this.items.push({
+              spreadsheet_column: element,
+              database_fields: "",
+            });
           });
 
           this.activeTab = 1;
@@ -150,7 +149,7 @@ export default {
       }
     },
     onChange(event, item) {
-      item.spreadsheet_column = event.target.value;
+      item.database_fields = event.target.value;
     },
     mapAndContinue() {
       this.activeTab = 2;

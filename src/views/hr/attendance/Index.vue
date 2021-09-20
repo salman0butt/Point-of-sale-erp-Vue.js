@@ -5,19 +5,32 @@
         <CCard>
           <CCardHeader> Attendance Report </CCardHeader>
           <CCardBody>
-            <CRow>
-              <CCol>
-                <CMultiSelect
-                  :search="true"
-                  :selected="[]"
-                  :selection="true"
-                  optionsEmptyPlaceholder="No options placeholder"
-                  searchPlaceholder="Search"
-                  selectionType="tags"
-                >
-                </CMultiSelect>
+            <form @submit.prevent="getAttendance()">
+              <!-- <CRow>
+                <CCol>
+                  <CMultiSelect
+                    :search="true"
+                    :selected="[]"
+                    :selection="true"
+                    optionsEmptyPlaceholder="No options placeholder"
+                    searchPlaceholder="Search"
+                    selectionType="tags"
+                  >
+                  </CMultiSelect>
+                </CCol>
+              </CRow> -->
+              <CRow>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput label="From" type="date" v-model="from_date" />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput label="To" type="date" v-model="to_date" />
+                </CCol>
+              </CRow>
+              <CCol sm="6" md="4" class="pt-2">
+                <CButton block color="success" type="submit">Submit </CButton>
               </CCol>
-            </CRow>
+            </form>
           </CCardBody>
         </CCard>
         <CCard>
@@ -39,43 +52,24 @@
               :loading="loading"
               @row-clicked="rowClicked"
             >
-              <template #select="{ item }">
-                <td>
-                  <CInputCheckbox
-                    :checked="item._selected"
-                    @update:checked="() => check(item)"
-                    custom
-                  />
-                </td>
-              </template>
-              <template #business="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
-              <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
-                      @click="editRow(item.uuid)"
+                      @click="editRow(item.check_in_id, item.check_out_id)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      @click="deleteRow(item.uuid)"
+                      @click="deleteRow(item.check_in_id, item.check_out_id)"
                       class="btn-sm"
                       color="danger"
                     >
@@ -95,6 +89,7 @@
 <script>
 import DesignationService from "@/services/designations/DesignationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import moment from "moment";
 
 const fields = [
   {
@@ -107,7 +102,6 @@ const fields = [
   { key: "check_in", label: "In Time", _style: "min-width:15%;" },
   { key: "check_out", label: "Out Time", _style: "min-width:15%;" },
   { key: "working_hours", label: "Work Time", _style: "min-width:15%;" },
-  { key: "", label: "Status", _style: "min-width:15%;" },
   { key: "actions", label: "Actions", _style: "min-width:15%;" },
 ];
 
@@ -122,42 +116,46 @@ export default {
       loading: true,
       fields,
       deleteRows: [],
+      from_date: "",
+      to_date: "",
     };
   },
   created() {
+    this.currentDateTime();
     this.getAttendance();
   },
   computed: {},
   methods: {
+    currentDateTime() {
+      this.from_date = moment().subtract(1, "months").format("YYYY-MM-DD");
+      this.to_date = moment().format("YYYY-MM-DD");
+    },
     getAttendance() {
+      this.loading = true;
+
       this.$http
         .get("attendances", {
           params: {
-            from_date: "2021-09-12",
-            to_date: "2021-09-18",
+            from_date: this.from_date,
+            to_date: this.to_date,
           },
           headers: {
             branches: "[1]",
           },
         })
         .then((res) => {
+          this.attendance = [];
           res.data.map((item, id) => {
-            // item.working_hours = moment();
-
+            item.working_hours = moment
+              .utc(
+                moment(item.check_out, "HH:mm:ss").diff(
+                  moment(item.check_in, "HH:mm:ss")
+                )
+              )
+              .format("HH:mm:ss");
             this.attendance.push({ ...item, id });
-
-            // console.log(item.check_in);
-            // console.log(item.check_out);
           });
           this.loading = false;
-          // console.log(res.data);
-
-          // this.$swal.fire({
-          //   icon: "success",
-          //   title: "Success",
-          //   text: "Branch Updated Successfully",
-          //   timer: 3600,
-          // });
         })
         .catch((error) => {
           // console.log(error);
@@ -175,12 +173,13 @@ export default {
     viewRow(uuid) {
       alert("page not ready");
     },
-    editRow(uuid) {
-      this.$router.push({ path: "/designations/edit/" + uuid });
+    editRow(check_in, check_out) {
+      let ids = window.btoa(JSON.stringify([check_in, check_out]));
+      this.$router.push({ path: "edit/" + ids });
     },
+    deleteRow(check_in_uuid, check_out_uuid) {
+      let ids = JSON.stringify([check_in_uuid, check_out_uuid]);
 
-    deleteRow(uuid) {
-      this.deleteRows = JSON.stringify([uuid]);
       this.$swal
         .fire({
           title: "Do you want to delete this record",
@@ -191,20 +190,18 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            DesignationService.delete(this.deleteRows)
+            this.$http
+              .delete("/attendances/" + ids)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Department Deleted Successfully",
+                    text: "Attendance Deleted Successfully",
                     timer: 3600,
                   });
-                  this.designationsData = this.designationsData.filter(
-                    (department) => department.uuid != uuid
-                  );
-                  this.deleteRows = [];
                 }
+                this.$router.go({ name: "IndexAttendance" });
               })
               .catch((error) => {
                 this.$swal.fire({
