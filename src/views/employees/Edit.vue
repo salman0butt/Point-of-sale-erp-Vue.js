@@ -92,6 +92,13 @@
                 @click.prevent="changeActiveTab('EmployeeDiscountTab')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Discounts</a
               >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeComplainTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeComplainTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Complains</a
+              >
             </div>
           </CCardBody>
         </CCard>
@@ -115,6 +122,7 @@ import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergenc
 import EmployeeExpenseTab from "@/components/employees/employeeExpense/EmployeeExpenseTab";
 import EmployeeTargetTab from "@/components/employees/employeeTarget/EmployeeTargetTab";
 import EmployeeDiscountTab from "@/components/employees/employeeDiscount/EmployeeDiscountTab";
+import EmployeeComplainTab from "@/components/employees/employeeComplain/EmployeeComplainTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -133,6 +141,7 @@ export default {
     EmployeeExpenseTab,
     EmployeeTargetTab,
     EmployeeDiscountTab,
+    EmployeeComplainTab,
   },
   data() {
     return {

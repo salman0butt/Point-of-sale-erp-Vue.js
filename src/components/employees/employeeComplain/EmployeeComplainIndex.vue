@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeDiscount"
+              :items="employeeComplain"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -27,7 +27,6 @@
                   />
                 </td>
               </template>
-
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -71,7 +70,7 @@
 </template>
 
 <script>
-import EmployeeDiscountService from "@/services/employees/EmployeeDiscountService";
+import EmployeeComplainService from "@/services/employees/EmployeeComplainService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -82,19 +81,22 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
-  { key: "amount_limit", label: "AMOUNT", _style: "min-width:15%;" },
+  { key: "branch_id", label: "Branch", _style: "min-width:40%" },
+  { key: "from_employee_id", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
+  { key: "to_employee_id", label: "TO EMPLOYEE", _style: "min-width:15%;" },
+  { key: "title", label: "TITLE", _style: "min-width:15%;" },
+  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
+  { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 export default {
-  name: "EmployeeDiscountIndex",
+  name: "EmployeeComplainIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeDiscountData: [],
+      employeeComplainData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -106,11 +108,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeDiscount();
+    this.getEmployeeComplain();
   },
   computed: {
-    employeeDiscount() {
-      return this.employeeDiscountData;
+    employeeComplain() {
+      return this.employeeComplainData;
     },
   },
   watch: {
@@ -118,27 +120,28 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeDiscount(this.activePage, this.perPage);
+      this.getEmployeeComplain(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeDiscount(page = "", per_page = "") {
+    getEmployeeComplain(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeDiscountService.getAll(this.empId, page, per_page)
+      EmployeeComplainService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
+          console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeDiscountData = [];
+            this.employeeComplainData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeDiscountData.push({ ...item, id });
+                this.employeeComplainData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
-
+            // console.log(this.employeeComplainData);
             this.loading = false;
           }
         })
@@ -146,33 +149,14 @@ export default {
           console.log(err);
         });
     },
-    updateTableData(obj) {
-      if (obj.type === "create") {
-        let arr = Object.values(
-          this.employeeDiscountData.map(function (item) {
-            return item.id;
-          })
-        );
-        let max = Math.max(...arr);
-        obj.data.id = max + 1;
-        this.employeeDiscountData.push(obj.data);
-      } else {
-        this.employeeDiscountData.map(function (item) {
-          if (item.uuid === obj.data.uuid) {
-            obj.data.id = item.id;
-            return Object.assign(item, obj.data);
-          }
-        });
-      }
-    },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
       }
     },
     check(item) {
-      const val = Boolean(this.employeeDiscountData[item.id]._selected);
-      this.$set(this.employeeDiscountData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeComplainData[item.id]._selected);
+      this.$set(this.employeeComplainData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
@@ -193,16 +177,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeDiscountService.delete(this.deleteRows)
+            EmployeeComplainService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Discount Deleted Successfully",
+                    text: "Complain Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeDiscountData = this.employeeDiscountData.filter(
+                  this.employeeComplainData = this.employeeComplainData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -228,19 +212,14 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.designationsData = agent.currentItems;
+        this.employeeComplainData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeDiscount("", this.perPage);
+      this.getEmployeeComplain("", this.perPage);
     },
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>

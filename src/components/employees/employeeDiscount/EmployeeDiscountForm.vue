@@ -114,10 +114,7 @@ export default {
                 text: "Discount Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-target-update", {
-                type: "create",
-                data: res.data,
-              });
+              this.$emit("employee-discount-update");
               this.$v.$reset();
               this.resetForm();
             }
@@ -148,10 +145,7 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-target-update", {
-                type: "edit",
-                data: res.data,
-              });
+              this.$emit("employee-discount-update");
             }
           })
           .catch((error) => {

@@ -17,13 +17,13 @@
         <CCollapse :show="collapse_table">
           <EmployeeDiscountIndex
             ref="employeeDiscountRef"
-            @employee-target-edit="employeeDiscountEdit"
+            @employee-discount-edit="employeeDiscountEdit"
           />
         </CCollapse>
         <CCollapse :show="collapse">
           <EmployeeDiscountForm
             ref="employeeDiscountEditRef"
-            @employee-target-update="employeeDiscountUpdate"
+            @employee-discount-update="employeeDiscountUpdate"
           />
         </CCollapse>
       </CCol>
@@ -53,7 +53,7 @@ export default {
         this.toggleName = "Add New Discount";
       }
     },
-    employeeDiscountUpdate(data) {
+    employeeDiscountUpdate() {
       this.ToggleEmployeeDiscount();
       // this.$refs.employeeDiscountRef.updateTableData(data);
       this.$refs.employeeDiscountRef.getEmployeeDiscount();
