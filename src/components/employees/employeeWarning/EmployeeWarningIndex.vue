@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeComplain"
+              :items="employeeWarning"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -25,11 +25,6 @@
                     @update:checked="() => check(item)"
                     custom
                   />
-                </td>
-              </template>
-              <template #branch="{ item }">
-                <td>
-                  {{ item.branch.name.en }}
                 </td>
               </template>
               <template #from_employee="{ item }">
@@ -85,7 +80,7 @@
 </template>
 
 <script>
-import EmployeeComplainService from "@/services/employees/EmployeeComplainService";
+import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -96,22 +91,22 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "branch", label: "Branch", _style: "min-width:40%" },
   { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
   { key: "title", label: "TITLE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
+  { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 export default {
-  name: "EmployeeComplainIndex",
+  name: "EmployeeWarningIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeComplainData: [],
+      employeeWarningData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -123,11 +118,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeComplain();
+    this.getEmployeeWarning();
   },
   computed: {
-    employeeComplain() {
-      return this.employeeComplainData;
+    employeeWarning() {
+      return this.employeeWarningData;
     },
   },
   watch: {
@@ -135,27 +130,28 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeComplain(this.activePage, this.perPage);
+      this.getEmployeeWarning(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeComplain(page = "", per_page = "") {
+    getEmployeeWarning(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeComplainService.getAll(this.empId, page, per_page)
+      EmployeeWarningService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
+          console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeComplainData = [];
+            this.employeeWarningData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeComplainData.push({ ...item, id });
+                this.employeeWarningData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
-            // console.log(this.employeeComplainData);
+            // console.log(this.employeeWarningData);
             this.loading = false;
           }
         })
@@ -169,14 +165,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeComplainData[item.id]._selected);
-      this.$set(this.employeeComplainData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeWarningData[item.id]._selected);
+      this.$set(this.employeeWarningData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-complain-edit", uuid);
+      this.$emit("employee-warning-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -191,16 +187,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeComplainService.delete(this.deleteRows)
+            EmployeeWarningService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Complain Deleted Successfully",
+                    text: "Warning Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeComplainData = this.employeeComplainData.filter(
+                  this.employeeWarningData = this.employeeWarningData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -226,13 +222,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeComplainData = agent.currentItems;
+        this.employeeWarningData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeComplain("", this.perPage);
+      this.getEmployeeWarning("", this.perPage);
     },
   },
 };

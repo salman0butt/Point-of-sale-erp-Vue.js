@@ -178,7 +178,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-target-edit", uuid);
+      this.$emit("employee-discount-edit", uuid);
     },
 
     deleteRow(uuid) {

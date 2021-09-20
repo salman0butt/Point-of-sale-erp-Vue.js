@@ -3,21 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeComplain() : saveEmployeeComplain()"
+          @submit.prevent="isEditing ? updateEmployeeWarning() : saveEmployeeWarning()"
         >
           <CRow>
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Branch"
-                :options="options.branches"
-                :value.sync="form.branch_id"
-              />
-              <div v-if="$v.form.branch_id.$error">
-                <p v-if="!$v.form.branch_id.required" class="errorMsg">
-                  Branch is required
-                </p>
-              </div>
-            </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee From"
@@ -66,6 +54,13 @@
                 <p v-if="!$v.form.date.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Status"
+                :options="options.status"
+                :value.sync="form.status"
+              />
+            </CCol>
           </CRow>
 
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -86,33 +81,36 @@
   </div>
 </template>
 <script>
-import EmployeeComplainService from "@/services/employees/EmployeeComplainService";
+import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeComplainForm",
+  name: "EmployeeWarningForm",
   data: () => ({
     isEditing: false,
     form: {
       id: null,
-      branch_id: "",
       from_employee_id: "",
       to_employee_id: "",
       title: "",
       description: "",
       date: "",
+      status: "",
     },
     empId: null,
     options: {
-      branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
+      status: [
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
+        { value: "active", label: "Active" },
+        { value: "inactive", label: "inActive" },
+      ],
       employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
-        branch_id: { required },
         from_employee_id: { required },
         to_employee_id: { required },
         title: { required },
@@ -125,21 +123,21 @@ export default {
     this.getOptions();
   },
   methods: {
-    saveEmployeeComplain() {
+    saveEmployeeWarning() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeComplainService.create(data)
+        EmployeeWarningService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Complain Added Successfully",
+                text: "Warning Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-complain-update");
+              this.$emit("employee-warning-update");
               this.$v.$reset();
               this.resetForm();
             }
@@ -155,22 +153,22 @@ export default {
           });
       }
     },
-    updateEmployeeComplain() {
+    updateEmployeeWarning() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeComplainService.update(this.form.id, data)
+        EmployeeWarningService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Complain Updated Successfully",
+                text: "Warning Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-complain-update");
+              this.$emit("employee-warning-update");
             }
           })
           .catch((error) => {
@@ -184,18 +182,20 @@ export default {
           });
       }
     },
-    getEmployeeComplain() {
-      EmployeeComplainService.get(this.empId)
+    getEmployeeWarning() {
+      EmployeeWarningService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
+            console.log(data);
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.branch_id = data.branch.id;
             this.form.from_employee_id = data.from_employee.id;
             this.form.to_employee_id = data.to_employee.id;
             this.form.title = data.title;
             this.form.description = data.description;
             this.form.date = data.date;
+            this.form.status = data.status;
+            console.log(this.form);
           }
         })
         .catch((error) => {
@@ -227,12 +227,8 @@ export default {
         .get("/employees-create")
         .then(({ data }) => {
           if (data != null && data != "") {
-            const branches = this.options.branches;
             const employees = this.options.employees;
 
-            data.branches.map(function (val) {
-              branches.push({ value: val.id, label: val.name.en });
-            });
             data.employees.map(function (val) {
               employees.push({ value: val.id, label: val.full_name.en });
             });
@@ -245,7 +241,7 @@ export default {
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeComplain();
+      this.getEmployeeWarning();
     },
     resetForm() {
       for (let index in this.form) {
