@@ -6,6 +6,7 @@ import departmentRoutes from '@/router/departments/departmentRoutes';
 import designationRoutes from '@/router/designations/designationRoutes';
 import settingRoutes from '@/router/settings/settingRoutes';
 import store from '@/store'
+import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -158,6 +159,7 @@ const router = new Router({
         employeeRoutes,
         departmentRoutes,
         designationRoutes,
+        attendanceRoutes,
         settingRoutes,
 
         {
@@ -608,7 +610,7 @@ router.beforeEach((to, from, next) => {
 });
 
 const originalPush = Router.prototype.push
-Router.prototype.push = function push (location) {
+Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 
