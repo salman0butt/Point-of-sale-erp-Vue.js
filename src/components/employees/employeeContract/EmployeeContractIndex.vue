@@ -152,9 +152,9 @@ export default {
             if (data.meta) {
               this.setPagination(data.meta);
             }
-            this.loading = false;
           }
-          console.log(this.employeeContractData);
+          this.loading = false;
+          // console.log(this.employeeContractData);
         })
         .catch((err) => {
           console.log(err);

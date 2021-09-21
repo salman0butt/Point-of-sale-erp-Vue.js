@@ -152,8 +152,8 @@ export default {
               this.setPagination(data.meta);
             }
             // console.log(this.employeeWarningData);
-            this.loading = false;
           }
+          this.loading = false;
         })
         .catch((err) => {
           console.log(err);
