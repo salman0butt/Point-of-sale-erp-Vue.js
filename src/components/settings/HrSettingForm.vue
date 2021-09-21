@@ -100,6 +100,19 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Leave Types"
+                    v-model="form.leave_type"
+                    :class="{ error: $v.form.leave_type.$error }"
+                    @input="$v.form.leave_type.$touch()"
+                  />
+                  <div v-if="$v.form.leave_type.$error">
+                    <p v-if="!$v.form.leave_type.required" class="errorMsg">
+                      Leave Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -137,6 +150,7 @@ export default {
       qualification_type: "",
       periodic_type: "",
       allowances_type: "",
+      leave_type: "",
     },
     options: {
       attendance_by: [
@@ -156,6 +170,7 @@ export default {
         qualification_type: { required },
         periodic_type: { required },
         allowances_type: { required },
+        leave_type: { required },
       },
     };
   },

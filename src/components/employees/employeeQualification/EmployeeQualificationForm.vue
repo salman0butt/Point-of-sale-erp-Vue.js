@@ -119,7 +119,7 @@ export default {
     };
   },
   created() {
-    this.empId = this.empId = this.$route.params.id;
+    this.empId = this.$route.params.id;
     this.generateArrayOfYears();
     this.getOptions();
   },
@@ -235,11 +235,9 @@ export default {
       this.getEmployeeQualification();
     },
     resetForm() {
-      this.form.name = "";
-      this.form.type = "";
-      this.form.organization = "";
-      this.form.marks = "";
-      this.form.year = "";
+      for (let index in this.form) {
+        this.form[index] = "";
+      }
       this.isEditing = false;
     },
   },

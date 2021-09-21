@@ -92,7 +92,7 @@ export default {
     };
   },
   created() {
-    this.empId = this.empId = this.$route.params.id;
+    this.empId = this.$route.params.id;
   },
   methods: {
     saveEmployeeContract() {
@@ -178,9 +178,9 @@ export default {
       this.getEmployeeContract();
     },
     resetForm() {
-      this.form.name = "";
-      this.form.value = "";
-      this.form.additional_terms_and_conditions = "";
+      for (let index in this.form) {
+        this.form[index] = "";
+      }
       this.isEditing = false;
     },
   },

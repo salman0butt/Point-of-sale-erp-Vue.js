@@ -85,6 +85,34 @@
                 @click.prevent="changeActiveTab('EmployeeTargetTab')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Targets</a
               >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeDiscountTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeDiscountTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Discounts</a
+              >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeComplainTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeComplainTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Complains</a
+              >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeWarningTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeWarningTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Warnings</a
+              >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeLeaveTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeLeaveTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Leaves</a
+              >
             </div>
           </CCardBody>
         </CCard>
@@ -107,6 +135,10 @@ import EmployeeContractTab from "@/components/employees/employeeContract/Employe
 import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergencyContact/EmployeeEmergencyContactTab";
 import EmployeeExpenseTab from "@/components/employees/employeeExpense/EmployeeExpenseTab";
 import EmployeeTargetTab from "@/components/employees/employeeTarget/EmployeeTargetTab";
+import EmployeeDiscountTab from "@/components/employees/employeeDiscount/EmployeeDiscountTab";
+import EmployeeComplainTab from "@/components/employees/employeeComplain/EmployeeComplainTab";
+import EmployeeWarningTab from "@/components/employees/employeeWarning/EmployeeWarningTab";
+import EmployeeLeaveTab from "@/components/employees/employeeLeave/EmployeeLeaveTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -124,6 +156,10 @@ export default {
     EmployeeEmergencyContactTab,
     EmployeeExpenseTab,
     EmployeeTargetTab,
+    EmployeeDiscountTab,
+    EmployeeComplainTab,
+    EmployeeWarningTab,
+    EmployeeLeaveTab,
   },
   data() {
     return {

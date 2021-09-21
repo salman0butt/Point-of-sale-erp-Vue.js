@@ -146,7 +146,7 @@ export default {
     };
   },
   created() {
-    this.empId = this.empId = this.$route.params.id;
+    this.empId = this.$route.params.id;
     this.form.employee_id = this.$route.params.id;
     this.getEmployeeDetail();
   },

@@ -190,12 +190,9 @@ export default {
       this.getEmployeeAddress();
     },
     resetForm() {
-      this.form.address = "";
-      this.form.address2 = "";
-      this.form.city = "";
-      this.form.postal_code = "";
-      this.form.set_default = "";
-      this.form.employee_id = "";
+      for (let index in this.form) {
+        this.form[index] = "";
+      }
       this.isEditing = false;
     },
   },

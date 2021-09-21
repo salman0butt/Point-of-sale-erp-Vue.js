@@ -2,59 +2,68 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form
-          @submit.prevent="isEditing ? updateEmployeeExpense() : saveEmployeeExpense()"
-        >
+        <form @submit.prevent="isEditing ? updateEmployeeLeave() : saveEmployeeLeave()">
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Name"
-                v-model="form.name"
-                :class="{ error: $v.form.name.$error }"
-                @input="$v.form.name.$touch()"
-              />
-              <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Type"
-                :options="options.expense_types"
+                label="Leave Type"
+                :options="options.leave_type"
                 :value.sync="form.type"
               />
               <div v-if="$v.form.type.$error">
-                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Amount"
-                type="number"
-                v-model="form.amount"
-                :class="{ error: $v.form.amount.$error }"
-                @input="$v.form.amount.$touch()"
-              />
-              <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
-              </div>
-            </CCol>
-          </CRow>
-          <CRow>
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Repeat"
-                :options="options.periodic_type"
-                :value.sync="form.periodic"
-              />
-              <div v-if="$v.form.periodic.$error">
-                <p v-if="!$v.form.periodic.required" class="errorMsg">
-                  Periodic is required
+                <p v-if="!$v.form.type.required" class="errorMsg">
+                  Leave Type is required
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="6">
-              <CTextarea label="Note" placeholder="Content..." v-model="form.detail" />
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput label="From Date" type="date" :value.sync="form.from_date" />
+              <div v-if="$v.form.from_date.$error">
+                <p v-if="!$v.form.from_date.required" class="errorMsg">
+                  From Date is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput label="To Date" type="date" :value.sync="form.to_date" />
+              <div v-if="$v.form.to_date.$error">
+                <p v-if="!$v.form.to_date.required" class="errorMsg">
+                  To Date is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput label="Return Date" type="date" :value.sync="form.return_date" />
+              <div v-if="$v.form.return_date.$error">
+                <p v-if="!$v.form.return_date.required" class="errorMsg">
+                  Return Date is required
+                </p>
+              </div>
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Total Days"
+                v-model="form.total_days"
+                :class="{ error: $v.form.total_days.$error }"
+                @input="$v.form.total_days.$touch()"
+              />
+              <div v-if="$v.form.total_days.$error">
+                <p v-if="!$v.form.total_days.required" class="errorMsg">
+                  Total Days is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4">
+              <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Status"
+                :options="options.status"
+                :value.sync="form.status"
+              />
             </CCol>
           </CRow>
 
@@ -76,38 +85,44 @@
   </div>
 </template>
 <script>
-import EmployeeExpenseService from "@/services/employees/EmployeeExpenseService";
+import EmployeeLeaveService from "@/services/employees/EmployeeLeaveService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeExpenseForm",
+  name: "EmployeeLeaveForm",
   data: () => ({
     isEditing: false,
     form: {
       id: null,
       employee_id: "",
-      name: "",
       type: "",
-      periodic: "",
-      amount: "",
-      detail: "",
+      from_date: "",
+      to_date: "",
+      return_date: "",
+      total_days: "",
+      note: "",
+      status: "",
+      leave_doc: "",
     },
     empId: null,
     options: {
-      expense_types: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
-      periodic_type: [
-        { value: "", label: "Choose repeat", disabled: true, selected: "" },
+      status: [
+        { value: "", label: "Choose Status", disabled: true, selected: "" },
+        { value: "pending", label: "Pending" },
       ],
+      leave_type: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
-        name: { required },
+        employee_id: { required },
         type: { required },
-        periodic: { required },
-        amount: { required },
+        from_date: { required },
+        to_date: { required },
+        return_date: { required },
+        total_days: { required },
       },
     };
   },
@@ -116,24 +131,21 @@ export default {
     this.getOptions();
   },
   methods: {
-    saveEmployeeExpense() {
+    saveEmployeeLeave() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeExpenseService.create(data)
+        EmployeeLeaveService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Expense Added Successfully",
+                text: "Leave Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-expense-update", {
-                type: "create",
-                data: res.data,
-              });
+              this.$emit("employee-leave-update");
               this.$v.$reset();
               this.resetForm();
             }
@@ -149,25 +161,22 @@ export default {
           });
       }
     },
-    updateEmployeeExpense() {
+    updateEmployeeLeave() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeExpenseService.update(this.form.id, data)
+        EmployeeLeaveService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Expense Updated Successfully",
+                text: "Leave Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-expense-update", {
-                type: "edit",
-                data: res.data,
-              });
+              this.$emit("employee-leave-update");
             }
           })
           .catch((error) => {
@@ -181,18 +190,21 @@ export default {
           });
       }
     },
-    getEmployeeExpense() {
-      EmployeeExpenseService.get(this.empId)
+    getEmployeeLeave() {
+      EmployeeLeaveService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.employee_id = data.employee_id;
-            this.form.name = data.name;
             this.form.type = data.type;
-            this.form.periodic = data.periodic;
-            this.form.amount = data.amount;
-            this.form.detail = data.detail;
+            this.form.from_date = data.from_date;
+            this.form.to_date = data.to_date;
+            this.form.return_date = data.return_date;
+            this.form.total_days = data.total_days;
+            this.form.note = data.note;
+            this.form.status = data.status;
+            this.form.leave_doc = data.leave_doc;
           }
         })
         .catch((error) => {
@@ -201,7 +213,7 @@ export default {
         });
     },
     getOptions() {
-      let ids = JSON.stringify(["expense_types", "periodic_type"]);
+      let ids = JSON.stringify(["leave_type"]);
       HrSettingService.getSettings(ids)
         .then(({ data }) => {
           if (data != null && data != "") {
@@ -223,7 +235,7 @@ export default {
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeExpense();
+      this.getEmployeeLeave();
     },
     resetForm() {
       for (let index in this.form) {
