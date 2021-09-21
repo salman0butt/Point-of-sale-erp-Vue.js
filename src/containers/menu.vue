@@ -101,6 +101,11 @@ export default {
                   to: "/employees/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Attendance",
+                  to: "/attendance/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {
