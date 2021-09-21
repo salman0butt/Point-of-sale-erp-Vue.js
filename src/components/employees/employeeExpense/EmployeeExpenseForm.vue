@@ -112,7 +112,7 @@ export default {
     };
   },
   created() {
-    this.empId = this.empId = this.$route.params.id;
+    this.empId = this.$route.params.id;
     this.getOptions();
   },
   methods: {
@@ -226,11 +226,9 @@ export default {
       this.getEmployeeExpense();
     },
     resetForm() {
-      this.form.name = "";
-      this.form.type = "";
-      this.form.periodic = "";
-      this.form.amount = "";
-      this.form.detail = "";
+      for (let index in this.form) {
+        this.form[index] = "";
+      }
       this.isEditing = false;
     },
   },

@@ -96,7 +96,7 @@ export default {
     };
   },
   created() {
-    this.empId = this.empId = this.$route.params.id;
+    this.empId = this.$route.params.id;
     this.getOptions();
   },
   methods: {
