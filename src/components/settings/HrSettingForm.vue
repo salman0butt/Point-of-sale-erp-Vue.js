@@ -126,6 +126,19 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Deduction Types"
+                    v-model="form.deduction_type"
+                    :class="{ error: $v.form.deduction_type.$error }"
+                    @input="$v.form.deduction_type.$touch()"
+                  />
+                  <div v-if="$v.form.deduction_type.$error">
+                    <p v-if="!$v.form.deduction_type.required" class="errorMsg">
+                      Deduction Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -165,6 +178,7 @@ export default {
       allowances_type: "",
       leave_type: "",
       loan_type: "",
+      deduction_type: "",
     },
     options: {
       attendance_by: [
@@ -186,6 +200,7 @@ export default {
         allowances_type: { required },
         leave_type: { required },
         loan_type: { required },
+        deduction_type: { required },
       },
     };
   },
