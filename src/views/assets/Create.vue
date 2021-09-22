@@ -3,50 +3,55 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>New Department </CCardHeader>
+          <CCardHeader>New Asset </CCardHeader>
           <CCardBody>
-            <form @submit.prevent="saveDepartment">
+            <form @submit.prevent="saveAsset">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
-                    label="Business"
-                    :options="options.business"
-                    :value.sync="form.business_id"
-                    :class="{ error: $v.form.business_id.$error }"
-                    @input="$v.form.business_id.$touch()"
+                    label="Branch"
+                    :options="options.branches"
+                    :value.sync="form.branch_id"
+                    :class="{ error: $v.form.branch_id.$error }"
+                    @input="$v.form.branch_id.$touch()"
                   />
-                  <div v-if="$v.form.business_id.$error">
-                    <p v-if="!$v.form.business_id.required" class="errorMsg">
-                      Business is required
+                  <div v-if="$v.form.branch_id.$error">
+                    <p v-if="!$v.form.branch_id.required" class="errorMsg">
+                      Branch is required
                     </p>
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
-                    label="Department Name"
+                    label="Asset Name"
                     v-model="form.name"
                     :class="{ error: $v.form.name.$error }"
                     @input="$v.form.name.$touch()"
                   />
                   <div v-if="$v.form.name.$error">
-                    <p v-if="!$v.form.name.required" class="errorMsg">
-                      Department is required
-                    </p>
+                    <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
-                    label="Parent"
-                    :options="options.departments"
-                    :value.sync="form.parent_id"
+                    label="Type"
+                    :options="options.asset_type"
+                    :value.sync="form.type"
                   />
+                  <div v-if="$v.form.type.$error">
+                    <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
+                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Status"
-                    :options="options.status"
-                    :value.sync="form.status"
+                  <CTextarea
+                    label="Description"
+                    placeholder="Content..."
+                    :value.sync="form.description"
                   />
+                </CCol>
+
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput label="Price" type="number" :value.sync="form.price" />
                 </CCol>
               </CRow>
 
@@ -81,82 +86,74 @@
 </template>
 
 <script>
-import DepartmentService from "@/services/departments/DepartmentService";
+import AssetService from "@/services/assets/AssetService";
+import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "CreateDepartment",
+  name: "CreateAsset",
   data: () => ({
     saveAndExit: false,
     form: {
-      business_id: "",
+      branch_id: "",
       name: "",
-      parent_id: "",
-      departments: [],
-      status: "",
+      type: "",
+      description: "",
+      price: "",
     },
     options: {
-      departments: [
-        { value: "", label: "Choose Departments", disabled: true, selected: "" },
-      ],
-      business: [
-        { value: "", label: "Choose Departments", disabled: true, selected: "" },
-      ],
-      status: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "InActive" },
-      ],
+      branches: [{ value: "", label: "Choose branch", disabled: true, selected: "" }],
+      asset_type: [{ value: "", label: "Choose Assets", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
+        branch_id: { required },
         name: { required },
-        business_id: { required },
+        type: { required },
+        description: { required },
+        price: { required },
       },
     };
   },
   created() {
     this.getDetail();
+    this.getOptions();
   },
   methods: {
     getDetail() {
-      DepartmentService.getAllDepartments()
+      AssetService.getAllBranches()
         .then(({ data }) => {
-          let departments = this.options.departments;
-          let business = this.options.business;
-          data.departments.map(function (val) {
-            departments.push({ value: val.id, label: val.name.en });
-          });
-
-          business.push({
-            value: data.business.id,
-            label: JSON.parse(data.business.business_name).en,
-          });
+          let branches = this.options.branches;
+          if (data.data) {
+            data.data.map(function (val) {
+              branches.push({ value: val.uuid, label: val.name });
+            });
+          }
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    saveDepartment() {
+    saveAsset() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        DepartmentService.create(data)
+        AssetService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Department Created Successfully",
+                text: "Asset Created Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
               if (this.saveAndExit) {
-                this.$router.push({ path: "/departments/index" });
+                this.$router.push({ path: "/assets/index" });
               } else {
-                this.$router.push({ path: "/departments/edit/" + res.data.uuid });
+                this.$router.push({ path: "/assets/edit/" + res.data.uuid });
               }
             }
           })
@@ -165,11 +162,31 @@ export default {
             this.$swal.fire({
               icon: "error",
               title: "Error",
-              text: "Something Went Wrong",
+              text: "Something Went Wrong.",
               timer: 3600,
             });
           });
       }
+    },
+    getOptions() {
+      let ids = JSON.stringify(["asset_type"]);
+      HrSettingService.getSettings(ids)
+        .then(({ data }) => {
+          if (data != null && data != "") {
+            const types = this.options;
+            for (let index in data) {
+              let arr = JSON.parse(data[index]);
+              for (let i in arr) {
+                if (types[index]) {
+                  types[index].push({ value: arr[i], label: arr[i] });
+                }
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };

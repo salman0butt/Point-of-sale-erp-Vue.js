@@ -5,6 +5,7 @@ import employeeRoutes from '@/router/employees/employeeRoutes';
 import departmentRoutes from '@/router/departments/departmentRoutes';
 import designationRoutes from '@/router/designations/designationRoutes';
 import settingRoutes from '@/router/settings/settingRoutes';
+import assetRoutes from '@/router/assets/assetRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
@@ -161,6 +162,7 @@ const router = new Router({
         designationRoutes,
         attendanceRoutes,
         settingRoutes,
+        assetRoutes,
 
         {
           path: 'theme',

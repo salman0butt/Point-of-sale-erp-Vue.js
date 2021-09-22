@@ -106,6 +106,11 @@ export default {
                   to: "/attendance/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Assets",
+                  to: "/assets/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {

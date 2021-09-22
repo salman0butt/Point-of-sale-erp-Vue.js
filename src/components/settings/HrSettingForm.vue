@@ -139,6 +139,19 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Asset Types"
+                    v-model="form.asset_type"
+                    :class="{ error: $v.form.asset_type.$error }"
+                    @input="$v.form.asset_type.$touch()"
+                  />
+                  <div v-if="$v.form.asset_type.$error">
+                    <p v-if="!$v.form.asset_type.required" class="errorMsg">
+                      Asset Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -179,6 +192,7 @@ export default {
       leave_type: "",
       loan_type: "",
       deduction_type: "",
+      asset_type: "",
     },
     options: {
       attendance_by: [
@@ -201,6 +215,7 @@ export default {
         leave_type: { required },
         loan_type: { required },
         deduction_type: { required },
+        asset_type: { required },
       },
     };
   },
