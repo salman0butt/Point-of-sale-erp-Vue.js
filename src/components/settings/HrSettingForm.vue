@@ -152,6 +152,19 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Award Types"
+                    v-model="form.award_type"
+                    :class="{ error: $v.form.award_type.$error }"
+                    @input="$v.form.award_type.$touch()"
+                  />
+                  <div v-if="$v.form.award_type.$error">
+                    <p v-if="!$v.form.award_type.required" class="errorMsg">
+                      Award Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -193,6 +206,7 @@ export default {
       loan_type: "",
       deduction_type: "",
       asset_type: "",
+      award_type: "",
     },
     options: {
       attendance_by: [
@@ -216,6 +230,7 @@ export default {
         loan_type: { required },
         deduction_type: { required },
         asset_type: { required },
+        award_type: { required },
       },
     };
   },

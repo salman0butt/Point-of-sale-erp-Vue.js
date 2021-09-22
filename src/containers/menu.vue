@@ -111,6 +111,11 @@ export default {
                   to: "/assets/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Awards",
+                  to: "/awards/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {
