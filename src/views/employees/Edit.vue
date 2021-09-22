@@ -113,6 +113,27 @@
                 @click.prevent="changeActiveTab('EmployeeLeaveTab')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Leaves</a
               >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeLoanTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeLoanTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Loans</a
+              >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeLoanInstallmentTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeLoanInstallmentTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Loan Installments</a
+              >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeDeductionTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeDeductionTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Deductions</a
+              >
             </div>
           </CCardBody>
         </CCard>
@@ -139,6 +160,9 @@ import EmployeeDiscountTab from "@/components/employees/employeeDiscount/Employe
 import EmployeeComplainTab from "@/components/employees/employeeComplain/EmployeeComplainTab";
 import EmployeeWarningTab from "@/components/employees/employeeWarning/EmployeeWarningTab";
 import EmployeeLeaveTab from "@/components/employees/employeeLeave/EmployeeLeaveTab";
+import EmployeeLoanTab from "@/components/employees/employeeLoan/EmployeeLoanTab";
+import EmployeeLoanInstallmentTab from "@/components/employees/employeeLoanInstallment/EmployeeLoanInstallmentTab";
+import EmployeeDeductionTab from "@/components/employees/employeeDeduction/EmployeeDeductionTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -160,6 +184,9 @@ export default {
     EmployeeComplainTab,
     EmployeeWarningTab,
     EmployeeLeaveTab,
+    EmployeeLoanTab,
+    EmployeeLoanInstallmentTab,
+    EmployeeDeductionTab,
   },
   data() {
     return {
@@ -225,7 +252,7 @@ a.nav-link.active,
 .online {
   color: #52b947 !important;
   position: absolute;
-  left: 30%;
-  top: 18%;
+  left: 32%;
+  top: 14%;
 }
 </style>

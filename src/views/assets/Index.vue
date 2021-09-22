@@ -4,8 +4,11 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
+            <router-link class="btn btn-success" to="/assets/create"
+              >Create Asset</router-link
+            >
             <CDataTable
-              :items="employeeAddresses"
+              :items="departments"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -27,40 +30,26 @@
                   />
                 </td>
               </template>
-              <template #business="{ item }">
+              <template #branch="{ item }">
                 <td>
-                  {{ item.name }}
+                  {{ item.branch.name.en }}
                 </td>
               </template>
-              <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
+
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
-                      title="View"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      title="Edit"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                      title="Delete"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -80,7 +69,7 @@
 </template>
 
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import AssetService from "@/services/assets/AssetService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,26 +80,25 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "address", label: "ADDRESS", _style: "min-width:40%" },
-  { key: "address2", label: "SECOND ADDRESS", _style: "min-width:15%;" },
-  { key: "city", label: "CITY", _style: "min-width:15%;" },
-  { key: "postal_code", label: "POSTAL CODE", _style: "min-width:15%;" },
-  { key: "set_default", label: "DEFAULT", _style: "min-width:15%;" },
+  { key: "branch", label: "BRANCH", _style: "min-width:40%" },
+  { key: "name", label: "NAME", _style: "min-width:15%;" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
+  { key: "price", label: "PRICE", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeAddressIndex",
+  name: "IndexAsset",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAddressesData: [],
+      departmentsData: [],
       fields,
       loading: false,
       deleteRows: [],
-      empId: null,
       activePage: 1,
       pages: 0,
       perPage: 10,
@@ -118,40 +106,39 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAddressData();
-  },
-  computed: {
-    employeeAddresses() {
-      return this.employeeAddressesData;
-    },
+    this.getAssetData();
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeAddressData(this.activePage, this.perPage);
+      this.getAssetData(this.activePage, this.perPage);
+    },
+  },
+  computed: {
+    departments() {
+      return this.departmentsData;
     },
   },
   methods: {
-    getEmployeeAddressData(page = "", per_page = "") {
-      this.empId = this.$route.params.id;
-
-      EmployeeAddressService.getAll(this.empId, page, per_page)
+    getAssetData(page = "", per_page = "") {
+      AssetService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.employeeAddressesData = [];
+            this.departmentsData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeAddressesData.push({ ...item, id });
+                this.departmentsData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
+
+            this.loading = false;
           }
-          this.loading = false;
         })
         .catch((err) => {
           console.log(err);
@@ -163,14 +150,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAddressesData[item.id]._selected);
-      this.$set(this.employeeAddressesData[item.id], "_selected", !val);
+      const val = Boolean(this.departmentsData[item.id]._selected);
+      this.$set(this.departmentsData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAddressEdit", uuid);
+      this.$router.push({ path: "/assets/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -185,16 +172,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAddressService.delete(this.deleteRows)
+            AssetService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "Asset Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAddressesData = this.employeeAddressesData.filter(
+                  this.departmentsData = this.departmentsData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -220,13 +207,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeAddressesData = agent.currentItems;
+        this.departmentsData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeAddressData("", this.perPage);
+      this.getAssetData("", this.perPage);
     },
   },
 };

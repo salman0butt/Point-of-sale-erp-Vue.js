@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeAddresses"
+              :items="employeeDeduction"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -25,16 +25,6 @@
                     @update:checked="() => check(item)"
                     custom
                   />
-                </td>
-              </template>
-              <template #business="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
-              <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
                 </td>
               </template>
               <template #actions="{ item }">
@@ -80,7 +70,7 @@
 </template>
 
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import EmployeeDeductionService from "@/services/employees/EmployeeDeductionService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,22 +81,22 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "address", label: "ADDRESS", _style: "min-width:40%" },
-  { key: "address2", label: "SECOND ADDRESS", _style: "min-width:15%;" },
-  { key: "city", label: "CITY", _style: "min-width:15%;" },
-  { key: "postal_code", label: "POSTAL CODE", _style: "min-width:15%;" },
-  { key: "set_default", label: "DEFAULT", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:15%;" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
+  { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
+  { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeAddressIndex",
+  name: "EmployeeDeductionIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAddressesData: [],
+      employeeDeductionData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -118,11 +108,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAddressData();
+    this.getEmployeeDeduction();
   },
   computed: {
-    employeeAddresses() {
-      return this.employeeAddressesData;
+    employeeDeduction() {
+      return this.employeeDeductionData;
     },
   },
   watch: {
@@ -130,21 +120,22 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeAddressData(this.activePage, this.perPage);
+      this.getEmployeeDeduction(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeAddressData(page = "", per_page = "") {
+    getEmployeeDeduction(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeAddressService.getAll(this.empId, page, per_page)
+      EmployeeDeductionService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
+          console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeAddressesData = [];
+            this.employeeDeductionData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeAddressesData.push({ ...item, id });
+                this.employeeDeductionData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -163,14 +154,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAddressesData[item.id]._selected);
-      this.$set(this.employeeAddressesData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeDeductionData[item.id]._selected);
+      this.$set(this.employeeDeductionData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAddressEdit", uuid);
+      this.$emit("employee-deduction-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -185,17 +176,17 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAddressService.delete(this.deleteRows)
+            EmployeeDeductionService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "Deduction Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAddressesData = this.employeeAddressesData.filter(
-                    (department) => department.uuid != uuid
+                  this.employeeDeductionData = this.employeeDeductionData.filter(
+                    (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
                 }
@@ -220,19 +211,14 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeAddressesData = agent.currentItems;
+        this.employeeDeductionData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeAddressData("", this.perPage);
+      this.getEmployeeDeduction("", this.perPage);
     },
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>

@@ -113,6 +113,58 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Loan Types"
+                    v-model="form.loan_type"
+                    :class="{ error: $v.form.loan_type.$error }"
+                    @input="$v.form.loan_type.$touch()"
+                  />
+                  <div v-if="$v.form.loan_type.$error">
+                    <p v-if="!$v.form.loan_type.required" class="errorMsg">
+                      Loan Types is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Deduction Types"
+                    v-model="form.deduction_type"
+                    :class="{ error: $v.form.deduction_type.$error }"
+                    @input="$v.form.deduction_type.$touch()"
+                  />
+                  <div v-if="$v.form.deduction_type.$error">
+                    <p v-if="!$v.form.deduction_type.required" class="errorMsg">
+                      Deduction Types is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Asset Types"
+                    v-model="form.asset_type"
+                    :class="{ error: $v.form.asset_type.$error }"
+                    @input="$v.form.asset_type.$touch()"
+                  />
+                  <div v-if="$v.form.asset_type.$error">
+                    <p v-if="!$v.form.asset_type.required" class="errorMsg">
+                      Asset Types is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Award Types"
+                    v-model="form.award_type"
+                    :class="{ error: $v.form.award_type.$error }"
+                    @input="$v.form.award_type.$touch()"
+                  />
+                  <div v-if="$v.form.award_type.$error">
+                    <p v-if="!$v.form.award_type.required" class="errorMsg">
+                      Award Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -151,6 +203,10 @@ export default {
       periodic_type: "",
       allowances_type: "",
       leave_type: "",
+      loan_type: "",
+      deduction_type: "",
+      asset_type: "",
+      award_type: "",
     },
     options: {
       attendance_by: [
@@ -171,6 +227,10 @@ export default {
         periodic_type: { required },
         allowances_type: { required },
         leave_type: { required },
+        loan_type: { required },
+        deduction_type: { required },
+        asset_type: { required },
+        award_type: { required },
       },
     };
   },

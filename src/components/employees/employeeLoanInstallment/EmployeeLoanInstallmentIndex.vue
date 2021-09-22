@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeAddresses"
+              :items="employeeLoanInstallment"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -27,14 +27,9 @@
                   />
                 </td>
               </template>
-              <template #business="{ item }">
+              <template #employee_loan="{ item }">
                 <td>
-                  {{ item.name }}
-                </td>
-              </template>
-              <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
+                  {{ item.employee_loan.name.en }}
                 </td>
               </template>
               <template #actions="{ item }">
@@ -80,7 +75,7 @@
 </template>
 
 <script>
-import EmployeeAddressService from "@/services/employees/EmployeeAddressService";
+import EmployeeLoanInstallmentService from "@/services/employees/EmployeeLoanInstallmentService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,22 +86,22 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "address", label: "ADDRESS", _style: "min-width:40%" },
-  { key: "address2", label: "SECOND ADDRESS", _style: "min-width:15%;" },
-  { key: "city", label: "CITY", _style: "min-width:15%;" },
-  { key: "postal_code", label: "POSTAL CODE", _style: "min-width:15%;" },
-  { key: "set_default", label: "DEFAULT", _style: "min-width:15%;" },
+  { key: "employee_loan", label: "LOAN", _style: "min-width:15%;" },
+  { key: "installment", label: "INSTALLMENT", _style: "min-width:15%;" },
+  { key: "total_paid", label: "TOTAL PAID", _style: "min-width:15%;" },
+  { key: "total_amount", label: "TOTAL AMOUNT", _style: "min-width:15%;" },
+  { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeAddressIndex",
+  name: "EmployeeLoanInstallmentIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeAddressesData: [],
+      employeeLoanInstallmentData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -118,11 +113,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeAddressData();
+    this.getEmployeeLoanInstallment();
   },
   computed: {
-    employeeAddresses() {
-      return this.employeeAddressesData;
+    employeeLoanInstallment() {
+      return this.employeeLoanInstallmentData;
     },
   },
   watch: {
@@ -130,21 +125,22 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeAddressData(this.activePage, this.perPage);
+      this.getEmployeeLoanInstallment(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeAddressData(page = "", per_page = "") {
+    getEmployeeLoanInstallment(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeAddressService.getAll(this.empId, page, per_page)
+      EmployeeLoanInstallmentService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
+          console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeAddressesData = [];
+            this.employeeLoanInstallmentData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeAddressesData.push({ ...item, id });
+                this.employeeLoanInstallmentData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -163,14 +159,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeAddressesData[item.id]._selected);
-      this.$set(this.employeeAddressesData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeLoanInstallmentData[item.id]._selected);
+      this.$set(this.employeeLoanInstallmentData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAddressEdit", uuid);
+      this.$emit("employee-loaninstallment-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -185,17 +181,17 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAddressService.delete(this.deleteRows)
+            EmployeeLoanInstallmentService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Address Deleted Successfully",
+                    text: "LoanInstallment Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAddressesData = this.employeeAddressesData.filter(
-                    (department) => department.uuid != uuid
+                  this.employeeLoanInstallmentData = this.employeeLoanInstallmentData.filter(
+                    (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
                 }
@@ -220,19 +216,14 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeAddressesData = agent.currentItems;
+        this.employeeLoanInstallmentData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeAddressData("", this.perPage);
+      this.getEmployeeLoanInstallment("", this.perPage);
     },
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>
