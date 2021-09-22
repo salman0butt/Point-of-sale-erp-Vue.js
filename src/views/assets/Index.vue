@@ -80,7 +80,7 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "branch", label: "BUSINESS", _style: "min-width:40%" },
+  { key: "branch", label: "BRANCH", _style: "min-width:40%" },
   { key: "name", label: "NAME", _style: "min-width:15%;" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
