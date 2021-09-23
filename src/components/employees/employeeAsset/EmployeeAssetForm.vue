@@ -85,7 +85,6 @@
 </template>
 <script>
 import EmployeeAssetService from "@/services/employees/EmployeeAssetService";
-import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
@@ -125,7 +124,6 @@ export default {
   },
   created() {
     this.empId = this.$route.params.id;
-    this.getOptions();
     this.getAllAssets();
   },
   methods: {
@@ -208,7 +206,7 @@ export default {
         });
     },
     getAllAssets() {
-      EmployeeAssetService.getAllAssets(this.empId)
+      EmployeeAssetService.getAllAssets()
         .then(({ data }) => {
           if (data != null && data != "") {
             let assets = this.options.assets;
@@ -222,26 +220,6 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-        });
-    },
-    getOptions() {
-      let ids = JSON.stringify(["deduction_type"]);
-      HrSettingService.getSettings(ids)
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            const types = this.options;
-            for (let index in data) {
-              let arr = JSON.parse(data[index]);
-              for (let i in arr) {
-                if (types[index]) {
-                  types[index].push({ value: arr[i], label: arr[i] });
-                }
-              }
-            }
-          }
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
     getEditData(uuid) {

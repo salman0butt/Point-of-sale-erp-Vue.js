@@ -21,125 +21,13 @@
               <br />
               <a
                 class="nav-link bborder"
-                @click.prevent="changeActiveTab('EmployeeTab')"
+                v-for="(tab, index) in tabs"
+                v-bind:key="index"
+                @click.prevent="changeActiveTab(tab.key)"
                 href="#"
-                v-bind:class="{ active: activeTab === 'EmployeeTab' }"
+                v-bind:class="{ active: activeTab === tab.key }"
               >
-                <CIcon :content="$options.cilUser" />&nbsp; General</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeQualificationTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeQualificationTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Qualifications</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeAllowanceTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeAllowanceTab')"
-              >
-                <CIcon :content="$options.cilUser" />&nbsp; Allowances</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeBankAccountTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeBankAccountTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Bank Accounts</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeLicenseTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeLicenseTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Licenses</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeContractTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeContractTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Contracts</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeEmergencyContactTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeEmergencyContactTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Emergency Contacts</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeExpenseTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeExpenseTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Expenses</a
-              >
-
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeTargetTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeTargetTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Targets</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeDiscountTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeDiscountTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Discounts</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeComplainTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeComplainTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Complains</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeWarningTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeWarningTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Warnings</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeLeaveTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeLeaveTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Leaves</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeLoanTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeLoanTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Loans</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeLoanInstallmentTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeLoanInstallmentTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Loan Installments</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeDeductionTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeDeductionTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Deductions</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'EmployeeAssetTab' }"
-                href="#"
-                @click.prevent="changeActiveTab('EmployeeAssetTab')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Assets</a
+                <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}</a
               >
             </div>
           </CCardBody>
@@ -171,6 +59,7 @@ import EmployeeLoanTab from "@/components/employees/employeeLoan/EmployeeLoanTab
 import EmployeeLoanInstallmentTab from "@/components/employees/employeeLoanInstallment/EmployeeLoanInstallmentTab";
 import EmployeeDeductionTab from "@/components/employees/employeeDeduction/EmployeeDeductionTab";
 import EmployeeAssetTab from "@/components/employees/employeeAsset/EmployeeAssetTab";
+import EmployeeAwardTab from "@/components/employees/employeeAward/EmployeeAwardTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -196,12 +85,33 @@ export default {
     EmployeeLoanInstallmentTab,
     EmployeeDeductionTab,
     EmployeeAssetTab,
+    EmployeeAwardTab,
   },
   data() {
     return {
       employee_name: "Alan Butler",
       employee_designation: "Project Manager",
       activeTab: "EmployeeTab",
+      tabs: [
+        { key: "EmployeeTab", name: "General" },
+        { key: "EmployeeQualificationTab", name: "Qualifications" },
+        { key: "EmployeeAllowanceTab", name: "Allowances" },
+        { key: "EmployeeBankAccountTab", name: "Bank Accounts" },
+        { key: "EmployeeLicenseTab", name: "Licenses" },
+        { key: "EmployeeContractTab", name: "Contracts" },
+        { key: "EmployeeEmergencyContactTab", name: "Emergency Contacts" },
+        { key: "EmployeeExpenseTab", name: "Expenses" },
+        { key: "EmployeeTargetTab", name: "Targets" },
+        { key: "EmployeeDiscountTab", name: "Discounts" },
+        { key: "EmployeeComplainTab", name: "Complains" },
+        { key: "EmployeeWarningTab", name: "Warnings" },
+        { key: "EmployeeLeaveTab", name: "Leaves" },
+        { key: "EmployeeLoanTab", name: "Loans" },
+        { key: "EmployeeLoanInstallmentTab", name: "Loan Installments" },
+        { key: "EmployeeDeductionTab", name: "Deductions" },
+        { key: "EmployeeAssetTab", name: "Assets" },
+        { key: "EmployeeAwardTab", name: "Awards" },
+      ],
     };
   },
   created() {
