@@ -30,11 +30,6 @@
                   />
                 </td>
               </template>
-              <template #branch="{ item }">
-                <td>
-                  {{ item.branch.name.en }}
-                </td>
-              </template>
 
               <template #actions="{ item }">
                 <td>
@@ -83,7 +78,6 @@ const fields = [
   { key: "name", label: "NAME", _style: "min-width:15%;" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
-  { key: "price", label: "PRICE", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
@@ -156,7 +150,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/assets/edit/" + uuid });
+      this.$router.push({ path: "/awards/edit/" + uuid });
     },
 
     deleteRow(uuid) {
