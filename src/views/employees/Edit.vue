@@ -134,6 +134,13 @@
                 @click.prevent="changeActiveTab('EmployeeDeductionTab')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Deductions</a
               >
+              <a
+                class="nav-link bborder"
+                v-bind:class="{ active: activeTab === 'EmployeeAssetTab' }"
+                href="#"
+                @click.prevent="changeActiveTab('EmployeeAssetTab')"
+                ><CIcon :content="$options.cilUser" />&nbsp; Assets</a
+              >
             </div>
           </CCardBody>
         </CCard>
@@ -163,6 +170,7 @@ import EmployeeLeaveTab from "@/components/employees/employeeLeave/EmployeeLeave
 import EmployeeLoanTab from "@/components/employees/employeeLoan/EmployeeLoanTab";
 import EmployeeLoanInstallmentTab from "@/components/employees/employeeLoanInstallment/EmployeeLoanInstallmentTab";
 import EmployeeDeductionTab from "@/components/employees/employeeDeduction/EmployeeDeductionTab";
+import EmployeeAssetTab from "@/components/employees/employeeAsset/EmployeeAssetTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -187,6 +195,7 @@ export default {
     EmployeeLoanTab,
     EmployeeLoanInstallmentTab,
     EmployeeDeductionTab,
+    EmployeeAssetTab,
   },
   data() {
     return {
@@ -253,6 +262,6 @@ a.nav-link.active,
   color: #52b947 !important;
   position: absolute;
   left: 32%;
-  top: 14%;
+  top: 12%;
 }
 </style>
