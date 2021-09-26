@@ -16,17 +16,17 @@ const employeeRoutes =  {
     children: [
       {
         path: 'index',
-        name: 'Index',
+        name: 'IndexEmployee',
         component: IndexEmployee
       },
       {
         path: 'create',
-        name: 'Create',
+        name: 'CreateEmployee',
         component: CreateEmployee
       },
       {
         path: 'edit/:id',
-        name: 'Edit',
+        name: 'EditEmployee',
         component: EditEmployee
       }
     ]

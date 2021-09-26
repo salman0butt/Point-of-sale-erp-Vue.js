@@ -29,7 +29,7 @@ class EmployeeService extends Helper {
   }
 
   update(id, data) {
-    return http.put(`/employees/${id}`, data);
+    return http.patch(`/employees/${id}`, data);
   }
 
   delete(id) {

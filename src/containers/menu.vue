@@ -116,6 +116,11 @@ export default {
                   to: "/awards/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Grades",
+                  to: "/grades/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {

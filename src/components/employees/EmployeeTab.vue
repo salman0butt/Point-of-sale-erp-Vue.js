@@ -28,16 +28,10 @@
 
               <CTab>
                 <template slot="title">
-                  {{ tabs.salary }}
+                  {{ tabs.emergencyContanct }}
                 </template>
-                <EmployeeSalaryTab />
+                <EmployeeEmergencyContactTab />
               </CTab>
-              <!-- <CTab>
-                <template slot="title">
-                  {{ tabs.target }}
-                </template>
-                Deatil target
-              </CTab> -->
             </CTabs>
           </CCardBody>
         </CCard>
@@ -48,7 +42,8 @@
 <script>
 import EmployeeAddressTab from "@/components/employees/employeeAddress/EmployeeAddressTab";
 import EmployeeDetailTab from "@/components/employees/employeeDetail/EmployeeDetailTab";
-import EmployeeSalaryTab from "@/components/employees/employeeSalary/EmployeeSalaryTab";
+import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergencyContact/EmployeeEmergencyContactTab";
+
 import EmployeeForm from "@/components/employees/EmployeeForm";
 
 export default {
@@ -56,16 +51,16 @@ export default {
   components: {
     EmployeeAddressTab,
     EmployeeDetailTab,
-    EmployeeSalaryTab,
     EmployeeForm,
+    EmployeeEmergencyContactTab,
   },
   data: () => ({
     tabs: {
       employee: "Employee",
       detail: "Detail",
-      salary: "Salary",
       target: "Traget",
       address: "Address",
+      emergencyContanct: "Emergency Contancts",
     },
   }),
 };

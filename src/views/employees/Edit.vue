@@ -44,11 +44,7 @@
 <script>
 import EmployeeTab from "@/components/employees/EmployeeTab";
 import EmployeeQualificationTab from "@/components/employees/employeeQualification/EmployeeQualificationTab";
-import EmployeeAllowanceTab from "@/components/employees/employeeAllowance/EmployeeAllowanceTab";
-import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/EmployeeBankAccountTab";
-import EmployeeLicenseTab from "@/components/employees/employeeLicense/EmployeeLicenseTab";
 import EmployeeContractTab from "@/components/employees/employeeContract/EmployeeContractTab";
-import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergencyContact/EmployeeEmergencyContactTab";
 import EmployeeExpenseTab from "@/components/employees/employeeExpense/EmployeeExpenseTab";
 import EmployeeTargetTab from "@/components/employees/employeeTarget/EmployeeTargetTab";
 import EmployeeDiscountTab from "@/components/employees/employeeDiscount/EmployeeDiscountTab";
@@ -60,6 +56,7 @@ import EmployeeLoanInstallmentTab from "@/components/employees/employeeLoanInsta
 import EmployeeDeductionTab from "@/components/employees/employeeDeduction/EmployeeDeductionTab";
 import EmployeeAssetTab from "@/components/employees/employeeAsset/EmployeeAssetTab";
 import EmployeeAwardTab from "@/components/employees/employeeAward/EmployeeAwardTab";
+import EmployeeSalaryTab from "@/components/employees/employeeSalary/EmployeeSalaryTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -70,11 +67,7 @@ export default {
   components: {
     EmployeeTab,
     EmployeeQualificationTab,
-    EmployeeAllowanceTab,
-    EmployeeBankAccountTab,
-    EmployeeLicenseTab,
     EmployeeContractTab,
-    EmployeeEmergencyContactTab,
     EmployeeExpenseTab,
     EmployeeTargetTab,
     EmployeeDiscountTab,
@@ -86,6 +79,7 @@ export default {
     EmployeeDeductionTab,
     EmployeeAssetTab,
     EmployeeAwardTab,
+    EmployeeSalaryTab,
   },
   data() {
     return {
@@ -95,11 +89,8 @@ export default {
       tabs: [
         { key: "EmployeeTab", name: "General" },
         { key: "EmployeeQualificationTab", name: "Qualifications" },
-        { key: "EmployeeAllowanceTab", name: "Allowances" },
-        { key: "EmployeeBankAccountTab", name: "Bank Accounts" },
-        { key: "EmployeeLicenseTab", name: "Licenses" },
+        { key: "EmployeeSalaryTab", name: "Salary" },
         { key: "EmployeeContractTab", name: "Contracts" },
-        { key: "EmployeeEmergencyContactTab", name: "Emergency Contacts" },
         { key: "EmployeeExpenseTab", name: "Expenses" },
         { key: "EmployeeTargetTab", name: "Targets" },
         { key: "EmployeeDiscountTab", name: "Discounts" },
