@@ -3,7 +3,6 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Emergency Contacts</CCardHeader>
           <CCardBody>
             <EmployeeEmergencyContactToggle />
           </CCardBody>

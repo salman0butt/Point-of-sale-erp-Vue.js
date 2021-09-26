@@ -2,12 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CCard>
-          <CCardHeader>Allowances</CCardHeader>
-          <CCardBody>
-            <EmployeeAllowanceToggle />
-          </CCardBody>
-        </CCard>
+        <EmployeeAllowanceToggle />
       </CCol>
     </CRow>
   </div>
