@@ -4,11 +4,8 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/awards/create"
-              >Create Award</router-link
-            >
             <CDataTable
-              :items="departments"
+              :items="employeeGrade"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -30,21 +27,35 @@
                   />
                 </td>
               </template>
-
+              <template #award="{ item }">
+                <td>
+                  {{ item.award.name }}
+                </td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
+                      title="View"
                       >View</CButton
                     >
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
+                      title="Edit"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                      title="Delete"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -64,7 +75,7 @@
 </template>
 
 <script>
-import AwardService from "@/services/awards/AwardService";
+import EmployeeGradeService from "@/services/employees/EmployeeGradeService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -75,23 +86,23 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "name", label: "NAME", _style: "min-width:15%;" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
+  { key: "award", label: "AWARD", _style: "min-width:15%;" },
+  { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "IndexAward",
+  name: "EmployeeGradeIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      departmentsData: [],
+      employeeGradeData: [],
       fields,
       loading: false,
       deleteRows: [],
+      empId: null,
       activePage: 1,
       pages: 0,
       perPage: 10,
@@ -99,39 +110,41 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getAwardData();
+    this.getEmployeeGrade();
+  },
+  computed: {
+    employeeGrade() {
+      return this.employeeGradeData;
+    },
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getAwardData(this.activePage, this.perPage);
-    },
-  },
-  computed: {
-    departments() {
-      return this.departmentsData;
+      this.getEmployeeGrade(this.activePage, this.perPage);
     },
   },
   methods: {
-    getAwardData(page = "", per_page = "") {
-      AwardService.getAll(page, per_page)
+    getEmployeeGrade(page = "", per_page = "") {
+      this.empId = this.$route.params.id;
+
+      EmployeeGradeService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
+          // console.log(data);
           if (data !== "" && data !== undefined) {
-            this.departmentsData = [];
+            this.employeeGradeData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.departmentsData.push({ ...item, id });
+                this.employeeGradeData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
-
-            this.loading = false;
           }
+          this.loading = false;
         })
         .catch((err) => {
           console.log(err);
@@ -143,14 +156,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.departmentsData[item.id]._selected);
-      this.$set(this.departmentsData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeGradeData[item.id]._selected);
+      this.$set(this.employeeGradeData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/awards/edit/" + uuid });
+      this.$emit("employee-grade-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -165,17 +178,17 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            AwardService.delete(this.deleteRows)
+            EmployeeGradeService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Award Deleted Successfully",
+                    text: "Grade Deleted Successfully",
                     timer: 3600,
                   });
-                  this.departmentsData = this.departmentsData.filter(
-                    (department) => department.uuid != uuid
+                  this.employeeGradeData = this.employeeGradeData.filter(
+                    (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
                 }
@@ -200,19 +213,14 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.departmentsData = agent.currentItems;
+        this.employeeGradeData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getAwardData("", this.perPage);
+      this.getEmployeeGrade("", this.perPage);
     },
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>

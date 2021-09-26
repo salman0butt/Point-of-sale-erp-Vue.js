@@ -3,24 +3,10 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Award</CCardHeader>
+          <CCardHeader>Edit Award </CCardHeader>
           <CCardBody>
             <form @submit.prevent="updateAward">
               <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Branch"
-                    :options="options.branches"
-                    :value.sync="form.branch_id"
-                    :class="{ error: $v.form.branch_id.$error }"
-                    @input="$v.form.branch_id.$touch()"
-                  />
-                  <div v-if="$v.form.branch_id.$error">
-                    <p v-if="!$v.form.branch_id.required" class="errorMsg">
-                      Branch is required
-                    </p>
-                  </div>
-                </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Award Name"
@@ -35,7 +21,7 @@
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Type"
-                    :options="options.asset_type"
+                    :options="options.award_type"
                     :value.sync="form.type"
                   />
                   <div v-if="$v.form.type.$error">
@@ -48,10 +34,6 @@
                     placeholder="Content..."
                     :value.sync="form.description"
                   />
-                </CCol>
-
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Price" type="number" :value.sync="form.price" />
                 </CCol>
               </CRow>
 
@@ -95,26 +77,21 @@ export default {
   data: () => ({
     saveAndExit: false,
     form: {
-      branch_id: "",
       name: "",
       type: "",
       description: "",
-      price: "",
     },
     assetId: null,
     options: {
-      branches: [{ value: "", label: "Choose branch", disabled: true, selected: "" }],
-      asset_type: [{ value: "", label: "Choose Awards", disabled: true, selected: "" }],
+      award_type: [{ value: "", label: "Choose Awards", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
-        branch_id: { required },
         name: { required },
         type: { required },
         description: { required },
-        price: { required },
       },
     };
   },
@@ -122,17 +99,14 @@ export default {
     this.assetId = this.$route.params.id;
     this.getAward();
     this.getOptions();
-    this.getDetail();
   },
   methods: {
     getAward() {
       AwardService.get(this.assetId)
         .then(({ data }) => {
-          this.form.branch_id = data.branch.uuid;
           this.form.name = data.name;
           this.form.type = data.type;
           this.form.description = data.description;
-          this.form.price = data.price;
         })
         .catch((error) => {
           console.log(error);
@@ -171,7 +145,7 @@ export default {
       }
     },
     getOptions() {
-      let ids = JSON.stringify(["asset_type"]);
+      let ids = JSON.stringify(["award_type"]);
       HrSettingService.getSettings(ids)
         .then(({ data }) => {
           if (data != null && data != "") {
