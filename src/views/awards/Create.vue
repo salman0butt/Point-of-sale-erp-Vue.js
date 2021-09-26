@@ -3,13 +3,13 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>New Awards </CCardHeader>
+          <CCardHeader>New Award </CCardHeader>
           <CCardBody>
             <form @submit.prevent="saveAwards">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
-                    label="Awards Name"
+                    label="Award Name"
                     v-model="form.name"
                     :class="{ error: $v.form.name.$error }"
                     @input="$v.form.name.$touch()"
@@ -21,7 +21,7 @@
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Type"
-                    :options="options.asset_type"
+                    :options="options.award_type"
                     :value.sync="form.type"
                   />
                   <div v-if="$v.form.type.$error">
@@ -34,10 +34,6 @@
                     placeholder="Content..."
                     :value.sync="form.description"
                   />
-                </CCol>
-
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Price" type="number" :value.sync="form.price" />
                 </CCol>
               </CRow>
 
@@ -72,7 +68,7 @@
 </template>
 
 <script>
-import AwardsService from "@/services/awards/AwardService";
+import AwardService from "@/services/awards/AwardService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
@@ -81,24 +77,20 @@ export default {
   data: () => ({
     saveAndExit: false,
     form: {
-      branch_id: "",
       name: "",
       type: "",
       description: "",
-      price: "",
     },
     options: {
-      asset_type: [{ value: "", label: "Choose Awardss", disabled: true, selected: "" }],
+      award_type: [{ value: "", label: "Choose Awards", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
-        branch_id: { required },
         name: { required },
         type: { required },
         description: { required },
-        price: { required },
       },
     };
   },
@@ -110,7 +102,7 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        AwardsService.create(data)
+        AwardService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -139,7 +131,7 @@ export default {
       }
     },
     getOptions() {
-      let ids = JSON.stringify(["asset_type"]);
+      let ids = JSON.stringify(["award_type"]);
       HrSettingService.getSettings(ids)
         .then(({ data }) => {
           if (data != null && data != "") {
