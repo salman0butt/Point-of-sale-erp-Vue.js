@@ -9,14 +9,7 @@
                 label="Employee"
                 :options="options.employees"
                 :value.sync="form.employee_id"
-                :class="{ error: $v.form.employee_id.$error }"
-                @input="$v.form.employee_id.$touch()"
               />
-              <div v-if="$v.form.employee_id.$error">
-                <p v-if="!$v.form.employee_id.required" class="errorMsg">
-                  Employee is required
-                </p>
-              </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -99,15 +92,25 @@
             </CCol>
           </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-          <CRow class="mt-4 d-block">
+          <CRow class="mt-4">
             <CButton
               progress
               timeout="2000"
               block
               color="success"
-              style="float: right; width: 150px; margin-right: 20px"
+              style="float: right; width: 200px; margin-left: 20px"
               type="submit"
-              >Save</CButton
+              @click="saveAndExit = false"
+              >Save & Continue</CButton
+            >
+            <CButton
+              timeout="2000"
+              block
+              color="danger"
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              @click="saveAndExit = true"
+              type="submit"
+              >Save & Exit</CButton
             >
           </CRow>
         </form>
@@ -123,6 +126,7 @@ export default {
   name: "EmployeeGradeForm",
   data: () => ({
     isEditing: false,
+    saveAndExit: false,
     form: {
       id: null,
       employee_id: "",
@@ -133,7 +137,6 @@ export default {
       status: "",
       date: "",
     },
-    empId: null,
     options: {
       designations: [
         { value: "", label: "Choose Designation", disabled: true, selected: "" },
@@ -148,7 +151,6 @@ export default {
   validations() {
     return {
       form: {
-        employee_id: { required },
         old_designation: { required },
         new_designation: { required },
         old_salary: { required },
@@ -158,13 +160,16 @@ export default {
     };
   },
   created() {
-    this.empId = this.$route.params.id;
+    this.form.id = this.$route.params.id;
     this.getAllEmployees();
     this.getAllDesignations();
+    if (this.form.id) {
+      this.isEditing = true;
+      this.getEmployeeGrade();
+    }
   },
   methods: {
     saveEmployeeGrade() {
-      this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -177,9 +182,15 @@ export default {
                 text: "Grade Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-grade-update");
+              // this.$emit("employee-grade-update");
               this.$v.$reset();
               this.resetForm();
+
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/grades/index" });
+              } else {
+                this.$router.push({ path: "/grades/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
@@ -194,7 +205,6 @@ export default {
       }
     },
     updateEmployeeGrade() {
-      this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -208,7 +218,12 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-grade-update");
+              // this.$emit("employee-grade-update");
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/grades/index" });
+              } else {
+                this.$router.push({ path: "/grades/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
@@ -223,13 +238,15 @@ export default {
       }
     },
     getEmployeeGrade() {
-      EmployeeGradeService.get(this.empId)
+      EmployeeGradeService.get(this.form.id)
         .then(({ data }) => {
+          console.log(data);
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.old_designation = data.old_designation;
-            this.form.new_designation = data.new_designation;
+            this.form.employee_id = data.employee.uuid;
+            this.form.old_designation = data.old_designation.uuid;
+            this.form.new_designation = data.new_designation.uuid;
             this.form.old_salary = data.old_salary;
             this.form.new_salary = data.new_salary;
             this.form.status = data.status;
@@ -274,11 +291,6 @@ export default {
           console.log(error);
           this.isEditing = false;
         });
-    },
-    getEditData(uuid) {
-      this.isEditing = true;
-      this.empId = uuid;
-      this.getEmployeeGrade();
     },
     resetForm() {
       for (let index in this.form) {

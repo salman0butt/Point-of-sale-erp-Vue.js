@@ -3,10 +3,8 @@ import Helper from "@/helpers/Helper";
 
 class EmployeeGradeService extends Helper {
 
-  getAll(emp_id, page, per_page) {
+  getAll(page, per_page) {
     let url = "/employee-grades";
-    if(emp_id !== '')
-    url = super.updateQueryStringParameter(url,"id",emp_id);
 
     if(page !== '')
      url = super.updateQueryStringParameter(url,"page",page);
