@@ -121,6 +121,11 @@ export default {
                   to: "/grades/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Terminations",
+                  to: "/terminations/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {

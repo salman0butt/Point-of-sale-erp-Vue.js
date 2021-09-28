@@ -1,10 +1,10 @@
 import http from "@/http-common";
 import Helper from "@/helpers/Helper";
 
-class EmployeeGradeService extends Helper {
+class TerminationService extends Helper {
 
   getAll(page, per_page) {
-    let url = "/employee-grades";
+    let url = "/employee-terminations";
 
     if(page !== '')
      url = super.updateQueryStringParameter(url,"page",page);
@@ -15,30 +15,26 @@ class EmployeeGradeService extends Helper {
     return http.get(url);
   }
 
-  getAllDesignations() {
-    return http.get(`/designations`);
-  }
-
   getAllEmployees() {
     return http.get(`/employees`);
   }
 
   get(id) {
-    return http.get(`/employee-grades/${id}`);
+    return http.get(`/employee-terminations/${id}`);
   }
 
   create(data) {
-    return http.post("/employee-grades", data);
+    return http.post("/employee-terminations", data);
   }
 
   update(id, data) {
-    return http.patch(`/employee-grades/${id}`, data);
+    return http.patch(`/employee-terminations/${id}`, data);
   }
 
   delete(id) {
-    return http.delete(`/employee-grades/${id}`);
+    return http.delete(`/employee-terminations/${id}`);
   }
 
 }
 
-export default new EmployeeGradeService();
+export default new TerminationService();

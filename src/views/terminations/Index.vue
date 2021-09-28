@@ -4,10 +4,10 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/grades/create"
-              >Create Grades</router-link
+            <router-link class="btn btn-success" to="/terminations/create"
+              >Create Terminations</router-link
             >
-            <EmployeeGradeIndex />
+            <TerminationIndex />
           </CCardBody>
         </CCard>
       </CCol>
@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import EmployeeGradeIndex from "@/components/employees/employeeGrade/EmployeeGradeIndex";
+import TerminationIndex from "@/components/terminations/TerminationIndex";
 export default {
   name: "IndexGrade",
-  components: { EmployeeGradeIndex },
+  components: { TerminationIndex },
   data() {
     return {};
   },

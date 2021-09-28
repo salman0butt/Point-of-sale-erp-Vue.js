@@ -165,6 +165,19 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Termination Types"
+                    v-model="form.termination_type"
+                    :class="{ error: $v.form.termination_type.$error }"
+                    @input="$v.form.termination_type.$touch()"
+                  />
+                  <div v-if="$v.form.termination_type.$error">
+                    <p v-if="!$v.form.termination_type.required" class="errorMsg">
+                      Termination Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -207,6 +220,7 @@ export default {
       deduction_type: "",
       asset_type: "",
       award_type: "",
+      termination_type: "",
     },
     options: {
       attendance_by: [
@@ -231,6 +245,7 @@ export default {
         deduction_type: { required },
         asset_type: { required },
         award_type: { required },
+        termination_type: { required },
       },
     };
   },

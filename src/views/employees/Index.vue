@@ -76,6 +76,17 @@
                   />
                 </td>
               </template>
+              <template #branches="{ item }">
+                <td>
+                  {{
+                    item.branches
+                      .map(function (item) {
+                        return item.name.en;
+                      })
+                      .join(",")
+                  }}
+                </td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -124,7 +135,7 @@ const fields = [
   { key: "email", label: "EMAIL", _style: "min-width:15%;" },
   { key: "phone_number", label: "MOBILE", _style: "min-width:15%;" },
   { key: "department", label: "DEPARTMENT", _style: "min-width:15%;" },
-  { key: "branch_name", label: "BRANCH", _style: "min-width:15%;" },
+  { key: "branches", label: "BRANCH", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
