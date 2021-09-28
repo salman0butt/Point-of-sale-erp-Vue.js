@@ -126,6 +126,11 @@ export default {
                   to: "/terminations/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Resignations",
+                  to: "/resignations/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {

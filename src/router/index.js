@@ -9,6 +9,7 @@ import assetRoutes from '@/router/assets/assetRoutes';
 import awardRoutes from '@/router/awards/awardRoutes';
 import gradeRoutes from '@/router/grades/gradeRoutes';
 import terminationRoutes from '@/router/terminations/terminationRoutes';
+import resignationRoutes from '@/router/resignations/resignationRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
@@ -169,6 +170,7 @@ const router = new Router({
         awardRoutes,
         gradeRoutes,
         terminationRoutes,
+        resignationRoutes,
 
         {
           path: 'theme',

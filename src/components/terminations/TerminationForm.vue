@@ -159,7 +159,7 @@ export default {
     this.form.id = this.$route.params.id;
     this.getOptions();
     this.getAllEmployees();
-    if (this.form.id) {
+    if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getTermination();
     }

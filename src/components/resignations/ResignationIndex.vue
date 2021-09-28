@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="employeeTermination"
+          :items="employeeResignation"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -25,9 +25,9 @@
               />
             </td>
           </template>
-          <template #termination_to="{ item }">
+          <template #employee="{ item }">
             <td>
-              {{ item.termination_to.name }}
+              {{ item.employee.name }}
             </td>
           </template>
           <template #status="{ item }">
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import TerminationService from "@/services/terminations/TerminationService";
+import ResignationService from "@/services/resignations/ResignationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -83,9 +83,8 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "termination_type", label: "TERMINATION TYPE", _style: "min-width:15%;" },
-  { key: "termination_date", label: "TERMINATION DATE", _style: "min-width:15%;" },
-  { key: "termination_to", label: "TERMINATION TO", _style: "min-width:15%;" },
+  { key: "employee", label: "EMPLOYEE", _style: "min-width:15%;" },
+  { key: "resignation_date", label: "RESIGNATION DATE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
   { key: "notice_date", label: "NOTICE DATE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
@@ -93,13 +92,13 @@ const fields = [
 ];
 
 export default {
-  name: "TerminationIndex",
+  name: "ResignationIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeTerminationData: [],
+      employeeResignationData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -110,11 +109,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getTermination();
+    this.getResignation();
   },
   computed: {
-    employeeTermination() {
-      return this.employeeTerminationData;
+    employeeResignation() {
+      return this.employeeResignationData;
     },
   },
   watch: {
@@ -122,21 +121,21 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getTermination(this.activePage, this.perPage);
+      this.getResignation(this.activePage, this.perPage);
     },
   },
   methods: {
-    getTermination(page = "", per_page = "") {
+    getResignation(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      TerminationService.getAll(page, per_page)
+      ResignationService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.employeeTerminationData = [];
+            this.employeeResignationData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeTerminationData.push({ ...item, id });
+                this.employeeResignationData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -155,8 +154,8 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeTerminationData[item.id]._selected);
-      this.$set(this.employeeTerminationData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeResignationData[item.id]._selected);
+      this.$set(this.employeeResignationData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
@@ -178,16 +177,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            TerminationService.delete(this.deleteRows)
+            ResignationService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Termination Deleted Successfully",
+                    text: "Resignation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeTerminationData = this.employeeTerminationData.filter(
+                  this.employeeResignationData = this.employeeResignationData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -213,13 +212,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeTerminationData = agent.currentItems;
+        this.employeeResignationData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getTermination("", this.perPage);
+      this.getResignation("", this.perPage);
     },
   },
 };
