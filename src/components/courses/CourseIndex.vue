@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="employeeResignation"
+          :items="employeeCourse"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import ResignationService from "@/services/resignations/ResignationService";
+import CourseService from "@/services/courses/CourseService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -84,21 +84,24 @@ const fields = [
     filter: false,
   },
   { key: "employee", label: "EMPLOYEE", _style: "min-width:15%;" },
-  { key: "resignation_date", label: "RESIGNATION DATE", _style: "min-width:15%;" },
-  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
-  { key: "notice_date", label: "NOTICE DATE", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:15%;" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "institution", label: "INSTITUTION", _style: "min-width:15%;" },
+  { key: "start_date", label: "START DATE", _style: "min-width:15%;" },
+  { key: "end_date", label: "END DATE", _style: "min-width:15%;" },
+  { key: "total_amount", label: "TOTAL AMOUNT", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "ResignationIndex",
+  name: "CourseIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeResignationData: [],
+      employeeCourseData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,11 +112,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getResignation();
+    this.getCourse();
   },
   computed: {
-    employeeResignation() {
-      return this.employeeResignationData;
+    employeeCourse() {
+      return this.employeeCourseData;
     },
   },
   watch: {
@@ -121,21 +124,21 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getResignation(this.activePage, this.perPage);
+      this.getCourse(this.activePage, this.perPage);
     },
   },
   methods: {
-    getResignation(page = "", per_page = "") {
+    getCourse(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      ResignationService.getAll(page, per_page)
+      CourseService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.employeeResignationData = [];
+            this.employeeCourseData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeResignationData.push({ ...item, id });
+                this.employeeCourseData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -154,15 +157,15 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeResignationData[item.id]._selected);
-      this.$set(this.employeeResignationData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeCourseData[item.id]._selected);
+      this.$set(this.employeeCourseData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
       // this.$emit("employee-grade-edit", uuid);
-      this.$router.push({ path: "/resignations/edit/" + uuid });
+      this.$router.push({ path: "/courses/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -177,16 +180,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            ResignationService.delete(this.deleteRows)
+            CourseService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Resignation Deleted Successfully",
+                    text: "Course Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeResignationData = this.employeeResignationData.filter(
+                  this.employeeCourseData = this.employeeCourseData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -212,13 +215,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeResignationData = agent.currentItems;
+        this.employeeCourseData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getResignation("", this.perPage);
+      this.getCourse("", this.perPage);
     },
   },
 };

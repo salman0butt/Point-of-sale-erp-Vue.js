@@ -8,7 +8,7 @@ const EditResignations = () => import('@/views/resignations/Edit')
 const resignationRoutes =  {
     path: 'resignations',
     redirect: '/grades/index',
-    name: 'Resignationss',
+    name: 'Resignations',
     component: {
       render (c) { return c('router-view') }
     },

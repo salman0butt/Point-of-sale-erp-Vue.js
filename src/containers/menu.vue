@@ -131,6 +131,11 @@ export default {
                   to: "/resignations/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Courses",
+                  to: "/courses/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {
