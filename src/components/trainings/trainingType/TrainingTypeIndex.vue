@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="employeeTransfer"
+          :items="employeeTrainingType"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -25,21 +25,7 @@
               />
             </td>
           </template>
-          <template #employee="{ item }">
-            <td>
-              {{ item.employee.full_name }}
-            </td>
-          </template>
-          <template #from_branch="{ item }">
-            <td>
-              {{ item.from_branch.name }}
-            </td>
-          </template>
-          <template #to_branch="{ item }">
-            <td>
-              {{ item.to_branch.name }}
-            </td>
-          </template>
+
           <template #status="{ item }">
             <td>
               {{ item.status ? item.status : "" }}
@@ -82,7 +68,7 @@
 </template>
 
 <script>
-import TransferService from "@/services/transfers/TransferService";
+import TrainingTypeService from "@/services/trainings/TrainingTypeService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -93,24 +79,19 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "employee", label: "EMPLOYEE", _style: "min-width:15%;" },
-  { key: "from_branch", label: "FROM BRANCH", _style: "min-width:15%;" },
-  { key: "to_branch", label: "TO BRANCH", _style: "min-width:15%;" },
-  { key: "notes", label: "NOTES", _style: "min-width:15%;" },
-  { key: "date_of_transfer", label: "DATE OF TRANSFER", _style: "min-width:15%;" },
-  { key: "joining_date", label: "JOINING DATE", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "TransferIndex",
+  name: "TrainingTypeIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeTransferData: [],
+      employeeTrainingTypeData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -121,11 +102,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getTransfer();
+    this.getTrainingType();
   },
   computed: {
-    employeeTransfer() {
-      return this.employeeTransferData;
+    employeeTrainingType() {
+      return this.employeeTrainingTypeData;
     },
   },
   watch: {
@@ -133,21 +114,21 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getTransfer(this.activePage, this.perPage);
+      this.getTrainingType(this.activePage, this.perPage);
     },
   },
   methods: {
-    getTransfer(page = "", per_page = "") {
+    getTrainingType(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      TransferService.getAll(page, per_page)
+      TrainingTypeService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.employeeTransferData = [];
+            this.employeeTrainingTypeData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeTransferData.push({ ...item, id });
+                this.employeeTrainingTypeData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -166,15 +147,15 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeTransferData[item.id]._selected);
-      this.$set(this.employeeTransferData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeTrainingTypeData[item.id]._selected);
+      this.$set(this.employeeTrainingTypeData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      // this.$emit("employee-transfers-edit", uuid);
-      this.$router.push({ path: "/transfers/edit/" + uuid });
+      // this.$emit("employee-training-types-edit", uuid);
+      this.$router.push({ path: "/trainingTypes/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -189,16 +170,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            TransferService.delete(this.deleteRows)
+            TrainingTypeService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Transfer Deleted Successfully",
+                    text: "TrainingType Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeTransferData = this.employeeTransferData.filter(
+                  this.employeeTrainingTypeData = this.employeeTrainingTypeData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -224,13 +205,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeTransferData = agent.currentItems;
+        this.employeeTrainingTypeData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getTransfer("", this.perPage);
+      this.getTrainingType("", this.perPage);
     },
   },
 };

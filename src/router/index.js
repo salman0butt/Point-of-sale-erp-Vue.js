@@ -13,6 +13,7 @@ import resignationRoutes from '@/router/resignations/resignationRoutes';
 import letterTemplateRoutes from '@/router/letterTemplates/letterTemplateRoutes';
 import courseRoutes from '@/router/courses/courseRoutes';
 import transferRoutes from '@/router/transfers/transferRoutes';
+import traningTypeRoutes from '@/router/trainings/traningTypeRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
@@ -177,6 +178,7 @@ const router = new Router({
         courseRoutes,
         letterTemplateRoutes,
         transferRoutes,
+        traningTypeRoutes,
 
         {
           path: 'theme',

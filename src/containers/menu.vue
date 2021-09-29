@@ -158,26 +158,27 @@ export default {
                 },
                 {
                   _name: "CSidebarNavDropdown",
-                  name: "Apps",
+                  name: "Trainings",
                   route: "/apps",
                   icon: "cil-layers",
                   _children: [
                     {
-                      _name: "CSidebarNavDropdown",
-                      name: "Email",
-                      route: "/apps/email",
-                      icon: "cil-envelope-closed",
-                      items: [
-                        {
-                          name: "Compose",
-                          to: "/apps/email/compose",
-                          icon: "cil-envelope-letter",
-                          badge: {
-                            color: "danger",
-                            text: "PRO",
-                          },
-                        },
-                      ],
+                      _name: "CSidebarNavItem",
+                      name: "Traning Type",
+                      to: "/trainingTypes/index",
+                      icon: "cil-lan",
+                    },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Trainers",
+                      to: "/transfers/index",
+                      icon: "cil-lan",
+                    },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Trainings",
+                      to: "/transfers/index",
+                      icon: "cil-lan",
                     },
                   ],
                 },

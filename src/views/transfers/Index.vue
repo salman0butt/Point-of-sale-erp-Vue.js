@@ -23,9 +23,6 @@ export default {
   data() {
     return {};
   },
-  created() {},
-  watch: {},
-  computed: {},
   methods: {},
 };
 </script>
