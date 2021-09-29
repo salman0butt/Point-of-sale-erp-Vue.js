@@ -10,6 +10,7 @@ import awardRoutes from '@/router/awards/awardRoutes';
 import gradeRoutes from '@/router/grades/gradeRoutes';
 import terminationRoutes from '@/router/terminations/terminationRoutes';
 import resignationRoutes from '@/router/resignations/resignationRoutes';
+import letterTemplateRoutes from '@/router/letterTemplates/letterTemplateRoutes';
 import courseRoutes from '@/router/courses/courseRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
@@ -173,6 +174,7 @@ const router = new Router({
         terminationRoutes,
         resignationRoutes,
         courseRoutes,
+        letterTemplateRoutes,
 
         {
           path: 'theme',

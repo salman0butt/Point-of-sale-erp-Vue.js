@@ -136,6 +136,11 @@ export default {
                   to: "/courses/index",
                   icon: "cil-lan",
                 },
+                {
+                  name: "Letter Templates",
+                  to: "/letterTemplates/index",
+                  icon: "cil-lan",
+                },
               ],
             },
             {

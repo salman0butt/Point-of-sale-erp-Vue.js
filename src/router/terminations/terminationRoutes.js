@@ -7,7 +7,7 @@ const EditTermination = () => import('@/views/terminations/Edit')
 
 const terminationRoutes =  {
     path: 'terminations',
-    redirect: '/grades/index',
+    redirect: '/terminations/index',
     name: 'Terminations',
     component: {
       render (c) { return c('router-view') }

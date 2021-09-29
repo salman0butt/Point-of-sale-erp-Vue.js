@@ -1,14 +1,14 @@
 import auth from '@/middleware/auth'
 
-//Courses
-const IndexCourses = () => import('@/views/courses/Index')
-const CreateCourses = () => import('@/views/courses/Create')
-const EditCourses = () => import('@/views/courses/Edit')
+//Course
+const IndexCourse = () => import('@/views/courses/Index')
+const CreateCourse = () => import('@/views/courses/Create')
+const EditCourse = () => import('@/views/courses/Edit')
 
 const courseRoutes =  {
     path: 'courses',
-    redirect: '/grades/index',
-    name: 'Courses',
+    redirect: '/courses/index',
+    name: 'Course',
     component: {
       render (c) { return c('router-view') }
     },
@@ -16,18 +16,18 @@ const courseRoutes =  {
     children: [
       {
         path: 'index',
-        name: 'IndexCourses',
-        component: IndexCourses
+        name: 'IndexCourse',
+        component: IndexCourse
       },
       {
         path: 'create',
-        name: 'CreateCourses',
-        component: CreateCourses
+        name: 'CreateCourse',
+        component: CreateCourse
       },
       {
         path: 'edit/:id',
-        name: 'EditCourses',
-        component: EditCourses
+        name: 'EditCourse',
+        component: EditCourse
       }
     ]
 };
