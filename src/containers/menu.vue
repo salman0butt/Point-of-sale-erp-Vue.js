@@ -83,7 +83,7 @@ export default {
               _name: "CSidebarNavDropdown",
               name: "HR",
               icon: "cil-lan",
-              items: [
+              _children: [
                 {
                   _name: "CSidebarNavItem",
                   name: "Departments",
@@ -97,49 +97,89 @@ export default {
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Employees",
                   to: "/employees/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Attendance",
                   to: "/attendance/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Assets",
                   to: "/assets/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Awards",
                   to: "/awards/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Grades",
                   to: "/grades/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Terminations",
                   to: "/terminations/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Resignations",
                   to: "/resignations/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Courses",
                   to: "/courses/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Letter Templates",
                   to: "/letterTemplates/index",
                   icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Transfers",
+                  to: "/transfers/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavDropdown",
+                  name: "Apps",
+                  route: "/apps",
+                  icon: "cil-layers",
+                  _children: [
+                    {
+                      _name: "CSidebarNavDropdown",
+                      name: "Email",
+                      route: "/apps/email",
+                      icon: "cil-envelope-closed",
+                      items: [
+                        {
+                          name: "Compose",
+                          to: "/apps/email/compose",
+                          icon: "cil-envelope-letter",
+                          badge: {
+                            color: "danger",
+                            text: "PRO",
+                          },
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },
@@ -149,6 +189,7 @@ export default {
               to: "/settings",
               icon: "cil-lan",
             },
+
             // {
             //   _name: 'CSidebarNavTitle',
             //   _children: ['Components']

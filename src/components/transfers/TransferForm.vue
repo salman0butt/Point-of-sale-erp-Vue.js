@@ -2,7 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateResignation() : saveResignation()">
+        <form @submit.prevent="isEditing ? updateTransfer() : saveTransfer()">
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -20,46 +20,73 @@
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label=" Resignation Date"
-                type="date"
-                v-model="form.resignation_date"
-                :class="{ error: $v.form.resignation_date.$error }"
-                @input="$v.form.resignation_date.$touch()"
+              <CSelect
+                label="Branch From"
+                :options="options.branches"
+                :value.sync="form.from_branch_id"
+                :class="{ error: $v.form.from_branch_id.$error }"
+                @input="$v.form.from_branch_id.$touch()"
               />
-              <div v-if="$v.form.resignation_date.$error">
-                <p v-if="!$v.form.resignation_date.required" class="errorMsg">
-                  Resignation Date is required
+              <div v-if="$v.form.from_branch_id.$error">
+                <p v-if="!$v.form.from_branch_id.required" class="errorMsg">
+                  Branch From is required
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="4">
-              <CTextarea
-                label="Description"
-                placeholder="Content..."
-                v-model="form.description"
-                :class="{ error: $v.form.description.$error }"
-                @input="$v.form.description.$touch()"
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Branch To"
+                :options="options.branches"
+                :value.sync="form.to_branch_id"
+                :class="{ error: $v.form.to_branch_id.$error }"
+                @input="$v.form.to_branch_id.$touch()"
               />
-              <div v-if="$v.form.description.$error">
-                <p v-if="!$v.form.description.required" class="errorMsg">
-                  Description is required
+              <div v-if="$v.form.to_branch_id.$error">
+                <p v-if="!$v.form.to_branch_id.required" class="errorMsg">
+                  Branch To is required
                 </p>
               </div>
             </CCol>
           </CRow>
+
           <CRow>
+            <CCol sm="6" md="4">
+              <CTextarea
+                label="Notes"
+                placeholder="Content..."
+                v-model="form.notes"
+                :class="{ error: $v.form.notes.$error }"
+                @input="$v.form.notes.$touch()"
+              />
+              <div v-if="$v.form.notes.$error">
+                <p v-if="!$v.form.notes.required" class="errorMsg">Notes is required</p>
+              </div>
+            </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label=" Notice Date"
+                label=" Transfer Date"
                 type="date"
-                v-model="form.notice_date"
-                :class="{ error: $v.form.notice_date.$error }"
-                @input="$v.form.notice_date.$touch()"
+                v-model="form.date_of_transfer"
+                :class="{ error: $v.form.date_of_transfer.$error }"
+                @input="$v.form.date_of_transfer.$touch()"
               />
-              <div v-if="$v.form.notice_date.$error">
-                <p v-if="!$v.form.notice_date.required" class="errorMsg">
-                  Notice Date is required
+              <div v-if="$v.form.date_of_transfer.$error">
+                <p v-if="!$v.form.date_of_transfer.required" class="errorMsg">
+                  Transfer Date is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label=" Joining Date"
+                type="date"
+                v-model="form.joining_date"
+                :class="{ error: $v.form.joining_date.$error }"
+                @input="$v.form.joining_date.$touch()"
+              />
+              <div v-if="$v.form.joining_date.$error">
+                <p v-if="!$v.form.joining_date.required" class="errorMsg">
+                  Joining Date is required
                 </p>
               </div>
             </CCol>
@@ -100,28 +127,32 @@
   </div>
 </template>
 <script>
-import ResignationService from "@/services/resignations/ResignationService";
+import TransferService from "@/services/transfers/TransferService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "ResignationForm",
+  name: "TransferForm",
   data: () => ({
     isEditing: false,
     saveAndExit: false,
     form: {
       id: null,
       employee_id: "",
-      resignation_date: "",
-      description: "",
-      notice_date: "",
+      from_branch_id: "",
+      to_branch_id: "",
+      notes: "",
+      date_of_transfer: "",
+      joining_date: "",
       status: "pending",
     },
     options: {
       employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
+      branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "pending", label: "Pending" },
-        { value: "approved_by_hr", label: "Approved By HR" },
+        { value: "approved_by_hr", label: "Approved by HR" },
+        { value: "cancel", label: "Cancel" },
       ],
     },
   }),
@@ -129,42 +160,45 @@ export default {
     return {
       form: {
         employee_id: { required },
-        resignation_date: { required },
-        description: { required },
-        notice_date: { required },
+        from_branch_id: { required },
+        to_branch_id: { required },
+        date_of_transfer: { required },
+        joining_date: { required },
+        notes: { required },
       },
     };
   },
   created() {
     this.form.id = this.$route.params.id;
     this.getAllEmployees();
+    this.getAllBranches();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
-      this.getResignation();
+      this.getTransfer();
     }
   },
   methods: {
-    saveResignation() {
+    saveTransfer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        ResignationService.create(data)
+        TransferService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Resignation Added Successfully",
+                text: "Transfer Added Successfully",
                 timer: 3600,
               });
-              // this.$emit("employee-termination-update");
+              // this.$emit("employee-transfer-update");
               this.$v.$reset();
               this.resetForm();
 
               if (this.saveAndExit) {
-                this.$router.push({ path: "/resignations/index" });
+                this.$router.push({ path: "/transfers/index" });
               } else {
-                this.$router.push({ path: "/resignations/edit/" + res.data.uuid });
+                this.$router.push({ path: "/transfers/edit/" + res.data.uuid });
               }
             }
           })
@@ -179,25 +213,25 @@ export default {
           });
       }
     },
-    updateResignation() {
+    updateTransfer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        ResignationService.update(this.form.id, data)
+        TransferService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Resignation Updated Successfully",
+                text: "Transfer Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              // this.$emit("employee-termination-update");
+              // this.$emit("employee-transfer-update");
               if (this.saveAndExit) {
-                this.$router.push({ path: "/resignations/index" });
+                this.$router.push({ path: "/transfers/index" });
               } else {
-                this.$router.push({ path: "/resignations/edit/" + res.data.uuid });
+                this.$router.push({ path: "/transfers/edit/" + res.data.uuid });
               }
             }
           })
@@ -212,17 +246,19 @@ export default {
           });
       }
     },
-    getResignation() {
-      ResignationService.get(this.form.id)
+    getTransfer() {
+      TransferService.get(this.form.id)
         .then(({ data }) => {
           console.log(data);
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.employee_id = data.employee.uuid;
-            this.form.resignation_date = data.resignation_date;
-            this.form.description = data.description;
-            this.form.notice_date = data.notice_date;
+            this.form.from_branch_id = data.from_branch.uuid;
+            this.form.to_branch_id = data.to_branch.uuid;
+            this.form.notes = data.notes;
+            this.form.date_of_transfer = data.date_of_transfer;
+            this.form.joining_date = data.joining_date;
             this.form.status = data.status;
           }
         })
@@ -232,7 +268,7 @@ export default {
         });
     },
     getAllEmployees() {
-      ResignationService.getAllEmployees()
+      TransferService.getAllEmployees()
         .then(({ data }) => {
           if (data != null && data != "") {
             let employees = this.options.employees;
@@ -245,7 +281,22 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          this.isEditing = false;
+        });
+    },
+    getAllBranches() {
+      TransferService.getAllBranches()
+        .then(({ data }) => {
+          if (data != null && data != "") {
+            let branches = this.options.branches;
+            if (data.data) {
+              data.data.map(function (val) {
+                branches.push({ value: val.uuid, label: val.name });
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     resetForm() {

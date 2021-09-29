@@ -27,7 +27,7 @@
           </template>
           <template #employee="{ item }">
             <td>
-              {{ item.employee.name }}
+              {{ item.employee.full_name }}
             </td>
           </template>
           <template #status="{ item }">

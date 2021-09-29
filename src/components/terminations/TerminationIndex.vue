@@ -27,7 +27,7 @@
           </template>
           <template #termination_to="{ item }">
             <td>
-              {{ item.termination_to.name }}
+              {{ item.termination_to.full_name }}
             </td>
           </template>
           <template #status="{ item }">

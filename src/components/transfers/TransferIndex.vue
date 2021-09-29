@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="employeeGrade"
+          :items="employeeTermination"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -30,14 +30,19 @@
               {{ item.employee.full_name }}
             </td>
           </template>
-          <template #old_designation="{ item }">
+          <template #from_branch="{ item }">
             <td>
-              {{ item.old_designation.name }}
+              {{ item.from_branch.name }}
             </td>
           </template>
-          <template #new_designation="{ item }">
+          <template #to_branch="{ item }">
             <td>
-              {{ item.new_designation.name }}
+              {{ item.to_branch.name }}
+            </td>
+          </template>
+          <template #status="{ item }">
+            <td>
+              {{ item.status ? item.status : "" }}
             </td>
           </template>
           <template #actions="{ item }">
@@ -77,7 +82,7 @@
 </template>
 
 <script>
-import EmployeeGradeService from "@/services/employees/EmployeeGradeService";
+import TerminationService from "@/services/transfers/TransferService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -88,24 +93,24 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "employee", label: "Employee", _style: "min-width:15%;" },
-  { key: "old_designation", label: "OLD DESIGNATION", _style: "min-width:15%;" },
-  { key: "new_designation", label: "NEW DESIGNATION", _style: "min-width:15%;" },
-  { key: "old_salary", label: "OLD SALARY", _style: "min-width:15%;" },
-  { key: "new_salary", label: "NEW SALARY", _style: "min-width:15%;" },
-  { key: "date", label: "DATE", _style: "min-width:15%;" },
+  { key: "employee", label: "EMPLOYEE", _style: "min-width:15%;" },
+  { key: "from_branch", label: "FROM BRANCH", _style: "min-width:15%;" },
+  { key: "to_branch", label: "TO BRANCH", _style: "min-width:15%;" },
+  { key: "notes", label: "NOTES", _style: "min-width:15%;" },
+  { key: "date_of_transfer", label: "DATE OF TRANSFER", _style: "min-width:15%;" },
+  { key: "joining_date", label: "JOINING DATE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeGradeIndex",
+  name: "TerminationIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeGradeData: [],
+      employeeTerminationData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -116,11 +121,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeGrade();
+    this.getTermination();
   },
   computed: {
-    employeeGrade() {
-      return this.employeeGradeData;
+    employeeTermination() {
+      return this.employeeTerminationData;
     },
   },
   watch: {
@@ -128,21 +133,21 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeGrade(this.activePage, this.perPage);
+      this.getTermination(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeGrade(page = "", per_page = "") {
+    getTermination(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeGradeService.getAll(page, per_page)
+      TerminationService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.employeeGradeData = [];
+            this.employeeTerminationData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeGradeData.push({ ...item, id });
+                this.employeeTerminationData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -161,15 +166,15 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeGradeData[item.id]._selected);
-      this.$set(this.employeeGradeData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeTerminationData[item.id]._selected);
+      this.$set(this.employeeTerminationData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      // this.$emit("employee-grade-edit", uuid);
-      this.$router.push({ path: "/grades/edit/" + uuid });
+      // this.$emit("employee-transfers-edit", uuid);
+      this.$router.push({ path: "/transfers/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -184,16 +189,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeGradeService.delete(this.deleteRows)
+            TerminationService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Grade Deleted Successfully",
+                    text: "Termination Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeGradeData = this.employeeGradeData.filter(
+                  this.employeeTerminationData = this.employeeTerminationData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -219,13 +224,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeGradeData = agent.currentItems;
+        this.employeeTerminationData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeGrade("", this.perPage);
+      this.getTermination("", this.perPage);
     },
   },
 };
