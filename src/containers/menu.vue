@@ -110,18 +110,6 @@ export default {
                 },
                 {
                   _name: "CSidebarNavItem",
-                  name: "Assets",
-                  to: "/assets/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Awards",
-                  to: "/awards/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
                   name: "Grades",
                   to: "/grades/index",
                   icon: "cil-lan",
@@ -180,6 +168,18 @@ export default {
                   _name: "CSidebarNavItem",
                   name: "Letter Templates",
                   to: "/letterTemplates/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Assets",
+                  to: "/assets/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Awards",
+                  to: "/awards/index",
                   icon: "cil-lan",
                 },
               ],
