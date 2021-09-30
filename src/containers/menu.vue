@@ -13,16 +13,7 @@ export default {
               to: "/dashboard",
               icon: "cil-speedometer",
             },
-            // {
-            //   _name: 'CSidebarNavTitle',
-            //   _children: ['Theme']
-            // },
-            // {
-            //   _name: 'CSidebarNavItem',
-            //   name: 'Merchant',
-            //   to: '/merchant',
-            //   icon: 'cil-institution'
-            // },
+
             {
               _name: "CSidebarNavItem",
               name: "Merchant",
@@ -112,6 +103,11 @@ export default {
                   icon: "cil-lan",
                 },
                 {
+                  name: "Salary",
+                  to: "/salary/index",
+                  icon: "cil-lan",
+                },
+                {
                   name: "Awards",
                   to: "/awards/index",
                   icon: "cil-lan",
@@ -124,6 +120,25 @@ export default {
                 {
                   name: "Terminations",
                   to: "/terminations/index",
+                  icon: "cil-lan",
+                },
+              ],
+            },
+            {
+              _name: "CSidebarNavDropdown",
+              name: "Accounting",
+              icon: "cil-lan",
+              items: [
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Accounts",
+                  to: "/accounting/accounts/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Payment Methods",
+                  to: "/accounting/paymentMethods/index",
                   icon: "cil-lan",
                 },
               ],
