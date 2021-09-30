@@ -25,19 +25,14 @@
               />
             </td>
           </template>
-          <template #employee="{ item }">
+          <template #termination_to="{ item }">
             <td>
-              {{ item.employee.full_name.en }}
+              {{ item.termination_to.name }}
             </td>
           </template>
-          <template #old_designation="{ item }">
+          <template #status="{ item }">
             <td>
-              {{ item.old_designation.name }}
-            </td>
-          </template>
-          <template #new_designation="{ item }">
-            <td>
-              {{ item.new_designation.name }}
+              {{ item.status ? item.status : "" }}
             </td>
           </template>
           <template #actions="{ item }">
@@ -77,7 +72,7 @@
 </template>
 
 <script>
-import EmployeeGradeService from "@/services/employees/EmployeeGradeService";
+import TerminationService from "@/services/terminations/TerminationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -88,18 +83,17 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "employee", label: "Employee", _style: "min-width:15%;" },
-  { key: "old_designation", label: "OLD DESIGNATION", _style: "min-width:15%;" },
-  { key: "new_designation", label: "NEW DESIGNATION", _style: "min-width:15%;" },
-  { key: "old_salary", label: "OLD SALARY", _style: "min-width:15%;" },
-  { key: "new_salary", label: "NEW SALARY", _style: "min-width:15%;" },
-  { key: "date", label: "DATE", _style: "min-width:15%;" },
+  { key: "termination_type", label: "TERMINATION TYPE", _style: "min-width:15%;" },
+  { key: "termination_date", label: "TERMINATION DATE", _style: "min-width:15%;" },
+  { key: "termination_to", label: "TERMINATION TO", _style: "min-width:15%;" },
+  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
+  { key: "notice_date", label: "NOTICE DATE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeGradeIndex",
+  name: "TerminationIndex",
   cilPencil,
   cilTrash,
   cilEye,
@@ -116,7 +110,7 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeGrade();
+    this.getTermination();
   },
   computed: {
     employeeGrade() {
@@ -128,14 +122,14 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeGrade(this.activePage, this.perPage);
+      this.getTermination(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeGrade(page = "", per_page = "") {
+    getTermination(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeGradeService.getAll(page, per_page)
+      TerminationService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
             this.employeeGradeData = [];
@@ -169,7 +163,7 @@ export default {
     },
     editRow(uuid) {
       // this.$emit("employee-grade-edit", uuid);
-      this.$router.push({ path: "/grades/edit/" + uuid });
+      this.$router.push({ path: "/terminations/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -184,7 +178,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeGradeService.delete(this.deleteRows)
+            TerminationService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -225,7 +219,7 @@ export default {
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeGrade("", this.perPage);
+      this.getTermination("", this.perPage);
     },
   },
 };

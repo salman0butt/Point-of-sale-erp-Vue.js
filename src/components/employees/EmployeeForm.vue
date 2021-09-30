@@ -3,9 +3,8 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>General</CCardHeader>
           <CCardBody>
-            <form @submit.prevent="updateEmployee">
+            <form @submit.prevent="isEditing ? updateEmployee() : saveEmployee()">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput label="Serial No" v-model="form.serial_no" />
@@ -29,14 +28,7 @@
                     label="Gender"
                     :options="options.gender"
                     :value.sync="form.gender"
-                    :class="{ error: $v.form.gender.$error }"
-                    @input="$v.form.gender.$touch()"
                   />
-                  <div v-if="$v.form.gender.$error">
-                    <p v-if="!$v.form.gender.required" class="errorMsg">
-                      Gender is required
-                    </p>
-                  </div>
                 </CCol>
               </CRow>
               <CRow>
@@ -45,14 +37,7 @@
                     label="Martial Status"
                     :options="options.marital_status"
                     :value.sync="form.marital_status"
-                    :class="{ error: $v.form.marital_status.$error }"
-                    @input="$v.form.marital_status.$touch()"
                   />
-                  <div v-if="$v.form.marital_status.$error">
-                    <p v-if="!$v.form.marital_status.required" class="errorMsg">
-                      Martial Status is required
-                    </p>
-                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -69,61 +54,18 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Email"
-                    type="email"
-                    :value.sync="form.email"
-                    :class="{ error: $v.form.email.$error }"
-                    @input="$v.form.email.$touch()"
-                  />
-                  <div v-if="$v.form.email.$error">
-                    <p v-if="!$v.form.email.required" class="errorMsg">
-                      Email is required
-                    </p>
-                    <p v-if="!$v.form.email.email" class="errorMsg">
-                      Please Enter the valid email.
-                    </p>
-                  </div>
+                  <CInput label="Email" type="email" :value.sync="form.email" />
                 </CCol>
               </CRow>
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="DOB"
-                    type="date"
-                    :value.sync="form.dob"
-                    :class="{ error: $v.form.dob.$error }"
-                    @input="$v.form.dob.$touch()"
-                  />
-                  <div v-if="$v.form.dob.$error">
-                    <p v-if="!$v.form.dob.required" class="errorMsg">DOB is required</p>
-                  </div>
+                  <CInput label="DOB" type="date" :value.sync="form.dob" />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Nationality"
-                    :value.sync="form.nationality"
-                    :class="{ error: $v.form.nationality.$error }"
-                    @input="$v.form.nationality.$touch()"
-                  />
-                  <div v-if="$v.form.nationality.$error">
-                    <p v-if="!$v.form.nationality.required" class="errorMsg">
-                      Nationality is required
-                    </p>
-                  </div>
+                  <CInput label="Nationality" :value.sync="form.nationality" />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Address"
-                    :value.sync="form.address"
-                    :class="{ error: $v.form.address.$error }"
-                    @input="$v.form.address.$touch()"
-                  />
-                  <div v-if="$v.form.address.$error">
-                    <p v-if="!$v.form.address.required" class="errorMsg">
-                      Address is required
-                    </p>
-                  </div>
+                  <CInput label="Address" :value.sync="form.address" />
                 </CCol>
               </CRow>
               <CRow>
@@ -165,13 +107,28 @@
               </CRow>
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Branches"
+                  <label class="typo__label">Branches</label>
+                  <multiselect
+                    v-model="form.branch_id"
                     :options="options.branches"
-                    :value.sync="form.branch_id"
-                    :class="{ error: $v.form.branch_id.$error }"
-                    @input="$v.form.branch_id.$touch()"
-                  />
+                    :multiple="true"
+                    :close-on-select="false"
+                    :clear-on-select="false"
+                    :preserve-search="true"
+                    placeholder="Select Branches"
+                    label="label"
+                    track-by="label"
+                    :preselect-first="true"
+                  >
+                    <template slot="selection" slot-scope="{ values, search, isOpen }">
+                      <span
+                        class="multiselect__single"
+                        v-if="values.value &amp;&amp; !isOpen"
+                        >{{ values.length }} options selected</span
+                      ></template
+                    >
+                  </multiselect>
+
                   <div v-if="$v.form.branch_id.$error">
                     <p v-if="!$v.form.branch_id.required" class="errorMsg">
                       Branch is required
@@ -197,14 +154,7 @@
                     label="Passport No"
                     type="text"
                     :value.sync="form.passport_no"
-                    :class="{ error: $v.form.passport_no.$error }"
-                    @input="$v.form.passport_no.$touch()"
                   />
-                  <div v-if="$v.form.passport_no.$error">
-                    <p v-if="!$v.form.passport_no.required" class="errorMsg">
-                      Passport No is required
-                    </p>
-                  </div>
                 </CCol>
               </CRow>
               <CRow>
@@ -213,14 +163,7 @@
                     label="Passport Expiry"
                     type="date"
                     :value.sync="form.passport_expiry"
-                    :class="{ error: $v.form.passport_expiry.$error }"
-                    @input="$v.form.passport_expiry.$touch()"
                   />
-                  <div v-if="$v.form.passport_expiry.$error">
-                    <p v-if="!$v.form.passport_expiry.required" class="errorMsg">
-                      Passport Expiry is required
-                    </p>
-                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
@@ -237,6 +180,20 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Select Job Type"
+                    :options="options.job_type"
+                    :value.sync="form.job_type"
+                  />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Branch Shift"
+                    :options="options.branch_shift"
+                    :value.sync="form.branch_shift_id"
+                  />
+                </CCol>
+                <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Status"
                     :options="options.status"
@@ -294,14 +251,6 @@
               <CRow>
                 <CCol sm="6" md="3" class="pt-2">
                   <CCardBody>
-                    <div class="mb-2" style="padding: 5px; background: #f7e9e9">
-                      <CImg
-                        v-bind:src="form.previewImage"
-                        block
-                        class="mb-2"
-                        width="100%"
-                      />
-                    </div>
                     <div>
                       Choose Profile:
                       <input
@@ -346,13 +295,14 @@
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
 import { required, email, numeric } from "vuelidate/lib/validators";
+import Multiselect from "vue-multiselect";
 
 export default {
   name: "EmployeeForm",
+  components: { Multiselect },
   data: () => ({
     isEditing: false,
     saveAndExit: false,
-
     form: {
       serial_no: "",
       full_name: "",
@@ -368,6 +318,7 @@ export default {
       passport_no: "",
       passport_expiry: "",
       branch_id: "",
+      branch_shift_id: "",
       department_id: "",
       designation_id: "",
       status: "",
@@ -375,6 +326,7 @@ export default {
       documents: "",
       previewImage: "https://picsum.photos/1024/480/?image=54",
       create_user: false,
+      job_type: "",
       user_name: "",
       user_email: "",
       user_pass: "",
@@ -384,10 +336,14 @@ export default {
     },
     empId: null,
     options: {
-      branches: [{ value: "", label: "Choose Branch" }],
-      managers: [{ value: "", label: "Choose Manager" }],
-      departments: [{ value: "", label: "Choose Departments" }],
-      designations: [{ value: "", label: "Choose Designations" }],
+      branches: [],
+      managers: [{ value: "", label: "Choose Manager", disabled: true, selected: "" }],
+      departments: [
+        { value: "", label: "Choose Departments", disabled: true, selected: "" },
+      ],
+      designations: [
+        { value: "", label: "Choose Designations", disabled: true, selected: "" },
+      ],
       gender: [
         { value: "", label: "Choose Gender", disabled: true, selected: "" },
         { value: "male", label: "Male" },
@@ -417,23 +373,24 @@ export default {
         { value: "eng", label: "English" },
         { value: "ar", label: "Arabic" },
       ],
+      job_type: [
+        { value: "", label: "Choose Job Type", disabled: true, selected: "" },
+        { value: "full time", label: "Full Time" },
+        { value: "part time", label: "Part time" },
+        { value: "outsource", label: "Outsource" },
+      ],
+      branch_shift: [
+        { value: "", label: "Choose Branch Shift", disabled: true, selected: "" },
+      ],
     },
   }),
   validations() {
     return {
       form: {
         full_name: { required },
-        gender: { required },
-        marital_status: { required },
         phone_number: { required, numeric },
-        email: { required, email },
-        dob: { required },
-        nationality: { required },
-        address: { required },
         cpr_no: { required },
         cpr_no_expiry: { required },
-        passport_no: { required },
-        passport_expiry: { required },
         branch_id: { required },
         department_id: { required },
         designation_id: { required },
@@ -441,8 +398,12 @@ export default {
     };
   },
   created() {
+    this.empId = this.$route.params.id;
     this.getDetail();
-    this.getEmployee();
+    if (this.empId) {
+      this.getEmployee();
+      this.isEditing = true;
+    }
   },
   methods: {
     getDetail() {
@@ -452,25 +413,38 @@ export default {
           let managers = this.options.managers;
           let departments = this.options.departments;
           let designations = this.options.designations;
-          data.branches.map(function (val) {
-            branches.push({ value: val.id, label: val.name.en });
-          });
-          data.managers.map(function (val) {
-            managers.push({ value: val.id, label: val.full_name.en });
-          });
-          data.departments.map(function (val) {
-            departments.push({ value: val.id, label: val.name.en });
-          });
-          data.designations.map(function (val) {
-            designations.push({ value: val.id, label: val.name });
-          });
+          let branch_shift = this.options.branch_shift;
+          if (data.branches) {
+            data.branches.map(function (val) {
+              branches.push({ value: val.uuid, label: val.name.en });
+            });
+          }
+          if (data.managers) {
+            data.managers.map(function (val) {
+              managers.push({ value: val.uuid, label: val.full_name.en });
+            });
+          }
+          if (data.departments) {
+            data.departments.map(function (val) {
+              departments.push({ value: val.uuid, label: val.name.en });
+            });
+          }
+          if (data.designations) {
+            data.designations.map(function (val) {
+              designations.push({ value: val.uuid, label: val.name });
+            });
+          }
+          if (data.branch_shift) {
+            data.branch_shift.map(function (val) {
+              branch_shift.push({ value: val.uuid, label: val.name });
+            });
+          }
         })
         .catch((error) => {
           console.log(error);
         });
     },
     getEmployee() {
-      this.empId = this.$route.params.id;
       EmployeeService.get(this.empId)
         .then(({ data }) => {
           this.form.serial_no = data.serial_no;
@@ -486,28 +460,72 @@ export default {
           this.form.cpr_no_expiry = data.cpr_no_expiry;
           this.form.passport_no = data.passport_no;
           this.form.passport_expiry = data.passport_expiry;
-          this.form.branch_id = data.branch_id[0];
+          this.form.branch_id = data.branches.map(function (item) {
+            return { label: item.name.en, value: item.id };
+          });
           this.form.department_id = data.department_id;
           this.form.designation_id = data.designation_id;
           this.form.manager_id = data.manager_id;
           this.form.personal_photo = data.personal_photo;
+          this.form.documents = data.documents;
           this.form.status = data.status;
           this.form.create_user = data.create_user == "true" ? true : false;
+          this.form.job_type = data.job_type;
           this.form.user_name = data.user.name;
           this.form.user_email = data.user.email;
           this.form.user_role = data.user.role[0];
-          this.form.user_status = data.user.status.toString();
+          this.form.user_status = data.user.status?.toString();
           this.form.user_language = data.user.user_language;
+          this.form.branch_shift_id = data.branch_shift_id;
         })
         .catch((error) => {
           console.log(error);
         });
     },
+    saveEmployee() {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        let formData = this.formData();
+
+        EmployeeService.create(formData, config)
+          .then((res) => {
+            if (res.status == 201) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Employee Created Successfully",
+                timer: 3600,
+              });
+              this.$v.$reset();
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/employees/index" });
+              } else {
+                this.$router.push({ path: "/employees/edit/" + res.data.uuid });
+              }
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Something Went wrong.",
+              timer: 3600,
+            });
+          });
+      }
+    },
     updateEmployee() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        EmployeeService.update(this.empId, data)
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        let formData = this.formData(true);
+        EmployeeService.update(this.empId, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -535,6 +553,48 @@ export default {
           });
       }
     },
+    formData(update = false) {
+      const branches = this.form.branch_id;
+      const getBranchs = branches?.map(function (item) {
+        return item.value;
+      });
+      let formData = new FormData();
+      if (update) {
+        formData.append("_method", "patch");
+      }
+      formData.append("serial_no", this.form.serial_no);
+      formData.append("full_name", this.form.full_name);
+      formData.append("gender", this.form.gender);
+      formData.append("marital_status", this.form.marital_status);
+      formData.append("phone_number", this.form.phone_number);
+      formData.append("email", this.form.email);
+      formData.append("dob", this.form.dob);
+      formData.append("nationality", this.form.nationality);
+      formData.append("address", this.form.address);
+      formData.append("cpr_no", this.form.cpr_no);
+      formData.append("cpr_no_expiry", this.form.cpr_no_expiry);
+      formData.append("passport_no", this.form.passport_no);
+      formData.append("passport_expiry", this.form.passport_expiry);
+      formData.append("branch_id", getBranchs);
+      formData.append("department_id", this.form.department_id);
+      formData.append("designation_id", this.form.designation_id);
+      formData.append("status", this.form.status);
+      if (this.form.personal_photo) {
+        formData.append("personal_photo", this.form.personal_photo);
+      }
+      if (this.form.documents) {
+        formData.append("documents", this.form.documents);
+      }
+      formData.append("create_user", this.form.create_user);
+      formData.append("user_name", this.form.user_name);
+      formData.append("user_email", this.form.user_email);
+      formData.append("user_pass", this.form.user_pass);
+      formData.append("user_role", this.form.user_role);
+      formData.append("user_status", this.form.user_status);
+      formData.append("user_language", this.form.user_language);
+      formData.append("branch_shift_id", this.form.branch_shift_id);
+      return formData;
+    },
     toggleUserSection() {
       this.form.create_user = !this.form.create_user;
     },
@@ -542,17 +602,12 @@ export default {
       let file = e.target.files;
       if (file && file[0]) {
         this.form.personal_photo = file[0];
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          this.form.previewImage = e.target.result;
-        };
-        reader.readAsDataURL(file[0]);
       }
     },
   },
 };
 </script>
-
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style>
 .errorMsg {
   color: red;
