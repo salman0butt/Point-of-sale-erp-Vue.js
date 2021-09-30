@@ -171,7 +171,7 @@ export default {
                     {
                       _name: "CSidebarNavItem",
                       name: "Trainers",
-                      to: "/transfers/index",
+                      to: "/trainers/index",
                       icon: "cil-lan",
                     },
                     {

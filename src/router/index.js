@@ -14,6 +14,7 @@ import letterTemplateRoutes from '@/router/letterTemplates/letterTemplateRoutes'
 import courseRoutes from '@/router/courses/courseRoutes';
 import transferRoutes from '@/router/transfers/transferRoutes';
 import traningTypeRoutes from '@/router/trainings/traningTypeRoutes';
+import trainerRoutes from '@/router/trainings/trainerRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
@@ -179,6 +180,7 @@ const router = new Router({
         letterTemplateRoutes,
         transferRoutes,
         traningTypeRoutes,
+        trainerRoutes,
 
         {
           path: 'theme',

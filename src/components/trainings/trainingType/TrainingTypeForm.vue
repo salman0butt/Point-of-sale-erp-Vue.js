@@ -25,9 +25,7 @@
                 @input="$v.form.status.$touch()"
               />
               <div v-if="$v.form.status.$error">
-                <p v-if="!$v.form.status.required" class="errorMsg">
-                  Name DateStatus is required
-                </p>
+                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
               </div>
             </CCol>
           </CRow>
