@@ -9,7 +9,7 @@
               block
               variant="outline"
               @click="addBranchBtn()"
-              color="primary"
+              color="success"
               >Add Branch</CButton
             >
           </CCol>
@@ -63,13 +63,6 @@
 
 <script>
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
   { key: "name", label: "Name Of Branch", _style: "min-width:40%" },
   { key: "area", label: "Area", _style: "min-width:10%;" },
   { key: "address", label: "Address", _style: "min-width:15%;" },

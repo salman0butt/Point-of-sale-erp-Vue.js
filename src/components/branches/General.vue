@@ -44,7 +44,7 @@
         </CRow>
         <CRow>
           <CCol sm="6" md="4" class="pt-2">
-            <CInput label="Telephone" v-model="form.tel" />
+            <CInput label="Telephone" v-model="form.tel" type="number" />
             <div v-if="$v.form.tel.$error">
               <p v-if="!$v.form.tel.required" class="errorMsg">
                 Telephone is required
@@ -58,7 +58,7 @@
             </div>
           </CCol>
           <CCol sm="6" md="4" class="pt-2">
-            <CInput label="Mobile" v-model="form.mob" />
+            <CInput label="Mobile" v-model="form.mob" type="number" />
             <div v-if="$v.form.mob.$error">
               <p v-if="!$v.form.mob.required" class="errorMsg">
                 Mobile Number is required

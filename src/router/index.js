@@ -16,8 +16,10 @@ import transferRoutes from '@/router/transfers/transferRoutes';
 import traningTypeRoutes from '@/router/trainings/traningTypeRoutes';
 import trainerRoutes from '@/router/trainings/trainerRoutes';
 import trainingRoutes from '@/router/trainings/trainingRoutes';
+import salaryRoutes from '@/router/salary/salaryRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
+import accountingRoutes from '@/router/accounting/accountingRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -136,6 +138,7 @@ const router = new Router({
           component: Dashboard,
           beforeEnter: auth
         },
+
         {
           path: 'merchant',
           name: 'Merchant',
@@ -183,6 +186,8 @@ const router = new Router({
         traningTypeRoutes,
         trainerRoutes,
         trainingRoutes,
+        salaryRoutes,
+        accountingRoutes,
 
         {
           path: 'theme',
@@ -560,11 +565,11 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-      beforeEnter:(to, from, next) => {
+      beforeEnter: (to, from, next) => {
         if (store.getters.isLoggedIn) {
-            next({path: "/dashboard"});
+          next({ path: "/dashboard" });
         } else {
-            next();
+          next();
         }
       }
     },
@@ -618,16 +623,16 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-      if (!store.getters.isLoggedIn) {
-          next({
-              path: "/login",
-              query: { redirect: to.fullPath }
-          });
-      } else {
-          next();
-      }
-  } else {
+    if (!store.getters.isLoggedIn) {
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath }
+      });
+    } else {
       next();
+    }
+  } else {
+    next();
   }
 });
 
