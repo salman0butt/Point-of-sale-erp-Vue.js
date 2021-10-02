@@ -18,7 +18,7 @@
 <script>
 import TerminationIndex from "@/components/terminations/TerminationIndex";
 export default {
-  name: "IndexGrade",
+  name: "IndexTermination",
   components: { TerminationIndex },
   data() {
     return {};

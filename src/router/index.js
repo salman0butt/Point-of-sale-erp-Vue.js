@@ -8,6 +8,14 @@ import settingRoutes from '@/router/settings/settingRoutes';
 import assetRoutes from '@/router/assets/assetRoutes';
 import awardRoutes from '@/router/awards/awardRoutes';
 import gradeRoutes from '@/router/grades/gradeRoutes';
+import terminationRoutes from '@/router/terminations/terminationRoutes';
+import resignationRoutes from '@/router/resignations/resignationRoutes';
+import letterTemplateRoutes from '@/router/letterTemplates/letterTemplateRoutes';
+import courseRoutes from '@/router/courses/courseRoutes';
+import transferRoutes from '@/router/transfers/transferRoutes';
+import traningTypeRoutes from '@/router/trainings/traningTypeRoutes';
+import trainerRoutes from '@/router/trainings/trainerRoutes';
+import trainingRoutes from '@/router/trainings/trainingRoutes';
 import salaryRoutes from '@/router/salary/salaryRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
@@ -170,6 +178,14 @@ const router = new Router({
         assetRoutes,
         awardRoutes,
         gradeRoutes,
+        terminationRoutes,
+        resignationRoutes,
+        courseRoutes,
+        letterTemplateRoutes,
+        transferRoutes,
+        traningTypeRoutes,
+        trainerRoutes,
+        trainingRoutes,
         salaryRoutes,
         accountingRoutes,
 

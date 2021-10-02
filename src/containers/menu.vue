@@ -74,7 +74,7 @@ export default {
               _name: "CSidebarNavDropdown",
               name: "HR",
               icon: "cil-lan",
-              items: [
+              _children: [
                 {
                   _name: "CSidebarNavItem",
                   name: "Departments",
@@ -88,21 +88,28 @@ export default {
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Employees",
                   to: "/employees/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Attendance",
                   to: "/attendance/index",
                   icon: "cil-lan",
                 },
                 {
-                  name: "Assets",
-                  to: "/assets/index",
+                  _name: "CSidebarNavItem",
+                  name: "Grades",
+                  to: "/grades/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
+                  name: "Terminations",
+                  to: "/terminations/index",
+}
                   name: "Salary",
                   to: "/salary/index",
                   icon: "cil-lan",
@@ -113,13 +120,65 @@ export default {
                   icon: "cil-lan",
                 },
                 {
-                  name: "Grades",
-                  to: "/grades/index",
+                  _name: "CSidebarNavItem",
+                  name: "Resignations",
+                  to: "/resignations/index",
                   icon: "cil-lan",
                 },
                 {
-                  name: "Terminations",
-                  to: "/terminations/index",
+                  _name: "CSidebarNavItem",
+                  name: "Transfers",
+                  to: "/transfers/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavDropdown",
+                  name: "Trainings",
+                  route: "/apps",
+                  icon: "cil-layers",
+                  _children: [
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Traning Type",
+                      to: "/trainingTypes/index",
+                      icon: "cil-lan",
+                    },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Trainers",
+                      to: "/trainers/index",
+                      icon: "cil-lan",
+                    },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Training",
+                      to: "/trainings/index",
+                      icon: "cil-lan",
+                    },
+                  ],
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Courses",
+                  to: "/courses/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Letter Templates",
+                  to: "/letterTemplates/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Assets",
+                  to: "/assets/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Awards",
+                  to: "/awards/index",
                   icon: "cil-lan",
                 },
               ],
@@ -149,6 +208,7 @@ export default {
               to: "/settings",
               icon: "cil-lan",
             },
+
             // {
             //   _name: 'CSidebarNavTitle',
             //   _children: ['Components']

@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="employeeGrade"
+          :items="employeeTermination"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -27,7 +27,7 @@
           </template>
           <template #termination_to="{ item }">
             <td>
-              {{ item.termination_to.name }}
+              {{ item.termination_to.full_name }}
             </td>
           </template>
           <template #status="{ item }">
@@ -99,7 +99,7 @@ export default {
   cilEye,
   data() {
     return {
-      employeeGradeData: [],
+      employeeTerminationData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -113,8 +113,8 @@ export default {
     this.getTermination();
   },
   computed: {
-    employeeGrade() {
-      return this.employeeGradeData;
+    employeeTermination() {
+      return this.employeeTerminationData;
     },
   },
   watch: {
@@ -132,11 +132,11 @@ export default {
       TerminationService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.employeeGradeData = [];
+            this.employeeTerminationData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeGradeData.push({ ...item, id });
+                this.employeeTerminationData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -155,8 +155,8 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeGradeData[item.id]._selected);
-      this.$set(this.employeeGradeData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeTerminationData[item.id]._selected);
+      this.$set(this.employeeTerminationData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
@@ -184,10 +184,10 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Grade Deleted Successfully",
+                    text: "Termination Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeGradeData = this.employeeGradeData.filter(
+                  this.employeeTerminationData = this.employeeTerminationData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -213,7 +213,7 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeGradeData = agent.currentItems;
+        this.employeeTerminationData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },

@@ -14,12 +14,9 @@
 <script>
 import TerminationForm from "@/components/terminations/TerminationForm";
 export default {
-  name: "EditGrade",
+  name: "EditTermination",
   components: { TerminationForm },
-  data: () => ({
-    isEditing: true,
-  }),
-  created() {},
+  data: () => ({}),
   methods: {},
 };
 </script>

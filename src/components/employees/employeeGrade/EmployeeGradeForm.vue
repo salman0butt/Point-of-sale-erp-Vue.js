@@ -163,7 +163,7 @@ export default {
     this.form.id = this.$route.params.id;
     this.getAllEmployees();
     this.getAllDesignations();
-    if (this.form.id) {
+    if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getEmployeeGrade();
     }

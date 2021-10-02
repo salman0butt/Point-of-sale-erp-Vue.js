@@ -159,7 +159,7 @@ export default {
     this.form.id = this.$route.params.id;
     this.getOptions();
     this.getAllEmployees();
-    if (this.form.id) {
+    if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getTermination();
     }
@@ -242,7 +242,7 @@ export default {
             this.form.id = data.uuid;
             this.form.termination_type = data.termination_type;
             this.form.termination_date = data.termination_date;
-            this.form.termination_to = data.termination_to.id;
+            this.form.termination_to = data.termination_to.uuid;
             this.form.description = data.description;
             this.form.notice_date = data.notice_date;
             this.form.status = data.status;
@@ -287,7 +287,6 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          this.isEditing = false;
         });
     },
     resetForm() {

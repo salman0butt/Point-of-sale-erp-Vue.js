@@ -178,6 +178,19 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Course Types"
+                    v-model="form.course_types"
+                    :class="{ error: $v.form.course_types.$error }"
+                    @input="$v.form.course_types.$touch()"
+                  />
+                  <div v-if="$v.form.course_types.$error">
+                    <p v-if="!$v.form.course_types.required" class="errorMsg">
+                      Course Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -221,6 +234,7 @@ export default {
       asset_type: "",
       award_type: "",
       termination_type: "",
+      course_types: "",
     },
     options: {
       attendance_by: [
@@ -246,6 +260,7 @@ export default {
         asset_type: { required },
         award_type: { required },
         termination_type: { required },
+        course_types: { required },
       },
     };
   },
