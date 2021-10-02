@@ -57,6 +57,7 @@ import EmployeeDeductionTab from "@/components/employees/employeeDeduction/Emplo
 import EmployeeAssetTab from "@/components/employees/employeeAsset/EmployeeAssetTab";
 import EmployeeAwardTab from "@/components/employees/employeeAward/EmployeeAwardTab";
 import EmployeeSalaryTab from "@/components/employees/employeeSalary/EmployeeSalaryTab";
+import ExperianceCertifcateTab from "@/components/experianceCertifcate/ExperianceCertifcateTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -80,6 +81,7 @@ export default {
     EmployeeAssetTab,
     EmployeeAwardTab,
     EmployeeSalaryTab,
+    ExperianceCertifcateTab,
   },
   data() {
     return {
@@ -102,6 +104,7 @@ export default {
         { key: "EmployeeDeductionTab", name: "Deductions" },
         { key: "EmployeeAssetTab", name: "Assets" },
         { key: "EmployeeAwardTab", name: "Awards" },
+        { key: "ExperianceCertifcateTab", name: "Experiance Certifcate" },
       ],
     };
   },
