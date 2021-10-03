@@ -4,10 +4,10 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/complains/create"
-              >Create Complains</router-link
+            <router-link class="btn btn-success" to="/warnings/create"
+              >Create Warnings</router-link
             >
-            <ComplainIndex />
+            <WarningIndex />
           </CCardBody>
         </CCard>
       </CCol>
@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import ComplainIndex from "@/components/complains/ComplainIndex";
+import WarningIndex from "@/components/warnings/WarningIndex";
 export default {
-  name: "IndexComplain",
-  components: { ComplainIndex },
+  name: "IndexWarning",
+  components: { WarningIndex },
   data() {
     return {};
   },
