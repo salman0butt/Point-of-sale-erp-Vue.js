@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeWarning"
+              :items="warning"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -27,11 +27,11 @@
                   />
                 </td>
               </template>
-              <!-- <template #from_employee="{ item }">
+              <template #from_employee="{ item }">
                 <td>
-                  {{ item.from_employee.full_name.en }}
+                  {{ item.from_employee.full_name }}
                 </td>
-              </template> -->
+              </template>
               <template #to_employee="{ item }">
                 <td>
                   {{ item.to_employee.full_name }}
@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
+import WarningService from "@/services/employees/EmployeeWarningService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,7 +91,7 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  // { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
+  { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
   { key: "title", label: "TITLE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
@@ -100,13 +100,13 @@ const fields = [
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 export default {
-  name: "EmployeeWarningIndex",
+  name: "WarningIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeWarningData: [],
+      warningData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -118,11 +118,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeWarning();
+    this.getWarning();
   },
   computed: {
-    employeeWarning() {
-      return this.employeeWarningData;
+    warning() {
+      return this.warningData;
     },
   },
   watch: {
@@ -130,28 +130,28 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeWarning(this.activePage, this.perPage);
+      this.getWarning(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeWarning(page = "", per_page = "") {
+    getWarning(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeWarningService.getAll(this.empId, page, per_page)
+      WarningService.getAll(this.empId, page, per_page, true)
         .then(({ data }) => {
           console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeWarningData = [];
+            this.warningData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeWarningData.push({ ...item, id });
+                this.warningData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
-            // console.log(this.employeeWarningData);
+            // console.log(this.warningData);
           }
           this.loading = false;
         })
@@ -165,14 +165,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeWarningData[item.id]._selected);
-      this.$set(this.employeeWarningData[item.id], "_selected", !val);
+      const val = Boolean(this.warningData[item.id]._selected);
+      this.$set(this.warningData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-warning-edit", uuid);
+      this.$router.push({ path: "/warnings/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -187,7 +187,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeWarningService.delete(this.deleteRows)
+            WarningService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -196,9 +196,7 @@ export default {
                     text: "Warning Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeWarningData = this.employeeWarningData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.warningData = this.warningData.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })
@@ -222,13 +220,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeWarningData = agent.currentItems;
+        this.warningData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeWarning("", this.perPage);
+      this.getWarning("", this.perPage);
     },
   },
 };

@@ -11,14 +11,14 @@
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
-                    label="Fullname"
+                    label="Full Name"
                     v-model="form.full_name"
                     :class="{ error: $v.form.full_name.$error }"
                     @input="$v.form.full_name.$touch()"
                   />
                   <div v-if="$v.form.full_name.$error">
                     <p v-if="!$v.form.full_name.required" class="errorMsg">
-                      Fullname is required
+                      Full Name is required
                     </p>
                   </div>
                 </CCol>
@@ -305,7 +305,7 @@ export default {
     saveAndExit: false,
     form: {
       serial_no: "",
-      full_name: "",
+      full_name: "e.g name",
       gender: "",
       marital_status: "",
       phone_number: "",
@@ -404,6 +404,12 @@ export default {
       this.getEmployee();
       this.isEditing = true;
     }
+  },
+  watch: {
+    "form.full_name"(val) {
+      this.$store.commit("set_employee_name", val);
+    },
+    deep: true,
   },
   methods: {
     getDetail() {

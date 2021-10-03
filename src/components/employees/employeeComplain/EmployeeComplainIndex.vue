@@ -27,7 +27,7 @@
                   />
                 </td>
               </template>
-              <template #branch="{ item }">
+              <!-- <template #branch="{ item }">
                 <td>
                   {{ item.branch.name.en }}
                 </td>
@@ -36,10 +36,10 @@
                 <td>
                   {{ item.from_employee.full_name.en }}
                 </td>
-              </template>
+              </template> -->
               <template #to_employee="{ item }">
                 <td>
-                  {{ item.to_employee.full_name.en }}
+                  {{ item.to_employee.full_name }}
                 </td>
               </template>
               <template #actions="{ item }">
@@ -96,8 +96,8 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  { key: "branch", label: "Branch", _style: "min-width:40%" },
-  { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
+  // { key: "branch", label: "Branch", _style: "min-width:40%" },
+  // { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
   { key: "title", label: "TITLE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },

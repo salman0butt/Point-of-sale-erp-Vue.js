@@ -191,6 +191,22 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Experiance Certifcate Types"
+                    v-model="form.experiance_certifcate_types"
+                    :class="{ error: $v.form.experiance_certifcate_types.$error }"
+                    @input="$v.form.experiance_certifcate_types.$touch()"
+                  />
+                  <div v-if="$v.form.experiance_certifcate_types.$error">
+                    <p
+                      v-if="!$v.form.experiance_certifcate_types.required"
+                      class="errorMsg"
+                    >
+                      Experiance Certifcate Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -235,6 +251,7 @@ export default {
       award_type: "",
       termination_type: "",
       course_types: "",
+      experiance_certifcate_types: "",
     },
     options: {
       attendance_by: [
@@ -261,6 +278,7 @@ export default {
         award_type: { required },
         termination_type: { required },
         course_types: { required },
+        experiance_certifcate_types: { required },
       },
     };
   },

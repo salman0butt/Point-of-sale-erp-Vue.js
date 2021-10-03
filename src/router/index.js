@@ -16,6 +16,8 @@ import transferRoutes from '@/router/transfers/transferRoutes';
 import traningTypeRoutes from '@/router/trainings/traningTypeRoutes';
 import trainerRoutes from '@/router/trainings/trainerRoutes';
 import trainingRoutes from '@/router/trainings/trainingRoutes';
+import complainRoutes from '@/router/complains/complainRoutes';
+import warningRoutes from '@/router/warnings/warningRoutes';
 import salaryRoutes from '@/router/salary/salaryRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
@@ -186,6 +188,8 @@ const router = new Router({
         traningTypeRoutes,
         trainerRoutes,
         trainingRoutes,
+        complainRoutes,
+        warningRoutes,
         salaryRoutes,
         accountingRoutes,
 

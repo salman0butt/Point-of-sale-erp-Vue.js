@@ -13,7 +13,8 @@ const state = {
   token: localStorage.getItem('token') || '',
   user: {},
   errors: [],
-  msgs: []
+  msgs: [],
+  employee_name:""
 }
 
 const mutations = {
@@ -54,6 +55,9 @@ const mutations = {
   },
   remove_msgs(state) {
     state.msgs = [];
+  },
+  set_employee_name(state, name) {
+    state.employee_name = name;
   }
 }
 
@@ -110,6 +114,7 @@ const getters = {
   authStatus: state => state.status,
   errors: state => state.errors,
   msgs: state => state.msgs,
+  get_employee_name: state => state.employee_name,
 }
 
 export default new Vuex.Store({

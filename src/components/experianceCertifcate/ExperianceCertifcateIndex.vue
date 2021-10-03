@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeWarning"
+              :items="employeeExperianceCertifcate"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -27,14 +27,9 @@
                   />
                 </td>
               </template>
-              <!-- <template #from_employee="{ item }">
+              <template #employee="{ item }">
                 <td>
-                  {{ item.from_employee.full_name.en }}
-                </td>
-              </template> -->
-              <template #to_employee="{ item }">
-                <td>
-                  {{ item.to_employee.full_name }}
+                  {{ item.employee.full_name }}
                 </td>
               </template>
               <template #actions="{ item }">
@@ -80,7 +75,7 @@
 </template>
 
 <script>
-import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
+import ExperianceCertifcateService from "@/services/experianceCertifcate/ExperianceCertifcateService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,22 +86,23 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  // { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
-  { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
-  { key: "title", label: "TITLE", _style: "min-width:15%;" },
-  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
-  { key: "date", label: "DATE", _style: "min-width:15%;" },
+  { key: "employee", label: "EMPLOYEE", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:15%;" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "from_date", label: "FROM DATE", _style: "min-width:15%;" },
+  { key: "to_date", label: "TO DATE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
+
 export default {
-  name: "EmployeeWarningIndex",
+  name: "ExperianceCertifcateIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeWarningData: [],
+      employeeExperianceCertifcateData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -118,11 +114,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeWarning();
+    this.getExperianceCertifcate();
   },
   computed: {
-    employeeWarning() {
-      return this.employeeWarningData;
+    employeeExperianceCertifcate() {
+      return this.employeeExperianceCertifcateData;
     },
   },
   watch: {
@@ -130,28 +126,27 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeWarning(this.activePage, this.perPage);
+      this.getExperianceCertifcate(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeWarning(page = "", per_page = "") {
+    getExperianceCertifcate(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeWarningService.getAll(this.empId, page, per_page)
+      ExperianceCertifcateService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
           console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeWarningData = [];
+            this.employeeExperianceCertifcateData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeWarningData.push({ ...item, id });
+                this.employeeExperianceCertifcateData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
-            // console.log(this.employeeWarningData);
           }
           this.loading = false;
         })
@@ -165,14 +160,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeWarningData[item.id]._selected);
-      this.$set(this.employeeWarningData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeExperianceCertifcateData[item.id]._selected);
+      this.$set(this.employeeExperianceCertifcateData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-warning-edit", uuid);
+      this.$emit("employee-experiance-certifcate-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -187,16 +182,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeWarningService.delete(this.deleteRows)
+            ExperianceCertifcateService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Warning Deleted Successfully",
+                    text: "Experiance Certifcate Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeWarningData = this.employeeWarningData.filter(
+                  this.employeeExperianceCertifcateData = this.employeeExperianceCertifcateData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -222,13 +217,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeWarningData = agent.currentItems;
+        this.employeeExperianceCertifcateData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeWarning("", this.perPage);
+      this.getExperianceCertifcate("", this.perPage);
     },
   },
 };

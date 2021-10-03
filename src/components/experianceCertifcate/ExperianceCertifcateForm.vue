@@ -3,55 +3,64 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeWarning() : saveEmployeeWarning()"
+          @submit.prevent="
+            isEditing ? updateExperianceCertifcate() : saveExperianceCertifcate()
+          "
         >
           <CRow>
-            <!-- <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Employee From"
-                :options="options.employees"
-                :value.sync="form.from_employee_id"
-              />
-              <div v-if="$v.form.from_employee_id.$error">
-                <p v-if="!$v.form.from_employee_id.required" class="errorMsg">
-                  Employee From is required
-                </p>
-              </div>
-            </CCol> -->
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Employee To"
-                :options="options.employees"
-                :value.sync="form.to_employee_id"
-              />
-              <div v-if="$v.form.to_employee_id.$error">
-                <p v-if="!$v.form.to_employee_id.required" class="errorMsg">
-                  Employee To is required
-                </p>
-              </div>
-            </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Title"
-                v-model="form.title"
-                :class="{ error: $v.form.title.$error }"
-                @input="$v.form.title.$touch()"
+                label="Name"
+                v-model="form.name"
+                :class="{ error: $v.form.name.$error }"
+                @input="$v.form.name.$touch()"
               />
-              <div v-if="$v.form.title.$error">
-                <p v-if="!$v.form.title.required" class="errorMsg">Title is required</p>
+              <div v-if="$v.form.name.$error">
+                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
               </div>
             </CCol>
-            <CCol sm="6" md="4">
-              <CTextarea
-                label="Note"
-                placeholder="Content..."
-                v-model="form.description"
-              />
-            </CCol>
+
             <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Type" type="date" :value.sync="form.date" />
-              <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">Type is required</p>
+              <CSelect
+                label="Type"
+                :options="options.experiance_certifcate_types"
+                :value.sync="form.type"
+                :class="{ error: $v.form.type.$error }"
+                @input="$v.form.type.$touch()"
+              />
+              <div v-if="$v.form.type.$error">
+                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
+              </div>
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="From Date"
+                type="date"
+                v-model="form.from_date"
+                :class="{ error: $v.form.from_date.$error }"
+                @input="$v.form.from_date.$touch()"
+              />
+              <div v-if="$v.form.from_date.$error">
+                <p v-if="!$v.form.from_date.required" class="errorMsg">
+                  From Date is required
+                </p>
+              </div>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="To Date"
+                type="date"
+                v-model="form.to_date"
+                :class="{ error: $v.form.to_date.$error }"
+                @input="$v.form.to_date.$touch()"
+              />
+              <div v-if="$v.form.to_date.$error">
+                <p v-if="!$v.form.to_date.required" class="errorMsg">
+                  To Date is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -62,7 +71,6 @@
               />
             </CCol>
           </CRow>
-
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4 d-block">
             <CButton
@@ -81,40 +89,44 @@
   </div>
 </template>
 <script>
-import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
+import ExperianceCertifcateService from "@/services/experianceCertifcate/ExperianceCertifcateService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeWarningForm",
+  name: "ExperianceCertifcateForm",
   data: () => ({
     isEditing: false,
     form: {
       id: null,
-      // from_employee_id: "",
-      to_employee_id: "",
-      title: "",
-      description: "",
-      date: "",
+      employee_id: "",
+      name: "",
+      type: "",
+      from_date: "",
+      to_date: "",
       status: "",
     },
     empId: null,
     options: {
+      experiance_certifcate_types: [
+        { value: "", label: "Choose Type", disabled: true, selected: "" },
+      ],
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "inActive" },
+        { value: "pending", label: "Pending" },
+        { value: "complete", label: "Complete" },
+        { value: "in-process", label: "In Process" },
       ],
-      employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
-        from_employee_id: { required },
-        to_employee_id: { required },
-        title: { required },
-        date: { required },
+        employee_id: { required },
+        name: { required },
+        type: { required },
+        from_date: { required },
+        to_date: { required },
       },
     };
   },
@@ -123,21 +135,21 @@ export default {
     this.getOptions();
   },
   methods: {
-    saveEmployeeWarning() {
-      this.form.from_employee_id = this.$route.params.id;
+    saveExperianceCertifcate() {
+      this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeWarningService.create(data)
+        ExperianceCertifcateService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Warning Added Successfully",
+                text: "Experiance Certifcate Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-warning-update");
+              this.$emit("employee-experiance-certifcate-update");
               this.$v.$reset();
               this.resetForm();
             }
@@ -153,22 +165,22 @@ export default {
           });
       }
     },
-    updateEmployeeWarning() {
-      this.form.from_employee_id = this.$route.params.id;
+    updateExperianceCertifcate() {
+      this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeWarningService.update(this.form.id, data)
+        ExperianceCertifcateService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Warning Updated Successfully",
+                text: "Experiance Certifcate Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-warning-update");
+              this.$emit("employee-experiance-certifcate-update");
             }
           })
           .catch((error) => {
@@ -182,20 +194,18 @@ export default {
           });
       }
     },
-    getEmployeeWarning() {
-      EmployeeWarningService.get(this.empId)
+    getExperianceCertifcate() {
+      ExperianceCertifcateService.get(this.empId)
         .then(({ data }) => {
           if (data != null && data != "") {
-            console.log(data);
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.from_employee_id = data.from_employee.uuid;
-            this.form.to_employee_id = data.to_employee.uuid;
-            this.form.title = data.title;
-            this.form.description = data.description;
-            this.form.date = data.date;
+            this.form.employee_id = data.employee.uuid;
+            this.form.name = data.name;
+            this.form.type = data.type;
+            this.form.from_date = data.from_date;
+            this.form.to_date = data.to_date;
             this.form.status = data.status;
-            console.log(this.form);
           }
         })
         .catch((error) => {
@@ -204,7 +214,7 @@ export default {
         });
     },
     getOptions() {
-      let ids = JSON.stringify(["periodic_type"]);
+      let ids = JSON.stringify(["experiance_certifcate_types"]);
       HrSettingService.getSettings(ids)
         .then(({ data }) => {
           if (data != null && data != "") {
@@ -222,26 +232,11 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-
-      this.$http
-        .get("/employees-create")
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            const employees = this.options.employees;
-
-            data.employees.map(function (val) {
-              employees.push({ value: val.uuid, label: val.full_name });
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     },
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
-      this.getEmployeeWarning();
+      this.getExperianceCertifcate();
     },
     resetForm() {
       for (let index in this.form) {

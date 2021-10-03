@@ -2,11 +2,9 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form
-          @submit.prevent="isEditing ? updateEmployeeWarning() : saveEmployeeWarning()"
-        >
+        <form @submit.prevent="isEditing ? updateWarning() : saveWarning()">
           <CRow>
-            <!-- <CCol sm="6" md="4" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee From"
                 :options="options.employees"
@@ -17,7 +15,7 @@
                   Employee From is required
                 </p>
               </div>
-            </CCol> -->
+            </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee To"
@@ -64,15 +62,25 @@
           </CRow>
 
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-          <CRow class="mt-4 d-block">
+          <CRow class="mt-4">
             <CButton
               progress
               timeout="2000"
               block
               color="success"
-              style="float: right; width: 150px; margin-right: 20px"
+              style="float: right; width: 200px; margin-left: 20px"
               type="submit"
-              >Save</CButton
+              @click="saveAndExit = false"
+              >Save & Continue</CButton
+            >
+            <CButton
+              timeout="2000"
+              block
+              color="danger"
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              @click="saveAndExit = true"
+              type="submit"
+              >Save & Exit</CButton
             >
           </CRow>
         </form>
@@ -81,17 +89,17 @@
   </div>
 </template>
 <script>
-import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
+import WarningService from "@/services/employees/EmployeeWarningService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeWarningForm",
+  name: "WarningForm",
   data: () => ({
     isEditing: false,
     form: {
       id: null,
-      // from_employee_id: "",
+      from_employee_id: "",
       to_employee_id: "",
       title: "",
       description: "",
@@ -119,16 +127,19 @@ export default {
     };
   },
   created() {
-    this.empId = this.$route.params.id;
+    this.form.id = this.$route.params.id;
     this.getOptions();
+    if (this.form.id !== "" && this.form.id !== undefined) {
+      this.isEditing = true;
+      this.getWarning();
+    }
   },
   methods: {
-    saveEmployeeWarning() {
-      this.form.from_employee_id = this.$route.params.id;
+    saveWarning() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeWarningService.create(data)
+        WarningService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -137,9 +148,15 @@ export default {
                 text: "Warning Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-warning-update");
+
               this.$v.$reset();
               this.resetForm();
+
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/warnings/index" });
+              } else {
+                this.$router.push({ path: "/warnings/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
@@ -153,12 +170,11 @@ export default {
           });
       }
     },
-    updateEmployeeWarning() {
-      this.form.from_employee_id = this.$route.params.id;
+    updateWarning() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        EmployeeWarningService.update(this.form.id, data)
+        WarningService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -168,7 +184,13 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-warning-update");
+              // this.resetForm();
+
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/warnings/index" });
+              } else {
+                this.$router.push({ path: "/warnings/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
@@ -182,11 +204,10 @@ export default {
           });
       }
     },
-    getEmployeeWarning() {
-      EmployeeWarningService.get(this.empId)
+    getWarning() {
+      WarningService.get(this.form.id)
         .then(({ data }) => {
           if (data != null && data != "") {
-            console.log(data);
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.from_employee_id = data.from_employee.uuid;
@@ -230,18 +251,13 @@ export default {
             const employees = this.options.employees;
 
             data.employees.map(function (val) {
-              employees.push({ value: val.uuid, label: val.full_name });
+              employees.push({ value: val.uuid, label: val.full_name.en });
             });
           }
         })
         .catch((error) => {
           console.log(error);
         });
-    },
-    getEditData(uuid) {
-      this.isEditing = true;
-      this.empId = uuid;
-      this.getEmployeeWarning();
     },
     resetForm() {
       for (let index in this.form) {

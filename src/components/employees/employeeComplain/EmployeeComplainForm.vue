@@ -6,19 +6,7 @@
           @submit.prevent="isEditing ? updateEmployeeComplain() : saveEmployeeComplain()"
         >
           <CRow>
-            <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Branch"
-                :options="options.branches"
-                :value.sync="form.branch_id"
-              />
-              <div v-if="$v.form.branch_id.$error">
-                <p v-if="!$v.form.branch_id.required" class="errorMsg">
-                  Branch is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
+            <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee From"
                 :options="options.employees"
@@ -29,7 +17,7 @@
                   Employee From is required
                 </p>
               </div>
-            </CCol>
+            </CCol> -->
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee To"
@@ -61,9 +49,9 @@
               />
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Type" type="date" :value.sync="form.date" />
+              <CInput label="Date" type="date" :value.sync="form.date" />
               <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">Type is required</p>
+                <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
               </div>
             </CCol>
           </CRow>
@@ -87,7 +75,6 @@
 </template>
 <script>
 import EmployeeComplainService from "@/services/employees/EmployeeComplainService";
-import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
@@ -112,8 +99,7 @@ export default {
   validations() {
     return {
       form: {
-        branch_id: { required },
-        from_employee_id: { required },
+        // from_employee_id: { required },
         to_employee_id: { required },
         title: { required },
         date: { required },
@@ -126,7 +112,8 @@ export default {
   },
   methods: {
     saveEmployeeComplain() {
-      this.form.employee_id = this.$route.params.id;
+      this.form.from_employee_id = this.$route.params.id;
+      this.form.branch_id = this.options.branches[1].value;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -156,7 +143,8 @@ export default {
       }
     },
     updateEmployeeComplain() {
-      this.form.employee_id = this.$route.params.id;
+      this.form.from_employee_id = this.$route.params.id;
+      this.form.branch_id = this.options.branches[1].value;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -190,9 +178,9 @@ export default {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.branch_id = data.branch.id;
-            this.form.from_employee_id = data.from_employee.id;
-            this.form.to_employee_id = data.to_employee.id;
+            this.form.branch_id = data.branch.uuid;
+            this.form.from_employee_id = data.from_employee.uuid;
+            this.form.to_employee_id = data.to_employee.uuid;
             this.form.title = data.title;
             this.form.description = data.description;
             this.form.date = data.date;
@@ -204,25 +192,6 @@ export default {
         });
     },
     getOptions() {
-      let ids = JSON.stringify(["periodic_type"]);
-      HrSettingService.getSettings(ids)
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            const types = this.options;
-            for (let index in data) {
-              let arr = JSON.parse(data[index]);
-              for (let i in arr) {
-                if (types[index]) {
-                  types[index].push({ value: arr[i], label: arr[i] });
-                }
-              }
-            }
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
       this.$http
         .get("/employees-create")
         .then(({ data }) => {
@@ -231,11 +200,13 @@ export default {
             const employees = this.options.employees;
 
             data.branches.map(function (val) {
-              branches.push({ value: val.id, label: val.name.en });
+              branches.push({ value: val.uuid, label: val.name.en });
             });
-            data.employees.map(function (val) {
-              employees.push({ value: val.id, label: val.full_name.en });
-            });
+            if (data.employees) {
+              data.employees.map(function (val) {
+                employees.push({ value: val.uuid, label: val.full_name.en });
+              });
+            }
           }
         })
         .catch((error) => {

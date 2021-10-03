@@ -4,8 +4,16 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
+            <!-- <CButton
+              @click="selectAll()"
+              class="btn-sm"
+              color="danger"
+              title="Select All"
+            >
+              Select All
+            </CButton> -->
             <CDataTable
-              :items="employeeWarning"
+              :items="Complain"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -27,11 +35,16 @@
                   />
                 </td>
               </template>
-              <!-- <template #from_employee="{ item }">
+              <!-- <template #branch="{ item }">
                 <td>
-                  {{ item.from_employee.full_name.en }}
+                  {{ item.branch.name.en }}
                 </td>
               </template> -->
+              <template #from_employee="{ item }">
+                <td>
+                  {{ item.from_employee.full_name }}
+                </td>
+              </template>
               <template #to_employee="{ item }">
                 <td>
                   {{ item.to_employee.full_name }}
@@ -80,7 +93,7 @@
 </template>
 
 <script>
-import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
+import ComplainService from "@/services/employees/EmployeeComplainService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,22 +104,22 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  // { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
+  // { key: "branch", label: "Branch", _style: "min-width:40%" },
+  { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
   { key: "title", label: "TITLE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 export default {
-  name: "EmployeeWarningIndex",
+  name: "ComplainIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeWarningData: [],
+      complainData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -118,11 +131,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeWarning();
+    this.getComplain();
   },
   computed: {
-    employeeWarning() {
-      return this.employeeWarningData;
+    Complain() {
+      return this.complainData;
     },
   },
   watch: {
@@ -130,28 +143,27 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeWarning(this.activePage, this.perPage);
+      this.getComplain(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeWarning(page = "", per_page = "") {
+    getComplain(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeWarningService.getAll(this.empId, page, per_page)
+      ComplainService.getAll(this.empId, page, per_page, true)
         .then(({ data }) => {
-          console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeWarningData = [];
+            this.complainData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeWarningData.push({ ...item, id });
+                this.complainData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
-            // console.log(this.employeeWarningData);
+            // console.log(this.complainData);
           }
           this.loading = false;
         })
@@ -159,22 +171,28 @@ export default {
           console.log(err);
         });
     },
+    // selectAll() {
+    //   const data = this.complainData;
+    //   data.map(function (item) {
+    //     const val = Boolean(item._selected);
+    //     this.$set(item, "_selected", !val);
+    //   });
+    // },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
       }
     },
     check(item) {
-      const val = Boolean(this.employeeWarningData[item.id]._selected);
-      this.$set(this.employeeWarningData[item.id], "_selected", !val);
+      const val = Boolean(this.complainData[item.id]._selected);
+      this.$set(this.complainData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-warning-edit", uuid);
+      this.$router.push({ path: "/complains/edit/" + uuid });
     },
-
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
@@ -187,16 +205,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeWarningService.delete(this.deleteRows)
+            ComplainService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Warning Deleted Successfully",
+                    text: "Complain Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeWarningData = this.employeeWarningData.filter(
+                  this.complainData = this.complainData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -222,13 +240,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeWarningData = agent.currentItems;
+        this.complainData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeWarning("", this.perPage);
+      this.getComplain("", this.perPage);
     },
   },
 };
