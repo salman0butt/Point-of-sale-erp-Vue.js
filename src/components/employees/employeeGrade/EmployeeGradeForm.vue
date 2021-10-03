@@ -43,34 +43,6 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Old Salary"
-                type="number"
-                v-model="form.old_salary"
-                :class="{ error: $v.form.old_salary.$error }"
-                @input="$v.form.old_salary.$touch()"
-              />
-              <div v-if="$v.form.old_salary.$error">
-                <p v-if="!$v.form.old_salary.required" class="errorMsg">
-                  Old Salary is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="New Salary"
-                type="number"
-                v-model="form.new_salary"
-                :class="{ error: $v.form.new_salary.$error }"
-                @input="$v.form.new_salary.$touch()"
-              />
-              <div v-if="$v.form.new_salary.$error">
-                <p v-if="!$v.form.new_salary.required" class="errorMsg">
-                  New Salary is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
                 label="Date"
                 type="date"
                 v-model="form.date"
@@ -81,8 +53,7 @@
                 <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
               </div>
             </CCol>
-          </CRow>
-          <CRow>
+
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
@@ -153,8 +124,6 @@ export default {
       form: {
         old_designation: { required },
         new_designation: { required },
-        old_salary: { required },
-        new_salary: { required },
         date: { required },
       },
     };
@@ -247,8 +216,6 @@ export default {
             this.form.employee_id = data.employee.uuid;
             this.form.old_designation = data.old_designation.uuid;
             this.form.new_designation = data.new_designation.uuid;
-            this.form.old_salary = data.old_salary;
-            this.form.new_salary = data.new_salary;
             this.form.status = data.status;
             this.form.date = data.date;
           }

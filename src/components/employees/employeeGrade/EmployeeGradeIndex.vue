@@ -91,8 +91,6 @@ const fields = [
   { key: "employee", label: "Employee", _style: "min-width:15%;" },
   { key: "old_designation", label: "OLD DESIGNATION", _style: "min-width:15%;" },
   { key: "new_designation", label: "NEW DESIGNATION", _style: "min-width:15%;" },
-  { key: "old_salary", label: "OLD SALARY", _style: "min-width:15%;" },
-  { key: "new_salary", label: "NEW SALARY", _style: "min-width:15%;" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },

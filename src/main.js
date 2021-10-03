@@ -11,6 +11,9 @@ import i18n from './i18n.js'
 import http from '../src/http-common';
 import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
+import Skeleton from 'vue-loading-skeleton';
+
+Vue.use(Skeleton)
 
 Vue.use(Vuelidate);
 

@@ -14,8 +14,15 @@
                 <img src="/img/avatars/7.jpg" class="c-avatar-img" alt="Profile" />
                 <CIcon :content="$options.cisCircle" class="online" />
                 <div>
-                  <span class="emp-name">{{ employee_name }} </span><br />
-                  <span class="emp-designation">{{ employee_designation }}</span>
+                  <template v-if="emp_name">
+                    <span class="emp-name">{{ emp_name }} </span></template
+                  >
+                  <PuSkeleton v-else width="100px" />
+                  <br />
+                  <template v-if="employee_designation">
+                    <span class="emp-designation">{{ employee_designation }}</span>
+                  </template>
+                  <PuSkeleton v-else />
                 </div>
               </div>
               <br />
@@ -57,7 +64,6 @@ import EmployeeDeductionTab from "@/components/employees/employeeDeduction/Emplo
 import EmployeeAssetTab from "@/components/employees/employeeAsset/EmployeeAssetTab";
 import EmployeeAwardTab from "@/components/employees/employeeAward/EmployeeAwardTab";
 import EmployeeSalaryTab from "@/components/employees/employeeSalary/EmployeeSalaryTab";
-import ExperianceCertifcateTab from "@/components/experianceCertifcate/ExperianceCertifcateTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 
@@ -81,12 +87,11 @@ export default {
     EmployeeAssetTab,
     EmployeeAwardTab,
     EmployeeSalaryTab,
-    ExperianceCertifcateTab,
   },
   data() {
     return {
-      employee_name: "Alan Butler",
-      employee_designation: "Project Manager",
+      employee_name: "e.g name",
+      employee_designation: "Designation",
       activeTab: "EmployeeTab",
       tabs: [
         { key: "EmployeeTab", name: "General" },
@@ -104,12 +109,17 @@ export default {
         { key: "EmployeeDeductionTab", name: "Deductions" },
         { key: "EmployeeAssetTab", name: "Assets" },
         { key: "EmployeeAwardTab", name: "Awards" },
-        { key: "ExperianceCertifcateTab", name: "Experiance Certifcate" },
       ],
     };
   },
   created() {
+    // this.$store.commit("set_employee_name", this.employee_name);
     this.getEmployeeDetail();
+  },
+  computed: {
+    emp_name() {
+      return this.$store.getters.get_employee_name;
+    },
   },
   methods: {
     changeActiveTab(value) {
@@ -120,6 +130,7 @@ export default {
       EmployeeService.get(id)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
+            // this.$store.commit("set_employee_name", data.full_name);
             this.employee_name = data.full_name;
             this.employee_designation = data.designation;
           }
@@ -167,5 +178,8 @@ a.nav-link.active,
   position: absolute;
   left: 32%;
   top: 12%;
+}
+#v-pills-tab {
+  display: block;
 }
 </style>

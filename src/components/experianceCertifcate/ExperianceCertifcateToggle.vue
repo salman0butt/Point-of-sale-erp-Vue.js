@@ -35,7 +35,7 @@ import ExperianceCertifcateIndex from "@/components/experianceCertifcate/Experia
 import ExperianceCertifcateForm from "@/components/experianceCertifcate/ExperianceCertifcateForm";
 
 export default {
-  name: "ExperianceCertifcateTab",
+  name: "ExperianceCertifcateToggle",
   components: { ExperianceCertifcateIndex, ExperianceCertifcateForm },
   data: () => ({
     toggleName: "Add New Experiance Certifcate",
