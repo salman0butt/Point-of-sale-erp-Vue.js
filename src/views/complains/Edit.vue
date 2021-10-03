@@ -3,8 +3,8 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>New Complain</CCardHeader>
-          <CCardBody> <ComplainForm /> </CCardBody>
+          <CCardHeader>Edit Complain</CCardHeader>
+          <CCardBody> <ComplainForm /></CCardBody>
         </CCard>
       </CCol>
     </CRow>
@@ -14,7 +14,7 @@
 <script>
 import ComplainForm from "@/components/complains/ComplainForm";
 export default {
-  name: "CreateComplain",
+  name: "EditComplain",
   components: { ComplainForm },
   data: () => ({}),
   methods: {},

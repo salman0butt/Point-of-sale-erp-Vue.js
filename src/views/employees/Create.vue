@@ -112,6 +112,9 @@ export default {
       return this.$store.getters.get_employee_name;
     },
   },
+  beforeDestroy() {
+    this.$store.commit("set_employee_name", "");
+  },
   created() {
     this.$store.commit("set_employee_name", this.employee_name);
   },

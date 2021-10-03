@@ -121,6 +121,9 @@ export default {
       return this.$store.getters.get_employee_name;
     },
   },
+  beforeDestroy() {
+    this.$store.commit("set_employee_name", "");
+  },
   methods: {
     changeActiveTab(value) {
       this.activeTab = value;

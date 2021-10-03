@@ -16,6 +16,7 @@ import transferRoutes from '@/router/transfers/transferRoutes';
 import traningTypeRoutes from '@/router/trainings/traningTypeRoutes';
 import trainerRoutes from '@/router/trainings/trainerRoutes';
 import trainingRoutes from '@/router/trainings/trainingRoutes';
+import complainRoutes from '@/router/complains/complainRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 // Containers
@@ -183,6 +184,7 @@ const router = new Router({
         traningTypeRoutes,
         trainerRoutes,
         trainingRoutes,
+        complainRoutes,
 
         {
           path: 'theme',

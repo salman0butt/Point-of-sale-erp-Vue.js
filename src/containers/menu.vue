@@ -122,6 +122,12 @@ export default {
                 },
                 {
                   _name: "CSidebarNavItem",
+                  name: "Complains",
+                  to: "/complains/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
                   name: "Resignations",
                   to: "/resignations/index",
                   icon: "cil-lan",
