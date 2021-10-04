@@ -12,6 +12,8 @@ import salaryRoutes from '@/router/salary/salaryRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 import accountingRoutes from '@/router/accounting/accountingRoutes';
+import customersRoutes from '@/router/customers/customersRoutes';
+import groupRoutes from '@/router/groups/groupRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -172,6 +174,8 @@ const router = new Router({
         gradeRoutes,
         salaryRoutes,
         accountingRoutes,
+        customersRoutes,
+        groupRoutes,
 
         {
           path: 'theme',

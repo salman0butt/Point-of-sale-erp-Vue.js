@@ -2,7 +2,11 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateEmployeeDetail() : saveEmployeeDetail()">
+        <form
+          @submit.prevent="
+            isEditing ? updateEmployeeDetail() : saveEmployeeDetail()
+          "
+        >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
@@ -95,7 +99,9 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
