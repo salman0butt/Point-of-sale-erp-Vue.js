@@ -109,12 +109,16 @@ export default {
                   _name: "CSidebarNavItem",
                   name: "Terminations",
                   to: "/terminations/index",
-}
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
                   name: "Salary",
                   to: "/salary/index",
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavItem",
                   name: "Awards",
                   to: "/awards/index",
                   icon: "cil-lan",
