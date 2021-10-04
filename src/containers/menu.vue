@@ -123,6 +123,12 @@ export default {
                       to: "/recruitment/jobCategories/index",
                       icon: "cil-lan",
                     },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Job Post",
+                      to: "/recruitment/jobPosts/index",
+                      icon: "cil-lan",
+                    },
                   ],
                 },
                 {
