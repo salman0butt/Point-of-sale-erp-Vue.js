@@ -18,6 +18,7 @@ import trainerRoutes from '@/router/trainings/trainerRoutes';
 import trainingRoutes from '@/router/trainings/trainingRoutes';
 import complainRoutes from '@/router/complains/complainRoutes';
 import warningRoutes from '@/router/warnings/warningRoutes';
+import recruitmentRoutes from '@/router/recruitments/recruitmentRoutes';
 import salaryRoutes from '@/router/salary/salaryRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
@@ -192,6 +193,7 @@ const router = new Router({
         warningRoutes,
         salaryRoutes,
         accountingRoutes,
+        recruitmentRoutes,
 
         {
           path: 'theme',

@@ -112,6 +112,20 @@ export default {
                   icon: "cil-lan",
                 },
                 {
+                  _name: "CSidebarNavDropdown",
+                  name: "Recruitment",
+                  route: "/apps",
+                  icon: "cil-layers",
+                  _children: [
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Job Category",
+                      to: "/recruitment/jobCategories/index",
+                      icon: "cil-lan",
+                    },
+                  ],
+                },
+                {
                   _name: "CSidebarNavItem",
                   name: "Salary",
                   to: "/salary/index",
