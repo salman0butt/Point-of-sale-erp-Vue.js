@@ -27,11 +27,11 @@
                   />
                 </td>
               </template>
-              <!-- <template #from_employee="{ item }">
+              <template #from_employee="{ item }">
                 <td>
-                  {{ item.from_employee.full_name.en }}
+                  {{ item.from_employee.full_name }}
                 </td>
-              </template> -->
+              </template>
               <template #to_employee="{ item }">
                 <td>
                   {{ item.to_employee.full_name }}
@@ -91,7 +91,7 @@ const fields = [
     sorter: false,
     filter: false,
   },
-  // { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
+  { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
   { key: "title", label: "TITLE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },

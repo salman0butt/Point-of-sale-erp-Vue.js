@@ -4,14 +4,14 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <!-- <CButton
+            <CButton
               @click="selectAll()"
               class="btn-sm"
               color="danger"
               title="Select All"
             >
               Select All
-            </CButton> -->
+            </CButton>
             <CDataTable
               :items="Complain"
               :fields="fields"
@@ -157,7 +157,7 @@ export default {
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.complainData.push({ ...item, id });
+                this.complainData.push({ ...item, id, _selected: false });
               });
             }
             if (data.meta) {
@@ -171,13 +171,13 @@ export default {
           console.log(err);
         });
     },
-    // selectAll() {
-    //   const data = this.complainData;
-    //   data.map(function (item) {
-    //     const val = Boolean(item._selected);
-    //     this.$set(item, "_selected", !val);
-    //   });
-    // },
+    selectAll() {
+      const data = this.complainData;
+      data.map(function (item) {
+        const val = Boolean(item._selected);
+        item._selected = !val;
+      });
+    },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);

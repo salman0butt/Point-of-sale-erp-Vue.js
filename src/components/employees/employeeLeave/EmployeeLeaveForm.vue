@@ -102,8 +102,8 @@ export default {
       return_date: "",
       total_days: "",
       note: "",
-      status: "pending",
       leave_doc: "",
+      status: "",
     },
     empId: null,
     options: {
@@ -142,6 +142,7 @@ export default {
   methods: {
     saveEmployeeLeave() {
       this.form.employee_id = this.$route.params.id;
+      this.form.status = "status";
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;

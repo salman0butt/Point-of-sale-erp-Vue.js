@@ -36,10 +36,6 @@ class EmployeeService extends Helper {
   delete(id) {
     return http.delete(`/employees/${id}`);
   }
-
-  deleteAll() {
-    return http.delete(`/employees`);
-  }
 }
 
 export default new EmployeeService();

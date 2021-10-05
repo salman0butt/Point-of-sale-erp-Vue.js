@@ -71,6 +71,12 @@ export default {
             //   ],
             // },
             {
+              _name: "CSidebarNavItem",
+              name: "Profile",
+              to: "/profile/" + localStorage.getItem("employee_id") ?? "",
+              icon: "cil-lan",
+            },
+            {
               _name: "CSidebarNavDropdown",
               name: "HR",
               icon: "cil-lan",
@@ -114,7 +120,7 @@ export default {
                 {
                   _name: "CSidebarNavDropdown",
                   name: "Recruitment",
-                  route: "/apps",
+                  route: "/recruitment",
                   icon: "cil-layers",
                   _children: [
                     {
@@ -127,6 +133,12 @@ export default {
                       _name: "CSidebarNavItem",
                       name: "Job Post",
                       to: "/recruitment/jobPosts/index",
+                      icon: "cil-lan",
+                    },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Job Candidates",
+                      to: "/recruitment/jobCandidates/index",
                       icon: "cil-lan",
                     },
                   ],

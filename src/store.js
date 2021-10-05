@@ -70,6 +70,7 @@ const actions = {
           const business_id = res.data.business_id;
           localStorage.setItem('token', token);
           localStorage.setItem('business_id', business_id);
+          localStorage.setItem('employee_id', res.data.employee_id);
           http.defaults.headers.common['Authorization'] = "Bearer "+token;
           commit('auth_success', token);
           resolve(res);

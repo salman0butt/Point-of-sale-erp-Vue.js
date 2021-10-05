@@ -7,7 +7,17 @@
             <form @submit.prevent="isEditing ? updateEmployee() : saveEmployee()">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Serial No" v-model="form.serial_no" />
+                  <CInput
+                    label="Serial No"
+                    v-model="form.serial_no"
+                    :class="{ error: $v.form.serial_no.$error }"
+                    @input="$v.form.serial_no.$touch()"
+                  />
+                  <div v-if="$v.form.serial_no.$error">
+                    <p v-if="!$v.form.serial_no.required" class="errorMsg">
+                      Serial No is required
+                    </p>
+                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -394,6 +404,7 @@ export default {
         branch_id: { required },
         department_id: { required },
         designation_id: { required },
+        serial_no: { required },
       },
     };
   },
