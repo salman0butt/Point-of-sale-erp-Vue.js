@@ -41,13 +41,6 @@
                 <td>
                   <CButtonGroup>
                     <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
-                      title="View"
-                      >View</CButton
-                    >
-                    <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -84,17 +77,19 @@ import EmployeeAddressService from "@/services/employees/EmployeeAddressService"
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
-  { key: "address", label: "ADDRESS", _style: "min-width:40%" },
-  { key: "address2", label: "SECOND ADDRESS", _style: "min-width:15%;" },
-  { key: "city", label: "CITY", _style: "min-width:15%;" },
-  { key: "postal_code", label: "POSTAL CODE", _style: "min-width:15%;" },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
+  { key: "flat", label: "FLAT", _style: "min-width:40%" },
+  { key: "floor", label: "FLOOR", _style: "min-width:15%;" },
+  { key: "building", label: "BUILDING", _style: "min-width:15%;" },
+  { key: "street", label: "STREET", _style: "min-width:15%;" },
+  { key: "block", label: "BLOCK", _style: "min-width:15%;" },
+  { key: "area", label: "AREA", _style: "min-width:15%;" },
   { key: "set_default", label: "DEFAULT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
@@ -194,9 +189,10 @@ export default {
                     text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAddressesData = this.employeeAddressesData.filter(
-                    (department) => department.uuid != uuid
-                  );
+                  this.employeeAddressesData =
+                    this.employeeAddressesData.filter(
+                      (department) => department.uuid != uuid
+                    );
                   this.deleteRows = [];
                 }
               })

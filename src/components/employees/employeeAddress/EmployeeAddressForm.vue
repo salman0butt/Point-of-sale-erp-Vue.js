@@ -3,51 +3,83 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeAddress() : saveEmployeeAddress()"
+          @submit.prevent="
+            isEditing ? updateEmployeeAddress() : saveEmployeeAddress()
+          "
         >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Address"
-                v-model="form.address"
-                :class="{ error: $v.form.address.$error }"
-                @input="$v.form.address.$touch()"
+                label="Flat/Villa"
+                v-model="form.flat"
+                :class="{ error: $v.form.flat.$error }"
+                @input="$v.form.flat.$touch()"
               />
-              <div v-if="$v.form.address.$error">
-                <p v-if="!$v.form.address.required" class="errorMsg">
-                  Address is required
+              <div v-if="$v.form.flat.$error">
+                <p v-if="!$v.form.flat.required" class="errorMsg">
+                  Flat No is required
                 </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Second Address (Optional)" v-model="form.address2" />
+              <CInput label="Floor (Optional)" v-model="form.floor" />
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="City"
-                v-model="form.city"
-                :class="{ error: $v.form.city.$error }"
-                @input="$v.form.city.$touch()"
+                label="building"
+                v-model="form.building"
+                :class="{ error: $v.form.building.$error }"
+                @input="$v.form.building.$touch()"
               />
-              <div v-if="$v.form.city.$error">
-                <p v-if="!$v.form.city.required" class="errorMsg">City is required</p>
+              <div v-if="$v.form.building.$error">
+                <p v-if="!$v.form.building.required" class="errorMsg">
+                  building is required
+                </p>
               </div>
             </CCol>
           </CRow>
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Postal Code"
-                v-model="form.postal_code"
-                :class="{ error: $v.form.postal_code.$error }"
-                @input="$v.form.postal_code.$touch()"
+                label="Street"
+                v-model="form.street"
+                :class="{ error: $v.form.street.$error }"
+                @input="$v.form.street.$touch()"
               />
-              <div v-if="$v.form.postal_code.$error">
-                <p v-if="!$v.form.postal_code.required" class="errorMsg">
-                  Postal Code is required
+              <div v-if="$v.form.street.$error">
+                <p v-if="!$v.form.street.required" class="errorMsg">
+                  Street is required
                 </p>
               </div>
             </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Block"
+                v-model="form.block"
+                :class="{ error: $v.form.block.$error }"
+                @input="$v.form.block.$touch()"
+              />
+              <div v-if="$v.form.block.$error">
+                <p v-if="!$v.form.block.required" class="errorMsg">
+                  Block is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Area"
+                v-model="form.area"
+                :class="{ error: $v.form.area.$error }"
+                @input="$v.form.area.$touch()"
+              />
+              <div v-if="$v.form.area.$error">
+                <p v-if="!$v.form.area.required" class="errorMsg">
+                  Area is required
+                </p>
+              </div>
+            </CCol>
+          </CRow>
+          <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Is Default"
@@ -57,7 +89,9 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -83,10 +117,12 @@ export default {
   data: () => ({
     isEditing: false,
     form: {
-      address: "",
-      address2: "",
-      city: "",
-      postal_code: "",
+      flat: "",
+      floor: "",
+      building: "",
+      street: "",
+      block: "",
+      area: "",
       set_default: "",
       employee_id: "",
     },
@@ -102,9 +138,11 @@ export default {
   validations() {
     return {
       form: {
-        address: { required },
-        city: { required },
-        postal_code: { required },
+        flat: { required },
+        building: { required },
+        street: { required },
+        block: { required },
+        area: { required },
       },
     };
   },
@@ -173,10 +211,12 @@ export default {
         .then(({ data }) => {
           if (data != null && data != "") {
             this.empId = data.uuid;
-            this.form.address = data.address;
-            this.form.address2 = data.address2;
-            this.form.city = data.city;
-            this.form.postal_code = data.postal_code;
+            this.form.flat = data.flat;
+            this.form.floor = data.floor;
+            this.form.building = data.building;
+            this.form.street = data.street;
+            this.form.block = data.block;
+            this.form.area = data.area;
             this.form.set_default = data.set_default;
           }
         })

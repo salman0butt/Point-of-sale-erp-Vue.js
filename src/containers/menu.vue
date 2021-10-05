@@ -220,6 +220,12 @@ export default {
               ],
             },
             {
+              _name: "CSidebarNavItem",
+              name: "Customers",
+              to: { name: "Index Customers" },
+              icon: "cil-lan",
+            },
+            {
               _name: "CSidebarNavDropdown",
               name: "Accounting",
               icon: "cil-lan",
@@ -237,6 +243,12 @@ export default {
                   icon: "cil-lan",
                 },
               ],
+            },
+            {
+              _name: "CSidebarNavItem",
+              name: "Groups",
+              to: { name: "Index Groups" },
+              icon: "cil-lan",
             },
             {
               _name: "CSidebarNavItem",
