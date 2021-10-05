@@ -32,7 +32,7 @@
               </template>
               <template #branch="{ item }">
                 <td>
-                  {{ item.branch.name.en }}
+                  {{ item.branch.name }}
                 </td>
               </template>
 

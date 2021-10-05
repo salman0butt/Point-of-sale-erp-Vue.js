@@ -4,7 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardHeader>Edit Grade</CCardHeader>
-          <CCardBody> </CCardBody>
+          <CCardBody> <EmployeeGradeForm /></CCardBody>
         </CCard>
       </CCol>
     </CRow>
@@ -12,10 +12,12 @@
 </template>
 
 <script>
+import EmployeeGradeForm from "@/components/employees/employeeGrade/EmployeeGradeForm";
 export default {
   name: "EditGrade",
+  components: { EmployeeGradeForm },
   data: () => ({
-    isEditing: false,
+    isEditing: true,
   }),
   created() {},
   methods: {},

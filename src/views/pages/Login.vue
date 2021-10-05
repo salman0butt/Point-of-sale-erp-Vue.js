@@ -111,12 +111,6 @@ export default {
         .then(() =>{
           localStorage.setItem('username', this.username);
           this.$store.commit('remove_errors');
-            this.$swal.fire({
-                icon: "success",
-                title: "Success",
-                text: "Login Successfully",
-                timer: 2000,
-              });
           this.$router.push({path: '/dashboard'});
         }).catch(() => {
          this.set_errors('Username Or Password Incorrect');

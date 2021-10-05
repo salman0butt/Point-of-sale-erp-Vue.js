@@ -58,7 +58,7 @@
             <CCol sm="6" md="4">
               <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
@@ -102,7 +102,7 @@ export default {
       return_date: "",
       total_days: "",
       note: "",
-      status: "",
+      status: "pending",
       leave_doc: "",
     },
     empId: null,
@@ -129,6 +129,15 @@ export default {
   created() {
     this.empId = this.$route.params.id;
     this.getOptions();
+  },
+  watch: {
+    "form.to_date"(val) {
+      let day_start = new Date(Date.parse(this.form.from_date));
+      let day_end = new Date(Date.parse(val));
+      // To calculate the no. of days between two dates
+      this.form.total_days = Math.round((day_end - day_start) / (1000 * 60 * 60 * 24));
+    },
+    deep: true,
   },
   methods: {
     saveEmployeeLeave() {

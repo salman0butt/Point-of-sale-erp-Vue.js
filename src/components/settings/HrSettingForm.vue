@@ -165,6 +165,48 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Termination Types"
+                    v-model="form.termination_type"
+                    :class="{ error: $v.form.termination_type.$error }"
+                    @input="$v.form.termination_type.$touch()"
+                  />
+                  <div v-if="$v.form.termination_type.$error">
+                    <p v-if="!$v.form.termination_type.required" class="errorMsg">
+                      Termination Types is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Course Types"
+                    v-model="form.course_types"
+                    :class="{ error: $v.form.course_types.$error }"
+                    @input="$v.form.course_types.$touch()"
+                  />
+                  <div v-if="$v.form.course_types.$error">
+                    <p v-if="!$v.form.course_types.required" class="errorMsg">
+                      Course Types is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Experiance Certifcate Types"
+                    v-model="form.experiance_certifcate_types"
+                    :class="{ error: $v.form.experiance_certifcate_types.$error }"
+                    @input="$v.form.experiance_certifcate_types.$touch()"
+                  />
+                  <div v-if="$v.form.experiance_certifcate_types.$error">
+                    <p
+                      v-if="!$v.form.experiance_certifcate_types.required"
+                      class="errorMsg"
+                    >
+                      Experiance Certifcate Types is required
+                    </p>
+                  </div>
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -207,6 +249,9 @@ export default {
       deduction_type: "",
       asset_type: "",
       award_type: "",
+      termination_type: "",
+      course_types: "",
+      experiance_certifcate_types: "",
     },
     options: {
       attendance_by: [
@@ -231,6 +276,9 @@ export default {
         deduction_type: { required },
         asset_type: { required },
         award_type: { required },
+        termination_type: { required },
+        course_types: { required },
+        experiance_certifcate_types: { required },
       },
     };
   },

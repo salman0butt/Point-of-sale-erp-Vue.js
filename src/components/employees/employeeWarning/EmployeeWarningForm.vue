@@ -6,7 +6,7 @@
           @submit.prevent="isEditing ? updateEmployeeWarning() : saveEmployeeWarning()"
         >
           <CRow>
-            <CCol sm="6" md="4" class="pt-2">
+            <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee From"
                 :options="options.employees"
@@ -17,7 +17,7 @@
                   Employee From is required
                 </p>
               </div>
-            </CCol>
+            </CCol> -->
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee To"
@@ -91,7 +91,7 @@ export default {
     isEditing: false,
     form: {
       id: null,
-      from_employee_id: "",
+      // from_employee_id: "",
       to_employee_id: "",
       title: "",
       description: "",
@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     saveEmployeeWarning() {
-      this.form.employee_id = this.$route.params.id;
+      this.form.from_employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -154,7 +154,7 @@ export default {
       }
     },
     updateEmployeeWarning() {
-      this.form.employee_id = this.$route.params.id;
+      this.form.from_employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -189,8 +189,8 @@ export default {
             console.log(data);
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.from_employee_id = data.from_employee.id;
-            this.form.to_employee_id = data.to_employee.id;
+            this.form.from_employee_id = data.from_employee.uuid;
+            this.form.to_employee_id = data.to_employee.uuid;
             this.form.title = data.title;
             this.form.description = data.description;
             this.form.date = data.date;
@@ -230,7 +230,7 @@ export default {
             const employees = this.options.employees;
 
             data.employees.map(function (val) {
-              employees.push({ value: val.id, label: val.full_name.en });
+              employees.push({ value: val.uuid, label: val.full_name });
             });
           }
         })
