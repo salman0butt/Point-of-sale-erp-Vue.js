@@ -12,12 +12,12 @@
                 </template>
                 <EmployeeForm />
               </CTab>
-              <CTab>
+              <!-- <CTab>
                 <template slot="title">
                   {{ tabs.detail }}
                 </template>
                 <EmployeeDetailTab />
-              </CTab>
+              </CTab> -->
 
               <CTab>
                 <template slot="title">
@@ -41,7 +41,7 @@
 </template>
 <script>
 import EmployeeAddressTab from "@/components/employees/employeeAddress/EmployeeAddressTab";
-import EmployeeDetailTab from "@/components/employees/employeeDetail/EmployeeDetailTab";
+// import EmployeeDetailTab from "@/components/employees/employeeDetail/EmployeeDetailTab";
 import EmployeeEmergencyContactTab from "@/components/employees/employeeEmergencyContact/EmployeeEmergencyContactTab";
 
 import EmployeeForm from "@/components/employees/EmployeeForm";
@@ -50,14 +50,14 @@ export default {
   name: "EmployeeTab",
   components: {
     EmployeeAddressTab,
-    EmployeeDetailTab,
+    // EmployeeDetailTab,
     EmployeeForm,
     EmployeeEmergencyContactTab,
   },
   data: () => ({
     tabs: {
       employee: "Employee",
-      detail: "Detail",
+      // detail: "Detail",
       target: "Traget",
       address: "Address",
       emergencyContanct: "Emergency Contancts",

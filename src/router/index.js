@@ -195,12 +195,9 @@ const router = new Router({
         warningRoutes,
         salaryRoutes,
         accountingRoutes,
-<<<<<<< HEAD
+        recruitmentRoutes,
         customersRoutes,
         groupRoutes,
-=======
-        recruitmentRoutes,
->>>>>>> 2ee07b1eab26a079bc3c941ab7e590920103f9de
 
         {
           path: 'theme',
