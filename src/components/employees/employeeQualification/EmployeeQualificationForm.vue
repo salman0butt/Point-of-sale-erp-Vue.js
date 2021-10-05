@@ -4,7 +4,9 @@
       <CCol xs="12" lg="12">
         <form
           @submit.prevent="
-            isEditing ? updateEmployeeQualification() : saveEmployeeQualification()
+            isEditing
+              ? updateEmployeeQualification()
+              : saveEmployeeQualification()
           "
         >
           <CRow>
@@ -16,17 +18,21 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Name is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Type"
+                label="Education Type"
                 :options="options.qualification_type"
                 :value.sync="form.type"
               />
               <div v-if="$v.form.type.$error">
-                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
+                <p v-if="!$v.form.type.required" class="errorMsg">
+                  Type is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -46,25 +52,50 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Marks"
+                label="Marks/CGPA Obtained"
                 type="number"
                 v-model="form.marks"
                 :class="{ error: $v.form.marks.$error }"
                 @input="$v.form.marks.$touch()"
               />
               <div v-if="$v.form.marks.$error">
-                <p v-if="!$v.form.marks.required" class="errorMsg">Marks is required</p>
+                <p v-if="!$v.form.marks.required" class="errorMsg">
+                  Marks is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Year" :options="options.year" :value.sync="form.year" />
+              <CInput
+                label="Total Marks/CGPA"
+                type="number"
+                v-model="form.marks"
+                :class="{ error: $v.form.marks.$error }"
+                @input="$v.form.marks.$touch()"
+              />
+              <div v-if="$v.form.marks.$error">
+                <p v-if="!$v.form.marks.required" class="errorMsg">
+                  Marks is required
+                </p>
+              </div>
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Graduation Year"
+                :options="options.year"
+                :value.sync="form.year"
+              />
               <div v-if="$v.form.year.$error">
-                <p v-if="!$v.form.year.required" class="errorMsg">Year is required</p>
+                <p v-if="!$v.form.year.required" class="errorMsg">
+                  Year is required
+                </p>
               </div>
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -204,7 +235,7 @@ export default {
     },
     generateArrayOfYears() {
       let max = new Date().getFullYear();
-      let min = max - 15;
+      let min = max - 30;
       for (let i = max; i >= min; i--) {
         this.options.year.push(i);
       }
