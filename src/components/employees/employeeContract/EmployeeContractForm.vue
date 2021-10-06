@@ -3,52 +3,47 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateEmployeeContract() : saveEmployeeContract()"
+          @submit.prevent="
+            isEditing ? updateEmployeeContract() : saveEmployeeContract()
+          "
         >
           <CRow>
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol sm="6" md="6" class="pt-2">
               <CInput
-                label="Contract Name"
+                label="Name"
                 v-model="form.name"
                 :class="{ error: $v.form.name.$error }"
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
                 <p v-if="!$v.form.name.required" class="errorMsg">
-                  Contract Name is required
+                  Name is required
                 </p>
               </div>
             </CCol>
-
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Value"
-                v-model="form.value"
-                :class="{ error: $v.form.value.$error }"
-                @input="$v.form.value.$touch()"
+              <CSelect
+                label="Select Template"
+                :options="options.template_type"
+                :value.sync="form.template_type"
+                @change="changeMethodSelect(form.template_type)"
               />
-              <div v-if="$v.form.value.$error">
-                <p v-if="!$v.form.value.required" class="errorMsg">Value is required</p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CTextarea
-                label="Terms & Conditions"
-                placeholder="Content..."
-                v-model="form.additional_terms_and_conditions"
-              />
-              <div v-if="$v.form.additional_terms_and_conditions.$error">
-                <p
-                  v-if="!$v.form.additional_terms_and_conditions.required"
-                  class="errorMsg"
-                >
-                  Terms & Conditions is required
+              <div v-if="$v.form.template_type.$error">
+                <p v-if="!$v.form.template_type.required" class="errorMsg">
+                  Template Type is required
                 </p>
               </div>
             </CCol>
           </CRow>
+          <CRow>
+            <CCol sm="6" md="12">
+              <vue-editor v-model="form.template"></vue-editor>
+            </CCol>
+          </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -67,18 +62,27 @@
 </template>
 <script>
 import EmployeeContractService from "@/services/employees/EmployeeContractService";
+import LetterTemplateService from "@/services/letterTemplates/LetterTemplateService";
+import { VueEditor } from "vue2-editor";
+
 import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "EmployeeContractForm",
+  components: {
+    VueEditor,
+  },
   data: () => ({
     isEditing: false,
     form: {
-      id: null,
-      employee_id: "",
       name: "",
-      value: "",
-      additional_terms_and_conditions: "",
+      template_type: "",
+      template: "",
+    },
+    options: {
+      template_type: [
+        { value: "", label: "Choose Template", disabled: true, selected: "" },
+      ],
     },
     empId: null,
   }),
@@ -86,15 +90,40 @@ export default {
     return {
       form: {
         name: { required },
-        value: { required },
-        additional_terms_and_conditions: { required },
+        template_type: { required },
+        template: { required },
       },
     };
   },
   created() {
     this.empId = this.$route.params.id;
+    this.getData();
   },
   methods: {
+    getData() {
+      LetterTemplateService.getAll(0, 40)
+        .then(({ data }) => {
+          let template = this.options.template_type;
+          data.data.forEach((element) => {
+            template.push({
+              value: element.uuid,
+              label: element.name,
+            });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    changeMethodSelect(uuid) {
+      LetterTemplateService.get(uuid)
+        .then(({ data }) => {
+          this.form.template = data.template;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     saveEmployeeContract() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
@@ -109,7 +138,10 @@ export default {
                 text: "Contract Added Successfully",
                 timer: 3600,
               });
-              this.$emit("employee-contract-update", { type: "create", data: res.data });
+              this.$emit("employee-contract-update", {
+                type: "create",
+                data: res.data,
+              });
               this.$v.$reset();
               this.resetForm();
             }
@@ -127,32 +159,31 @@ export default {
     },
     updateEmployeeContract() {
       this.form.employee_id = this.$route.params.id;
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
-        let data = this.form;
-        EmployeeContractService.update(this.form.id, data)
-          .then((res) => {
-            if (res.status == 200) {
-              this.$swal.fire({
-                icon: "success",
-                title: "Success",
-                text: "Contract Updated Successfully",
-                timer: 3600,
-              });
-              this.$v.$reset();
-              this.$emit("employee-contract-update", { type: "edit", data: res.data });
-            }
-          })
-          .catch((error) => {
-            console.log(error);
+      let data = this.form;
+      EmployeeContractService.update(this.form.id, data)
+        .then((res) => {
+          if (res.status == 200) {
             this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
+              icon: "success",
+              title: "Success",
+              text: "Contract Updated Successfully",
               timer: 3600,
             });
+            this.$v.$reset();
+            this.$emit("employee-contract-update", {
+              type: "edit",
+              data: res.data,
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
           });
-      }
+        });
     },
     getEmployeeContract() {
       EmployeeContractService.get(this.empId)
@@ -162,9 +193,7 @@ export default {
             this.form.id = data.uuid;
             this.form.employee_id = data.employee_id;
             this.form.name = data.name;
-            this.form.value = data.value;
-            this.form.additional_terms_and_conditions =
-              data.additional_terms_and_conditions;
+            this.form.template = data.template;
           }
         })
         .catch((error) => {
