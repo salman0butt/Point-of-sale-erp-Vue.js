@@ -40,13 +40,13 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -84,17 +84,19 @@ import EmployeeQualificationService from "@/services/employees/EmployeeQualifica
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "organization", label: "ORGANIZATION", _style: "min-width:15%;" },
-  { key: "marks", label: "MARKS", _style: "min-width:15%;" },
+  { key: "marks_obtained", label: "MARKS OBTAINED", _style: "min-width:15%;" },
+  { key: "total_marks", label: "TOTAL MARKS", _style: "min-width:15%;" },
+  { key: "percentage", label: "PERCENTAGE", _style: "min-width:15%;" },
   { key: "year", label: "Year", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
@@ -139,6 +141,7 @@ export default {
 
       EmployeeQualificationService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
+          console.log(data);
           if (data !== "" && data !== undefined) {
             this.loading = true;
             this.employeeQualificationData = [];
@@ -194,9 +197,10 @@ export default {
                     text: "Qualification Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeQualificationData = this.employeeQualificationData.filter(
-                    (department) => department.uuid != uuid
-                  );
+                  this.employeeQualificationData =
+                    this.employeeQualificationData.filter(
+                      (department) => department.uuid != uuid
+                    );
                   this.deleteRows = [];
                 }
               })

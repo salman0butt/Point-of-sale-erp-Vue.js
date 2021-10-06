@@ -8,9 +8,9 @@
             <CTabs add-tab-classes="mt-1" variant="pills" fade>
               <CTab active id="show">
                 <template slot="title">
-                  {{ tabs.salary }}
+                  {{ tabs.basic }}
                 </template>
-                <EmployeeSalaryForm />
+                <EmployeeBasicForm />
               </CTab>
               <CTab id="show">
                 <template slot="title">
@@ -32,16 +32,20 @@
   </div>
 </template>
 <script>
-import EmployeeSalaryForm from "@/components/employees/employeeSalary/EmployeeSalaryForm";
+import EmployeeBasicForm from "@/components/employees/employeeSalary/EmployeeBasicForm";
 import EmployeeAllowanceTab from "@/components/employees/employeeAllowance/EmployeeAllowanceTab";
 import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/EmployeeBankAccountTab";
 
 export default {
   name: "EmployeeSalaryTab",
-  components: { EmployeeSalaryForm, EmployeeAllowanceTab, EmployeeBankAccountTab },
+  components: {
+    EmployeeBasicForm,
+    EmployeeAllowanceTab,
+    EmployeeBankAccountTab,
+  },
   data: () => ({
     tabs: {
-      salary: "Salary",
+      basic: "Basic",
       allowances: "Allowances",
       banks: "Bank Accounts",
     },

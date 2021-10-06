@@ -54,13 +54,14 @@
               <CInput
                 label="Marks/CGPA Obtained"
                 type="number"
-                v-model="form.marks"
-                :class="{ error: $v.form.marks.$error }"
-                @input="$v.form.marks.$touch()"
+                step="any"
+                v-model="form.marks_obtained"
+                :class="{ error: $v.form.marks_obtained.$error }"
+                @input="$v.form.marks_obtained.$touch()"
               />
-              <div v-if="$v.form.marks.$error">
-                <p v-if="!$v.form.marks.required" class="errorMsg">
-                  Marks is required
+              <div v-if="$v.form.marks_obtained.$error">
+                <p v-if="!$v.form.marks_obtained.required" class="errorMsg">
+                  Marks Obtanined is required
                 </p>
               </div>
             </CCol>
@@ -68,17 +69,34 @@
               <CInput
                 label="Total Marks/CGPA"
                 type="number"
-                v-model="form.marks"
-                :class="{ error: $v.form.marks.$error }"
-                @input="$v.form.marks.$touch()"
+                step="any"
+                v-model="form.total_marks"
+                :class="{ error: $v.form.total_marks.$error }"
+                @input="$v.form.total_marks.$touch()"
               />
-              <div v-if="$v.form.marks.$error">
-                <p v-if="!$v.form.marks.required" class="errorMsg">
-                  Marks is required
+              <div v-if="$v.form.total_marks.$error">
+                <p v-if="!$v.form.total_marks.required" class="errorMsg">
+                  Total Marks are required
                 </p>
               </div>
             </CCol>
-
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Percentage Obtained"
+                type="number"
+                step="any"
+                v-model="form.percentage"
+                :class="{ error: $v.form.percentage.$error }"
+                @input="$v.form.percentage.$touch()"
+              />
+              <div v-if="$v.form.percentage.$error">
+                <p v-if="!$v.form.percentage.required" class="errorMsg">
+                  percentage is required
+                </p>
+              </div>
+            </CCol>
+          </CRow>
+          <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Graduation Year"
@@ -127,7 +145,9 @@ export default {
       name: "",
       type: "",
       organization: "",
-      marks: "",
+      percentage: "",
+      marks_obtained: "",
+      total_marks: "",
       year: "",
     },
     empId: null,
@@ -144,7 +164,9 @@ export default {
         name: { required },
         type: { required },
         organization: { required },
-        marks: { required },
+        percentage: { required },
+        marks_obtained: { required },
+        total_marks: { required },
         year: { required },
       },
     };
@@ -224,7 +246,9 @@ export default {
             this.form.name = data.name;
             this.form.type = data.type;
             this.form.organization = data.organization;
-            this.form.marks = data.marks;
+            this.form.percentage = data.percentage;
+            this.form.total_marks = data.total_marks;
+            this.form.marks_obtained = data.marks_obtained;
             this.form.year = parseInt(data.year);
           }
         })

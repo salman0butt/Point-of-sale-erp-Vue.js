@@ -4,7 +4,9 @@
       <CCol xs="12" lg="12">
         <form
           @submit.prevent="
-            isEditing ? updateExperianceCertifcate() : saveExperianceCertifcate()
+            isEditing
+              ? updateExperianceCertifcate()
+              : saveExperianceCertifcate()
           "
         >
           <CRow>
@@ -16,7 +18,9 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Name is required
+                </p>
               </div>
             </CCol>
 
@@ -29,7 +33,9 @@
                 @input="$v.form.type.$touch()"
               />
               <div v-if="$v.form.type.$error">
-                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
+                <p v-if="!$v.form.type.required" class="errorMsg">
+                  Type is required
+                </p>
               </div>
             </CCol>
 
@@ -71,7 +77,19 @@
               />
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <CRow>
+            <CCol sm="6" md="6">
+              <CTextarea
+                label="Note"
+                placeholder="Content..."
+                v-model="form.description"
+              />
+            </CCol>
+          </CRow>
+
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -105,6 +123,7 @@ export default {
       from_date: "",
       to_date: "",
       status: "",
+      description: "",
     },
     empId: null,
     options: {
@@ -113,7 +132,6 @@ export default {
       ],
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "pending", label: "Pending" },
         { value: "complete", label: "Complete" },
         { value: "in-process", label: "In Process" },
       ],
@@ -203,6 +221,7 @@ export default {
             this.form.employee_id = data.employee.uuid;
             this.form.name = data.name;
             this.form.type = data.type;
+            this.form.description = data.description;
             this.form.from_date = data.from_date;
             this.form.to_date = data.to_date;
             this.form.status = data.status;
