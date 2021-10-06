@@ -447,6 +447,13 @@ export default {
     "form.full_name"(val) {
       this.$store.commit("set_employee_name", val);
     },
+    "form.dob"(val) {
+      var d1 = new Date(this.getDOB());
+      var d2 = new Date(val);
+      if (d2 >= d1) {
+        this.form.dob = this.getDOB();
+      }
+    },
     deep: true,
   },
   methods: {
