@@ -230,7 +230,7 @@ export default {
             const employees = this.options.employees;
 
             data.employees.map(function (val) {
-              employees.push({ value: val.uuid, label: val.full_name });
+              employees.push({ value: val.uuid, label: val.full_name.en });
             });
           }
         })

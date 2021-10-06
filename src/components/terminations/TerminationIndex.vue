@@ -16,7 +16,7 @@
           @row-clicked="rowClicked"
           ref="externalAgent"
         >
-          <template #select="{ item }">
+          <!-- <template #select="{ item }">
             <td>
               <CInputCheckbox
                 :checked="item._selected"
@@ -24,7 +24,7 @@
                 custom
               />
             </td>
-          </template>
+          </template> -->
           <template #termination_to="{ item }">
             <td>
               {{ item.termination_to.full_name }}
@@ -38,13 +38,13 @@
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
-                <CButton
+                <!-- <CButton
                   @click="viewRow(item.uuid)"
                   class="btn-sm"
                   color="success"
                   title="View"
                   >View</CButton
-                >
+                > -->
                 <CButton
                   @click="editRow(item.uuid)"
                   class="btn-sm text-white"
@@ -76,13 +76,13 @@ import TerminationService from "@/services/terminations/TerminationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "termination_type", label: "TERMINATION TYPE", _style: "min-width:15%;" },
   { key: "termination_date", label: "TERMINATION DATE", _style: "min-width:15%;" },
   { key: "termination_to", label: "TERMINATION TO", _style: "min-width:15%;" },

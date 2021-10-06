@@ -67,7 +67,7 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <template #select="{ item }">
+              <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -75,7 +75,7 @@
                     custom
                   />
                 </td>
-              </template>
+              </template> -->
               <template #branches="{ item }">
                 <td>
                   {{
@@ -90,9 +90,9 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -124,13 +124,13 @@ import EmployeeService from "@/services/employees/EmployeeService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "full_name", label: "EMPLOYEE NAME", _style: "min-width:40%" },
   { key: "email", label: "EMAIL", _style: "min-width:15%;" },
   { key: "phone_number", label: "MOBILE", _style: "min-width:15%;" },

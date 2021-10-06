@@ -4,14 +4,14 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <CButton
+            <!-- <CButton
               @click="selectAll()"
               class="btn-sm"
               color="danger"
               title="Select All"
             >
               Select All
-            </CButton>
+            </CButton> -->
             <CDataTable
               :items="Complain"
               :fields="fields"
@@ -26,7 +26,7 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <template #select="{ item }">
+              <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -34,7 +34,7 @@
                     custom
                   />
                 </td>
-              </template>
+              </template> -->
               <!-- <template #branch="{ item }">
                 <td>
                   {{ item.branch.name.en }}
@@ -53,13 +53,13 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -97,13 +97,13 @@ import ComplainService from "@/services/employees/EmployeeComplainService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   // { key: "branch", label: "Branch", _style: "min-width:40%" },
   { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
@@ -171,13 +171,13 @@ export default {
           console.log(err);
         });
     },
-    selectAll() {
-      const data = this.complainData;
-      data.map(function (item) {
-        const val = Boolean(item._selected);
-        item._selected = !val;
-      });
-    },
+    // selectAll() {
+    //   const data = this.complainData;
+    //   data.map(function (item) {
+    //     const val = Boolean(item._selected);
+    //     item._selected = !val;
+    //   });
+    // },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);

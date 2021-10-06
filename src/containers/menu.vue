@@ -107,6 +107,12 @@ export default {
                 },
                 {
                   _name: "CSidebarNavItem",
+                  name: "Leaves",
+                  to: "/leaves/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
                   name: "Grades",
                   to: "/grades/index",
                   icon: "cil-lan",

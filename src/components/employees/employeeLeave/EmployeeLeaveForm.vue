@@ -58,13 +58,13 @@
             <CCol sm="6" md="4">
               <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
             </CCol>
-            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
+            <!-- <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
                 :value.sync="form.status"
               />
-            </CCol>
+            </CCol> -->
           </CRow>
 
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>

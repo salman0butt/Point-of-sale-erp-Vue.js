@@ -27,13 +27,13 @@
                     :value.sync="form.description"
                   />
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <!-- <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Status"
                     :options="options.status"
                     :value.sync="form.status"
                   />
-                </CCol>
+                </CCol> -->
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -77,7 +77,7 @@ export default {
     form: {
       name: "",
       descriptions: "",
-      status: "",
+      status: "active",
     },
     options: {
       status: [

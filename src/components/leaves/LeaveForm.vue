@@ -70,13 +70,13 @@
             <CCol sm="6" md="4">
               <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
             </CCol>
-            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
+            <!-- <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
                 :value.sync="form.status"
               />
-            </CCol>
+            </CCol> -->
           </CRow>
 
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -131,6 +131,9 @@ export default {
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "pending", label: "Pending" },
+        { value: "approved_by_hr", label: "Approved By Hr" },
+        { value: "approved_by_manager", label: "Approved By Manager" },
+        { value: "cancel", label: "Cancel" },
       ],
       leave_type: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
       employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
@@ -243,7 +246,7 @@ export default {
           if (data != undefined && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.employee_id = data.employee_id;
+            this.form.employee_id = data.employee.uuid;
             this.form.type = data.type;
             this.form.from_date = data.from_date;
             this.form.to_date = data.to_date;

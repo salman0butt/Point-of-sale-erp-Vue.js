@@ -52,7 +52,7 @@
                 <p v-if="!$v.form.date.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
@@ -138,6 +138,7 @@ export default {
     saveWarning() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
+        this.form.status = "active";
         let data = this.form;
         WarningService.create(data)
           .then((res) => {

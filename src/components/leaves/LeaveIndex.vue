@@ -18,7 +18,7 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <template #select="{ item }">
+              <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -26,22 +26,47 @@
                     custom
                   />
                 </td>
-              </template>
+              </template> -->
               <template #employee="{ item }">
                 <td>
                   {{ item.employee.full_name }}
                 </td>
               </template>
+              <template #status="{ item }">
+                <td>
+                  <CBadge color="primary" v-if="item.status === 'pending'">
+                    {{ item.status }}</CBadge
+                  >
+                  <CBadge color="danger" v-if="item.status === 'cancel'">
+                    {{ item.status }}</CBadge
+                  >
+                  <CBadge color="success" v-if="item.status === 'approved_by_hr'">
+                    {{ item.status }}</CBadge
+                  >
+                  <CBadge color="success" v-if="item.status === 'approved_by_manager'">
+                    {{ item.status }}</CBadge
+                  >
+                </td>
+              </template>
+              <template #approve="{ item }">
+                <td>
+                  <CSelect
+                    :options="options.status"
+                    :value.sync="item.status"
+                    @change="changeLeaveStatus(item.uuid, item.status)"
+                  /></td
+              ></template>
+
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -79,21 +104,28 @@ import LeaveService from "@/services/employees/EmployeeLeaveService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "employee", label: "TYPE", _style: "min-width:15%;" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "from_date", label: "FROM DATE", _style: "min-width:15%;" },
   { key: "to_date", label: "TO DATE", _style: "min-width:15%;" },
   { key: "return_date", label: "RETURN DATE", _style: "min-width:15%;" },
   { key: "total_days", label: "TOTAL DAYS", _style: "min-width:15%;" },
-  { key: "note", label: "STATUS", _style: "min-width:15%;" },
+  { key: "note", label: "NOTE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
+  {
+    key: "approve",
+    label: "APPROVE",
+    _style: "min-width:15%",
+    sorter: false,
+    filter: false,
+  },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
@@ -112,6 +144,15 @@ export default {
       activePage: 1,
       pages: 0,
       perPage: 10,
+      options: {
+        status: [
+          { value: "", label: "Choose Status", disabled: true, selected: "" },
+          { value: "pending", label: "Pending" },
+          { value: "approved_by_hr", label: "Approved By Hr" },
+          { value: "approved_by_manager", label: "Approved By Manager" },
+          { value: "cancel", label: "Cancel" },
+        ],
+      },
     };
   },
   created() {
@@ -135,7 +176,7 @@ export default {
     getLeave(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      LeaveService.getAll(this.empId, page, per_page, true)
+      LeaveService.getAll("", page, per_page, true)
         .then(({ data }) => {
           console.log(data);
           if (data !== "" && data !== undefined) {
@@ -208,6 +249,28 @@ export default {
                 });
               });
           }
+        });
+    },
+    changeLeaveStatus(uuid, status) {
+      LeaveService.changeLeaveStatus(uuid, { status: status })
+        .then((res) => {
+          if (res.status == 200) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Leave Status Updated Successfully",
+              timer: 3600,
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
+          });
         });
     },
     setPagination(meta) {
