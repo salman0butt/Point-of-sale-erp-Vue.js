@@ -16,7 +16,9 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Name is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -26,39 +28,52 @@
                 :value.sync="form.type"
               />
               <div v-if="$v.form.type.$error">
-                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
+                <p v-if="!$v.form.type.required" class="errorMsg">
+                  Type is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Amount"
                 type="number"
+                step="any"
                 v-model="form.amount"
                 :class="{ error: $v.form.amount.$error }"
                 @input="$v.form.amount.$touch()"
               />
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">
+                  Amount is required
+                </p>
               </div>
             </CCol>
           </CRow>
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Repeat"
-                :options="options.periodic_type"
+                label="Repeat Every Month"
+                :options="options.repeat"
                 :value.sync="form.repeat"
               />
               <div v-if="$v.form.repeat.$error">
-                <p v-if="!$v.form.repeat.required" class="errorMsg">Type is required</p>
+                <p v-if="!$v.form.repeat.required" class="errorMsg">
+                  Type is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="6">
-              <CTextarea label="Note" placeholder="Content..." v-model="form.detail" />
+              <CTextarea
+                label="Note"
+                placeholder="Content..."
+                v-model="form.detail"
+              />
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -98,8 +113,10 @@ export default {
       allowances_type: [
         { value: "", label: "Choose Type", disabled: true, selected: "" },
       ],
-      periodic_type: [
+      repeat: [
         { value: "", label: "Choose repeat", disabled: true, selected: "" },
+        { value: "yes", label: "Yes" },
+        { value: "no", label: "No" },
       ],
     },
   }),
@@ -197,7 +214,7 @@ export default {
         });
     },
     getOptions() {
-      let ids = JSON.stringify(["allowances_type", "periodic_type"]);
+      let ids = JSON.stringify(["allowances_type"]);
       HrSettingService.getSettings(ids)
         .then(({ data }) => {
           if (data != null && data != "") {

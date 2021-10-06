@@ -83,13 +83,13 @@ import EmployeeAllowanceService from "@/services/employees/EmployeeAllowanceServ
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
@@ -192,9 +192,10 @@ export default {
                     text: "Allowance Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAllowanceData = this.employeeAllowanceData.filter(
-                    (department) => department.uuid != uuid
-                  );
+                  this.employeeAllowanceData =
+                    this.employeeAllowanceData.filter(
+                      (department) => department.uuid != uuid
+                    );
                   this.deleteRows = [];
                 }
               })

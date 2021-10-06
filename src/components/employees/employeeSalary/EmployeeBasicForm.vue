@@ -2,15 +2,17 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateEmployeeSalary() : saveEmployeeSalary()">
+        <form
+          @submit.prevent="
+            isEditing ? updateEmployeeSalary() : saveEmployeeSalary()
+          "
+        >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Salary type"
-                type="text"
-                v-model="form.salary_type"
-                :class="{ error: $v.form.salary_type.$error }"
-                @input="$v.form.salary_type.$touch()"
+              <CSelect
+                label="Select Job Type"
+                :options="options.salary_type"
+                :value.sync="form.salary_type"
               />
               <div v-if="$v.form.salary_type.$error">
                 <p v-if="!$v.form.salary_type.required" class="errorMsg">
@@ -34,7 +36,9 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -56,7 +60,7 @@ import EmployeeSalaryService from "@/services/employees/EmployeeSalaryService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "EmployeeDetailForm",
+  name: "EmployeeBasicForm",
   data: () => ({
     isEditing: false,
     form: {
@@ -66,6 +70,14 @@ export default {
       basic_salary: "",
     },
     empId: null,
+    options: {
+      salary_type: [
+        { value: "", label: "Choose Job Type", disabled: true, selected: "" },
+        { value: "full time", label: "Full Time" },
+        { value: "part time", label: "Part time" },
+        { value: "outsource", label: "Outsource" },
+      ],
+    },
   }),
   validations() {
     return {
