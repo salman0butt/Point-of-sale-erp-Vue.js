@@ -16,7 +16,7 @@
           @row-clicked="rowClicked"
           ref="externalAgent"
         >
-          <template #select="{ item }">
+          <!-- <template #select="{ item }">
             <td>
               <CInputCheckbox
                 :checked="item._selected"
@@ -24,7 +24,7 @@
                 custom
               />
             </td>
-          </template>
+          </template> -->
 
           <template #status="{ item }">
             <td>
@@ -34,13 +34,13 @@
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
-                <CButton
+                <!-- <CButton
                   @click="viewRow(item.uuid)"
                   class="btn-sm"
                   color="success"
                   title="View"
                   >View</CButton
-                >
+                > -->
                 <CButton
                   @click="editRow(item.uuid)"
                   class="btn-sm text-white"
@@ -72,13 +72,13 @@ import TrainingTypeService from "@/services/trainings/TrainingTypeService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "name", label: "NAME", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },

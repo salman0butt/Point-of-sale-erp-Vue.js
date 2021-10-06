@@ -18,7 +18,7 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <template #select="{ item }">
+              <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -26,12 +26,12 @@
                     custom
                   />
                 </td>
-              </template>
-              <!-- <template #from_employee="{ item }">
-                <td>
-                  {{ item.from_employee.full_name.en }}
-                </td>
               </template> -->
+              <template #from_employee="{ item }">
+                <td>
+                  {{ item.from_employee.full_name }}
+                </td>
+              </template>
               <template #to_employee="{ item }">
                 <td>
                   {{ item.to_employee.full_name }}
@@ -40,13 +40,13 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -84,14 +84,14 @@ import EmployeeWarningService from "@/services/employees/EmployeeWarningService"
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
-  // { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
+  { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
   { key: "title", label: "TITLE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },

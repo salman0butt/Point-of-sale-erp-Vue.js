@@ -58,7 +58,7 @@
                 <p v-if="!$v.form.notes.required" class="errorMsg">Note is required</p>
               </div>
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
@@ -131,6 +131,7 @@ export default {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
+        this.form.status = "good";
         let data = this.form;
         EmployeeAssetService.create(data)
           .then((res) => {

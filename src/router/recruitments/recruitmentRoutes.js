@@ -10,6 +10,11 @@ const IndexJobPost = () => import('@/views/recruitments/jobPost/Index');
 const CreateJobPost = () => import('@/views/recruitments/jobPost/Create');
 const EditJobPost = () => import('@/views/recruitments/jobPost/Edit');
 
+//Job Post
+const IndexjobCandidate = () => import('@/views/recruitments/jobCandidates/Index');
+const CreatejobCandidate = () => import('@/views/recruitments/jobCandidates/Create');
+const EditjobCandidate = () => import('@/views/recruitments/jobCandidates/Edit');
+
 const recruitmentRoutes =  {
     path: 'recruitment',
     redirect: '/recruitment/jobCategories/index',
@@ -48,7 +53,22 @@ const recruitmentRoutes =  {
         path: 'jobPosts/edit/:id',
         name: 'Edit Job Post',
         component: EditJobPost
-      }
+      },
+      {
+        path: 'jobCandidates/index',
+        name: 'All Job Candidates',
+        component: IndexjobCandidate
+      },
+      {
+        path: 'jobCandidates/create',
+        name: 'Create Job Candidates',
+        component: CreatejobCandidate
+      },
+      {
+        path: 'jobCandidates/edit/:id',
+        name: 'Edit Job Candidates',
+        component: EditjobCandidate
+      },
     ]
 };
 

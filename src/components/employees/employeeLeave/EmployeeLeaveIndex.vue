@@ -18,7 +18,7 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <template #select="{ item }">
+              <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -26,17 +26,33 @@
                     custom
                   />
                 </td>
+              </template> -->
+              <template #status="{ item }">
+                <td>
+                  <CBadge color="primary" v-if="item.status === 'pending'">
+                    {{ item.status }}</CBadge
+                  >
+                  <CBadge color="danger" v-if="item.status === 'cancel'">
+                    {{ item.status }}</CBadge
+                  >
+                  <CBadge color="success" v-if="item.status === 'approved_by_hr'">
+                    {{ item.status }}</CBadge
+                  >
+                  <CBadge color="success" v-if="item.status === 'approved_by_manager'">
+                    {{ item.status }}</CBadge
+                  >
+                </td>
               </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -74,13 +90,13 @@ import EmployeeLeaveService from "@/services/employees/EmployeeLeaveService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "from_date", label: "FROM DATE", _style: "min-width:15%;" },
   { key: "to_date", label: "TO DATE", _style: "min-width:15%;" },

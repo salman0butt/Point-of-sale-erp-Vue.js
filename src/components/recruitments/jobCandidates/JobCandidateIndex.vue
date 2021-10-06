@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="employeeResignation"
+          :items="JobCandidate"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -25,11 +25,7 @@
               />
             </td>
           </template> -->
-          <template #employee="{ item }">
-            <td>
-              {{ item.employee.full_name }}
-            </td>
-          </template>
+
           <template #status="{ item }">
             <td>
               {{ item.status ? item.status : "" }}
@@ -72,7 +68,7 @@
 </template>
 
 <script>
-import ResignationService from "@/services/resignations/ResignationService";
+import JobCandidateService from "@/services/recruitments/jobCandidates/JobCandidateService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -83,22 +79,19 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "employee", label: "EMPLOYEE", _style: "min-width:15%;" },
-  { key: "resignation_date", label: "RESIGNATION DATE", _style: "min-width:15%;" },
-  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
-  { key: "notice_date", label: "NOTICE DATE", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "ResignationIndex",
+  name: "JobCandidateIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeResignationData: [],
+      JobCandidateData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -109,11 +102,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getResignation();
+    this.getJobCandidate();
   },
   computed: {
-    employeeResignation() {
-      return this.employeeResignationData;
+    JobCandidate() {
+      return this.JobCandidateData;
     },
   },
   watch: {
@@ -121,21 +114,21 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getResignation(this.activePage, this.perPage);
+      this.getJobCandidate(this.activePage, this.perPage);
     },
   },
   methods: {
-    getResignation(page = "", per_page = "") {
+    getJobCandidate(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      ResignationService.getAll(page, per_page)
+      JobCandidateService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.employeeResignationData = [];
+            this.JobCandidateData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeResignationData.push({ ...item, id });
+                this.JobCandidateData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -154,15 +147,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeResignationData[item.id]._selected);
-      this.$set(this.employeeResignationData[item.id], "_selected", !val);
+      const val = Boolean(this.JobCandidateData[item.id]._selected);
+      this.$set(this.JobCandidateData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      // this.$emit("employee-grade-edit", uuid);
-      this.$router.push({ path: "/resignations/edit/" + uuid });
+      this.$router.push({ path: "/recruitment/jobCandidates/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -177,16 +169,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            ResignationService.delete(this.deleteRows)
+            JobCandidateService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Resignation Deleted Successfully",
+                    text: "Job Category Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeResignationData = this.employeeResignationData.filter(
+                  this.JobCandidateData = this.JobCandidateData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -212,13 +204,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeResignationData = agent.currentItems;
+        this.JobCandidateData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getResignation("", this.perPage);
+      this.getJobCandidate("", this.perPage);
     },
   },
 };

@@ -26,7 +26,7 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <template #select="{ item }">
+              <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -34,7 +34,7 @@
                     custom
                   />
                 </td>
-              </template>
+              </template> -->
               <!-- <template #branch="{ item }">
                 <td>
                   {{ item.branch.name.en }}
@@ -53,13 +53,13 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -97,13 +97,13 @@ import ComplainService from "@/services/employees/EmployeeComplainService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   // { key: "branch", label: "Branch", _style: "min-width:40%" },
   { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
@@ -157,7 +157,7 @@ export default {
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.complainData.push({ ...item, id });
+                this.complainData.push({ ...item, id, _selected: false });
               });
             }
             if (data.meta) {
@@ -175,7 +175,7 @@ export default {
     //   const data = this.complainData;
     //   data.map(function (item) {
     //     const val = Boolean(item._selected);
-    //     this.$set(item, "_selected", !val);
+    //     item._selected = !val;
     //   });
     // },
     rowClicked(item, index, column, e) {

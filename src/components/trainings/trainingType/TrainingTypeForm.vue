@@ -18,15 +18,11 @@
 
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
+                v-if="isEditing"
                 label="Status"
                 :options="options.status"
                 :value.sync="form.status"
-                :class="{ error: $v.form.status.$error }"
-                @input="$v.form.status.$touch()"
               />
-              <div v-if="$v.form.status.$error">
-                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
-              </div>
             </CCol>
           </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -68,7 +64,7 @@ export default {
     form: {
       id: null,
       name: "",
-      status: "",
+      status: "active",
     },
     options: {
       status: [
@@ -82,7 +78,6 @@ export default {
     return {
       form: {
         name: { required },
-        status: { required },
       },
     };
   },

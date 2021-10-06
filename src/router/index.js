@@ -20,11 +20,11 @@ import complainRoutes from '@/router/complains/complainRoutes';
 import warningRoutes from '@/router/warnings/warningRoutes';
 import recruitmentRoutes from '@/router/recruitments/recruitmentRoutes';
 import salaryRoutes from '@/router/salary/salaryRoutes';
+import profileRoutes from '@/router/profile/profileRoutes';
+import leaveRoutes from '@/router/leaves/leaveRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 import accountingRoutes from '@/router/accounting/accountingRoutes';
-import customersRoutes from '@/router/customers/customersRoutes';
-import groupRoutes from '@/router/groups/groupRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -196,8 +196,8 @@ const router = new Router({
         salaryRoutes,
         accountingRoutes,
         recruitmentRoutes,
-        customersRoutes,
-        groupRoutes,
+        profileRoutes,
+        leaveRoutes,
 
         {
           path: 'theme',

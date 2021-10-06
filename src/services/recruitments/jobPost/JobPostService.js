@@ -1,7 +1,7 @@
 import http from "@/http-common";
 import Helper from "@/helpers/Helper";
 
-class JobPost extends Helper {
+class JobPostService extends Helper {
 
   getAll(page, per_page) {
     let url = "/job-posts";
@@ -40,4 +40,4 @@ class JobPost extends Helper {
 
 }
 
-export default new JobPost();
+export default new JobPostService();

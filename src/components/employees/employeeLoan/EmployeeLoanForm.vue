@@ -58,7 +58,7 @@
               </div>
             </CCol>
 
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
@@ -100,7 +100,7 @@ export default {
       type: "",
       description: "",
       amount: "",
-      status: "",
+      status: "pending",
     },
     empId: null,
     options: {

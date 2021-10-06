@@ -7,7 +7,17 @@
             <form @submit.prevent="isEditing ? updateEmployee() : saveEmployee()">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Serial No" v-model="form.serial_no" />
+                  <CInput
+                    label="Serial No"
+                    v-model="form.serial_no"
+                    :class="{ error: $v.form.serial_no.$error }"
+                    @input="$v.form.serial_no.$touch()"
+                  />
+                  <div v-if="$v.form.serial_no.$error">
+                    <p v-if="!$v.form.serial_no.required" class="errorMsg">
+                      Serial No is required
+                    </p>
+                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -54,21 +64,32 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Email" type="email" :value.sync="form.email" />
+                  <CInput
+                    label="Email"
+                    type="email"
+                    :value.sync="form.email"
+                    :class="{ error: $v.form.email.$error }"
+                    @input="$v.form.email.$touch()"
+                  />
+                  <div v-if="$v.form.email.$error">
+                    <p v-if="!$v.form.email.email" class="errorMsg">
+                      Email Should be Valid
+                    </p>
+                  </div>
                 </CCol>
               </CRow>
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="DOB" type="date" :value.sync="form.dob" />
+                  <CInput
+                    label="DOB"
+                    type="date"
+                    :value.sync="form.dob"
+                    v-bind:max="getDOB()"
+                  />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput label="Nationality" :value.sync="form.nationality" />
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Address" :value.sync="form.address" />
-                </CCol>
-              </CRow>
-              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Manager"
@@ -88,6 +109,12 @@
                     <p v-if="!$v.form.cpr_no.required" class="errorMsg">
                       CPR is required
                     </p>
+                    <p v-if="!$v.form.cpr_no.minLength" class="errorMsg">
+                      CPR should be at least 9 character
+                    </p>
+                    <p v-if="!$v.form.cpr_no.maxLength" class="errorMsg">
+                      CPR should be 9 character
+                    </p>
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
@@ -104,8 +131,7 @@
                     </p>
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <label class="typo__label">Branches</label>
                   <multiselect
@@ -135,6 +161,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Departments"
@@ -156,8 +184,7 @@
                     :value.sync="form.passport_no"
                   />
                 </CCol>
-              </CRow>
-              <CRow>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Passport Expiry"
@@ -165,6 +192,8 @@
                     :value.sync="form.passport_expiry"
                   />
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Designation"
@@ -191,7 +220,14 @@
                     label="Branch Shift"
                     :options="options.branch_shift"
                     :value.sync="form.branch_shift_id"
+                    :class="{ error: $v.form.branch_shift_id.$error }"
+                    @input="$v.form.branch_shift_id.$touch()"
                   />
+                  <div v-if="$v.form.branch_shift_id.$error">
+                    <p v-if="!$v.form.branch_shift_id.required" class="errorMsg">
+                      Branch Shift is required
+                    </p>
+                  </div>
                 </CCol>
                 <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
                   <CSelect
@@ -232,7 +268,7 @@
                       :value.sync="form.user_role"
                     />
                   </CCol>
-                  <CCol sm="6" md="4" class="pt-2">
+                  <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
                     <CSelect
                       label="Status"
                       :options="options.user_status"
@@ -294,7 +330,7 @@
 </template>
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
-import { required, email, numeric } from "vuelidate/lib/validators";
+import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 
 export default {
@@ -312,7 +348,6 @@ export default {
       email: "",
       dob: "",
       nationality: "",
-      address: "",
       cpr_no: "",
       cpr_no_expiry: "",
       passport_no: "",
@@ -389,11 +424,14 @@ export default {
       form: {
         full_name: { required },
         phone_number: { required, numeric },
-        cpr_no: { required },
+        cpr_no: { required, minLength: minLength(9), maxLength: maxLength(9) },
         cpr_no_expiry: { required },
+        email: { email },
         branch_id: { required },
         department_id: { required },
         designation_id: { required },
+        serial_no: { required },
+        branch_shift_id: { required },
       },
     };
   },
@@ -461,13 +499,12 @@ export default {
           this.form.email = data.email;
           this.form.dob = data.dob;
           this.form.nationality = data.nationality;
-          this.form.address = data.address;
           this.form.cpr_no = data.cpr_no;
           this.form.cpr_no_expiry = data.cpr_no_expiry;
           this.form.passport_no = data.passport_no;
           this.form.passport_expiry = data.passport_expiry;
           this.form.branch_id = data.branches.map(function (item) {
-            return { label: item.name.en, value: item.id };
+            return { label: item.name.en, value: item.uuid };
           });
           this.form.department_id = data.department_id;
           this.form.designation_id = data.designation_id;
@@ -576,7 +613,6 @@ export default {
       formData.append("email", this.form.email);
       formData.append("dob", this.form.dob);
       formData.append("nationality", this.form.nationality);
-      formData.append("address", this.form.address);
       formData.append("cpr_no", this.form.cpr_no);
       formData.append("cpr_no_expiry", this.form.cpr_no_expiry);
       formData.append("passport_no", this.form.passport_no);
@@ -603,6 +639,17 @@ export default {
     },
     toggleUserSection() {
       this.form.create_user = !this.form.create_user;
+    },
+    getDOB() {
+      let dtToday = new Date();
+      let month = dtToday.getMonth() + 1; // jan=0; feb=1 .......
+      let day = dtToday.getDate();
+      let year = dtToday.getFullYear() - 18;
+      if (month < 10) month = "0" + month.toString();
+      if (day < 10) day = "0" + day.toString();
+      let minDate = year + "-" + month + "-" + day;
+      let maxDate = year + "-" + month + "-" + day;
+      return maxDate;
     },
     pickFile(e) {
       let file = e.target.files;
