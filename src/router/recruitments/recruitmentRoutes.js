@@ -15,6 +15,11 @@ const IndexjobCandidate = () => import('@/views/recruitments/jobCandidates/Index
 const CreatejobCandidate = () => import('@/views/recruitments/jobCandidates/Create');
 const EditjobCandidate = () => import('@/views/recruitments/jobCandidates/Edit');
 
+//Job Interviewer
+const IndexJobInterviewer = () => import('@/views/recruitments/jobInterviewer/Index');
+const CreateJobInterviewer = () => import('@/views/recruitments/jobInterviewer/Create');
+const EditjobInterviewer = () => import('@/views/recruitments/jobInterviewer/Edit');
+
 const recruitmentRoutes =  {
     path: 'recruitment',
     redirect: '/recruitment/jobCategories/index',
@@ -68,6 +73,21 @@ const recruitmentRoutes =  {
         path: 'jobCandidates/edit/:id',
         name: 'Edit Job Candidates',
         component: EditjobCandidate
+      },
+      {
+        path: 'jobInterviewers/index',
+        name: 'All Job Interviewer',
+        component: IndexJobInterviewer
+      },
+      {
+        path: 'jobInterviewers/create',
+        name: 'Create Job Interviewer',
+        component: CreateJobInterviewer
+      },
+      {
+        path: 'jobInterviewers/edit/:id',
+        name: 'Edit Job Interviewer',
+        component: EditjobInterviewer
       },
     ]
 };

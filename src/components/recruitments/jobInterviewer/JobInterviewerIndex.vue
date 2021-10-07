@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="JobCandidate"
+          :items="JobInterviewer"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import JobCandidateService from "@/services/recruitments/jobCandidates/JobCandidateService";
+import JobInterviewerService from "@/services/recruitments/jobInterviewer/JobInterviewerService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -79,7 +79,7 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "full_name", label: "FULL NAME", _style: "min-width:15%;" },
+  { key: "name", label: "FULL NAME", _style: "min-width:15%;" },
   { key: "email", label: "EMAIL", _style: "min-width:15%;" },
   { key: "phone", label: "PHONE", _style: "min-width:15%;" },
   { key: "address", label: "ADDRESS", _style: "min-width:15%;" },
@@ -88,13 +88,13 @@ const fields = [
 ];
 
 export default {
-  name: "JobCandidateIndex",
+  name: "JobInterviewerIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      JobCandidateData: [],
+      JobInterviewerData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -105,11 +105,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getJobCandidate();
+    this.getJobInterviewer();
   },
   computed: {
-    JobCandidate() {
-      return this.JobCandidateData;
+    JobInterviewer() {
+      return this.JobInterviewerData;
     },
   },
   watch: {
@@ -117,21 +117,21 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getJobCandidate(this.activePage, this.perPage);
+      this.getJobInterviewer(this.activePage, this.perPage);
     },
   },
   methods: {
-    getJobCandidate(page = "", per_page = "") {
+    getJobInterviewer(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      JobCandidateService.getAll(page, per_page)
+      JobInterviewerService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.JobCandidateData = [];
+            this.JobInterviewerData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.JobCandidateData.push({ ...item, id });
+                this.JobInterviewerData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -150,14 +150,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.JobCandidateData[item.id]._selected);
-      this.$set(this.JobCandidateData[item.id], "_selected", !val);
+      const val = Boolean(this.JobInterviewerData[item.id]._selected);
+      this.$set(this.JobInterviewerData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/recruitment/jobCandidates/edit/" + uuid });
+      this.$router.push({ path: "/recruitment/jobInterviewers/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -172,16 +172,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            JobCandidateService.delete(this.deleteRows)
+            JobInterviewerService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Job Candidate Deleted Successfully",
+                    text: "Job Interviewer Deleted Successfully",
                     timer: 3600,
                   });
-                  this.JobCandidateData = this.JobCandidateData.filter(
+                  this.JobInterviewerData = this.JobInterviewerData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -207,13 +207,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.JobCandidateData = agent.currentItems;
+        this.JobInterviewerData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getJobCandidate("", this.perPage);
+      this.getJobInterviewer("", this.perPage);
     },
   },
 };
