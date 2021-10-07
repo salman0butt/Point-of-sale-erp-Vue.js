@@ -210,13 +210,6 @@
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
-                    label="Select Job Type"
-                    :options="options.job_type"
-                    :value.sync="form.job_type"
-                  />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
                     label="Branch Shift"
                     :options="options.branch_shift"
                     :value.sync="form.branch_shift_id"
@@ -361,7 +354,6 @@ export default {
       documents: "",
       previewImage: "https://picsum.photos/1024/480/?image=54",
       create_user: false,
-      job_type: "",
       user_name: "",
       user_email: "",
       user_pass: "",
@@ -407,12 +399,6 @@ export default {
         { value: "", label: "Choose Language", disabled: true, selected: "" },
         { value: "eng", label: "English" },
         { value: "ar", label: "Arabic" },
-      ],
-      job_type: [
-        { value: "", label: "Choose Job Type", disabled: true, selected: "" },
-        { value: "full time", label: "Full Time" },
-        { value: "part time", label: "Part time" },
-        { value: "outsource", label: "Outsource" },
       ],
       branch_shift: [
         { value: "", label: "Choose Branch Shift", disabled: true, selected: "" },
@@ -520,7 +506,6 @@ export default {
           this.form.documents = data.documents;
           this.form.status = data.status;
           this.form.create_user = data.create_user == "true" ? true : false;
-          this.form.job_type = data.job_type;
           this.form.user_name = data.user.name;
           this.form.user_email = data.user.email;
           this.form.user_role = data.user.role[0];

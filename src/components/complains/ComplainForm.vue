@@ -4,7 +4,7 @@
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateComplain() : saveComplain()">
           <CRow>
-            <CCol sm="6" md="4" class="pt-2">
+            <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee From"
                 :options="options.employees"
@@ -15,7 +15,7 @@
                   Employee From is required
                 </p>
               </div>
-            </CCol>
+            </CCol> -->
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee To"
@@ -92,7 +92,7 @@ export default {
     form: {
       id: null,
       branch_id: "",
-      from_employee_id: "",
+      // from_employee_id: "",
       to_employee_id: "",
       title: "",
       description: "",
@@ -107,7 +107,7 @@ export default {
   validations() {
     return {
       form: {
-        from_employee_id: { required },
+        // from_employee_id: { required },
         to_employee_id: { required },
         title: { required },
         date: { required },
@@ -202,7 +202,7 @@ export default {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.branch_id = data.branch.uuid;
-            this.form.from_employee_id = data.from_employee.uuid;
+            // this.form.from_employee_id = data.from_employee.uuid;
             this.form.to_employee_id = data.to_employee.uuid;
             this.form.title = data.title;
             this.form.description = data.description;

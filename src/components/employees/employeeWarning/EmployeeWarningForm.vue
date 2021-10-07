@@ -18,7 +18,7 @@
                 </p>
               </div>
             </CCol> -->
-            <CCol sm="6" md="4" class="pt-2">
+            <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee To"
                 :options="options.employees"
@@ -29,8 +29,8 @@
                   Employee To is required
                 </p>
               </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
+            </CCol> -->
+            <CCol sm="6" md="8" class="pt-2">
               <CInput
                 label="Title"
                 v-model="form.title"
@@ -41,12 +41,21 @@
                 <p v-if="!$v.form.title.required" class="errorMsg">Title is required</p>
               </div>
             </CCol>
-            <CCol sm="6" md="4">
-              <CTextarea
-                label="Note"
-                placeholder="Content..."
-                v-model="form.description"
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Select Template"
+                :options="options.template_type"
+                :value.sync="form.template_type"
+                @change="changeMethodSelect(form.template_type)"
               />
+              <div v-if="$v.form.template_type.$error">
+                <p v-if="!$v.form.template_type.required" class="errorMsg">
+                  Template Type is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="12" md="12">
+              <vue-editor v-model="form.description"></vue-editor>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput label="Type" type="date" :value.sync="form.date" />
@@ -54,7 +63,7 @@
                 <p v-if="!$v.form.date.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
@@ -82,11 +91,14 @@
 </template>
 <script>
 import EmployeeWarningService from "@/services/employees/EmployeeWarningService";
+import LetterTemplateService from "@/services/letterTemplates/LetterTemplateService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
+import { VueEditor } from "vue2-editor";
 
 export default {
   name: "EmployeeWarningForm",
+  components: { VueEditor },
   data: () => ({
     isEditing: false,
     form: {
@@ -96,7 +108,8 @@ export default {
       title: "",
       description: "",
       date: "",
-      status: "",
+      status: "active",
+      template_type: "",
     },
     empId: null,
     options: {
@@ -105,15 +118,18 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "inActive" },
       ],
-      employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
+      template_type: [{ value: "", label: "Choose Template" }],
+      // employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
-        from_employee_id: { required },
-        to_employee_id: { required },
+        // from_employee_id: { required },
+        // to_employee_id: { required },
         title: { required },
+        template_type: { required },
+        description: { required },
         date: { required },
       },
     };
@@ -121,10 +137,12 @@ export default {
   created() {
     this.empId = this.$route.params.id;
     this.getOptions();
+    this.getTemplateData();
   },
   methods: {
     saveEmployeeWarning() {
-      this.form.from_employee_id = this.$route.params.id;
+      // this.form.from_employee_id = this.$route.params.id;
+      this.form.to_employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -154,7 +172,7 @@ export default {
       }
     },
     updateEmployeeWarning() {
-      this.form.from_employee_id = this.$route.params.id;
+      // this.form.from_employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -182,10 +200,38 @@ export default {
           });
       }
     },
+    getTemplateData() {
+      LetterTemplateService.getAll(0, 40)
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            let template = this.options.template_type;
+            data.data.forEach((element) => {
+              template.push({
+                value: element.uuid,
+                label: element.name,
+              });
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    changeMethodSelect(uuid) {
+      LetterTemplateService.get(uuid)
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            this.form.description = data.template;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     getEmployeeWarning() {
       EmployeeWarningService.get(this.empId)
         .then(({ data }) => {
-          if (data != null && data != "") {
+          if (data != undefined && data != "") {
             console.log(data);
             this.isEditing = true;
             this.form.id = data.uuid;
@@ -195,7 +241,7 @@ export default {
             this.form.description = data.description;
             this.form.date = data.date;
             this.form.status = data.status;
-            console.log(this.form);
+            this.form.template_type = "editing";
           }
         })
         .catch((error) => {
@@ -223,20 +269,20 @@ export default {
           console.log(error);
         });
 
-      this.$http
-        .get("/employees-create")
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            const employees = this.options.employees;
+      // this.$http
+      //   .get("/employees-create")
+      //   .then(({ data }) => {
+      //     if (data != null && data != "") {
+      //       const employees = this.options.employees;
 
-            data.employees.map(function (val) {
-              employees.push({ value: val.uuid, label: val.full_name.en });
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      //       data.employees.map(function (val) {
+      //         employees.push({ value: val.uuid, label: val.full_name.en });
+      //       });
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     },
     getEditData(uuid) {
       this.isEditing = true;
