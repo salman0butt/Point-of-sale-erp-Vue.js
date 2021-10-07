@@ -143,6 +143,7 @@ export default {
     saveEmployeeWarning() {
       // this.form.from_employee_id = this.$route.params.id;
       this.form.to_employee_id = this.$route.params.id;
+      this.form.status = "active";
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
