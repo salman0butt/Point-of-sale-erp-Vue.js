@@ -94,7 +94,6 @@ const fields = [
   { key: "from_employee", label: "FROM EMPLOYEE", _style: "min-width:15%;" },
   { key: "to_employee", label: "TO EMPLOYEE", _style: "min-width:15%;" },
   { key: "title", label: "TITLE", _style: "min-width:15%;" },
-  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },

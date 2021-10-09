@@ -32,9 +32,10 @@
                 v-bind:key="index"
                 @click.prevent="changeActiveTab(tab.key)"
                 href="#"
-                v-bind:class="{ active: activeTab === tab.key }"
+                v-bind:class="{ active: activeTab === tab.key, disabled: tab.disabled }"
               >
-                <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}</a
+                <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
+                <CBadge v-if="tab.disabled" color="danger"> comming soon</CBadge></a
               >
             </div>
           </CCardBody>
@@ -98,9 +99,9 @@ export default {
         { key: "EmployeeQualificationTab", name: "Qualifications" },
         { key: "EmployeeSalaryTab", name: "Salary" },
         { key: "EmployeeContractTab", name: "Contracts" },
-        { key: "EmployeeExpenseTab", name: "Expenses" },
-        { key: "EmployeeTargetTab", name: "Targets" },
-        { key: "EmployeeDiscountTab", name: "Discounts" },
+        { key: "EmployeeExpenseTab", name: "Expenses", disabled: true },
+        { key: "EmployeeTargetTab", name: "Targets", disabled: true },
+        { key: "EmployeeDiscountTab", name: "Discounts", disabled: true },
         { key: "EmployeeComplainTab", name: "Complains" },
         { key: "EmployeeWarningTab", name: "Warnings" },
         { key: "EmployeeLeaveTab", name: "Leaves" },

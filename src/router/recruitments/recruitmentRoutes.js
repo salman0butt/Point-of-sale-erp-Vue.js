@@ -15,6 +15,16 @@ const IndexjobCandidate = () => import('@/views/recruitments/jobCandidates/Index
 const CreatejobCandidate = () => import('@/views/recruitments/jobCandidates/Create');
 const EditjobCandidate = () => import('@/views/recruitments/jobCandidates/Edit');
 
+//Job Interviewer
+const IndexJobInterviewer = () => import('@/views/recruitments/jobInterviewer/Index');
+const CreateJobInterviewer = () => import('@/views/recruitments/jobInterviewer/Create');
+const EditjobInterviewer = () => import('@/views/recruitments/jobInterviewer/Edit');
+
+//Job Interview
+const IndexJobInterview = () => import('@/views/recruitments/jobInterview/Index');
+const CreateJobInterview = () => import('@/views/recruitments/jobInterview/Create');
+const EditjobInterview = () => import('@/views/recruitments/jobInterview/Edit');
+
 const recruitmentRoutes =  {
     path: 'recruitment',
     redirect: '/recruitment/jobCategories/index',
@@ -26,48 +36,78 @@ const recruitmentRoutes =  {
     children: [
       {
         path: 'jobCategories/index',
-        name: 'All Job Category',
+        name: 'IndexJobCategory',
         component: IndexJobCategory
       },
       {
         path: 'jobCategories/create',
-        name: 'Create Job Category',
+        name: 'CreateJobCategory',
         component: CreateJobCategory
       },
       {
         path: 'jobCategories/edit/:id',
-        name: 'Edit Job Category',
+        name: 'EditJobCategory',
         component: EditJobCategory
       },
       {
         path: 'jobPosts/index',
-        name: 'All Job Post',
+        name: 'IndexJobPost',
         component: IndexJobPost
       },
       {
         path: 'jobPosts/create',
-        name: 'Create Job Post',
+        name: 'CreateJobPost',
         component: CreateJobPost
       },
       {
         path: 'jobPosts/edit/:id',
-        name: 'Edit Job Post',
+        name: 'EditJobPost',
         component: EditJobPost
       },
       {
         path: 'jobCandidates/index',
-        name: 'All Job Candidates',
+        name: 'IndexjobCandidate',
         component: IndexjobCandidate
       },
       {
         path: 'jobCandidates/create',
-        name: 'Create Job Candidates',
+        name: 'CreatejobCandidate',
         component: CreatejobCandidate
       },
       {
         path: 'jobCandidates/edit/:id',
-        name: 'Edit Job Candidates',
+        name: 'EditjobCandidate',
         component: EditjobCandidate
+      },
+      {
+        path: 'jobInterviewers/index',
+        name: 'IndexJobInterviewer',
+        component: IndexJobInterviewer
+      },
+      {
+        path: 'jobInterviewers/create',
+        name: 'CreateJobInterviewer',
+        component: CreateJobInterviewer
+      },
+      {
+        path: 'jobInterviewers/edit/:id',
+        name: 'EditjobInterviewer',
+        component: EditjobInterviewer
+      },
+      {
+        path: 'jobInterviews/index',
+        name: 'IndexJobInterview',
+        component: IndexJobInterview
+      },
+      {
+        path: 'jobInterviews/create',
+        name: 'CreateJobInterview',
+        component: CreateJobInterview
+      },
+      {
+        path: 'jobInterviews/edit/:id',
+        name: 'EditjobInterview',
+        component: EditjobInterview
       },
     ]
 };

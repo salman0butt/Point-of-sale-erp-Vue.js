@@ -2,19 +2,17 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateJobCandidate() : saveJobCandidate()">
+        <form @submit.prevent="isEditing ? updateJobInterviewer() : saveJobInterviewer()">
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Full Name"
-                v-model="form.full_name"
-                :class="{ error: $v.form.full_name.$error }"
-                @input="$v.form.full_name.$touch()"
+                label="Name"
+                v-model="form.name"
+                :class="{ error: $v.form.name.$error }"
+                @input="$v.form.name.$touch()"
               />
-              <div v-if="$v.form.full_name.$error">
-                <p v-if="!$v.form.full_name.required" class="errorMsg">
-                  Full Name is required
-                </p>
+              <div v-if="$v.form.name.$error">
+                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -54,28 +52,15 @@
             </CCol>
             <CCol sm="6" md="4">
               <CTextarea
-                label="Cover Letter"
+                label="Description"
                 placeholder="Content..."
-                v-model="form.cover_letter"
-                :class="{ error: $v.form.cover_letter.$error }"
-                @input="$v.form.cover_letter.$touch()"
+                v-model="form.description"
+                :class="{ error: $v.form.description.$error }"
+                @input="$v.form.description.$touch()"
               />
-              <div v-if="$v.form.cover_letter.$error">
-                <p v-if="!$v.form.cover_letter.required" class="errorMsg">
-                  Cover Letter is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Linkdin Profile"
-                v-model="form.linkdin_profile"
-                :class="{ error: $v.form.linkdin_profile.$error }"
-                @input="$v.form.linkdin_profile.$touch()"
-              />
-              <div v-if="$v.form.linkdin_profile.$error">
-                <p v-if="!$v.form.linkdin_profile.required" class="errorMsg">
-                  Linkdin Profile is required
+              <div v-if="$v.form.description.$error">
+                <p v-if="!$v.form.description.required" class="errorMsg">
+                  Description is required
                 </p>
               </div>
             </CCol>
@@ -116,22 +101,21 @@
   </div>
 </template>
 <script>
-import JobCandidateService from "@/services/recruitments/jobCandidates/JobCandidateService";
+import JobInterviewerService from "@/services/recruitments/jobInterviewer/JobInterviewerService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "JobCandidateForm",
+  name: "JobInterviewerForm",
   data: () => ({
     isEditing: false,
     saveAndExit: false,
     form: {
       id: null,
-      full_name: "",
+      name: "",
       email: "",
       phone: "",
       address: "",
-      cover_letter: "",
-      linkdin_profile: "",
+      description: "",
       status: "active",
     },
     options: {
@@ -145,12 +129,11 @@ export default {
   validations() {
     return {
       form: {
-        full_name: { required },
+        name: { required },
         email: { required },
         phone: { required },
         address: { required },
-        cover_letter: { required },
-        linkdin_profile: { required },
+        description: { required },
       },
     };
   },
@@ -158,31 +141,31 @@ export default {
     this.form.id = this.$route.params.id;
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
-      this.getJobCandidate();
+      this.getJobInterviewer();
     }
   },
   methods: {
-    saveJobCandidate() {
+    saveJobInterviewer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        JobCandidateService.create(data)
+        JobInterviewerService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Job Candidate Added Successfully",
+                text: "Job Interviewer Added Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
               this.resetForm();
 
               if (this.saveAndExit) {
-                this.$router.push({ path: "/recruitment/jobCandidates/index" });
+                this.$router.push({ path: "/recruitment/jobInterviewers/index" });
               } else {
                 this.$router.push({
-                  path: "/recruitment/jobCandidates/edit/" + res.data.uuid,
+                  path: "/recruitment/jobInterviewers/edit/" + res.data.uuid,
                 });
               }
             }
@@ -198,25 +181,25 @@ export default {
           });
       }
     },
-    updateJobCandidate() {
+    updateJobInterviewer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        JobCandidateService.update(this.form.id, data)
+        JobInterviewerService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Job Candidate Updated Successfully",
+                text: "Job Interviewer Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
               if (this.saveAndExit) {
-                this.$router.push({ path: "/recruitment/jobCandidates/index" });
+                this.$router.push({ path: "/recruitment/jobInterviewers/index" });
               } else {
                 this.$router.push({
-                  path: "/recruitment/jobCandidates/edit/" + res.data.uuid,
+                  path: "/recruitment/jobInterviewers/edit/" + res.data.uuid,
                 });
               }
             }
@@ -232,19 +215,18 @@ export default {
           });
       }
     },
-    getJobCandidate() {
-      JobCandidateService.get(this.form.id)
+    getJobInterviewer() {
+      JobInterviewerService.get(this.form.id)
         .then(({ data }) => {
           console.log(data);
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.full_name = data.full_name;
+            this.form.name = data.name;
             this.form.email = data.email;
             this.form.phone = data.phone;
             this.form.address = data.address;
-            this.form.cover_letter = data.cover_letter;
-            this.form.linkdin_profile = data.linkdin_profile;
+            this.form.description = data.description;
             this.form.status = data.status;
           }
         })

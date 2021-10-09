@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="JobCandidate"
+          :items="JobInterview"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -26,6 +26,21 @@
             </td>
           </template> -->
 
+          <template #job_post="{ item }">
+            <td>
+              {{ item.job_post.title }}
+            </td>
+          </template>
+          <template #job_candidate="{ item }">
+            <td>
+              {{ item.job_candidate.full_name }}
+            </td>
+          </template>
+          <template #interviewer="{ item }">
+            <td>
+              {{ item.interviewer.name }}
+            </td>
+          </template>
           <template #status="{ item }">
             <td>
               {{ item.status ? item.status : "" }}
@@ -68,7 +83,7 @@
 </template>
 
 <script>
-import JobCandidateService from "@/services/recruitments/jobCandidates/JobCandidateService";
+import JobInterviewService from "@/services/recruitments/jobInterview/JobInterviewService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -79,22 +94,24 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "full_name", label: "FULL NAME", _style: "min-width:15%;" },
-  { key: "email", label: "EMAIL", _style: "min-width:15%;" },
-  { key: "phone", label: "PHONE", _style: "min-width:15%;" },
-  { key: "address", label: "ADDRESS", _style: "min-width:15%;" },
+  { key: "job_post", label: "JOB", _style: "min-width:15%;" },
+  { key: "job_candidate", label: "CANDIDATE", _style: "min-width:15%;" },
+  { key: "interviewer", label: "INTERVIEWER", _style: "min-width:15%;" },
+  { key: "interview_place", label: "INTERVIEW PLACE", _style: "min-width:15%;" },
+  { key: "interview_date", label: "DATE", _style: "min-width:15%;" },
+  { key: "interview_time", label: "TIME", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "JobCandidateIndex",
+  name: "JobInterviewIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      JobCandidateData: [],
+      JobInterviewData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -105,11 +122,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getJobCandidate();
+    this.getJobInterview();
   },
   computed: {
-    JobCandidate() {
-      return this.JobCandidateData;
+    JobInterview() {
+      return this.JobInterviewData;
     },
   },
   watch: {
@@ -117,21 +134,21 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getJobCandidate(this.activePage, this.perPage);
+      this.getJobInterview(this.activePage, this.perPage);
     },
   },
   methods: {
-    getJobCandidate(page = "", per_page = "") {
+    getJobInterview(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      JobCandidateService.getAll(page, per_page)
+      JobInterviewService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.JobCandidateData = [];
+            this.JobInterviewData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.JobCandidateData.push({ ...item, id });
+                this.JobInterviewData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -150,14 +167,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.JobCandidateData[item.id]._selected);
-      this.$set(this.JobCandidateData[item.id], "_selected", !val);
+      const val = Boolean(this.JobInterviewData[item.id]._selected);
+      this.$set(this.JobInterviewData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/recruitment/jobCandidates/edit/" + uuid });
+      this.$router.push({ path: "/recruitment/jobInterviews/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -172,16 +189,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            JobCandidateService.delete(this.deleteRows)
+            JobInterviewService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Job Candidate Deleted Successfully",
+                    text: "Job Interview Deleted Successfully",
                     timer: 3600,
                   });
-                  this.JobCandidateData = this.JobCandidateData.filter(
+                  this.JobInterviewData = this.JobInterviewData.filter(
                     (item) => item.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -207,13 +224,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.JobCandidateData = agent.currentItems;
+        this.JobInterviewData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getJobCandidate("", this.perPage);
+      this.getJobInterview("", this.perPage);
     },
   },
 };

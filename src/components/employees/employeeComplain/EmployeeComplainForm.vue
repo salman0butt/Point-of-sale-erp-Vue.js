@@ -18,7 +18,7 @@
                 </p>
               </div>
             </CCol> -->
-            <CCol sm="6" md="4" class="pt-2">
+            <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Employee To"
                 :options="options.employees"
@@ -29,7 +29,7 @@
                   Employee To is required
                 </p>
               </div>
-            </CCol>
+            </CCol> -->
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Title"
@@ -84,7 +84,7 @@ export default {
     form: {
       id: null,
       branch_id: "",
-      from_employee_id: "",
+      // from_employee_id: "",
       to_employee_id: "",
       title: "",
       description: "",
@@ -100,7 +100,7 @@ export default {
     return {
       form: {
         // from_employee_id: { required },
-        to_employee_id: { required },
+        // to_employee_id: { required },
         title: { required },
         date: { required },
       },
@@ -108,11 +108,13 @@ export default {
   },
   created() {
     this.empId = this.$route.params.id;
+
     this.getOptions();
   },
   methods: {
     saveEmployeeComplain() {
-      this.form.from_employee_id = this.$route.params.id;
+      // this.form.from_employee_id = this.$route.params.id;
+      this.form.to_employee_id = this.$route.params.id;
       this.form.branch_id = this.options.branches[1].value;
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -143,7 +145,7 @@ export default {
       }
     },
     updateEmployeeComplain() {
-      this.form.from_employee_id = this.$route.params.id;
+      // this.form.from_employee_id = this.$route.params.id;
       this.form.branch_id = this.options.branches[1].value;
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -179,7 +181,7 @@ export default {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.branch_id = data.branch.uuid;
-            this.form.from_employee_id = data.from_employee.uuid;
+            // this.form.from_employee_id = data.from_employee.uuid;
             this.form.to_employee_id = data.to_employee.uuid;
             this.form.title = data.title;
             this.form.description = data.description;
