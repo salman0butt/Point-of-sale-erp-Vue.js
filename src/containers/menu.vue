@@ -153,6 +153,12 @@ export default {
                       to: "/recruitment/jobInterviewers/index",
                       icon: "cil-lan",
                     },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Job Interviewes",
+                      to: "/recruitment/jobInterviews/index",
+                      icon: "cil-lan",
+                    },
                   ],
                 },
                 {

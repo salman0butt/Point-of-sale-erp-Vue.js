@@ -4,7 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardHeader>New Job Interviewer</CCardHeader>
-          <CCardBody> <JobJobInterviewerForm /> </CCardBody>
+          <CCardBody> <JobInterviewerForm /> </CCardBody>
         </CCard>
       </CCol>
     </CRow>
@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import JobJobInterviewerForm from "@/components/recruitments/jobInterviewer/JobInterviewerForm";
+import JobInterviewerForm from "@/components/recruitments/jobInterviewer/JobInterviewerForm";
 export default {
   name: "CreateJobInterviewer",
-  components: { JobJobInterviewerForm },
+  components: { JobInterviewerForm },
   data: () => ({}),
   methods: {},
 };
