@@ -33,20 +33,19 @@
             </form>
           </CCardBody>
         </CCard>
+        <CCard v-show="import_btn">
+          <router-link
+            class="btn btn-success"
+            to="/attendance/create-attendance-by-machine"
+            >Import Attendance</router-link
+          >
+        </CCard>
         <CCard>
           <CCardBody>
-            <!-- <router-link
-              class="btn btn-success"
-              to="/attendance/create-attendance-by-machine"
-              >Create Attendance</router-link
-            > -->
             <CDataTable
               :items="attendance"
               :fields="fields"
-              items-per-page-select
-              :items-per-page="5"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
@@ -55,12 +54,6 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
-                      >View</CButton
-                    > -->
                     <CButton
                       @click="editRow(item.check_in_id, item.check_out_id)"
                       class="btn-sm text-white"
@@ -87,7 +80,8 @@
 </template>
 
 <script>
-import DesignationService from "@/services/designations/DesignationService";
+import HrSettingService from "@/services/settings/HrSettingService";
+
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import moment from "moment";
 
@@ -118,9 +112,11 @@ export default {
       deleteRows: [],
       from_date: "",
       to_date: "",
+      import_btn: false,
     };
   },
   created() {
+    this.getAttendanceType();
     this.currentDateTime();
     this.getAttendance();
   },
@@ -129,6 +125,18 @@ export default {
     currentDateTime() {
       this.from_date = moment().subtract(1, "months").format("YYYY-MM-DD");
       this.to_date = moment().format("YYYY-MM-DD");
+    },
+    getAttendanceType() {
+      let ids = JSON.stringify(["attendance_by"]);
+      HrSettingService.getSettings(ids)
+        .then(({ data }) => {
+          if (data.attendance_by == "import") {
+            this.import_btn = true;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     getAttendance() {
       this.loading = true;
@@ -169,9 +177,6 @@ export default {
     check(item) {
       const val = Boolean(this.designationsData[item.id]._selected);
       this.$set(this.designationsData[item.id], "_selected", !val);
-    },
-    viewRow(uuid) {
-      alert("page not ready");
     },
     editRow(check_in, check_out) {
       let ids = window.btoa(JSON.stringify([check_in, check_out]));

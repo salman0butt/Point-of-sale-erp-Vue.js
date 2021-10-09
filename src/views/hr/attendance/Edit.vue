@@ -110,6 +110,7 @@ export default {
           if (res.data.check_in != null) {
             this.attendance.date = res.data.check_in.date;
             this.attendance.check_in = res.data.check_in.time;
+            this.attendance.check_out = res.data.check_out.time;
           } else {
             this.attendance.date = res.data.check_out.date;
             this.attendance.check_out = res.data.check_out.time;
