@@ -67,7 +67,10 @@
                     @input="$v.form.qualification_type.$touch()"
                   />
                   <div v-if="$v.form.qualification_type.$error">
-                    <p v-if="!$v.form.qualification_type.required" class="errorMsg">
+                    <p
+                      v-if="!$v.form.qualification_type.required"
+                      class="errorMsg"
+                    >
                       Qualification Types is required
                     </p>
                   </div>
@@ -95,7 +98,10 @@
                     @input="$v.form.allowances_type.$touch()"
                   />
                   <div v-if="$v.form.allowances_type.$error">
-                    <p v-if="!$v.form.allowances_type.required" class="errorMsg">
+                    <p
+                      v-if="!$v.form.allowances_type.required"
+                      class="errorMsg"
+                    >
                       Allowances Types is required
                     </p>
                   </div>
@@ -173,7 +179,10 @@
                     @input="$v.form.termination_type.$touch()"
                   />
                   <div v-if="$v.form.termination_type.$error">
-                    <p v-if="!$v.form.termination_type.required" class="errorMsg">
+                    <p
+                      v-if="!$v.form.termination_type.required"
+                      class="errorMsg"
+                    >
                       Termination Types is required
                     </p>
                   </div>
@@ -195,7 +204,9 @@
                   <CInput
                     label="Experiance Certifcate Types"
                     v-model="form.experiance_certifcate_types"
-                    :class="{ error: $v.form.experiance_certifcate_types.$error }"
+                    :class="{
+                      error: $v.form.experiance_certifcate_types.$error,
+                    }"
                     @input="$v.form.experiance_certifcate_types.$touch()"
                   />
                   <div v-if="$v.form.experiance_certifcate_types.$error">
@@ -209,7 +220,9 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress

@@ -258,9 +258,10 @@ export default {
             text: "File Imported Successfully",
             timer: 3600,
           });
-          res.data.forEach((element) => {
-            this.error_table_visibility = true;
-            this.errors.push(element);
+          this.error_table_visibility = true;
+          this.errors = [];
+          res.data.map((item, id) => {
+            this.errors.push({ ...item, id });
           });
         })
         .catch((err) => {
