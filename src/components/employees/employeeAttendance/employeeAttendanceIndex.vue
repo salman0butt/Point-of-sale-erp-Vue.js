@@ -140,12 +140,14 @@ export default {
     },
     getAttendance() {
       this.loading = true;
+      let emp_uuid = this.$route.params.id;
 
       this.$http
         .get("attendances", {
           params: {
             from_date: this.from_date,
             to_date: this.to_date,
+            emp_uuid: emp_uuid,
           },
           headers: {
             branches: "[1]",
@@ -180,7 +182,7 @@ export default {
     },
     editRow(check_in, check_out) {
       let ids = window.btoa(JSON.stringify([check_in, check_out]));
-      this.$router.push({ path: "edit/" + ids });
+      this.$router.push({ name: "editAttendance", params: { id: ids } });
     },
     deleteRow(check_in_uuid, check_out_uuid) {
       let ids = JSON.stringify([check_in_uuid, check_out_uuid]);
