@@ -38,7 +38,7 @@
           </template>
           <template #interviewer="{ item }">
             <td>
-              {{ item.interviewer.name }}
+              {{ item.interviewer.full_name }}
             </td>
           </template>
           <template #status="{ item }">
