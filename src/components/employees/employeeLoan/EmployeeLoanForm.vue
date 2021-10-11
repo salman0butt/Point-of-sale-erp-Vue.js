@@ -100,7 +100,7 @@ export default {
       type: "",
       description: "",
       amount: "",
-      status: "pending",
+      status: "",
     },
     empId: null,
     options: {
@@ -128,6 +128,7 @@ export default {
   methods: {
     saveEmployeeLoan() {
       this.form.employee_id = this.$route.params.id;
+      this.form.status = "active";
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
