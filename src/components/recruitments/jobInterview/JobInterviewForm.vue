@@ -305,9 +305,9 @@ export default {
                 job_candidates.push({ value: val.uuid, label: val.full_name });
               });
             }
-            if (data.interviwers) {
-              data.interviwers.map(function (val) {
-                job_interviewers.push({ value: val.uuid, label: val.name });
+            if (data.employees) {
+              data.employees.map(function (val) {
+                job_interviewers.push({ value: val.uuid, label: val.full_name });
               });
             }
           }

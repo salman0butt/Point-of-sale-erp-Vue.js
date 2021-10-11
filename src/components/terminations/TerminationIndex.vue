@@ -30,6 +30,11 @@
               {{ item.termination_to.full_name }}
             </td>
           </template>
+          <template #termination_from="{ item }">
+            <td>
+              {{ item.termination_from.full_name }}
+            </td>
+          </template>
           <template #status="{ item }">
             <td>
               {{ item.status ? item.status : "" }}
@@ -85,8 +90,9 @@ const fields = [
   // },
   { key: "termination_type", label: "TERMINATION TYPE", _style: "min-width:15%;" },
   { key: "termination_date", label: "TERMINATION DATE", _style: "min-width:15%;" },
+  { key: "termination_from", label: "TERMINATION FROM", _style: "min-width:15%;" },
   { key: "termination_to", label: "TERMINATION TO", _style: "min-width:15%;" },
-  { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
+  // { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
   { key: "notice_date", label: "NOTICE DATE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
