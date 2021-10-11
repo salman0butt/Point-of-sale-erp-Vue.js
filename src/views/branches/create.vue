@@ -117,17 +117,17 @@
                     </CRow>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput
+                        <CSelect
                           label="Opening Date"
-                          type="date"
-                          v-model="form.opening_date"
+                          :options="dates"
+                          :value.sync="form.opening_date"
                         />
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput
+                        <CSelect
                           label="Closing Date"
-                          type="date"
-                          v-model="form.closing_date"
+                          :options="dates"
+                          :value.sync="form.closing_date"
                         />
                       </CCol>
                     </CRow>
@@ -235,6 +235,7 @@ export default {
         opening_date: "",
         closing_date: "",
       },
+      dates: "",
 
       tabs: ["General", "Timing", "Traget", "Social media"],
       activeTab: 1,
@@ -255,7 +256,9 @@ export default {
       },
     };
   },
-  created() {},
+  created() {
+    this.getDates();
+  },
 
   methods: {
     locatorButtonPressed() {
@@ -292,6 +295,14 @@ export default {
             console.log(error);
           });
       }
+    },
+    getDates() {
+      let array = [];
+      for (let index = 1; index <= 31; index++) {
+        array.push({ value: index });
+      }
+      this.dates = array;
+      this.form.closing_date = 31;
     },
   },
 };
