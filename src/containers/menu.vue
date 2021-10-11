@@ -275,6 +275,13 @@ export default {
               icon: "cil-lan",
             },
 
+            {
+              _name: "CSidebarNavItem",
+              name: "Roles & Permissions",
+              to: { name: "Index Roles" },
+              icon: "cil-lan",
+            },
+
             // {
             //   _name: 'CSidebarNavTitle',
             //   _children: ['Components']

@@ -25,6 +25,7 @@ import leaveRoutes from '@/router/leaves/leaveRoutes';
 import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 import accountingRoutes from '@/router/accounting/accountingRoutes';
+import rolesandpermissions from '@/router/rolesandpermissions/RolesAndPermissionsRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -198,6 +199,7 @@ const router = new Router({
         recruitmentRoutes,
         profileRoutes,
         leaveRoutes,
+        rolesandpermissions,
 
         {
           path: 'theme',
