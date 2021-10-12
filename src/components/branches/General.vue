@@ -95,17 +95,17 @@
         </CRow>
         <CRow>
           <CCol sm="6" md="4" class="pt-2">
-            <CInput
+            <CSelect
               label="Opening Date"
-              type="date"
-              v-model="form.opening_date"
+              :options="dates"
+              :value.sync="form.opening_date"
             />
           </CCol>
           <CCol sm="6" md="4" class="pt-2">
-            <CInput
+            <CSelect
               label="Closing Date"
-              type="date"
-              v-model="form.closing_date"
+              :options="dates"
+              :value.sync="form.closing_date"
             />
           </CCol>
           <CCol sm="6" md="4" class="pt-2">
@@ -194,6 +194,7 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "Inactive" },
       ],
+      dates: "",
       url_data: null,
 
       // Timing tab
@@ -254,6 +255,7 @@ export default {
   created() {
     // General
     this.getGeneralDetail();
+    this.getDates();
   },
 
   methods: {
@@ -301,6 +303,14 @@ export default {
             console.log(error);
           });
       }
+    },
+
+    getDates() {
+      let array = [];
+      for (let index = 1; index <= 31; index++) {
+        array.push({ value: index });
+      }
+      this.dates = array;
     },
   },
 };

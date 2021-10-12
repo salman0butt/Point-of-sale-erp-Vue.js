@@ -121,7 +121,7 @@ export default {
   data: () => ({
     isEditing: false,
     form: {
-      id: null,
+      id: "",
       // from_employee_id: "",
       to_employee_id: "",
       title: "",

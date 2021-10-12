@@ -49,20 +49,6 @@
             </CCol>
           </CRow>
           <CRow>
-            <CCol sm="6" md="4">
-              <CTextarea
-                label="Description"
-                placeholder="Content..."
-                v-model="form.description"
-                :class="{ error: $v.form.description.$error }"
-                @input="$v.form.description.$touch()"
-              />
-              <div v-if="$v.form.description.$error">
-                <p v-if="!$v.form.description.required" class="errorMsg">
-                  Description is required
-                </p>
-              </div>
-            </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label=" Notice Date"
@@ -77,13 +63,43 @@
                 </p>
               </div>
             </CCol>
-
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Select Template"
+                :options="options.template_type"
+                :value.sync="form.template_type"
+                @change="changeMethodSelect(form.template_type)"
+              />
+              <div v-if="$v.form.template_type.$error">
+                <p v-if="!$v.form.template_type.required" class="errorMsg">
+                  Template Type is required
+                </p>
+              </div>
+            </CCol>
             <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
                 label="Status"
                 :options="options.status"
                 :value.sync="form.status"
               />
+            </CCol>
+            <CCol sm="12" md="12">
+              <vue-editor
+                v-model="form.description"
+                :class="{ error: $v.form.description.$error }"
+                @input="$v.form.description.$touch()"
+              ></vue-editor>
+              <div v-if="$v.form.template_type.$error">
+                <p v-if="!$v.form.template_type.required" class="errorMsg">
+                  Descripton is required
+                </p>
+              </div>
+            </CCol>
+          </CRow>
+
+          <CRow>
+            <CCol sm="12" md="12" class="mt-2">
+              <CInputCheckbox custom label="Do you want to deactivate user?" />
             </CCol>
           </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -115,11 +131,16 @@
 </template>
 <script>
 import TerminationService from "@/services/terminations/TerminationService";
+import LetterTemplateService from "@/services/letterTemplates/LetterTemplateService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
+import { VueEditor } from "vue2-editor";
 
 export default {
   name: "TerminationForm",
+  components: {
+    VueEditor,
+  },
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -131,12 +152,14 @@ export default {
       description: "",
       notice_date: "",
       status: "",
+      template_type: "",
     },
     options: {
       termination_type: [
         { value: "", label: "Choose Type", disabled: true, selected: "" },
       ],
       employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
+      template_type: [{ value: "", label: "Choose Template" }],
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "active", label: "Active" },
@@ -152,6 +175,7 @@ export default {
         termination_to: { required },
         description: { required },
         notice_date: { required },
+        template_type: { required },
       },
     };
   },
@@ -159,6 +183,7 @@ export default {
     this.form.id = this.$route.params.id;
     this.getOptions();
     this.getAllEmployees();
+    this.getTemplateData();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getTermination();
@@ -246,6 +271,7 @@ export default {
             this.form.description = data.description;
             this.form.notice_date = data.notice_date;
             this.form.status = data.status;
+            this.form.template_type = "editing";
           }
         })
         .catch((error) => {
@@ -289,6 +315,35 @@ export default {
           console.log(error);
         });
     },
+    getTemplateData() {
+      LetterTemplateService.getAll(0, 40)
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            let template = this.options.template_type;
+            data.data.forEach((element) => {
+              template.push({
+                value: element.uuid,
+                label: element.name,
+              });
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    changeMethodSelect(uuid) {
+      LetterTemplateService.get(uuid)
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            this.form.description = data.template;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";

@@ -147,18 +147,12 @@ export default {
                       to: "/recruitment/jobCandidates/index",
                       icon: "cil-lan",
                     },
-                    {
-                      _name: "CSidebarNavItem",
-                      name: "Job Interviewers",
-                      to: "/recruitment/jobInterviewers/index",
-                      icon: "cil-lan",
-                    },
-                    {
-                      _name: "CSidebarNavItem",
-                      name: "Job Interviewes",
-                      to: "/recruitment/jobInterviews/index",
-                      icon: "cil-lan",
-                    },
+                    // {
+                    //   _name: "CSidebarNavItem",
+                    //   name: "Job Interviewes",
+                    //   to: "/recruitment/jobInterviews/index",
+                    //   icon: "cil-lan",
+                    // },
                   ],
                 },
                 {
@@ -272,6 +266,13 @@ export default {
               _name: "CSidebarNavItem",
               name: "Settings",
               to: "/settings",
+              icon: "cil-lan",
+            },
+
+            {
+              _name: "CSidebarNavItem",
+              name: "Roles & Permissions",
+              to: { name: "Index Roles" },
               icon: "cil-lan",
             },
 

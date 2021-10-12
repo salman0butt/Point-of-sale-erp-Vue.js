@@ -1,9 +1,22 @@
 import http from "@/http-common";
+import Helper from "@/helpers/Helper";
 
-class EmployeeSalaryService {
+class EmployeeSalaryService extends Helper{
 
   get(id) {
     return http.get(`/employee-salary/${id}`);
+  }
+
+  genrateSalary(id, year, month) {
+    let url = `/salary/${id}`;
+
+    if(year !== '' && year != undefined)
+     url = super.updateQueryStringParameter(url,"year",year);
+
+    if(month !== '' && month != undefined)
+     url = super.updateQueryStringParameter(url,"month",month);
+
+    return http.get(url);
   }
 
   create(data) {
