@@ -2,7 +2,11 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateEmployeeSalary() : saveEmployeeSalary()">
+        <form
+          @submit.prevent="
+            isEditing ? updateEmployeeSalary() : saveEmployeeSalary()
+          "
+        >
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
               <CSelect
@@ -32,7 +36,9 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -49,7 +55,11 @@
         <div class="mt-4">
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Select Year" :options="options.years" :value.sync="year" />
+              <CSelect
+                label="Select Year"
+                :options="options.years"
+                :value.sync="year"
+              />
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -79,7 +89,11 @@
           </CRow>
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
-              <CInput label="Employee Name" v-model="salary.emp_name" disabled />
+              <CInput
+                label="Employee Name"
+                v-model="salary.emp_name"
+                disabled
+              />
             </CCol>
             <CCol sm="6" md="6" class="pt-2">
               <CInput
@@ -92,26 +106,45 @@
               <CInput label="Total Days" v-model="salary.total_days" />
             </CCol>
             <CCol sm="6" md="3" class="pt-2">
-              <CInput label="Total Working Days" v-model="salary.total_working_days" />
+              <CInput
+                label="Total Working Days"
+                v-model="salary.total_working_days"
+              />
             </CCol>
             <CCol sm="6" md="3" class="pt-2">
-              <CInput label="Total Leaves" type="number" v-model="salary.total_leaves" />
+              <CInput
+                label="Total Leaves"
+                type="number"
+                v-model="salary.total_leaves"
+              />
             </CCol>
             <CCol sm="6" md="3" class="pt-2">
-              <CInput label="Total Absent" type="number" v-model="salary.total_absent" />
+              <CInput
+                label="Total Absent"
+                type="number"
+                v-model="salary.total_absent"
+              />
             </CCol>
           </CRow>
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
               <h3>Earnings</h3>
-              <CInput label="Basic Salary" type="number" v-model="salary.basic_salary" />
+              <CInput
+                label="Basic Salary"
+                type="number"
+                v-model="salary.basic_salary"
+              />
               <div
                 class="form-group"
                 v-for="(input, k) in salary.earnings.inputs"
                 :key="k"
               >
                 <p contenteditable>{{ input.name }}</p>
-                <CInput type="number" v-model="input.value" @input="calculateSalary()" />
+                <CInput
+                  type="number"
+                  v-model="input.value"
+                  @input="calculateSalary()"
+                />
                 <span>
                   <i
                     class="fas fa-minus-circle"
@@ -176,7 +209,9 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -249,8 +284,12 @@ export default {
         { value: "part time", label: "Part time" },
         { value: "outsource", label: "Outsource" },
       ],
-      years: [{ value: "", label: "Choose Year", disabled: true, selected: "" }],
-      months: [{ value: "", label: "Choose Month", disabled: true, selected: "" }],
+      years: [
+        { value: "", label: "Choose Year", disabled: true, selected: "" },
+      ],
+      months: [
+        { value: "", label: "Choose Month", disabled: true, selected: "" },
+      ],
     },
   }),
   validations() {
@@ -373,11 +412,15 @@ export default {
       Array.from({ length: 12 }, (e, i) => {
         this.options.months.push({
           value: i + 1,
-          label: new Date(null, i + 1, null).toLocaleDateString("en", { month: "short" }),
+          label: new Date(null, i + 1, null).toLocaleDateString("en", {
+            month: "short",
+          }),
         });
 
         this.months.push(
-          new Date(null, i + 1, null).toLocaleDateString("en", { month: "short" })
+          new Date(null, i + 1, null).toLocaleDateString("en", {
+            month: "short",
+          })
         );
       });
 
@@ -395,7 +438,9 @@ export default {
         total_earnings += basic_salary;
         for (let index in this.salary.earnings.inputs) {
           if (this.salary.earnings.inputs[index].value) {
-            total_earnings += parseInt(this.salary.earnings.inputs[index].value);
+            total_earnings += parseInt(
+              this.salary.earnings.inputs[index].value
+            );
           }
         }
       }
@@ -403,14 +448,17 @@ export default {
       if (this.salary.deductions.inputs.length > 0) {
         for (let index in this.salary.deductions.inputs) {
           if (this.salary.deductions.inputs[index].value) {
-            total_deductions += parseInt(this.salary.deductions.inputs[index].value);
+            total_deductions += parseInt(
+              this.salary.deductions.inputs[index].value
+            );
           }
         }
       }
       this.salary.total_earnings = total_earnings;
       this.salary.total_deductions = total_deductions;
 
-      this.salary.net_salary = parseFloat(total_earnings) - parseFloat(total_deductions);
+      this.salary.net_salary =
+        parseFloat(total_earnings) - parseFloat(total_deductions);
     },
     genrateSlip() {
       let formData = {
@@ -443,25 +491,25 @@ export default {
           .then(({ data }) => {
             console.log(data);
             if (data != undefined && data != "") {
-              if (data.total_present > 0) {
-                this.salary.emp_name = data.emp.full_name.en;
-                this.salary.emp_designation = "salesman";
-                this.salary.basic_salary = data.emp.salary.basic_salary;
-                this.salary.net_salary = data.emp.salary.basic_salary;
-                this.salary.total_working_days = data.total_working_days;
-                this.salary.total_days = data.total_days;
-                this.salary.total_leaves = data.total_leaves;
-                this.salary.total_absent = data.total_absent;
-                this.showSalaryForm = true;
-              } else {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something Went Wrong.",
-                  timer: 3600,
-                });
-                this.showSalaryForm = false;
-              }
+              // if (data.total_present > 0) {
+              this.salary.emp_name = data.emp.full_name.en;
+              this.salary.emp_designation = "salesman";
+              this.salary.basic_salary = data.emp.salary.basic_salary;
+              this.salary.net_salary = data.emp.salary.basic_salary;
+              this.salary.total_working_days = data.total_working_days;
+              this.salary.total_days = data.total_days;
+              this.salary.total_leaves = data.total_leaves;
+              this.salary.total_absent = data.total_absent;
+              this.showSalaryForm = true;
+              // } else {
+              //   this.$swal.fire({
+              //     icon: "error",
+              //     title: "Error",
+              //     text: "Something Went Wrong.",
+              //     timer: 3600,
+              //   });
+              //   this.showSalaryForm = false;
+              // }
             }
           })
           .catch((error) => {

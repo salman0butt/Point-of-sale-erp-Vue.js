@@ -16,7 +16,9 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Name is required
+                </p>
               </div>
             </CCol>
 
@@ -58,7 +60,9 @@
                 @input="$v.form.amount.$touch()"
               />
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">
+                  Amount is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -68,24 +72,16 @@
                 :value.sync="form.repeat"
               />
               <div v-if="$v.form.repeat.$error">
-                <p v-if="!$v.form.repeat.required" class="errorMsg">Type is required</p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Date"
-                type="date"
-                :value.sync="form.date"
-                :class="{ error: $v.form.amount.$error }"
-                @input="$v.form.date.$touch()"
-              />
-              <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">Amount is required</p>
+                <p v-if="!$v.form.repeat.required" class="errorMsg">
+                  Type is required
+                </p>
               </div>
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -119,11 +115,12 @@ export default {
       description: "",
       amount: "",
       repeat: "",
-      date: "",
     },
     empId: null,
     options: {
-      deduction_type: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
+      deduction_type: [
+        { value: "", label: "Choose Type", disabled: true, selected: "" },
+      ],
       repeat: [
         { value: "", label: "Choose repeat", disabled: true, selected: "" },
         { value: "yes", label: "Yes" },
@@ -138,7 +135,6 @@ export default {
         type: { required },
         description: { required },
         amount: { required },
-        date: { required },
         repeat: { required },
       },
     };
@@ -218,7 +214,6 @@ export default {
             this.form.type = data.type;
             this.form.description = data.description;
             this.form.amount = data.amount;
-            this.form.date = data.date;
             this.form.repeat = data.repeat;
           }
         })
