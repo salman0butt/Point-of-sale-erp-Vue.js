@@ -27,9 +27,9 @@ class RolesAndPermissionsService extends Helper {
         return http.post("/roles", data);
     }
 
-    // update(id, data) {
-    //     return http.patch(`/account/${id}`, data);
-    // }
+    update(id, data) {
+        return http.put(`/roles/${id}`, data);
+    }
 
 
 }

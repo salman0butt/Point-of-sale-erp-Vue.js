@@ -7,7 +7,7 @@
     />
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="saveData">
+        <form @submit.prevent="isUpdatePage ? updateData() : saveData()">
           <CCard>
             <CCardHeader v-if="!isUpdatePage">New Role</CCardHeader>
             <CCardHeader v-else>Edit Role</CCardHeader>
@@ -75,6 +75,8 @@
 
 <script>
 import RolesAndPermissionsService from "@/services/rolesandpermissions/RolesAndPermissionsService";
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 import { required, minLength } from "vuelidate/lib/validators";
 import VueElementLoading from "vue-element-loading";
@@ -103,8 +105,6 @@ export default {
   mounted() {},
   created() {
     this.getSetting();
-
-    this.getEditData();
   },
   methods: {
     getSetting() {
@@ -117,6 +117,7 @@ export default {
               value: false,
             });
           });
+          this.getEditData();
         })
         .catch((error) => {
           this.$swal.fire({
@@ -169,6 +170,38 @@ export default {
                 icon: "success",
                 title: "Success",
                 text: "Role Created Successfully",
+                timer: 3600,
+              });
+              this.isLoading = false;
+              this.$v.$reset();
+              this.$router.push({ name: "Index Roles" });
+            }
+          })
+          .catch((error) => {
+            this.isLoading = false;
+            this.$swal.fire({
+              icon: "error",
+              title: error.message,
+              text: error.errors,
+              timer: 3600,
+            });
+          });
+      }
+    },
+    updateData() {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        this.isLoading = true;
+        let data = this.form;
+        let id = this.$route.params.id;
+        RolesAndPermissionsService.update(id, data)
+          .then((res) => {
+            console.log(res);
+            if (res.status == 200) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Role Updated Successfully",
                 timer: 3600,
               });
               this.isLoading = false;
