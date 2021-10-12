@@ -1,10 +1,6 @@
 <template>
   <div>
-    <vue-element-loading
-      :active="isLoading"
-      spinner="mini-spinner"
-      color="#FF6700"
-    />
+    <vue-element-loading :active="isLoading" spinner="mini-spinner" color="#FF6700" />
     <CRow>
       <CCol xs="12" lg="12">
         <form @submit.prevent="isUpdatePage ? updateData() : saveData()">
