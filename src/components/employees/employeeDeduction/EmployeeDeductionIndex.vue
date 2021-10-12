@@ -85,7 +85,6 @@ const fields = [
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
   { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
-  { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
@@ -186,9 +185,10 @@ export default {
                     text: "Deduction Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeDeductionData = this.employeeDeductionData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.employeeDeductionData =
+                    this.employeeDeductionData.filter(
+                      (item) => item.uuid != uuid
+                    );
                   this.deleteRows = [];
                 }
               })
