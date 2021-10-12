@@ -89,118 +89,90 @@
               />
             </CCol>
             <CCol sm="6" md="3" class="pt-2">
-              <CInput
-                label="Total Working Days"
-                v-model="salary.total_working_days"
-                disabled
-              />
+              <CInput label="Total Days" v-model="salary.total_days" />
             </CCol>
             <CCol sm="6" md="3" class="pt-2">
-              <CInput
-                label="Total Working Horus"
-                v-model="salary.total_working_hours"
-                disabled
-              />
-            </CCol>
-
-            <CCol sm="6" md="3" class="pt-2">
-              <CInput
-                label="Total Present"
-                type="number"
-                v-model="salary.total_present"
-                disabled
-              />
+              <CInput label="Total Working Days" v-model="salary.total_working_days" />
             </CCol>
             <CCol sm="6" md="3" class="pt-2">
-              <CInput
-                label="Total Leaves"
-                type="number"
-                v-model="salary.total_leaves"
-                disabled
-              />
+              <CInput label="Total Leaves" type="number" v-model="salary.total_leaves" />
             </CCol>
             <CCol sm="6" md="3" class="pt-2">
-              <CInput
-                label="Total Absent"
-                type="number"
-                v-model="salary.total_absent"
-                disabled
-              />
-            </CCol>
-            <CCol sm="6" md="3" class="pt-2">
-              <CInput
-                label="Total Late"
-                type="number"
-                v-model="salary.total_late"
-                disabled
-              />
-            </CCol>
-            <CCol sm="6" md="3" class="pt-2">
-              <CInput
-                label="Total Overtime"
-                type="number"
-                v-model="salary.total_overtime"
-                disabled
-              />
+              <CInput label="Total Absent" type="number" v-model="salary.total_absent" />
             </CCol>
           </CRow>
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
               <h3>Earnings</h3>
               <CInput label="Basic Salary" type="number" v-model="salary.basic_salary" />
-              <CInput
-                label="Overtime"
-                type="number"
-                v-model="salary.earnings.overtime_price"
-              />
-              <CInput
-                label="Allowances"
-                type="number"
-                v-model="salary.earnings.allowance_price"
-              />
-              <CInput
-                label="Commission"
-                type="number"
-                v-model="salary.earnings.commision"
-              />
+              <div
+                class="form-group"
+                v-for="(input, k) in salary.earnings.inputs"
+                :key="k"
+              >
+                <p contenteditable>{{ input.name }}</p>
+                <CInput type="number" v-model="input.value" @input="calculateSalary()" />
+                <span>
+                  <i
+                    class="fas fa-minus-circle"
+                    @click="removeEarnings(k)"
+                    v-show="k || (!k && salary.earnings.inputs.length > 1)"
+                    >Remove</i
+                  ><br />
+                  <i
+                    class="fas fa-plus-circle"
+                    @click="addEarnings(k)"
+                    placeholder="0.00"
+                    v-show="k == salary.earnings.inputs.length - 1"
+                    >Add fields</i
+                  >
+                </span>
+              </div>
             </CCol>
             <CCol sm="6" md="6" class="pt-2">
               <h3>Deductions</h3>
-              <CInput
-                label="Absents"
-                type="number"
-                v-model="salary.deduction.absent_price"
-              />
-              <CInput
-                label="Loans"
-                type="number"
-                v-model="salary.deduction.loans_price"
-              />
-              <CInput
-                label="Advance Salary"
-                type="number"
-                v-model="salary.deduction.advance_salary"
-              />
-              <!-- <CInput
-                label="Remaining Salary"
-                type="number"
-                v-model="salary.remaining_salary"
-              /> -->
+              <div
+                class="form-group"
+                v-for="(input, k) in salary.deductions.inputs"
+                :key="k"
+              >
+                <p contenteditable>{{ input.name }}</p>
+                <CInput
+                  type="number"
+                  v-model="input.value"
+                  placeholder="0.00"
+                  @input="calculateSalary()"
+                />
+                <span>
+                  <i
+                    class="fas fa-minus-circle"
+                    @click="removeDeduction(k)"
+                    v-show="k || (!k && salary.deductions.inputs.length > 1)"
+                    >Remove</i
+                  ><br />
+                  <i
+                    class="fas fa-plus-circle"
+                    @click="addDeduction(k)"
+                    v-show="k == salary.deductions.inputs.length - 1"
+                    >Add fields</i
+                  >
+                </span>
+              </div>
             </CCol>
           </CRow>
           <CRow>
             <CCol sm="6" md="6" class="pt-2"
               ><h6>Basic Salary: {{ this.salary.basic_salary }}</h6>
 
-              <h6>Earned Salary: {{ this.salary.remaining_salary }}</h6>
+              <h6 v-if="this.salary.total_earnings">
+                Total Earnings: {{ this.salary.total_earnings }}
+              </h6>
 
-              <h6>Allowances: +{{ salary.earnings.allowance_price }}</h6>
-              <h6>Overtime: +{{ salary.earnings.overtime_price }}</h6>
-              <h6>Commission: +{{ salary.earnings.commision }}</h6>
+              <h6 v-if="salary.total_deductions">
+                Total Deductions: -{{ salary.total_deductions }}
+              </h6>
 
-              <h6>Total Deductions: -{{ salary.total_deductions }}</h6>
-
-              <h4>Net Salary: {{ salary.total_remeaning_salary }}</h4>
+              <h4>Net Salary: {{ salary.net_salary }}</h4>
             </CCol>
           </CRow>
 
@@ -242,26 +214,28 @@ export default {
       emp_name: "",
       emp_designation: "",
       total_working_days: 0,
-      total_working_hours: 0,
+      total_days: 0,
       total_leaves: 0,
       total_absent: 0,
-      total_present: 0,
-      total_late: 0,
-      total_overtime: 0,
       basic_salary: 0,
-      month_days: 0,
-      remaining_salary: 0,
-      total_remeaning_salary: 0,
+      total_earnings: 0,
       total_deductions: 0,
-      deduction: {
-        absent_price: 0,
-        loans_price: 0,
-        advance_salary: 0,
+      net_salary: 0,
+      deductions: {
+        inputs: [
+          {
+            name: "Name",
+            value: "",
+          },
+        ],
       },
       earnings: {
-        overtime_price: 0,
-        allowance_price: 0,
-        commision: 0,
+        inputs: [
+          {
+            name: "Name",
+            value: "",
+          },
+        ],
       },
     },
     year: "",
@@ -288,27 +262,6 @@ export default {
     };
   },
   watch: {
-    "salary.deduction.absent_price"() {
-      this.calculateSalary();
-    },
-    "salary.deduction.loans_price"() {
-      this.calculateSalary();
-    },
-    "salary.deduction.advance_salary"() {
-      this.calculateSalary();
-    },
-    "salary.earnings.overtime_price"() {
-      this.calculateSalary();
-    },
-    "salary.earnings.allowance_price"() {
-      this.calculateSalary();
-    },
-    "salary.earnings.commision"() {
-      this.calculateSalary();
-    },
-    "salary.remaining_salary"() {
-      this.calculateSalary();
-    },
     "salary.basic_salary"() {
       this.calculateSalary();
     },
@@ -321,6 +274,29 @@ export default {
     this.generateArrayOfYearsAndMonths();
   },
   methods: {
+    addEarnings() {
+      this.salary.earnings.inputs.push({
+        name: "Name",
+        party: "",
+      });
+      console.log(this.inputs);
+    },
+
+    removeEarnings(index) {
+      this.salary.earnings.inputs.splice(index, 1);
+    },
+    addDeduction() {
+      this.salary.deductions.inputs.push({
+        name: "Name",
+        party: "",
+      });
+      console.log(this.inputs);
+    },
+
+    removeDeduction(index) {
+      this.salary.deductions.inputs.splice(index, 1);
+    },
+
     saveEmployeeSalary() {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
@@ -413,62 +389,38 @@ export default {
     },
     calculateSalary() {
       let basic_salary = parseFloat(this.salary.basic_salary);
-      let per_day_salary = parseFloat(this.salary.basic_salary) / this.salary.month_days;
-      let absent_deduction = 0;
-      let loan_deduction = 0;
-      let commission_deduction = 0;
-      basic_salary = parseFloat(this.salary.remaining_salary);
-
-      if (per_day_salary && this.salary.total_present) {
-        this.salary.remaining_salary = per_day_salary * this.salary.total_present;
+      let total_earnings = 0;
+      let total_deductions = 0;
+      if (this.salary.earnings.inputs.length > 0) {
+        total_earnings += basic_salary;
+        for (let index in this.salary.earnings.inputs) {
+          if (this.salary.earnings.inputs[index].value) {
+            total_earnings += parseInt(this.salary.earnings.inputs[index].value);
+          }
+        }
       }
-
-      if (this.salary.earnings.overtime_price > 0) {
-        basic_salary += parseFloat(this.salary.earnings.overtime_price);
-      }
-
-      if (this.salary.earnings.allowance_price > 0) {
-        basic_salary += parseFloat(this.salary.earnings.allowance_price);
-      }
-
-      if (this.salary.earnings.commision > 0) {
-        basic_salary += parseFloat(this.salary.earnings.commision);
-      }
-      // salary genrate issue absent not counting
       //deduction
-      // this.salary.deduction.absent_price = per_day_salary * this.salary.total_absent;
-      if (this.salary.deduction.absent_price > 0) {
-        absent_deduction = parseFloat(this.salary.deduction.absent_price);
-        basic_salary -= parseFloat(this.salary.deduction.absent_price);
+      if (this.salary.deductions.inputs.length > 0) {
+        for (let index in this.salary.deductions.inputs) {
+          if (this.salary.deductions.inputs[index].value) {
+            total_deductions += parseInt(this.salary.deductions.inputs[index].value);
+          }
+        }
       }
-      console.log(this.salary.deduction.absent_price);
-      if (this.salary.deduction.loans_price > 0) {
-        loan_deduction = parseFloat(this.salary.deduction.loans_price);
-        basic_salary -= parseFloat(this.salary.deduction.loans_price);
-      }
-      if (this.salary.deduction.advance_salary > 0) {
-        commission_deduction = parseFloat(this.salary.deduction.advance_salary);
-        basic_salary -= parseFloat(this.salary.deduction.advance_salary);
-      }
+      this.salary.total_earnings = total_earnings;
+      this.salary.total_deductions = total_deductions;
 
-      this.salary.total_deductions =
-        absent_deduction + loan_deduction + commission_deduction;
-      this.salary.total_remeaning_salary = parseFloat(basic_salary);
+      this.salary.net_salary = parseFloat(total_earnings) - parseFloat(total_deductions);
     },
     genrateSlip() {
       let formData = {
         employee_id: this.empId,
         month: this.months[this.month - 1],
         basic_salary: parseFloat(this.salary.basic_salary),
-        allowances: parseFloat(this.salary.earnings.allowance_price),
-        other: parseFloat(this.salary.earnings.commision),
-        total_earning: parseFloat(this.salary.remaining_salary),
-        absent: parseFloat(this.salary.deduction.absent_price),
-        advance: parseFloat(this.salary.deduction.advance_salary),
+        total_earning: parseFloat(this.salary.total_earnings),
         total_deductions: parseFloat(this.salary.total_deductions),
-        net_salary: parseFloat(this.salary.total_remeaning_salary),
+        net_salary: parseFloat(this.salary.net_salary),
       };
-      console.log(formData);
 
       EmployeeSalaryAdjustmentService.create(formData)
         .then((res) => {
@@ -489,42 +441,17 @@ export default {
       if (this.year !== "" && this.month !== "") {
         EmployeeSalaryService.genrateSalary(this.empId, this.year, this.month)
           .then(({ data }) => {
+            console.log(data);
             if (data != undefined && data != "") {
-              if (
-                data.emp.leave > 0 ||
-                data.emp.absent > 0 ||
-                data.emp.late > 0 ||
-                data.emp.present > 0 ||
-                data.emp.total_working_hours > 0
-              ) {
-                let absent_deduction = 0;
-                let loan_deduction = 0;
+              if (data.total_present > 0) {
                 this.salary.emp_name = data.emp.full_name.en;
-                this.salary.emp_designation = data.emp.designation.name;
+                this.salary.emp_designation = "salesman";
                 this.salary.basic_salary = data.emp.salary.basic_salary;
+                this.salary.net_salary = data.emp.salary.basic_salary;
                 this.salary.total_working_days = data.total_working_days;
-                this.salary.total_working_hours = data.emp.total_working_hours;
-                this.salary.total_leaves = data.emp.leave;
-                this.salary.total_absent = data.emp.absent;
-                this.salary.total_late = data.emp.late;
-                this.salary.total_present = data.emp.present;
-                this.salary.total_overtime = data.overtime;
-                if (data.per_day_salary && data.emp.absent) {
-                  absent_deduction = data.per_day_salary * data.emp.absent;
-                  this.salary.deduction.absent_price = absent_deduction;
-                }
-
-                this.salary.earnings.overtime_price = data.per_day_salary * data.overtime;
-                this.salary.remaining_salary = data.per_day_salary * data.emp.present;
-                this.salary.earnings.allowance_price = data.allowances_price;
-                if (data.loans_price) {
-                  loan_deduction = data.loans_price;
-                  this.salary.deduction.loans_price = loan_deduction;
-                }
-                this.salary.total_remeaning_salary = data.remeaning_salary;
-                this.salary.earnings.commision = this.salary.deduction.advance_salary = 0;
-                this.salary.total_deductions = absent_deduction + loan_deduction;
-                this.salary.month_days = data.month_days;
+                this.salary.total_days = data.total_days;
+                this.salary.total_leaves = data.total_leaves;
+                this.salary.total_absent = data.total_absent;
                 this.showSalaryForm = true;
               } else {
                 this.$swal.fire({
