@@ -99,7 +99,7 @@ export default {
         { key: "EmployeeQualificationTab", name: "Qualifications" },
         { key: "EmployeeSalaryTab", name: "Salary" },
         { key: "EmployeeContractTab", name: "Contracts" },
-        { key: "EmployeeExpenseTab", name: "Expenses", disabled: true },
+        { key: "EmployeeExpenseTab", name: "Expenses" },
         { key: "EmployeeTargetTab", name: "Targets", disabled: true },
         { key: "EmployeeDiscountTab", name: "Discounts", disabled: true },
         { key: "EmployeeComplainTab", name: "Complains" },

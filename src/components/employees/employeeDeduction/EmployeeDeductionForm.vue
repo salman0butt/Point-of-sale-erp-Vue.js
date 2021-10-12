@@ -61,7 +61,16 @@
                 <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
             </CCol>
-
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Repeat Every Month"
+                :options="options.repeat"
+                :value.sync="form.repeat"
+              />
+              <div v-if="$v.form.repeat.$error">
+                <p v-if="!$v.form.repeat.required" class="errorMsg">Type is required</p>
+              </div>
+            </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Date"
@@ -109,11 +118,17 @@ export default {
       type: "",
       description: "",
       amount: "",
+      repeat: "",
       date: "",
     },
     empId: null,
     options: {
       deduction_type: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
+      repeat: [
+        { value: "", label: "Choose repeat", disabled: true, selected: "" },
+        { value: "yes", label: "Yes" },
+        { value: "no", label: "No" },
+      ],
     },
   }),
   validations() {
@@ -124,6 +139,7 @@ export default {
         description: { required },
         amount: { required },
         date: { required },
+        repeat: { required },
       },
     };
   },
@@ -203,6 +219,7 @@ export default {
             this.form.description = data.description;
             this.form.amount = data.amount;
             this.form.date = data.date;
+            this.form.repeat = data.repeat;
           }
         })
         .catch((error) => {
