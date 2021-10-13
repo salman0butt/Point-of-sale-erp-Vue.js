@@ -139,25 +139,28 @@
                 v-for="(input, k) in salary.earnings.inputs"
                 :key="k"
               >
-                <p contenteditable>{{ input.name }}</p>
+                <p
+                  contenteditable
+                  @input="(event) => editableEarningName(event, k)"
+                >
+                  {{ input.name }}
+                </p>
                 <CInput
                   type="number"
                   v-model="input.value"
+                  placeholder="0.00"
                   @input="calculateSalary()"
                 />
                 <span>
                   <i
-                    class="fas fa-minus-circle"
                     @click="removeEarnings(k)"
                     v-show="k || (!k && salary.earnings.inputs.length > 1)"
-                    >Remove</i
+                    ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                   ><br />
                   <i
-                    class="fas fa-plus-circle"
                     @click="addEarnings(k)"
-                    placeholder="0.00"
                     v-show="k == salary.earnings.inputs.length - 1"
-                    >Add fields</i
+                    ><CIcon :content="$options.cibAddthis" /> Add fields</i
                   >
                 </span>
               </div>
@@ -169,7 +172,12 @@
                 v-for="(input, k) in salary.deductions.inputs"
                 :key="k"
               >
-                <p contenteditable>{{ input.name }}</p>
+                <p
+                  contenteditable
+                  @input="(event) => editableDeductionName(event, k)"
+                >
+                  {{ input.name }}
+                </p>
                 <CInput
                   type="number"
                   v-model="input.value"
@@ -178,16 +186,14 @@
                 />
                 <span>
                   <i
-                    class="fas fa-minus-circle"
                     @click="removeDeduction(k)"
                     v-show="k || (!k && salary.deductions.inputs.length > 1)"
-                    >Remove</i
+                    ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                   ><br />
                   <i
-                    class="fas fa-plus-circle"
                     @click="addDeduction(k)"
                     v-show="k == salary.deductions.inputs.length - 1"
-                    >Add fields</i
+                    ><CIcon :content="$options.cibAddthis" /> Add fields</i
                   >
                 </span>
               </div>
@@ -233,9 +239,12 @@
 import EmployeeSalaryService from "@/services/employees/EmployeeSalaryService";
 import EmployeeSalaryAdjustmentService from "@/services/employees/EmployeeSalaryAdjustmentService";
 import { required } from "vuelidate/lib/validators";
+import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 
 export default {
   name: "EmployeeBasicForm",
+  cibAddthis,
+  cisMinusSquare,
   data: () => ({
     isEditing: false,
     showSalaryForm: false,
@@ -316,24 +325,26 @@ export default {
     addEarnings() {
       this.salary.earnings.inputs.push({
         name: "Name",
-        party: "",
+        value: "",
       });
-      console.log(this.inputs);
+      this.calculateSalary();
     },
 
     removeEarnings(index) {
       this.salary.earnings.inputs.splice(index, 1);
+      this.calculateSalary();
     },
     addDeduction() {
       this.salary.deductions.inputs.push({
         name: "Name",
-        party: "",
+        value: "",
       });
-      console.log(this.inputs);
+      this.calculateSalary();
     },
 
     removeDeduction(index) {
       this.salary.deductions.inputs.splice(index, 1);
+      this.calculateSalary();
     },
 
     saveEmployeeSalary() {
@@ -465,8 +476,15 @@ export default {
         employee_id: this.empId,
         month: this.months[this.month - 1],
         basic_salary: parseFloat(this.salary.basic_salary),
-        total_earning: parseFloat(this.salary.total_earnings),
+        total_earnings: parseFloat(this.salary.total_earnings),
+        year: this.year,
+        earnings: this.salary.earnings.inputs,
+        deductions: this.salary.deductions.inputs,
+        total_absents: parseFloat(this.salary.total_absent),
+        total_leaves: parseFloat(this.salary.total_leaves),
         total_deductions: parseFloat(this.salary.total_deductions),
+        total_working_days: parseFloat(this.salary.total_working_days),
+        total_days: parseFloat(this.salary.total_days),
         net_salary: parseFloat(this.salary.net_salary),
       };
 
@@ -485,31 +503,53 @@ export default {
           console.log(error);
         });
     },
+    editableEarningName(event, index) {
+      const value = event.target.innerText;
+      this.salary.earnings.inputs[index].name = value;
+    },
+    editableDeductionName(event, index) {
+      const value = event.target.innerText;
+      this.salary.deductions.inputs[index].name = value;
+    },
     genrateSalary() {
       if (this.year !== "" && this.month !== "") {
         EmployeeSalaryService.genrateSalary(this.empId, this.year, this.month)
           .then(({ data }) => {
             console.log(data);
             if (data != undefined && data != "") {
-              // if (data.total_present > 0) {
               this.salary.emp_name = data.emp.full_name.en;
-              this.salary.emp_designation = "salesman";
-              this.salary.basic_salary = data.emp.salary.basic_salary;
+              this.salary.emp_designation = data.emp.designation
+                ? data.emp.designation.en
+                : "";
+              this.salary.basic_salary = data.emp.salary.basic_salary
+                ? data.emp.salary.basic_salary
+                : 0;
+
               this.salary.net_salary = data.emp.salary.basic_salary;
               this.salary.total_working_days = data.total_working_days;
               this.salary.total_days = data.total_days;
               this.salary.total_leaves = data.total_leaves;
               this.salary.total_absent = data.total_absent;
+
+              if (data.allowances) {
+                data.allowances.forEach((element) => {
+                  this.salary.earnings.inputs.unshift({
+                    name: element.name.en,
+                    value: parseInt(element.amount),
+                  });
+                });
+              }
+
+              if (data.deductions) {
+                data.deductions.forEach((element) => {
+                  this.salary.deductions.inputs.unshift({
+                    name: element.name.en,
+                    value: parseInt(element.amount),
+                  });
+                });
+              }
+
               this.showSalaryForm = true;
-              // } else {
-              //   this.$swal.fire({
-              //     icon: "error",
-              //     title: "Error",
-              //     text: "Something Went Wrong.",
-              //     timer: 3600,
-              //   });
-              //   this.showSalaryForm = false;
-              // }
             }
           })
           .catch((error) => {

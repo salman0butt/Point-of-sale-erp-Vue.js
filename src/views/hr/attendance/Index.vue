@@ -140,7 +140,6 @@ export default {
     },
     getAttendance() {
       this.loading = true;
-
       this.$http
         .get("attendances", {
           params: {
