@@ -110,7 +110,9 @@
                 v-for="(input, k) in salary.earnings.inputs"
                 :key="k"
               >
-                <p contenteditable>{{ input.name }}</p>
+                <p contenteditable @input="(event) => editableEarningName(event, k)">
+                  {{ input.name }}
+                </p>
                 <CInput
                   type="number"
                   v-model="input.value"
@@ -138,7 +140,9 @@
                 v-for="(input, k) in salary.deductions.inputs"
                 :key="k"
               >
-                <p contenteditable>{{ input.name }}</p>
+                <p contenteditable @input="(event) => editableDeductionName(event, k)">
+                  {{ input.name }}
+                </p>
                 <CInput
                   type="number"
                   v-model="input.value"
@@ -448,6 +452,14 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    editableEarningName(event, index) {
+      const value = event.target.innerText;
+      this.salary.earnings.inputs[index].name = value;
+    },
+    editableDeductionName(event, index) {
+      const value = event.target.innerText;
+      this.salary.deductions.inputs[index].name = value;
     },
     genrateSalary() {
       if (this.year !== "" && this.month !== "") {
