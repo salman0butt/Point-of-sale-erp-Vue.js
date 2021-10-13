@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeQualification"
+              :items="employeeSalary"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import EmployeeQualificationService from "@/services/employees/EmployeeQualificationService";
+import EmployeeSalaryAdjustmentService from "@/services/employees/EmployeeSalaryAdjustmentService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,24 +91,26 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "organization", label: "ORGANIZATION", _style: "min-width:15%;" },
-  { key: "marks_obtained", label: "MARKS OBTAINED", _style: "min-width:15%;" },
-  { key: "total_marks", label: "TOTAL MARKS", _style: "min-width:15%;" },
-  { key: "percentage", label: "PERCENTAGE", _style: "min-width:15%;" },
-  { key: "year", label: "Year", _style: "min-width:15%;" },
+  { key: "month", label: "MONTH", _style: "min-width:40%" },
+  // { key: "total_working_days", label: "TOTAL WORKING DAYS", _style: "min-width:15%;" },
+  // { key: "total_days", label: "TOTAL DAYS", _style: "min-width:15%;" },
+  { key: "total_leaves", label: "TOTAL LEAVES", _style: "min-width:15%;" },
+  { key: "total_absents", label: "TOTAL ABSENT", _style: "min-width:15%;" },
+  { key: "basic_salary", label: "BASIC SALARY", _style: "min-width:15%;" },
+  { key: "total_earnings", label: "TOTAL EARNINGS", _style: "min-width:15%;" },
+  { key: "total_deductions", label: "TOTAL DEDUCTIONS", _style: "min-width:15%;" },
+  { key: "net_salary", label: "NET SALARY", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeQualificationIndex",
+  name: "EmployeeSalaryIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeQualificationData: [],
+      employeeSalaryData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -120,11 +122,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeQualification();
+    this.getEmployeeSalary();
   },
   computed: {
-    employeeQualification() {
-      return this.employeeQualificationData;
+    employeeSalary() {
+      return this.employeeSalaryData;
     },
   },
   watch: {
@@ -132,22 +134,22 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeQualification(this.activePage, this.perPage);
+      this.getEmployeeSalary(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeQualification(page = "", per_page = "") {
+    getEmployeeSalary(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeQualificationService.getAll(this.empId, page, per_page)
+      EmployeeSalaryAdjustmentService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
           console.log(data);
           if (data !== "" && data !== undefined) {
             this.loading = true;
-            this.employeeQualificationData = [];
+            this.employeeSalaryData = [];
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeQualificationData.push({ ...item, id });
+                this.employeeSalaryData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -166,14 +168,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeQualificationData[item.id]._selected);
-      this.$set(this.employeeQualificationData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeSalaryData[item.id]._selected);
+      this.$set(this.employeeSalaryData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeQualificationEdit", uuid);
+      this.$emit("employee-salary-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -188,16 +190,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeQualificationService.delete(this.deleteRows)
+            EmployeeSalaryAdjustmentService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Qualification Deleted Successfully",
+                    text: "Salary Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeQualificationData = this.employeeQualificationData.filter(
+                  this.employeeSalaryData = this.employeeSalaryData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -223,13 +225,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeQualificationData = agent.currentItems;
+        this.employeeSalaryData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeQualification("", this.perPage);
+      this.getEmployeeSalary("", this.perPage);
     },
   },
 };

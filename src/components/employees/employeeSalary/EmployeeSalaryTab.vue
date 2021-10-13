@@ -14,6 +14,12 @@
               </CTab>
               <CTab id="show">
                 <template slot="title">
+                  {{ tabs.salary }}
+                </template>
+                <EmployeeSalaryToggle />
+              </CTab>
+              <CTab id="show">
+                <template slot="title">
                   {{ tabs.allowances }}
                 </template>
                 <EmployeeAllowanceTab />
@@ -33,6 +39,7 @@
 </template>
 <script>
 import EmployeeBasicForm from "@/components/employees/employeeSalary/EmployeeBasicForm";
+import EmployeeSalaryToggle from "@/components/employees/employeeSalary/EmployeeSalaryToggle";
 import EmployeeAllowanceTab from "@/components/employees/employeeAllowance/EmployeeAllowanceTab";
 import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/EmployeeBankAccountTab";
 
@@ -42,10 +49,12 @@ export default {
     EmployeeBasicForm,
     EmployeeAllowanceTab,
     EmployeeBankAccountTab,
+    EmployeeSalaryToggle,
   },
   data: () => ({
     tabs: {
       basic: "Basic",
+      salary: "Salary",
       allowances: "Allowances",
       banks: "Bank Accounts",
     },
