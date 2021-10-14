@@ -1,10 +1,15 @@
 <template>
   <div>
-    <CRow>
-      <CCol xs="12" lg="12">
-        <EmployeeBankAccountToggle />
-      </CCol>
-    </CRow>
+    <CCard>
+      <CCardHeader>Bank Accounts</CCardHeader>
+      <CCardBody>
+        <CRow>
+          <CCol xs="12" lg="12">
+            <EmployeeBankAccountToggle />
+          </CCol>
+        </CRow>
+      </CCardBody>
+    </CCard>
   </div>
 </template>
 <script>

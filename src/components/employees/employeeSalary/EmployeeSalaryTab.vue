@@ -1,64 +1,80 @@
 <template>
-  <div>
-    <CRow>
-      <CCol xs="12" lg="12">
-        <CCard>
-          <CCardHeader>Salary</CCardHeader>
-          <CCardBody>
-            <CTabs add-tab-classes="mt-1" variant="pills" fade>
-              <CTab active id="show">
-                <template slot="title">
-                  {{ tabs.basic }}
-                </template>
-                <EmployeeBasicForm />
-              </CTab>
-              <CTab id="show">
-                <template slot="title">
-                  {{ tabs.salary }}
-                </template>
-                <EmployeeSalaryToggle />
-              </CTab>
-              <CTab id="show">
-                <template slot="title">
-                  {{ tabs.allowances }}
-                </template>
-                <EmployeeAllowanceTab />
-              </CTab>
-              <CTab id="show">
-                <template slot="title">
-                  {{ tabs.banks }}
-                </template>
-                <EmployeeBankAccountTab />
-              </CTab>
-            </CTabs>
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+  <CCard>
+    <CCardHeader>Salary</CCardHeader>
+    <CCardBody>
+      <div>
+        <CRow>
+          <CCol xs="12" lg="12">
+            <CButton
+              @click="ToggleEmployeeSalary()"
+              color="primary"
+              class="mb-2 mt-3"
+              style="float: right"
+            >
+              {{ toggleName }}
+            </CButton>
+          </CCol>
+        </CRow>
+        <CRow>
+          <CCol xs="12" lg="12">
+            <CCollapse :show="collapse_table">
+              <EmployeeSalaryIndex
+                ref="employeeSalaryRef"
+                @employee-salary-edit="employeeSalaryEdited"
+              />
+            </CCollapse>
+            <CCollapse :show="collapse">
+              <EmployeeSalaryForm
+                ref="employeeSalaryEditRef"
+                @employee-salary-created="employeeSalaryCreatedSend"
+              />
+            </CCollapse>
+          </CCol>
+        </CRow>
+      </div>
+    </CCardBody>
+  </CCard>
 </template>
 <script>
-import EmployeeBasicForm from "@/components/employees/employeeSalary/EmployeeBasicForm";
-import EmployeeSalaryToggle from "@/components/employees/employeeSalary/EmployeeSalaryToggle";
-import EmployeeAllowanceTab from "@/components/employees/employeeAllowance/EmployeeAllowanceTab";
-import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/EmployeeBankAccountTab";
+import EmployeeSalaryIndex from "@/components/employees/employeeSalary/EmployeeSalaryIndex";
+import EmployeeSalaryForm from "@/components/employees/employeeSalary/EmployeeSalaryForm";
 
 export default {
-  name: "EmployeeSalaryTab",
-  components: {
-    EmployeeBasicForm,
-    EmployeeAllowanceTab,
-    EmployeeBankAccountTab,
-    EmployeeSalaryToggle,
-  },
+  name: "EmployeeSalaryToggle",
+  components: { EmployeeSalaryIndex, EmployeeSalaryForm },
   data: () => ({
-    tabs: {
-      basic: "Basic",
-      salary: "Salary",
-      allowances: "Allowances",
-      banks: "Bank Accounts",
-    },
+    toggleName: "Add New Salary",
+    collapse: false,
+    collapse_table: true,
   }),
-  methods: {},
+  methods: {
+    ToggleEmployeeSalary() {
+      this.resetEmployeeSalaryForm();
+      this.collapse = !this.collapse;
+      this.collapse_table = !this.collapse_table;
+      if (this.toggleName == "Add New Salary") {
+        this.toggleName = "Go To Salary";
+      } else if (this.toggleName == "Go To Salary") {
+        this.toggleName = "Add New Salary";
+      }
+    },
+    employeeSalaryCreatedSend() {
+      this.ToggleEmployeeSalary();
+      this.$refs.employeeSalaryRef.getEmployeeSalary();
+    },
+    employeeSalaryEdited(uuid) {
+      this.ToggleEmployeeSalary();
+      this.$refs.employeeSalaryEditRef.getEditData(uuid);
+    },
+    resetEmployeeSalaryForm() {
+      this.$refs.employeeSalaryEditRef.resetForm();
+    },
+  },
 };
 </script>
+
+<style>
+.errorMsg {
+  color: red;
+}
+</style>

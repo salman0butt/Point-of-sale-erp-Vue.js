@@ -11,7 +11,11 @@
               aria-orientation="vertical"
             >
               <div class="side-avatar">
-                <img src="/img/avatars/7.jpg" class="c-avatar-img" alt="Profile" />
+                <img
+                  src="/img/avatars/7.jpg"
+                  class="c-avatar-img"
+                  alt="Profile"
+                />
                 <CIcon :content="$options.cisCircle" class="online" />
                 <div>
                   <template v-if="emp_name">
@@ -20,7 +24,9 @@
                   <PuSkeleton v-else width="100px" />
                   <br />
                   <template v-if="employee_designation">
-                    <span class="emp-designation">{{ employee_designation }}</span>
+                    <span class="emp-designation">{{
+                      employee_designation
+                    }}</span>
                   </template>
                   <PuSkeleton v-else />
                 </div>
@@ -38,7 +44,9 @@
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
-                <CBadge v-if="tab.disabled" color="danger"> comming soon</CBadge></a
+                <CBadge v-if="tab.disabled" color="danger">
+                  comming soon</CBadge
+                ></a
               >
             </div>
           </CCardBody>
@@ -69,8 +77,10 @@ import EmployeeAssetTab from "@/components/employees/employeeAsset/EmployeeAsset
 import EmployeeAwardTab from "@/components/employees/employeeAward/EmployeeAwardTab";
 import employeeAttendanceIndex from "@/components/employees/employeeAttendance/employeeAttendanceIndex";
 import EmployeeSalaryTab from "@/components/employees/employeeSalary/EmployeeSalaryTab";
+import EmployeeEarningTab from "@/components/employees/employeeEarnings/EmployeeEarningTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
+import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/EmployeeBankAccountTab";
 
 export default {
   name: "EditEmployee",
@@ -93,6 +103,8 @@ export default {
     EmployeeAwardTab,
     EmployeeSalaryTab,
     employeeAttendanceIndex,
+    EmployeeEarningTab,
+    EmployeeBankAccountTab,
   },
   data() {
     return {
@@ -105,17 +117,23 @@ export default {
         { key: "EmployeeContractTab", name: "Contracts" },
         { key: "employeeAttendanceIndex", name: "Attendance" },
         { key: "EmployeeLeaveTab", name: "Leaves" },
-        { key: "EmployeeSalaryTab", name: "Salary" },
+        { key: "EmployeeEarningTab", name: "Earnings" },
+        { key: "EmployeeDeductionTab", name: "Deductions" },
         { key: "EmployeeExpenseTab", name: "Expenses" },
-        { key: "EmployeeTargetTab", name: "Targets", disabled: true },
-        { key: "EmployeeDiscountTab", name: "Discounts", disabled: true },
+        { key: "EmployeeBankAccountTab", name: "Bank Accounts" },
+        { key: "EmployeeSalaryTab", name: "Salary" },
         { key: "EmployeeComplainTab", name: "Complains" },
         { key: "EmployeeWarningTab", name: "Warnings" },
-        { key: "EmployeeLoanTab", name: "Loans" },
-        { key: "EmployeeLoanInstallmentTab", name: "Loan Installments" },
-        { key: "EmployeeDeductionTab", name: "Deductions" },
         { key: "EmployeeAssetTab", name: "Assets" },
         { key: "EmployeeAwardTab", name: "Awards" },
+        { key: "EmployeeTargetTab", name: "Targets", disabled: true },
+        { key: "EmployeeDiscountTab", name: "Discounts", disabled: true },
+        { key: "EmployeeLoanTab", name: "Loans", disabled: true },
+        {
+          key: "EmployeeLoanInstallmentTab",
+          name: "Loan Installments",
+          disabled: true,
+        },
       ],
     };
   },
