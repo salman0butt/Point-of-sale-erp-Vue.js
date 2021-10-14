@@ -364,7 +364,7 @@ export default {
             this.salary.earnings.inputs = [];
             if (earnings) {
               for (let index in earnings) {
-                this.salary.earnings.inputs.unshift({
+                this.salary.earnings.inputs.push({
                   name: earnings[index].name,
                   value: earnings[index].value,
                 });
@@ -374,7 +374,7 @@ export default {
             let deductions = JSON.parse(data.deductions);
             if (deductions) {
               for (let index in deductions) {
-                this.salary.deductions.inputs.unshift({
+                this.salary.deductions.inputs.push({
                   name: deductions[index].name,
                   value: deductions[index].value,
                 });
@@ -454,6 +454,8 @@ export default {
               this.salary.total_days = data.total_days;
               this.salary.total_leaves = data.total_leaves;
               this.salary.total_absent = data.total_absent;
+              this.salary.deductions.inputs = [];
+              this.salary.earnings.inputs = [];
 
               if (data.allowances) {
                 data.allowances.forEach((element) => {
