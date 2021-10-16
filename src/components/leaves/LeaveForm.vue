@@ -115,6 +115,7 @@ export default {
   name: "LeaveForm",
   data: () => ({
     isEditing: false,
+    saveAndExit: false,
     form: {
       id: null,
       employee_id: "",

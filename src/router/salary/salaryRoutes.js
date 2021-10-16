@@ -1,9 +1,11 @@
 import auth from '@/middleware/auth'
 
-//Grade
-const IndexSalary = () => import('@/views/hr/salary/Index')
-// const CreateGrade = () => import('@/views/grades/Create')
-// const EditGrade = () => import('@/views/grades/Edit')
+//Salary
+// const IndexSalary = () => import('@/views/hr/salary/Index')
+const IndexSalary = () => import('@/views/salary/Index')
+const CreateSalary = () => import('@/views/salary/Create')
+const EditSalary = () => import('@/views/salary/Edit')
+
 
 const salaryRoutes = {
     path: 'salary',
@@ -19,16 +21,16 @@ const salaryRoutes = {
             name: 'IndexSalary',
             component: IndexSalary
         },
-        // {
-        //     path: 'create',
-        //     name: 'CreateGrade',
-        //     component: CreateGrade
-        // },
-        // {
-        //     path: 'edit/:id',
-        //     name: 'EditGrade',
-        //     component: EditGrade
-        // }
+        {
+            path: 'create',
+            name: 'CreateSalary',
+            component: CreateSalary
+        },
+        {
+            path: 'edit/:id',
+            name: 'EditSalary',
+            component: EditSalary
+        }
     ]
 };
 

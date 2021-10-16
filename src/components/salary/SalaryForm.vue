@@ -5,6 +5,13 @@
         <form @submit.prevent="isEditing ? updateEmployeeSalary() : saveEmployeeSalary()">
           <CRow v-if="!this.isEditing">
             <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Employee"
+                :options="options.employees"
+                :value.sync="salary.employee_id"
+              />
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
               <CSelect label="Select Year" :options="options.years" :value.sync="year" />
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -171,15 +178,25 @@
             </CRow>
 
             <!-- <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p> -->
-            <CRow class="mt-4 d-block">
+            <CRow class="mt-4">
               <CButton
                 progress
                 timeout="2000"
                 block
                 color="success"
-                style="float: right; width: 150px; margin-right: 20px"
+                style="float: right; width: 200px; margin-left: 20px"
                 type="submit"
-                >Save Salary</CButton
+                @click="saveAndExit = false"
+                >Save & Continue</CButton
+              >
+              <CButton
+                timeout="2000"
+                block
+                color="danger"
+                style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                @click="saveAndExit = true"
+                type="submit"
+                >Save & Exit</CButton
               >
             </CRow>
           </div>
@@ -203,6 +220,7 @@ export default {
   cisMinusSquare,
   data: () => ({
     isEditing: false,
+    saveAndExit: false,
     showSalaryForm: false,
     salary: {
       id: null,
@@ -244,6 +262,7 @@ export default {
     options: {
       years: [{ value: "", label: "Choose Year", disabled: true, selected: "" }],
       months: [{ value: "", label: "Choose Month", disabled: true, selected: "" }],
+      employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
     },
   }),
   watch: {
@@ -254,8 +273,14 @@ export default {
   },
 
   created() {
-    this.empId = this.$route.params.id;
+    this.salary.id = this.$route.params.id;
     this.generateArrayOfYearsAndMonths();
+    this.getAllEmployees();
+    if (this.salary.id !== "" && this.salary.id !== undefined) {
+      this.isEditing = true;
+      this.showSalaryForm = true;
+      this.getEmployeeSalary();
+    }
   },
   methods: {
     addEarnings() {
@@ -295,7 +320,7 @@ export default {
       this.calculateSalary();
     },
     saveEmployeeSalary() {
-      this.salary.employee_id = this.$route.params.id;
+      // this.salary.employee_id = this.$route.params.id;
       // this.$v.$touch();
       // if (!this.$v.$invalid) {
       let formData = {
@@ -327,8 +352,12 @@ export default {
               timer: 3600,
             });
             // this.$v.$reset();
-            this.$emit("employee-salary-created");
             this.resetForm();
+            if (this.saveAndExit) {
+              this.$router.push({ path: "/salary/index" });
+            } else {
+              this.$router.push({ path: "/salary/edit/" + res.data.uuid });
+            }
           }
         })
         .catch((error) => {
@@ -344,7 +373,7 @@ export default {
       // }
     },
     updateEmployeeSalary() {
-      this.salary.employee_id = this.$route.params.id;
+      // this.salary.employee_id = this.$route.params.id;
       // this.$v.$touch();
       // if (!this.$v.$invalid) {
       let formData = {
@@ -376,8 +405,12 @@ export default {
               timer: 3600,
             });
             // this.$v.$reset();
-            this.$emit("employee-salary-created");
             this.resetForm();
+            if (this.saveAndExit) {
+              this.$router.push({ path: "/salary/index" });
+            } else {
+              this.$router.push({ path: "/salary/edit/" + res.data.uuid });
+            }
           }
         })
         .catch((error) => {
@@ -398,6 +431,7 @@ export default {
           if (data != null && data != "") {
             this.isEditing = true;
             this.salary.id = data.uuid;
+            this.salary.employee_id = data.employee.uuid;
             this.month = data.month;
             this.year = data.year;
             this.salary.total_working_days = data.total_working_days;
@@ -511,7 +545,11 @@ export default {
     },
     genrateSalary() {
       if (this.year !== "" && this.month !== "") {
-        EmployeeSalaryService.genrateSalary(this.empId, this.year, this.month)
+        EmployeeSalaryService.genrateSalary(
+          this.salary.employee_id,
+          this.year,
+          this.month
+        )
           .then(({ data }) => {
             console.log(data);
             if (data != undefined && data != "") {
@@ -568,6 +606,22 @@ export default {
           });
       }
     },
+    getAllEmployees() {
+      this.$http
+        .get("/employees-create")
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            const employees = this.options.employees;
+
+            data.employees.map(function (val) {
+              employees.push({ value: val.uuid, label: val.full_name.en });
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     getEditData(uuid) {
       // this.resetForm();
       this.isEditing = true;
@@ -585,8 +639,8 @@ export default {
       this.salary.total_deductions = 0;
       this.salary.total_expenses = 0;
       this.salary.net_salary = 0;
-      this.isEditing = false;
-      this.showSalaryForm = false;
+      // this.isEditing = false;
+      // this.showSalaryForm = false;
     },
   },
 };

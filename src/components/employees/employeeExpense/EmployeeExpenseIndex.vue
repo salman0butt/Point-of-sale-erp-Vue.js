@@ -94,7 +94,7 @@ const fields = [
   },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "periodic", label: "PERIODIC", _style: "min-width:15%;" },
+  { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
   { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
   { key: "detail", label: "DETAIL", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
