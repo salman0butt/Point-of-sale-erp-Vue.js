@@ -405,7 +405,7 @@ export default {
               timer: 3600,
             });
             // this.$v.$reset();
-            this.resetForm();
+            // this.resetForm();
             if (this.saveAndExit) {
               this.$router.push({ path: "/salary/index" });
             } else {
