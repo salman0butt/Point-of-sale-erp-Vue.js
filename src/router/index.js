@@ -20,6 +20,7 @@ import complainRoutes from '@/router/complains/complainRoutes';
 import warningRoutes from '@/router/warnings/warningRoutes';
 import recruitmentRoutes from '@/router/recruitments/recruitmentRoutes';
 import salaryRoutes from '@/router/salary/salaryRoutes';
+import salaryPaymentRoutes from '@/router/salaryPayment/salaryPaymentRoutes';
 import profileRoutes from '@/router/profile/profileRoutes';
 import leaveRoutes from '@/router/leaves/leaveRoutes';
 import store from '@/store'
@@ -195,6 +196,7 @@ const router = new Router({
         complainRoutes,
         warningRoutes,
         salaryRoutes,
+        salaryPaymentRoutes,
         accountingRoutes,
         recruitmentRoutes,
         profileRoutes,

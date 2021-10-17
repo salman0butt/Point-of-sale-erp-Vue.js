@@ -19,8 +19,8 @@ class EmployeeQualificationService extends Helper {
     return http.get(`/employee-qualifications/${id}`);
   }
 
-  create(data) {
-    return http.post("/employee-qualifications", data);
+  create(data, config) {
+    return http.post("/employee-qualifications", data, config);
   }
 
   update(id, data) {
