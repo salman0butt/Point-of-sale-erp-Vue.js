@@ -11,11 +11,7 @@
               aria-orientation="vertical"
             >
               <div class="side-avatar">
-                <img
-                  src="/img/avatars/7.jpg"
-                  class="c-avatar-img"
-                  alt="Profile"
-                />
+                <img src="/img/avatars/7.jpg" class="c-avatar-img" alt="Profile" />
                 <CIcon :content="$options.cisCircle" class="online" />
                 <div>
                   <template v-if="emp_name">
@@ -24,9 +20,7 @@
                   <PuSkeleton v-else width="100px" />
                   <br />
                   <template v-if="employee_designation">
-                    <span class="emp-designation">{{
-                      employee_designation
-                    }}</span>
+                    <span class="emp-designation">{{ employee_designation }}</span>
                   </template>
                   <PuSkeleton v-else />
                 </div>
@@ -44,9 +38,7 @@
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
-                <CBadge v-if="tab.disabled" color="danger">
-                  comming soon</CBadge
-                ></a
+                <CBadge v-if="tab.disabled" color="danger"> comming soon</CBadge></a
               >
             </div>
           </CCardBody>
@@ -81,6 +73,7 @@ import EmployeeEarningTab from "@/components/employees/employeeEarnings/Employee
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
 import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/EmployeeBankAccountTab";
+import EmployeeSalaryPaymentTab from "@/components/employees/employeeSalaryPayment/EmployeeSalaryPaymentTab";
 
 export default {
   name: "EditEmployee",
@@ -105,6 +98,7 @@ export default {
     employeeAttendanceIndex,
     EmployeeEarningTab,
     EmployeeBankAccountTab,
+    EmployeeSalaryPaymentTab,
   },
   data() {
     return {
@@ -122,6 +116,7 @@ export default {
         { key: "EmployeeExpenseTab", name: "Expenses" },
         { key: "EmployeeBankAccountTab", name: "Bank Accounts" },
         { key: "EmployeeSalaryTab", name: "Salary" },
+        { key: "EmployeeSalaryPaymentTab", name: "Payments" },
         { key: "EmployeeComplainTab", name: "Complains" },
         { key: "EmployeeWarningTab", name: "Warnings" },
         { key: "EmployeeAssetTab", name: "Assets" },
@@ -205,7 +200,7 @@ a.nav-link.active,
   color: #52b947 !important;
   position: absolute;
   left: 32%;
-  top: 12%;
+  top: 10%;
 }
 #v-pills-tab {
   display: block;

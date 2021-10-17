@@ -163,7 +163,7 @@
               </CCol>
               <CCol sm="12" md="12" class="pt-2">
                 <h6 v-if="this.salary.total_expenses">
-                  Total Expense: -{{ this.salary.total_expenses }}
+                  Total Expense: +{{ this.salary.total_expenses }}
                 </h6>
 
                 <h4>Total Payable Salary: {{ salary.payable_salary }}</h4>
@@ -507,7 +507,7 @@ export default {
 
       this.salary.net_salary = parseFloat(total_earnings) - parseFloat(total_deductions);
       this.salary.payable_salary =
-        parseFloat(this.salary.net_salary) - parseFloat(total_expenses);
+        parseFloat(this.salary.net_salary) + parseFloat(total_expenses);
     },
     genrateSalary() {
       if (this.year !== "" && this.month !== "") {

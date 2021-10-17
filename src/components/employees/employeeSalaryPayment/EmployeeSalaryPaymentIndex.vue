@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeSalary"
+              :items="employeeSalaryPayment"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -27,20 +27,22 @@
                   />
                 </td>
               </template>
-              <template #payment="{ item }">
+              <template #employee="{ item }">
                 <td>
-                  <CBadge color="danger" v-if="item.payment === 0"> Unpaid</CBadge>
-                  <CBadge
-                    color="primary"
-                    v-if="item.payment > 0 && item.payment < item.payable_salary"
-                  >
-                    Pending</CBadge
-                  >
-                  <CBadge color="success" v-if="item.payment >= item.payable_salary">
-                    Paid</CBadge
-                  >
+                  {{ item.employee.full_name }}
                 </td>
               </template>
+              <template #employee_salary_adjustment="{ item }">
+                <td>
+                  {{ item.employee_salary_adjustment.month }}
+                </td>
+              </template>
+              <template #bank_account="{ item }">
+                <td>
+                  {{ item.bank_account.name }}
+                </td>
+              </template>
+
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -84,7 +86,7 @@
 </template>
 
 <script>
-import EmployeeSalaryAdjustmentService from "@/services/employees/EmployeeSalaryAdjustmentService";
+import EmployeeSalaryPaymentService from "@/services/employees/EmployeeSalaryPaymentService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -95,28 +97,26 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "month", label: "MONTH", _style: "min-width:40%" },
-  // { key: "total_working_days", label: "TOTAL WORKING DAYS", _style: "min-width:15%;" },
-  // { key: "total_days", label: "TOTAL DAYS", _style: "min-width:15%;" },
-  // { key: "total_leaves", label: "TOTAL LEAVES", _style: "min-width:15%;" },
-  // { key: "total_absents", label: "TOTAL ABSENT", _style: "min-width:15%;" },
-  { key: "basic_salary", label: "BASIC SALARY", _style: "min-width:15%;" },
-  { key: "total_earnings", label: "TOTAL EARNINGS", _style: "min-width:15%;" },
-  { key: "total_deductions", label: "TOTAL DEDUCTIONS", _style: "min-width:15%;" },
-  { key: "net_salary", label: "NET SALARY", _style: "min-width:15%;" },
-  { key: "payable_salary", label: "PAYABLE SALARY", _style: "min-width:15%;" },
-  { key: "payment", label: "PAYMENT", _style: "min-width:15%;" },
+  { key: "employee", label: "EMPLOYEE", _style: "min-width:40%" },
+  {
+    key: "employee_salary_adjustment",
+    label: "SALARY ADJUSTMENT MONTH",
+    _style: "min-width:15%;",
+  },
+  { key: "bank_account", label: "BANK ACCOUNT", _style: "min-width:15%;" },
+  { key: "date", label: "DATE", _style: "min-width:15%;" },
+  { key: "amount_paid", label: "AMOUNT PAID", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "EmployeeSalaryIndex",
+  name: "EmployeeSalaryPaymentIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeSalaryData: [],
+      employeeSalaryPaymentData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -128,11 +128,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeSalary();
+    this.getEmployeeSalaryPayment();
   },
   computed: {
-    employeeSalary() {
-      return this.employeeSalaryData;
+    employeeSalaryPayment() {
+      return this.employeeSalaryPaymentData;
     },
   },
   watch: {
@@ -140,22 +140,22 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeSalary(this.activePage, this.perPage);
+      this.getEmployeeSalaryPayment(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeSalary(page = "", per_page = "") {
+    getEmployeeSalaryPayment(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeSalaryAdjustmentService.getAll(this.empId, page, per_page)
+      EmployeeSalaryPaymentService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
           console.log(data);
           if (data !== "" && data !== undefined) {
             this.loading = true;
-            this.employeeSalaryData = [];
+            this.employeeSalaryPaymentData = [];
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeSalaryData.push({ ...item, id });
+                this.employeeSalaryPaymentData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -174,14 +174,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.employeeSalaryData[item.id]._selected);
-      this.$set(this.employeeSalaryData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeSalaryPaymentData[item.id]._selected);
+      this.$set(this.employeeSalaryPaymentData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-salary-edit", uuid);
+      this.$emit("employee-salary-payment-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -196,16 +196,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeSalaryAdjustmentService.delete(this.deleteRows)
+            EmployeeSalaryPaymentService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Salary Deleted Successfully",
+                    text: "SalaryPayment Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeSalaryData = this.employeeSalaryData.filter(
+                  this.employeeSalaryPaymentData = this.employeeSalaryPaymentData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -231,13 +231,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.employeeSalaryData = agent.currentItems;
+        this.employeeSalaryPaymentData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeSalary("", this.perPage);
+      this.getEmployeeSalaryPayment("", this.perPage);
     },
   },
 };

@@ -30,9 +30,18 @@
               {{ item.employee.full_name }}
             </td>
           </template>
-          <template #parent="{ item }">
+          <template #payment="{ item }">
             <td>
-              {{ item.name }}
+              <CBadge color="danger" v-if="item.payment === 0"> Unpaid</CBadge>
+              <CBadge
+                color="primary"
+                v-if="item.payment > 0 && item.payment < item.payable_salary"
+              >
+                Pending</CBadge
+              >
+              <CBadge color="success" v-if="item.payment >= item.payable_salary">
+                Paid</CBadge
+              >
             </td>
           </template>
           <template #actions="{ item }">
@@ -95,6 +104,8 @@ const fields = [
   { key: "total_expenses", label: "TOTAL EXPENSES", _style: "min-width:15%;" },
   { key: "total_deductions", label: "TOTAL DEDUCTIONS", _style: "min-width:15%;" },
   { key: "net_salary", label: "NET SALARY", _style: "min-width:15%;" },
+  { key: "payable_salary", label: "PAYABLE SALARY", _style: "min-width:15%;" },
+  { key: "payment", label: "PAYMENT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 

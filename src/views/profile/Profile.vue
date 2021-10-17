@@ -64,9 +64,12 @@ import EmployeeLoanInstallmentTab from "@/components/employees/employeeLoanInsta
 import EmployeeDeductionTab from "@/components/employees/employeeDeduction/EmployeeDeductionTab";
 import EmployeeAssetTab from "@/components/employees/employeeAsset/EmployeeAssetTab";
 import EmployeeAwardTab from "@/components/employees/employeeAward/EmployeeAwardTab";
+import employeeAttendanceIndex from "@/components/employees/employeeAttendance/employeeAttendanceIndex";
 import EmployeeSalaryTab from "@/components/employees/employeeSalary/EmployeeSalaryTab";
+import EmployeeEarningTab from "@/components/employees/employeeEarnings/EmployeeEarningTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import EmployeeService from "@/services/employees/EmployeeService";
+import EmployeeBankAccountTab from "@/components/employees/employeeBankAccount/EmployeeBankAccountTab";
 
 export default {
   name: "Profile",
@@ -88,6 +91,9 @@ export default {
     EmployeeAssetTab,
     EmployeeAwardTab,
     EmployeeSalaryTab,
+    employeeAttendanceIndex,
+    EmployeeEarningTab,
+    EmployeeBankAccountTab,
   },
   data() {
     return {
@@ -97,19 +103,26 @@ export default {
       tabs: [
         { key: "EmployeeTab", name: "General" },
         { key: "EmployeeQualificationTab", name: "Qualifications" },
-        { key: "EmployeeSalaryTab", name: "Salary" },
         { key: "EmployeeContractTab", name: "Contracts" },
+        { key: "employeeAttendanceIndex", name: "Attendance" },
+        { key: "EmployeeLeaveTab", name: "Leaves" },
+        { key: "EmployeeEarningTab", name: "Earnings" },
+        { key: "EmployeeDeductionTab", name: "Deductions" },
         { key: "EmployeeExpenseTab", name: "Expenses" },
-        { key: "EmployeeTargetTab", name: "Targets", disabled: true },
-        { key: "EmployeeDiscountTab", name: "Discounts", disabled: true },
+        { key: "EmployeeBankAccountTab", name: "Bank Accounts" },
+        { key: "EmployeeSalaryTab", name: "Salary" },
         { key: "EmployeeComplainTab", name: "Complains" },
         { key: "EmployeeWarningTab", name: "Warnings" },
-        { key: "EmployeeLeaveTab", name: "Leaves" },
-        { key: "EmployeeLoanTab", name: "Loans" },
-        { key: "EmployeeLoanInstallmentTab", name: "Loan Installments" },
-        { key: "EmployeeDeductionTab", name: "Deductions" },
         { key: "EmployeeAssetTab", name: "Assets" },
         { key: "EmployeeAwardTab", name: "Awards" },
+        { key: "EmployeeTargetTab", name: "Targets", disabled: true },
+        { key: "EmployeeDiscountTab", name: "Discounts", disabled: true },
+        { key: "EmployeeLoanTab", name: "Loans", disabled: true },
+        {
+          key: "EmployeeLoanInstallmentTab",
+          name: "Loan Installments",
+          disabled: true,
+        },
       ],
     };
   },
@@ -181,7 +194,7 @@ a.nav-link.active,
   color: #52b947 !important;
   position: absolute;
   left: 32%;
-  top: 12%;
+  top: 10%;
 }
 #v-pills-tab {
   display: block;
