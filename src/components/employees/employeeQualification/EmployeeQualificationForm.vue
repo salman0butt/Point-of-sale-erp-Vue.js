@@ -296,9 +296,7 @@ export default {
         });
     },
     handleFile(files) {
-      this.form.documents.push(files[0]);
-      // files.forEach()
-      console.log(this.form.documents);
+      this.form.documents = files;
     },
     getEditData(uuid) {
       this.isEditing = true;
@@ -310,7 +308,7 @@ export default {
         this.form[index] = "";
       }
       this.isEditing = false;
-      this.$refs.fileUpload.reset();
+      // this.$refs.fileUpload.reset();
     },
   },
 };
