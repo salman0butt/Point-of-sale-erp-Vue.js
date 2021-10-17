@@ -83,7 +83,6 @@ export default {
       let readers = [];
       if (!this.files.length) return;
       for (let i = 0; i < this.files.length; i++) {
-        // console.log(this.files);
         if (this.files[i].type === "application/pdf") {
           readers.push({
             name: this.files[i].name,
