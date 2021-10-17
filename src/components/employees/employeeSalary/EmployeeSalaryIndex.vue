@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <CDataTable
-              :items="employeeExpense"
+              :items="employeeSalary"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -17,7 +17,6 @@
               hover
               :loading="loading"
               @row-clicked="rowClicked"
-              ref="externalAgent"
             >
               <template #select="{ item }">
                 <td>
@@ -41,13 +40,13 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -81,32 +80,37 @@
 </template>
 
 <script>
-import EmployeeExpenseService from "@/services/employees/EmployeeExpenseService";
+import EmployeeSalaryAdjustmentService from "@/services/employees/EmployeeSalaryAdjustmentService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "repeat", label: "REPEAT", _style: "min-width:15%;" },
-  { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
-  { key: "detail", label: "DETAIL", _style: "min-width:15%;" },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
+  { key: "month", label: "MONTH", _style: "min-width:40%" },
+  // { key: "total_working_days", label: "TOTAL WORKING DAYS", _style: "min-width:15%;" },
+  // { key: "total_days", label: "TOTAL DAYS", _style: "min-width:15%;" },
+  { key: "total_leaves", label: "TOTAL LEAVES", _style: "min-width:15%;" },
+  { key: "total_absents", label: "TOTAL ABSENT", _style: "min-width:15%;" },
+  { key: "basic_salary", label: "BASIC SALARY", _style: "min-width:15%;" },
+  { key: "total_earnings", label: "TOTAL EARNINGS", _style: "min-width:15%;" },
+  { key: "total_deductions", label: "TOTAL DEDUCTIONS", _style: "min-width:15%;" },
+  { key: "net_salary", label: "NET SALARY", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
+
 export default {
-  name: "EmployeeExpenseIndex",
+  name: "EmployeeSalaryIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      employeeExpenseData: [],
+      employeeSalaryData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -118,33 +122,34 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getEmployeeExpense();
+    this.getEmployeeSalary();
+  },
+  computed: {
+    employeeSalary() {
+      return this.employeeSalaryData;
+    },
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getDesignationData(this.activePage, this.perPage);
-    },
-  },
-  computed: {
-    employeeExpense() {
-      return this.employeeExpenseData;
+      this.getEmployeeSalary(this.activePage, this.perPage);
     },
   },
   methods: {
-    getEmployeeExpense(page = "", per_page = "") {
+    getEmployeeSalary(page = "", per_page = "") {
       this.empId = this.$route.params.id;
 
-      EmployeeExpenseService.getAll(this.empId, page, per_page)
+      EmployeeSalaryAdjustmentService.getAll(this.empId, page, per_page)
         .then(({ data }) => {
+          console.log(data);
           if (data !== "" && data !== undefined) {
-            this.employeeExpenseData = [];
             this.loading = true;
+            this.employeeSalaryData = [];
             if (data.data) {
               data.data.map((item, id) => {
-                this.employeeExpenseData.push({ ...item, id });
+                this.employeeSalaryData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -157,39 +162,20 @@ export default {
           console.log(err);
         });
     },
-    updateTableData(obj) {
-      if (obj.type === "create") {
-        let arr = Object.values(
-          this.employeeExpenseData.map(function (item) {
-            return item.id;
-          })
-        );
-        let max = Math.max(...arr);
-        obj.data.id = max + 1;
-        this.employeeExpenseData.push(obj.data);
-      } else {
-        this.employeeExpenseData.map(function (item) {
-          if (item.uuid === obj.data.uuid) {
-            obj.data.id = item.id;
-            return Object.assign(item, obj.data);
-          }
-        });
-      }
-    },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
       }
     },
     check(item) {
-      const val = Boolean(this.employeeExpenseData[item.id]._selected);
-      this.$set(this.employeeExpenseData[item.id], "_selected", !val);
+      const val = Boolean(this.employeeSalaryData[item.id]._selected);
+      this.$set(this.employeeSalaryData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-expense-edit", uuid);
+      this.$emit("employee-salary-edit", uuid);
     },
 
     deleteRow(uuid) {
@@ -204,16 +190,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeExpenseService.delete(this.deleteRows)
+            EmployeeSalaryAdjustmentService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Expense Deleted Successfully",
+                    text: "Salary Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeExpenseData = this.employeeExpenseData.filter(
+                  this.employeeSalaryData = this.employeeSalaryData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -239,13 +225,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.designationsData = agent.currentItems;
+        this.employeeSalaryData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getDesignationData("", this.perPage);
+      this.getEmployeeSalary("", this.perPage);
     },
   },
 };

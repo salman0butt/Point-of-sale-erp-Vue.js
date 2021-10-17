@@ -43,14 +43,12 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Repeat"
-                :options="options.periodic_type"
-                :value.sync="form.periodic"
+                label="Repeat Every Month"
+                :options="options.repeat_type"
+                :value.sync="form.repeat"
               />
-              <div v-if="$v.form.periodic.$error">
-                <p v-if="!$v.form.periodic.required" class="errorMsg">
-                  Periodic is required
-                </p>
+              <div v-if="$v.form.repeat.$error">
+                <p v-if="!$v.form.repeat.required" class="errorMsg">Repeat is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="6">
@@ -89,15 +87,17 @@ export default {
       employee_id: "",
       name: "",
       type: "",
-      periodic: "",
+      repeat: "",
       amount: "",
       detail: "",
     },
     empId: null,
     options: {
       expense_types: [{ value: "", label: "Choose Type", disabled: true, selected: "" }],
-      periodic_type: [
+      repeat_type: [
         { value: "", label: "Choose repeat", disabled: true, selected: "" },
+        { value: "yes", label: "Yes" },
+        { value: "no", label: "No" },
       ],
     },
   }),
@@ -106,7 +106,7 @@ export default {
       form: {
         name: { required },
         type: { required },
-        periodic: { required },
+        repeat: { required },
         amount: { required },
       },
     };
@@ -190,7 +190,7 @@ export default {
             this.form.employee_id = data.employee_id;
             this.form.name = data.name;
             this.form.type = data.type;
-            this.form.periodic = data.periodic;
+            this.form.repeat = data.repeat;
             this.form.amount = data.amount;
             this.form.detail = data.detail;
           }
@@ -201,7 +201,7 @@ export default {
         });
     },
     getOptions() {
-      let ids = JSON.stringify(["expense_types", "periodic_type"]);
+      let ids = JSON.stringify(["expense_types"]);
       HrSettingService.getSettings(ids)
         .then(({ data }) => {
           if (data != null && data != "") {

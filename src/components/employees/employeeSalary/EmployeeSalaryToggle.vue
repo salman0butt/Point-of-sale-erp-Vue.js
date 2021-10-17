@@ -1,39 +1,34 @@
 <template>
-  <CCard>
-    <CCardHeader>Salary</CCardHeader>
-    <CCardBody>
-      <div>
-        <CRow>
-          <CCol xs="12" lg="12">
-            <CButton
-              @click="ToggleEmployeeSalary()"
-              color="primary"
-              class="mb-2 mt-3"
-              style="float: right"
-            >
-              {{ toggleName }}
-            </CButton>
-          </CCol>
-        </CRow>
-        <CRow>
-          <CCol xs="12" lg="12">
-            <CCollapse :show="collapse_table">
-              <EmployeeSalaryIndex
-                ref="employeeSalaryRef"
-                @employee-salary-edit="employeeSalaryEdited"
-              />
-            </CCollapse>
-            <CCollapse :show="collapse">
-              <EmployeeSalaryForm
-                ref="employeeSalaryEditRef"
-                @employee-salary-created="employeeSalaryCreatedSend"
-              />
-            </CCollapse>
-          </CCol>
-        </CRow>
-      </div>
-    </CCardBody>
-  </CCard>
+  <div>
+    <CRow>
+      <CCol xs="12" lg="12">
+        <CButton
+          @click="ToggleEmployeeSalary()"
+          color="primary"
+          class="mb-2 mt-3"
+          style="float: right"
+        >
+          {{ toggleName }}
+        </CButton>
+      </CCol>
+    </CRow>
+    <CRow>
+      <CCol xs="12" lg="12">
+        <CCollapse :show="collapse_table">
+          <EmployeeSalaryIndex
+            ref="employeeSalaryRef"
+            @employee-salary-edit="employeeSalaryEdited"
+          />
+        </CCollapse>
+        <CCollapse :show="collapse">
+          <EmployeeSalaryForm
+            ref="employeeSalaryEditRef"
+            @employee-salary-created="employeeSalaryCreatedSend"
+          />
+        </CCollapse>
+      </CCol>
+    </CRow>
+  </div>
 </template>
 <script>
 import EmployeeSalaryIndex from "@/components/employees/employeeSalary/EmployeeSalaryIndex";

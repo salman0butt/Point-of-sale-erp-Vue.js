@@ -197,10 +197,9 @@ export default {
                     text: "Qualification Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeQualificationData =
-                    this.employeeQualificationData.filter(
-                      (department) => department.uuid != uuid
-                    );
+                  this.employeeQualificationData = this.employeeQualificationData.filter(
+                    (department) => department.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })
