@@ -197,7 +197,6 @@ export default {
                     // },
                   ],
                 },
-
                 {
                   _name: "CSidebarNavItem",
                   name: "Transfers",

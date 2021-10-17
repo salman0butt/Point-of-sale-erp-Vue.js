@@ -8,11 +8,27 @@
           "
         >
           <CRow>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Employee"
+                :options="options.employees"
+                :value.sync="form.employee_id"
+                :class="{ error: $v.form.employee_id.$error }"
+                @input="$v.form.employee_id.$touch()"
+              />
+              <div v-if="$v.form.employee_id.$error">
+                <p v-if="!$v.form.employee_id.required" class="errorMsg">
+                  Employee is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Select Salary Adjustment"
                 :options="options.employee_salary_adjustments"
                 :value.sync="form.employee_salary_adjustment_id"
+                :class="{ error: $v.form.employee_salary_adjustment_id.$error }"
+                @input="$v.form.employee_salary_adjustment_id.$touch()"
               />
               <div v-if="$v.form.employee_salary_adjustment_id.$error">
                 <p
@@ -23,11 +39,13 @@
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Select Bank Account"
                 :options="options.bank_accounts"
                 :value.sync="form.bank_account_id"
+                :class="{ error: $v.form.bank_account_id.$error }"
+                @input="$v.form.bank_account_id.$touch()"
               />
               <div v-if="$v.form.bank_account_id.$error">
                 <p v-if="!$v.form.bank_account_id.required" class="errorMsg">
@@ -35,7 +53,7 @@
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Date"
                 type="date"
@@ -47,7 +65,7 @@
                 <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
               </div>
             </CCol>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Amount Paid"
                 type="number"
@@ -65,15 +83,25 @@
           </CRow>
 
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-          <CRow class="mt-4 d-block">
+          <CRow class="mt-4">
             <CButton
               progress
               timeout="2000"
               block
               color="success"
-              style="float: right; width: 150px; margin-right: 20px"
+              style="float: right; width: 200px; margin-left: 20px"
               type="submit"
-              >Save</CButton
+              @click="saveAndExit = false"
+              >Save & Continue</CButton
+            >
+            <CButton
+              timeout="2000"
+              block
+              color="danger"
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              @click="saveAndExit = true"
+              type="submit"
+              >Save & Exit</CButton
             >
           </CRow>
         </form>
@@ -92,8 +120,9 @@ export default {
   cisMinusSquare,
   data: () => ({
     isEditing: false,
+    saveAndExit: false,
     form: {
-      id: null,
+      id: "",
       employee_id: "",
       employee_salary_adjustment_id: "",
       bank_account_id: "",
@@ -108,6 +137,7 @@ export default {
       bank_accounts: [
         { value: "", label: "Choose Bank Account", disabled: true, selected: "" },
       ],
+      employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
     },
   }),
   validations() {
@@ -122,13 +152,17 @@ export default {
     };
   },
   created() {
-    this.empId = this.$route.params.id;
-
+    this.form.id = this.$route.params.id;
     this.getOptions();
+    this.getAllEmployees();
+    if (this.form.id !== "" && this.form.id !== undefined) {
+      this.isEditing = true;
+      this.getEmployeeSalaryPayment();
+    }
   },
   methods: {
     saveEmployeeSalaryPayment() {
-      this.form.employee_id = this.$route.params.id;
+      // this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -142,7 +176,12 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-salary-payment-update");
+              // this.resetForm();
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/payments/index" });
+              } else {
+                this.$router.push({ path: "/payments/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
@@ -157,7 +196,7 @@ export default {
       }
     },
     updateEmployeeSalaryPayment() {
-      this.form.employee_id = this.$route.params.id;
+      // this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
@@ -171,7 +210,11 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-salary-payment-update");
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/payments/index" });
+              } else {
+                this.$router.push({ path: "/payments/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
@@ -208,7 +251,7 @@ export default {
         });
     },
     getEmployeeSalaryPayment() {
-      EmployeeSalaryPaymentService.get(this.empId)
+      EmployeeSalaryPaymentService.get(this.form.id)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
@@ -226,10 +269,22 @@ export default {
           this.isEditing = false;
         });
     },
-    getEditData(uuid) {
-      this.isEditing = true;
-      this.empId = uuid;
-      this.getEmployeeSalaryPayment();
+    getAllEmployees() {
+      this.$http
+        .get("/employees-create")
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            const employees = this.options.employees;
+            if (data.employees) {
+              data.employees.map(function (val) {
+                employees.push({ value: val.uuid, label: val.full_name.en });
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     resetForm() {
       for (let index in this.form) {

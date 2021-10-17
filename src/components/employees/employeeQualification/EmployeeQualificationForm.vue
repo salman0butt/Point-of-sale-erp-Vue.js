@@ -4,9 +4,7 @@
       <CCol xs="12" lg="12">
         <form
           @submit.prevent="
-            isEditing
-              ? updateEmployeeQualification()
-              : saveEmployeeQualification()
+            isEditing ? updateEmployeeQualification() : saveEmployeeQualification()
           "
         >
           <CRow>
@@ -18,9 +16,7 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">
-                  Name is required
-                </p>
+                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -30,9 +26,7 @@
                 :value.sync="form.type"
               />
               <div v-if="$v.form.type.$error">
-                <p v-if="!$v.form.type.required" class="errorMsg">
-                  Type is required
-                </p>
+                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -104,16 +98,17 @@
                 :value.sync="form.year"
               />
               <div v-if="$v.form.year.$error">
-                <p v-if="!$v.form.year.required" class="errorMsg">
-                  Year is required
-                </p>
+                <p v-if="!$v.form.year.required" class="errorMsg">Year is required</p>
               </div>
             </CCol>
           </CRow>
+          <CRow>
+            <CCol sm="12" md="12" class="pt-2">
+              <app-upload ref="fileUpload" @changed="handleFile" />
+            </CCol>
+          </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -134,9 +129,13 @@
 import EmployeeQualificationService from "@/services/employees/EmployeeQualificationService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
+import AppUpload from "@/components/uploads/Upload.vue";
 
 export default {
   name: "EmployeeQualificationForm",
+  components: {
+    AppUpload,
+  },
   data: () => ({
     isEditing: false,
     form: {
@@ -149,6 +148,7 @@ export default {
       marks_obtained: "",
       total_marks: "",
       year: "",
+      documents: [],
     },
     empId: null,
     options: {
@@ -181,8 +181,19 @@ export default {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        EmployeeQualificationService.create(data)
+        let formData = new FormData();
+        for (const index in this.form) {
+          if (this.form[index] != "") {
+            formData.append(index, this.form[index]);
+          }
+        }
+
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        // console.log(this.form.documents);
+        // let data = this.form;
+        EmployeeQualificationService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -284,6 +295,11 @@ export default {
           console.log(error);
         });
     },
+    handleFile(files) {
+      this.form.documents.push(files[0]);
+      // files.forEach()
+      console.log(this.form.documents);
+    },
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
@@ -294,6 +310,7 @@ export default {
         this.form[index] = "";
       }
       this.isEditing = false;
+      this.$refs.fileUpload.reset();
     },
   },
 };

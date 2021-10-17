@@ -2,84 +2,76 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CCard>
-          <CCardBody>
-            <CDataTable
-              :items="employeeSalaryPayment"
-              :fields="fields"
-              table-filter
-              items-per-page-select
-              @pagination-change="changePagination"
-              :items-per-page="perPage"
-              sorter
-              pagination
-              clickable-rows
-              hover
-              :loading="loading"
-              @row-clicked="rowClicked"
-            >
-              <template #select="{ item }">
-                <td>
-                  <CInputCheckbox
-                    :checked="item._selected"
-                    @update:checked="() => check(item)"
-                    custom
-                  />
-                </td>
-              </template>
-              <template #employee="{ item }">
-                <td>
-                  {{ item.employee.full_name }}
-                </td>
-              </template>
-              <template #employee_salary_adjustment="{ item }">
-                <td>
-                  {{ item.employee_salary_adjustment.month }}
-                </td>
-              </template>
-              <template #bank_account="{ item }">
-                <td>
-                  {{ item.bank_account.name }}
-                </td>
-              </template>
+        <CDataTable
+          :items="employeeSalaryPayment"
+          :fields="fields"
+          table-filter
+          items-per-page-select
+          @pagination-change="changePagination"
+          :items-per-page="perPage"
+          sorter
+          pagination
+          clickable-rows
+          hover
+          :loading="loading"
+          @row-clicked="rowClicked"
+        >
+          <template #select="{ item }">
+            <td>
+              <CInputCheckbox
+                :checked="item._selected"
+                @update:checked="() => check(item)"
+                custom
+              />
+            </td>
+          </template>
+          <template #employee="{ item }">
+            <td>
+              {{ item.employee.full_name }}
+            </td>
+          </template>
+          <template #employee_salary_adjustment="{ item }">
+            <td>
+              {{ item.employee_salary_adjustment.month }}
+            </td>
+          </template>
+          <template #bank_account="{ item }">
+            <td>
+              {{ item.bank_account.name }}
+            </td>
+          </template>
 
-              <template #actions="{ item }">
-                <td>
-                  <CButtonGroup>
-                    <!-- <CButton
+          <template #actions="{ item }">
+            <td>
+              <CButtonGroup>
+                <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
                     > -->
-                    <CButton
-                      @click="editRow(item.uuid)"
-                      class="btn-sm text-white"
-                      color="warning"
-                      title="Edit"
-                    >
-                      <CIcon :content="$options.cilPencil"
-                    /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                      title="Delete"
-                    >
-                      <CIcon :content="$options.cilTrash" />
-                    </CButton>
-                  </CButtonGroup>
-                </td>
-              </template>
-            </CDataTable>
-            <CPagination
-              v-show="pages > 1"
-              :pages="pages"
-              :active-page.sync="activePage"
-            />
-          </CCardBody>
-        </CCard>
+                <CButton
+                  @click="editRow(item.uuid)"
+                  class="btn-sm text-white"
+                  color="warning"
+                  title="Edit"
+                >
+                  <CIcon :content="$options.cilPencil"
+                /></CButton>
+                <CButton
+                  @click="deleteRow(item.uuid)"
+                  class="btn-sm"
+                  color="danger"
+                  title="Delete"
+                >
+                  <CIcon :content="$options.cilTrash" />
+                </CButton>
+              </CButtonGroup>
+            </td>
+          </template>
+        </CDataTable>
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
       </CCol>
     </CRow>
   </div>
@@ -97,7 +89,7 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  // { key: "employee", label: "EMPLOYEE", _style: "min-width:40%" },
+  { key: "employee", label: "EMPLOYEE", _style: "min-width:40%" },
   {
     key: "employee_salary_adjustment",
     label: "SALARY ADJUSTMENT MONTH",
@@ -110,7 +102,7 @@ const fields = [
 ];
 
 export default {
-  name: "EmployeeSalaryPaymentIndex",
+  name: "SalaryPaymentIndex",
   cilPencil,
   cilTrash,
   cilEye,
@@ -145,9 +137,9 @@ export default {
   },
   methods: {
     getEmployeeSalaryPayment(page = "", per_page = "") {
-      this.empId = this.$route.params.id;
+      // this.empId = this.$route.params.id;
 
-      EmployeeSalaryPaymentService.getAll(this.empId, page, per_page)
+      EmployeeSalaryPaymentService.getAll("", page, per_page, true)
         .then(({ data }) => {
           console.log(data);
           if (data !== "" && data !== undefined) {
@@ -181,7 +173,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employee-salary-payment-edit", uuid);
+      this.$router.push({ path: "/payments/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -202,7 +194,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "SalaryPayment Deleted Successfully",
+                    text: "Salary Payment Deleted Successfully",
                     timer: 3600,
                   });
                   this.employeeSalaryPaymentData = this.employeeSalaryPaymentData.filter(
