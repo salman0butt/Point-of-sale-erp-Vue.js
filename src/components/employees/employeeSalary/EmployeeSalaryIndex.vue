@@ -27,14 +27,18 @@
                   />
                 </td>
               </template>
-              <template #business="{ item }">
+              <template #payment="{ item }">
                 <td>
-                  {{ item.name }}
-                </td>
-              </template>
-              <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
+                  <CBadge color="danger" v-if="item.payment === 0"> Unpaid</CBadge>
+                  <CBadge
+                    color="primary"
+                    v-if="item.payment > 0 && item.payment < item.payable_salary"
+                  >
+                    Pending</CBadge
+                  >
+                  <CBadge color="success" v-if="item.payment >= item.payable_salary">
+                    Paid</CBadge
+                  >
                 </td>
               </template>
               <template #actions="{ item }">
@@ -94,12 +98,14 @@ const fields = [
   { key: "month", label: "MONTH", _style: "min-width:40%" },
   // { key: "total_working_days", label: "TOTAL WORKING DAYS", _style: "min-width:15%;" },
   // { key: "total_days", label: "TOTAL DAYS", _style: "min-width:15%;" },
-  { key: "total_leaves", label: "TOTAL LEAVES", _style: "min-width:15%;" },
-  { key: "total_absents", label: "TOTAL ABSENT", _style: "min-width:15%;" },
+  // { key: "total_leaves", label: "TOTAL LEAVES", _style: "min-width:15%;" },
+  // { key: "total_absents", label: "TOTAL ABSENT", _style: "min-width:15%;" },
   { key: "basic_salary", label: "BASIC SALARY", _style: "min-width:15%;" },
   { key: "total_earnings", label: "TOTAL EARNINGS", _style: "min-width:15%;" },
   { key: "total_deductions", label: "TOTAL DEDUCTIONS", _style: "min-width:15%;" },
   { key: "net_salary", label: "NET SALARY", _style: "min-width:15%;" },
+  { key: "payable_salary", label: "PAYABLE SALARY", _style: "min-width:15%;" },
+  { key: "payment", label: "PAYMENT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
