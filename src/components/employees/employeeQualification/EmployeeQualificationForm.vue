@@ -104,7 +104,28 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
-              <app-upload ref="fileUpload" @changed="handleFile" />
+              <app-upload ref="fileUpload" @file:changed="handleFile" />
+
+              <div class="attachment-display">
+                <ul v-if="isEditing && display_documents">
+                  <li
+                    v-for="(doc, index) in display_documents"
+                    v-bind:key="index"
+                    class="display-attachment-row"
+                  >
+                    <CIcon :content="$options.cisFile" />
+                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
+                      {{ doc.name }}</a
+                    >
+                    <a
+                      @click.prevent="deleteAttachment(doc.uuid)"
+                      class="delete-attachment"
+                    >
+                      <CIcon :content="$options.cilTrash" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </CCol>
           </CRow>
 
@@ -130,12 +151,15 @@ import EmployeeQualificationService from "@/services/employees/EmployeeQualifica
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
+import { cilTrash, cisFile } from "@coreui/icons-pro";
 
 export default {
   name: "EmployeeQualificationForm",
   components: {
     AppUpload,
   },
+  cilTrash,
+  cisFile,
   data: () => ({
     isEditing: false,
     form: {
@@ -150,6 +174,7 @@ export default {
       year: "",
       documents: [],
     },
+    display_documents: [],
     empId: null,
     options: {
       qualification_type: [
@@ -182,16 +207,24 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let formData = new FormData();
-        for (const index in this.form) {
-          if (this.form[index] != "") {
-            formData.append(index, this.form[index]);
+        formData.append("employee_id", this.form.employee_id);
+        formData.append("name", this.form.name);
+        formData.append("type", this.form.type);
+        formData.append("organization", this.form.organization);
+        formData.append("percentage", this.form.percentage);
+        formData.append("marks_obtained", this.form.marks_obtained);
+        formData.append("total_marks", this.form.total_marks);
+        formData.append("year", this.form.year);
+        if (this.form.documents) {
+          for (const i of Object.keys(this.form.documents)) {
+            formData.append("documents[]", this.form.documents[i]);
           }
         }
 
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };
-        // console.log(this.form.documents);
+
         // let data = this.form;
         EmployeeQualificationService.create(formData, config)
           .then((res) => {
@@ -222,8 +255,27 @@ export default {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        EmployeeQualificationService.update(this.form.id, data)
+        let formData = new FormData();
+        formData.append("employee_id", this.form.employee_id);
+        formData.append("name", this.form.name);
+        formData.append("type", this.form.type);
+        formData.append("organization", this.form.organization);
+        formData.append("percentage", this.form.percentage);
+        formData.append("marks_obtained", this.form.marks_obtained);
+        formData.append("total_marks", this.form.total_marks);
+        formData.append("year", this.form.year);
+        formData.append("_method", "PATCH");
+        if (this.form.documents) {
+          for (const i of Object.keys(this.form.documents)) {
+            formData.append("documents[]", this.form.documents[i]);
+          }
+        }
+
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        // let data = this.form;
+        EmployeeQualificationService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -261,6 +313,14 @@ export default {
             this.form.total_marks = data.total_marks;
             this.form.marks_obtained = data.marks_obtained;
             this.form.year = parseInt(data.year);
+
+            if (data.documents) {
+              this.display_documents = [];
+              let display_docs = this.display_documents;
+              data.documents.map(function (item) {
+                display_docs.push(item);
+              });
+            }
           }
         })
         .catch((error) => {
@@ -296,7 +356,45 @@ export default {
         });
     },
     handleFile(files) {
-      this.form.documents = files;
+      this.form.documents = Object.values(files);
+    },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this Attachment",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.display_documents = this.display_documents.filter(
+                    (item) => item.uuid != uuid
+                  );
+                }
+              })
+              .catch((err) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+                console.log(err);
+              });
+          }
+        });
     },
     getEditData(uuid) {
       this.isEditing = true;
@@ -305,17 +403,16 @@ export default {
     },
     resetForm() {
       for (let index in this.form) {
-        this.form[index] = "";
+        if (index === "documents") {
+          this.form[index] = [];
+        } else {
+          this.form[index] = "";
+        }
       }
+      this.display_documents = [];
       this.isEditing = false;
-      // this.$refs.fileUpload.reset();
+      this.$refs.fileUpload.reset();
     },
   },
 };
 </script>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>
