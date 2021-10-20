@@ -21,12 +21,12 @@ class EmployeeDeductionsService extends Helper {
     return http.get(`/employee-deductions/${id}`);
   }
 
-  create(data) {
-    return http.post("/employee-deductions", data);
+  create(data, config) {
+    return http.post("/employee-deductions", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/employee-deductions/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/employee-deductions/${id}`, data, config);
   }
 
   delete(id) {

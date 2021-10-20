@@ -21,12 +21,12 @@ class EmployeeLicenseService extends Helper {
     return http.get(`/employee-licenses/${id}`);
   }
 
-  create(data) {
-    return http.post("/employee-licenses", data);
+  create(data, config) {
+    return http.post("/employee-licenses", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/employee-licenses/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/employee-licenses/${id}`, data, config);
   }
 
   delete(id) {
