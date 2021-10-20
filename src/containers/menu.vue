@@ -1,6 +1,10 @@
 <script>
+import store from "@/store";
+// console.log("menu", store.state.permissions);
+
 export default {
   name: "nav",
+
   computed: {
     sidebarItems() {
       return [
@@ -86,6 +90,7 @@ export default {
                   name: "Departments",
                   to: "/departments/index",
                   // icon: "cil-laptop",
+                  permission: "department-read",
                 },
                 {
                   _name: "CSidebarNavItem",
