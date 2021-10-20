@@ -40,13 +40,13 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -84,13 +84,13 @@ import EmployeeLicenseService from "@/services/employees/EmployeeLicenseService"
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  {
-    key: "select",
-    label: "",
-    _style: "min-width:1%",
-    sorter: false,
-    filter: false,
-  },
+  // {
+  //   key: "select",
+  //   label: "",
+  //   _style: "min-width:1%",
+  //   sorter: false,
+  //   filter: false,
+  // },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "issuance", label: "ISSUANCE", _style: "min-width:15%;" },

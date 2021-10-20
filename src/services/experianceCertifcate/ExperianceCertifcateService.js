@@ -21,12 +21,12 @@ class ExperianceCertifcateService extends Helper {
     return http.get(`/experiance-certifcates/${id}`);
   }
 
-  create(data) {
-    return http.post("/experiance-certifcates", data);
+  create(data, config) {
+    return http.post("/experiance-certifcates", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/experiance-certifcates/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/experiance-certifcates/${id}`, data, config);
   }
 
   delete(id) {

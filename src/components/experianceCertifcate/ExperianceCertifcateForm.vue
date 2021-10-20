@@ -4,9 +4,7 @@
       <CCol xs="12" lg="12">
         <form
           @submit.prevent="
-            isEditing
-              ? updateExperianceCertifcate()
-              : saveExperianceCertifcate()
+            isEditing ? updateExperianceCertifcate() : saveExperianceCertifcate()
           "
         >
           <CRow>
@@ -18,9 +16,7 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">
-                  Name is required
-                </p>
+                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
               </div>
             </CCol>
 
@@ -33,9 +29,7 @@
                 @input="$v.form.type.$touch()"
               />
               <div v-if="$v.form.type.$error">
-                <p v-if="!$v.form.type.required" class="errorMsg">
-                  Type is required
-                </p>
+                <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
             </CCol>
 
@@ -76,9 +70,8 @@
                 :value.sync="form.status"
               />
             </CCol>
-          </CRow>
-          <CRow>
-            <CCol sm="6" md="6">
+
+            <CCol sm="6" md="4">
               <CTextarea
                 label="Note"
                 placeholder="Content..."
@@ -86,10 +79,34 @@
               />
             </CCol>
           </CRow>
+          <CRow>
+            <CCol sm="12" md="12" class="pt-2">
+              <app-upload ref="fileUpload" @file:changed="handleFile" />
 
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+              <div class="attachment-display">
+                <ul v-if="isEditing && display_documents">
+                  <li
+                    v-for="(doc, index) in display_documents"
+                    v-bind:key="index"
+                    class="display-attachment-row"
+                  >
+                    <CIcon :content="$options.cisFile" />
+                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
+                      {{ doc.name }}</a
+                    >
+                    <a
+                      @click.prevent="deleteAttachment(doc.uuid)"
+                      class="delete-attachment"
+                    >
+                      <CIcon :content="$options.cilTrash" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </CCol>
+          </CRow>
+
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -110,9 +127,16 @@
 import ExperianceCertifcateService from "@/services/experianceCertifcate/ExperianceCertifcateService";
 import HrSettingService from "@/services/settings/HrSettingService";
 import { required } from "vuelidate/lib/validators";
+import AppUpload from "@/components/uploads/Upload.vue";
+import { cilTrash, cisFile } from "@coreui/icons-pro";
 
 export default {
   name: "ExperianceCertifcateForm",
+  components: {
+    AppUpload,
+  },
+  cilTrash,
+  cisFile,
   data: () => ({
     isEditing: false,
     form: {
@@ -124,7 +148,9 @@ export default {
       to_date: "",
       status: "",
       description: "",
+      documents: [],
     },
+    display_documents: [],
     empId: null,
     options: {
       experiance_certifcate_types: [
@@ -157,8 +183,26 @@ export default {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        ExperianceCertifcateService.create(data)
+        let formData = new FormData();
+        formData.append("employee_id", this.form.employee_id);
+        formData.append("name", this.form.name);
+        formData.append("type", this.form.type);
+        formData.append("from_date", this.form.from_date);
+        formData.append("to_date", this.form.to_date);
+        formData.append("status", this.form.status);
+        formData.append("description", this.form.description);
+
+        if (this.form.documents) {
+          for (const i of Object.keys(this.form.documents)) {
+            formData.append("documents[]", this.form.documents[i]);
+          }
+        }
+
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        // let data = this.form;
+        ExperianceCertifcateService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -187,8 +231,27 @@ export default {
       this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        ExperianceCertifcateService.update(this.form.id, data)
+        let formData = new FormData();
+        formData.append("employee_id", this.form.employee_id);
+        formData.append("name", this.form.name);
+        formData.append("type", this.form.type);
+        formData.append("from_date", this.form.from_date);
+        formData.append("to_date", this.form.to_date);
+        formData.append("status", this.form.status);
+        formData.append("description", this.form.description);
+        formData.append("_method", "PATCH");
+
+        if (this.form.documents) {
+          for (const i of Object.keys(this.form.documents)) {
+            formData.append("documents[]", this.form.documents[i]);
+          }
+        }
+
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        // let data = this.form;
+        ExperianceCertifcateService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -225,6 +288,13 @@ export default {
             this.form.from_date = data.from_date;
             this.form.to_date = data.to_date;
             this.form.status = data.status;
+            if (data.documents) {
+              this.display_documents = [];
+              let display_docs = this.display_documents;
+              data.documents.map(function (item) {
+                display_docs.push(item);
+              });
+            }
           }
         })
         .catch((error) => {
@@ -252,6 +322,47 @@ export default {
           console.log(error);
         });
     },
+    handleFile(files) {
+      this.form.documents = Object.values(files);
+    },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this Attachment",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.display_documents = this.display_documents.filter(
+                    (item) => item.uuid != uuid
+                  );
+                }
+              })
+              .catch((err) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+                console.log(err);
+              });
+          }
+        });
+    },
     getEditData(uuid) {
       this.isEditing = true;
       this.empId = uuid;
@@ -259,16 +370,16 @@ export default {
     },
     resetForm() {
       for (let index in this.form) {
-        this.form[index] = "";
+        if (index === "documents") {
+          this.form[index] = [];
+        } else {
+          this.form[index] = "";
+        }
       }
+      this.display_documents = [];
       this.isEditing = false;
+      this.$refs.fileUpload.reset();
     },
   },
 };
 </script>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>

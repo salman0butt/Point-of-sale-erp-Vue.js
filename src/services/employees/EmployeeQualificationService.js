@@ -23,8 +23,8 @@ class EmployeeQualificationService extends Helper {
     return http.post("/employee-qualifications", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/employee-qualifications/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/employee-qualifications/${id}`, data, config);
   }
 
   delete(id) {
