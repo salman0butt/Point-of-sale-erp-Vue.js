@@ -97,7 +97,6 @@ export default {
     return {
       employeeContractData: [],
       fields,
-      loading: false,
       deleteRows: [],
       empId: null,
       activePage: 1,

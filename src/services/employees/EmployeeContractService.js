@@ -23,12 +23,12 @@ class EmployeeContractService extends Helper {
     return http.get(`/employee-contracts/${id}`);
   }
 
-  create(data) {
-    return http.post("/employee-contracts", data);
+  create(data, config) {
+    return http.post("/employee-contracts", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/employee-contracts/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/employee-contracts/${id}`, data, config);
   }
 
   delete(id) {
