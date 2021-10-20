@@ -8,11 +8,27 @@
           "
         >
           <CRow>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Employee"
+                :options="options.employees"
+                :value.sync="form.employee_id"
+                :class="{ error: $v.form.employee_id.$error }"
+                @input="$v.form.employee_id.$touch()"
+              />
+              <div v-if="$v.form.employee_id.$error">
+                <p v-if="!$v.form.employee_id.required" class="errorMsg">
+                  Employee is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Select Salary Adjustment"
                 :options="options.employee_salary_adjustments"
                 :value.sync="form.employee_salary_adjustment_id"
+                :class="{ error: $v.form.employee_salary_adjustment_id.$error }"
+                @input="$v.form.employee_salary_adjustment_id.$touch()"
               />
               <div v-if="$v.form.employee_salary_adjustment_id.$error">
                 <p
@@ -23,11 +39,13 @@
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Select Bank Account"
                 :options="options.bank_accounts"
                 :value.sync="form.bank_account_id"
+                :class="{ error: $v.form.bank_account_id.$error }"
+                @input="$v.form.bank_account_id.$touch()"
               />
               <div v-if="$v.form.bank_account_id.$error">
                 <p v-if="!$v.form.bank_account_id.required" class="errorMsg">
@@ -35,7 +53,7 @@
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Date"
                 type="date"
@@ -47,7 +65,7 @@
                 <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
               </div>
             </CCol>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Amount Paid"
                 type="number"
@@ -63,42 +81,27 @@
               </div>
             </CCol>
           </CRow>
-          <CRow>
-            <CCol sm="12" md="12" class="pt-2">
-              <app-upload ref="fileUpload" @file:changed="handleFile" />
 
-              <div class="attachment-display">
-                <ul v-if="isEditing && display_documents">
-                  <li
-                    v-for="(doc, index) in display_documents"
-                    v-bind:key="index"
-                    class="display-attachment-row"
-                  >
-                    <CIcon :content="$options.cisFile" />
-                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
-                      {{ doc.name }}</a
-                    >
-                    <a
-                      @click.prevent="deleteAttachment(doc.uuid)"
-                      class="delete-attachment"
-                    >
-                      <CIcon :content="$options.cilTrash" />
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </CCol>
-          </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-          <CRow class="mt-4 d-block">
+          <CRow class="mt-4">
             <CButton
               progress
               timeout="2000"
               block
               color="success"
-              style="float: right; width: 150px; margin-right: 20px"
+              style="float: right; width: 200px; margin-left: 20px"
               type="submit"
-              >{{ loading ? "loading..." : "Save" }}</CButton
+              @click="saveAndExit = false"
+              >Save & Continue</CButton
+            >
+            <CButton
+              timeout="2000"
+              block
+              color="danger"
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              @click="saveAndExit = true"
+              type="submit"
+              >Save & Exit</CButton
             >
           </CRow>
         </form>
@@ -109,30 +112,23 @@
 <script>
 import EmployeeSalaryPaymentService from "@/services/employees/EmployeeSalaryPaymentService";
 import { required } from "vuelidate/lib/validators";
-import { cibAddthis, cisMinusSquare, cilTrash, cisFile } from "@coreui/icons-pro";
-import AppUpload from "@/components/uploads/Upload.vue";
+import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 
 export default {
   name: "EmployeeBasicForm",
   cibAddthis,
   cisMinusSquare,
-  cilTrash,
-  cisFile,
-  components: {
-    AppUpload,
-  },
   data: () => ({
     isEditing: false,
+    saveAndExit: false,
     form: {
-      id: null,
+      id: "",
       employee_id: "",
       employee_salary_adjustment_id: "",
       bank_account_id: "",
       date: "",
       amount_paid: "",
-      documents: [],
     },
-    display_documents: [],
     empId: "",
     options: {
       employee_salary_adjustments: [
@@ -141,6 +137,7 @@ export default {
       bank_accounts: [
         { value: "", label: "Choose Bank Account", disabled: true, selected: "" },
       ],
+      employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
     },
   }),
   validations() {
@@ -155,44 +152,23 @@ export default {
     };
   },
   created() {
-    this.empId = this.$route.params.id;
+    this.form.id = this.$route.params.id;
     this.getOptions();
-  },
-  computed: {
-    loading() {
-      return this.$store.state.loading;
-    },
+    this.getAllEmployees();
+    if (this.form.id !== "" && this.form.id !== undefined) {
+      this.isEditing = true;
+      this.getEmployeeSalaryPayment();
+    }
   },
   methods: {
     saveEmployeeSalaryPayment() {
-      this.form.employee_id = this.$route.params.id;
+      // this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let formData = new FormData();
-        formData.append("employee_id", this.form.employee_id);
-        formData.append(
-          "employee_salary_adjustment_id",
-          this.form.employee_salary_adjustment_id
-        );
-        formData.append("bank_account_id", this.form.bank_account_id);
-        formData.append("date", this.form.date);
-        formData.append("amount_paid", this.form.amount_paid);
-
-        if (this.form.documents) {
-          for (const i of Object.keys(this.form.documents)) {
-            formData.append("documents[]", this.form.documents[i]);
-          }
-        }
-
-        const config = {
-          headers: { "Content-Type": "multipart/form-data" },
-        };
-        this.$store.commit("set_loader");
-        // let data = this.form;
-        EmployeeSalaryPaymentService.create(formData, config)
+        let data = this.form;
+        EmployeeSalaryPaymentService.create(data)
           .then((res) => {
             if (res.status == 201) {
-              this.$store.commit("close_loader");
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -200,11 +176,15 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-salary-payment-update");
+              // this.resetForm();
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/payments/index" });
+              } else {
+                this.$router.push({ path: "/payments/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
-            this.$store.commit("close_loader");
             console.log(error);
             this.$swal.fire({
               icon: "error",
@@ -216,35 +196,13 @@ export default {
       }
     },
     updateEmployeeSalaryPayment() {
-      this.form.employee_id = this.$route.params.id;
+      // this.form.employee_id = this.$route.params.id;
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let formData = new FormData();
-        formData.append("employee_id", this.form.employee_id);
-        formData.append(
-          "employee_salary_adjustment_id",
-          this.form.employee_salary_adjustment_id
-        );
-        formData.append("bank_account_id", this.form.bank_account_id);
-        formData.append("date", this.form.date);
-        formData.append("amount_paid", this.form.amount_paid);
-        formData.append("_method", "PATCH");
-
-        if (this.form.documents) {
-          for (const i of Object.keys(this.form.documents)) {
-            formData.append("documents[]", this.form.documents[i]);
-          }
-        }
-
-        const config = {
-          headers: { "Content-Type": "multipart/form-data" },
-        };
-        this.$store.commit("set_loader");
-        // let data = this.form;
-        EmployeeSalaryPaymentService.update(this.form.id, formData, config)
+        let data = this.form;
+        EmployeeSalaryPaymentService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
-              this.$store.commit("close_loader");
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -252,11 +210,14 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              this.$emit("employee-salary-payment-update");
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/payments/index" });
+              } else {
+                this.$router.push({ path: "/payments/edit/" + res.data.uuid });
+              }
             }
           })
           .catch((error) => {
-            this.$store.commit("close_loader");
             console.log(error);
             this.$swal.fire({
               icon: "error",
@@ -290,7 +251,7 @@ export default {
         });
     },
     getEmployeeSalaryPayment() {
-      EmployeeSalaryPaymentService.get(this.empId)
+      EmployeeSalaryPaymentService.get(this.form.id)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
@@ -301,14 +262,6 @@ export default {
             this.form.bank_account_id = data.bank_account.uuid;
             this.form.date = data.date;
             this.form.amount_paid = data.amount_paid;
-
-            if (data.documents) {
-              this.display_documents = [];
-              let display_docs = this.display_documents;
-              data.documents.map(function (item) {
-                display_docs.push(item);
-              });
-            }
           }
         })
         .catch((error) => {
@@ -316,63 +269,28 @@ export default {
           this.isEditing = false;
         });
     },
-    handleFile(files) {
-      this.form.documents = Object.values(files);
-    },
-    deleteAttachment(uuid) {
-      this.$swal
-        .fire({
-          title: "Do you want to delete this Attachment",
-          text: "This will be Deleted from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            this.$store
-              .dispatch("deleteAttachment", uuid)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Attachment Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.display_documents = this.display_documents.filter(
-                    (item) => item.uuid != uuid
-                  );
-                }
-              })
-              .catch((err) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-                console.log(err);
+    getAllEmployees() {
+      this.$http
+        .get("/employees-create")
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            const employees = this.options.employees;
+            if (data.employees) {
+              data.employees.map(function (val) {
+                employees.push({ value: val.uuid, label: val.full_name.en });
               });
+            }
           }
+        })
+        .catch((error) => {
+          console.log(error);
         });
-    },
-    getEditData(uuid) {
-      this.isEditing = true;
-      this.empId = uuid;
-      this.getEmployeeSalaryPayment();
     },
     resetForm() {
       for (let index in this.form) {
-        if (index === "documents") {
-          this.form[index] = [];
-        } else {
-          this.form[index] = "";
-        }
+        this.form[index] = "";
       }
-      this.display_documents = [];
       this.isEditing = false;
-      this.$refs.fileUpload.reset();
     },
   },
 };

@@ -14,7 +14,8 @@ const state = {
   user: {},
   errors: [],
   msgs: [],
-  employee_name:""
+  employee_name:"",
+  loading: false,
 }
 
 const mutations = {
@@ -58,6 +59,12 @@ const mutations = {
   },
   set_employee_name(state, name) {
     state.employee_name = name;
+  },
+  set_loader(state) {
+    state.loading = true;
+  },
+  close_loader(state) {
+    state.loading = false;
   }
 }
 
@@ -108,7 +115,17 @@ set_errors({commit}, errorMsg){
     commit('post_errors', errorMsg);
     resolve();
   });
-}
+},
+deleteAttachment({commit}, uuid){
+  return new Promise((resolve, reject) => {
+      http.delete('/attachments/'+uuid).then(res => {
+        resolve(res);
+      }).catch(err => {
+        reject(err);
+      });
+  })
+},
+
 }
 const getters = {
   isLoggedIn: state => !!state.token,

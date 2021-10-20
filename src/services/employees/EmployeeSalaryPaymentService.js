@@ -29,12 +29,12 @@ class EmployeeSalaryPaymentService extends Helper{
     return http.get(`/employee-salary-payments-options`);
   }
 
-  create(data) {
-    return http.post("/employee-salary-payments", data);
+  create(data, config) {
+    return http.post("/employee-salary-payments", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/employee-salary-payments/${id}`, data);
+  update(id, data, config) {
+    return http.patch(`/employee-salary-payments/${id}`, data, config);
   }
 
   delete(id) {

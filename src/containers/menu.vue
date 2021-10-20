@@ -163,6 +163,12 @@ export default {
                 },
                 {
                   _name: "CSidebarNavItem",
+                  name: "Payments",
+                  to: "/payments/index",
+                  icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
                   name: "Awards",
                   to: "/awards/index",
                   icon: "cil-lan",
