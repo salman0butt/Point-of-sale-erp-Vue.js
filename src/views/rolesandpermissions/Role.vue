@@ -1,6 +1,10 @@
 <template>
   <div>
-    <vue-element-loading :active="isLoading" spinner="mini-spinner" color="#FF6700" />
+    <vue-element-loading
+      :active="isLoading"
+      spinner="mini-spinner"
+      color="#FF6700"
+    />
     <CRow>
       <CCol xs="12" lg="12">
         <form @submit.prevent="isUpdatePage ? updateData() : saveData()">
@@ -11,7 +15,7 @@
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
-                    label="Name"
+                    label="Role Name"
                     v-model="form.name"
                     :class="{ error: $v.form.name.$error }"
                     @input="$v.form.name.$touch()"
@@ -26,29 +30,32 @@
                   </div>
                 </CCol>
               </CRow>
-            </CCardBody>
-          </CCard>
-          <CCard>
-            <CCardHeader>Permissions</CCardHeader>
-            <CCardBody>
-              <CRow>
-                <CCol
-                  sm="6"
-                  md="4"
-                  class="pt-2"
-                  v-for="item in form.items"
-                  :key="item.uuid"
-                >
-                  <label class="mr-4 font-lg"> {{ item.name }} </label>
-                  <CSwitch
-                    class="mx-1 pt-1"
-                    style="float: right"
-                    color="success"
-                    :checked.sync="item.value"
-                    shape="pill"
-                  />
-                </CCol>
-              </CRow>
+
+              <h2><u> Permissions</u></h2>
+              <div v-for="module in modules">
+                <h4>
+                  <u> {{ module }}</u>
+                </h4>
+
+                <CRow>
+                  <CCol
+                    sm="6"
+                    md="4"
+                    class="pt-2"
+                    v-if="item.module == module"
+                    v-for="item in form.items"
+                    :key="item.uuid"
+                  >
+                    <CSwitch
+                      class="mx-1 pt-2"
+                      color="success"
+                      :checked.sync="item.value"
+                      shape="pill"
+                    />
+                    <label class="mr-4 font-lg"> {{ item.name }} </label>
+                  </CCol>
+                </CRow>
+              </div>
             </CCardBody>
           </CCard>
 
@@ -89,6 +96,7 @@ export default {
       items: [],
       name: "",
     },
+    modules: [],
   }),
 
   validations() {
@@ -106,13 +114,18 @@ export default {
     getSetting() {
       RolesAndPermissionsService.getAllPermissions()
         .then((res) => {
-          res.data.forEach((element) => {
-            this.form.items.push({
-              name: element.name,
-              uuid: element.uuid,
-              value: false,
+          for (let index = 0; index < Object.keys(res.data).length; index++) {
+            let module = Object.keys(res.data)[index];
+            this.modules.push(module);
+            res.data[module].forEach((element) => {
+              this.form.items.push({
+                name: element.name,
+                uuid: element.uuid,
+                value: false,
+                module: module,
+              });
             });
-          });
+          }
           this.getEditData();
         })
         .catch((error) => {

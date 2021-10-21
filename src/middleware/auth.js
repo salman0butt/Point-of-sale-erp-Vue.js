@@ -5,6 +5,8 @@ const auth = (to, from, next) => {
     next('/login');
     return;
   }
+  console.log('auth', store.state.permissions);
+
   next();
 }
 

@@ -78,53 +78,61 @@
 
 <script>
 // import http from '../../http-common'
-import { mapActions } from 'vuex'
+import { mapActions } from "vuex";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: 'Login',
-  data(){
-    return{
-      username:'',
-      password:''
-    }
+  name: "Login",
+  data() {
+    return {
+      username: "",
+      password: "",
+    };
   },
-   validations() {
+  validations() {
     return {
       username: { required },
       password: { required },
     };
   },
-  created(){
-    if(this.$store.getters.isLoggedIn){
-      this.$router.push("/dashboard")
+  created() {
+    if (this.$store.getters.isLoggedIn) {
+      this.$router.push("/dashboard");
     }
-     this.$store.commit('remove_errors');
+    this.$store.commit("remove_errors");
   },
-  methods:{
+  methods: {
     ...mapActions(["set_errors"]),
-    login(){
+    login() {
       let username = this.username;
-      let password = this.password
-      if(username != '' && username != undefined && password != undefined && password != ''){
-        this.$store.dispatch('login', { username, password })
-        .then(() =>{
-          localStorage.setItem('username', this.username);
-          this.$store.commit('remove_errors');
-          this.$router.push({path: '/dashboard'});
-        }).catch(() => {
-         this.set_errors('Username Or Password Incorrect');
-        });
+      let password = this.password;
+      if (
+        username != "" &&
+        username != undefined &&
+        password != undefined &&
+        password != ""
+      ) {
+        this.$store
+          .dispatch("login", { username, password })
+          .then((res) => {
+            localStorage.setItem("username", this.username);
+            this.$store.commit("remove_errors");
+            this.$router.push({ path: "/dashboard" });
+          })
+          .catch(() => {
+            this.set_errors("Username Or Password Incorrect");
+          });
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 
 <style scoped>
-.error,.errorMsg {
-  color:red !important;
+.error,
+.errorMsg {
+  color: red !important;
 }
 </style>
 

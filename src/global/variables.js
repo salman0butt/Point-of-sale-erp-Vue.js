@@ -1,0 +1,1 @@
+export const globalvariable = 'This is global variable';
