@@ -13,16 +13,17 @@ import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
 import Skeleton from 'vue-loading-skeleton';
 
+
 Vue.use(Skeleton)
 
 Vue.use(Vuelidate);
-
 Vue.use(CoreuiVuePro);
 Vue.prototype.$log = console.log.bind(console);
-
 Vue.prototype.$swal = Swal;
-
 Vue.prototype.$http = http;
+
+
+
 const token = 'Bearer ' + localStorage.getItem('token');
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = token;

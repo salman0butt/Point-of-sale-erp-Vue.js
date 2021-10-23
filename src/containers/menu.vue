@@ -1,6 +1,10 @@
 <script>
+import store from "@/store";
+// console.log("menu", store.state.permissions);
+
 export default {
   name: "nav",
+
   computed: {
     sidebarItems() {
       return [
@@ -85,49 +89,92 @@ export default {
                   _name: "CSidebarNavItem",
                   name: "Departments",
                   to: "/departments/index",
-                  icon: "cil-lan",
+                  // icon: "cil-laptop",
+                  permission: "department-read",
                 },
                 {
                   _name: "CSidebarNavItem",
                   name: "Designations",
                   to: "/designations/index",
-                  icon: "cil-lan",
+                  // icon: "cil-moon",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Letter Templates",
+                  to: "/letterTemplates/index",
+                  // icon: "cil-lan",
                 },
                 {
                   _name: "CSidebarNavItem",
                   name: "Employees",
                   to: "/employees/index",
-                  icon: "cil-lan",
+                  // icon: "cil-people",
                 },
                 {
                   _name: "CSidebarNavItem",
                   name: "Attendance",
                   to: "/attendance/index",
-                  icon: "cil-lan",
+                  // icon: "cil-bell",
                 },
                 {
                   _name: "CSidebarNavItem",
                   name: "Leaves",
                   to: "/leaves/index",
-                  icon: "cil-lan",
+                  // icon: "cil-userFollow",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Salary",
+                  to: "/salary/index",
+                  // icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Complains",
+                  to: "/complains/index",
+                  // icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Warnings",
+                  to: "/warnings/index",
+                  // icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Resignations",
+                  to: "/resignations/index",
+                  // icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Assets",
+                  to: "/assets/index",
+                  // icon: "cil-lan",
+                },
+                {
+                  _name: "CSidebarNavItem",
+                  name: "Awards",
+                  to: "/awards/index",
+                  // icon: "cil-lan",
                 },
                 {
                   _name: "CSidebarNavItem",
                   name: "Grades",
                   to: "/grades/index",
-                  icon: "cil-lan",
+                  // icon: "cil-basket",
                 },
                 {
                   _name: "CSidebarNavItem",
                   name: "Terminations",
                   to: "/terminations/index",
-                  icon: "cil-lan",
+                  // icon: "cil-chartPie",
                 },
                 {
                   _name: "CSidebarNavDropdown",
                   name: "Recruitment",
                   route: "/recruitment",
-                  icon: "cil-layers",
+                  // icon: "cil-speech",
                   _children: [
                     {
                       _name: "CSidebarNavItem",
@@ -147,61 +194,31 @@ export default {
                       to: "/recruitment/jobCandidates/index",
                       icon: "cil-lan",
                     },
-                    // {
-                    //   _name: "CSidebarNavItem",
-                    //   name: "Job Interviewes",
-                    //   to: "/recruitment/jobInterviews/index",
-                    //   icon: "cil-lan",
-                    // },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Job Interviewers",
+                      to: "/recruitment/jobInterviewers/index",
+                      icon: "cil-lan",
+                    },
+                    {
+                      _name: "CSidebarNavItem",
+                      name: "Job Interviewes",
+                      to: "/recruitment/jobInterviews/index",
+                      icon: "cil-lan",
+                    },
                   ],
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Salary",
-                  to: "/salary/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Payments",
-                  to: "/payments/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Awards",
-                  to: "/awards/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Complains",
-                  to: "/complains/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Warnings",
-                  to: "/warnings/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Resignations",
-                  to: "/resignations/index",
-                  icon: "cil-lan",
                 },
                 {
                   _name: "CSidebarNavItem",
                   name: "Transfers",
                   to: "/transfers/index",
-                  icon: "cil-lan",
+                  // icon: "cil-lan",
                 },
                 {
                   _name: "CSidebarNavDropdown",
                   name: "Trainings",
                   route: "/apps",
-                  icon: "cil-layers",
+                  // icon: "cil-layers",
                   _children: [
                     {
                       _name: "CSidebarNavItem",
@@ -227,25 +244,7 @@ export default {
                   _name: "CSidebarNavItem",
                   name: "Courses",
                   to: "/courses/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Letter Templates",
-                  to: "/letterTemplates/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Assets",
-                  to: "/assets/index",
-                  icon: "cil-lan",
-                },
-                {
-                  _name: "CSidebarNavItem",
-                  name: "Awards",
-                  to: "/awards/index",
-                  icon: "cil-lan",
+                  // icon: "cil-lan",
                 },
               ],
             },
@@ -272,7 +271,7 @@ export default {
               _name: "CSidebarNavItem",
               name: "Settings",
               to: "/settings",
-              icon: "cil-lan",
+              icon: "cil-settings",
             },
 
             {

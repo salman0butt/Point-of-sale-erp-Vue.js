@@ -128,6 +128,7 @@ const test = () => import('@/views/Testing')
 
 Vue.use(Router)
 
+
 const router = new Router({
   mode: 'history', // https://router.vuejs.org/api/#mode
   linkActiveClass: 'open active',
