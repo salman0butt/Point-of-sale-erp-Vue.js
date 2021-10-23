@@ -4,7 +4,16 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/designations/create"
+            <router-link
+              v-if="$ability.can('create', 'roles')"
+              class="btn btn-success"
+              to="/designations/create"
+              >Delte Designations</router-link
+            >
+            <router-link
+              v-if="$ability.can('create', 'designation')"
+              class="btn btn-success"
+              to="/designations/create"
               >Create Designations</router-link
             >
             <CDataTable

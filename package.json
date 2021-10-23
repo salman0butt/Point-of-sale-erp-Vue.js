@@ -36,6 +36,8 @@
   },
   "dependencies": {
     "@babel/preset-env": "^7.15.0",
+    "@casl/ability": "^5.4.3",
+    "@casl/vue": "^2.1.2",
     "@coreui/coreui-pro": "^3.4.0",
     "@coreui/icons": "^2.0.0-rc.0",
     "@coreui/icons-pro": "^2.0.3",

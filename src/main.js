@@ -12,6 +12,11 @@ import http from '../src/http-common';
 import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
 import Skeleton from 'vue-loading-skeleton';
+// import { abilitiesPlugin } from '@casl/vue';
+import defineAbility from './defineAbility'
+
+// Vue.use(abilitiesPlugin, defineAbility)
+
 
 
 Vue.use(Skeleton)
@@ -21,6 +26,7 @@ Vue.use(CoreuiVuePro);
 Vue.prototype.$log = console.log.bind(console);
 Vue.prototype.$swal = Swal;
 Vue.prototype.$http = http;
+Vue.prototype.$ability = defineAbility;
 
 
 
@@ -40,9 +46,9 @@ http.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
-Vue.config.errorHandler = err => {
-  console.log('Exception: ', err)
-}
+// Vue.config.errorHandler = err => {
+//   console.error('Exception: ', err)
+// }
 
 new Vue({
   el: '#app',
