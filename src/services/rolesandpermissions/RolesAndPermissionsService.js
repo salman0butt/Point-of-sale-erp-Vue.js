@@ -2,7 +2,7 @@ import http from "../../http-common";
 import Helper from "@/helpers/Helper";
 
 class RolesAndPermissionsService extends Helper {
-    getAll(page, per_page) {
+    getAllPaginate(page, per_page) {
         let url = "/roles";
         if (page !== '')
             url = super.updateQueryStringParameter(url, "page", page);
@@ -12,6 +12,10 @@ class RolesAndPermissionsService extends Helper {
 
         return http.get(url);
     }
+    getAll() {
+        return http.get(`/roles`);
+    }
+
 
     getAllPermissions() {
         return http.get(`/permissions`);
