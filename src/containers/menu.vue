@@ -687,21 +687,21 @@ export default {
             // }
           ],
         },
-      ].map(function (item) {
-        return item._children
-          .map(function (i) {
-            if (
-              i &&
-              i &&
-              i.meta &&
-              i.meta.permission &&
-              ability.can(i.meta.permission[0], i.meta.permission[1])
-            ) {
-              return i;
-            }
-          })
-          .filter((notUndefined) => notUndefined !== undefined)[0];
-      });
+      ];
+      // .map(function (item) {
+      //   return item._children
+      //     .map(function (i) {
+      //       if (
+      //         i &&
+      //         i.meta &&
+      //         i.meta.permission &&
+      //         ability.can(i.meta.permission[0], i.meta.permission[1])
+      //       ) {
+      //         return i;
+      //       }
+      //     })
+      //     .filter((notUndefined) => notUndefined !== undefined)[0];
+      // });
     },
   },
 };
