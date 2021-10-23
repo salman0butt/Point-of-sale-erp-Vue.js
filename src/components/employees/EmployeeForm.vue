@@ -4,7 +4,9 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <form @submit.prevent="isEditing ? updateEmployee() : saveEmployee()">
+            <form
+              @submit.prevent="isEditing ? updateEmployee() : saveEmployee()"
+            >
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -146,7 +148,10 @@
                     track-by="label"
                     :preselect-first="true"
                   >
-                    <template slot="selection" slot-scope="{ values, search, isOpen }">
+                    <template
+                      slot="selection"
+                      slot-scope="{ values, search, isOpen }"
+                    >
                       <span
                         class="multiselect__single"
                         v-if="values.value &amp;&amp; !isOpen"
@@ -217,7 +222,10 @@
                     @input="$v.form.branch_shift_id.$touch()"
                   />
                   <div v-if="$v.form.branch_shift_id.$error">
-                    <p v-if="!$v.form.branch_shift_id.required" class="errorMsg">
+                    <p
+                      v-if="!$v.form.branch_shift_id.required"
+                      class="errorMsg"
+                    >
                       Branch Shift is required
                     </p>
                   </div>
@@ -292,7 +300,9 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4">
                 <CButton
                   progress
@@ -308,7 +318,12 @@
                   timeout="2000"
                   block
                   color="danger"
-                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                  style="
+                    float: right;
+                    width: 140px;
+                    margin-left: 20px;
+                    margin-top: 0;
+                  "
                   @click="saveAndExit = true"
                   type="submit"
                   >Save & Exit</CButton
@@ -323,7 +338,13 @@
 </template>
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
-import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
+import {
+  required,
+  email,
+  numeric,
+  minLength,
+  maxLength,
+} from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 
 export default {
@@ -364,12 +385,24 @@ export default {
     empId: null,
     options: {
       branches: [],
-      managers: [{ value: "", label: "Choose Manager", disabled: true, selected: "" }],
+      managers: [
+        { value: "", label: "Choose Manager", disabled: true, selected: "" },
+      ],
       departments: [
-        { value: "", label: "Choose Departments", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose Departments",
+          disabled: true,
+          selected: "",
+        },
       ],
       designations: [
-        { value: "", label: "Choose Designations", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose Designations",
+          disabled: true,
+          selected: "",
+        },
       ],
       gender: [
         { value: "", label: "Choose Gender", disabled: true, selected: "" },
@@ -387,8 +420,7 @@ export default {
         { value: "inactive", label: "InActive" },
       ],
       user_role: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "super-admin", label: "Super Admin" },
+        { value: "", label: "Choose Role", disabled: true, selected: "" },
       ],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
@@ -401,7 +433,12 @@ export default {
         { value: "ar", label: "Arabic" },
       ],
       branch_shift: [
-        { value: "", label: "Choose Branch Shift", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose Branch Shift",
+          disabled: true,
+          selected: "",
+        },
       ],
     },
   }),
@@ -451,6 +488,7 @@ export default {
           let departments = this.options.departments;
           let designations = this.options.designations;
           let branch_shift = this.options.branch_shift;
+          let user_role = this.options.user_role;
           if (data.branches) {
             data.branches.map(function (val) {
               branches.push({ value: val.uuid, label: val.name.en });
@@ -474,6 +512,11 @@ export default {
           if (data.branch_shift) {
             data.branch_shift.map(function (val) {
               branch_shift.push({ value: val.uuid, label: val.name });
+            });
+          }
+          if (data.user_role) {
+            data.user_role.map(function (val) {
+              user_role.push({ value: val.uuid, label: val.name });
             });
           }
         })
@@ -508,7 +551,10 @@ export default {
           this.form.create_user = data.create_user == "true" ? true : false;
           this.form.user_name = data.user.name;
           this.form.user_email = data.user.email;
+          console.log(data.user.role[0]);
+
           this.form.user_role = data.user.role[0];
+          this.options.user_role.value = data.user.role[0];
           this.form.user_status = data.user.status?.toString();
           this.form.user_language = data.user.user_language;
           this.form.branch_shift_id = data.branch_shift_id;

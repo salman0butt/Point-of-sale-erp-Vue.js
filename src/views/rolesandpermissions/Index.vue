@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     getServerData() {
-      RolesAndPermissionsService.getAll(this.activePage, this.perPage)
+      RolesAndPermissionsService.getAllPaginate(this.activePage, this.perPage)
         .then(({ data }) => {
           this.loading = true;
           if (data !== "" && data !== undefined) {
