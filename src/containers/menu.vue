@@ -1,5 +1,6 @@
 <script>
 import ability from "@/defineAbility";
+import store from "@/store";
 
 export default {
   name: "nav",
@@ -24,13 +25,13 @@ export default {
               icon: "cil-institution",
             },
             {
-              _name: "CSidebarNavItem",
-              name: "Branches",
-              to: "/branches",
-              icon: "cil-lan",
-              meta: {
-                permission: ["read", "branches"],
-              },
+              ...(store.state.permissions.includes("read branches") && {
+                _name: "CSidebarNavItem",
+                _attrs: { class: "hide-me" },
+                name: "Branches",
+                to: "/branches",
+                icon: "cil-lan",
+              }),
             },
             // {
             //   _name: "CSidebarNavItem",
