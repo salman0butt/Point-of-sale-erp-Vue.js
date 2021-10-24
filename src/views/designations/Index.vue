@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <router-link
-              v-if="$ability.can('store', 'designations')"
+              v-if="$ability.can('create', 'designations')"
               class="btn btn-success"
               to="/designations/create"
               >Create Designations</router-link
@@ -53,7 +53,7 @@
                       >View</CButton
                     > -->
                     <CButton
-                      v-if="$ability.can('update', 'designations')"
+                      v-if="$ability.can('edit', 'designations')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -61,7 +61,7 @@
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      v-if="$ability.can('destroy', 'designations')"
+                      v-if="$ability.can('delete', 'designations')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"

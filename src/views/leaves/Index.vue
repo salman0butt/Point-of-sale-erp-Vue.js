@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <router-link
-              v-if="$ability.can('store', 'leaves')"
+              v-if="$ability.can('create', 'leaves')"
               class="btn btn-success"
               to="/leaves/create"
               >Create Leaves</router-link

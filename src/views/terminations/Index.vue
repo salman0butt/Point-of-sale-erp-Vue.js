@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <router-link
-              v-if="$ability.can('store', 'employee-terminations')"
+              v-if="$ability.can('create', 'employee-terminations')"
               class="btn btn-success"
               to="/terminations/create"
               >Create Terminations</router-link

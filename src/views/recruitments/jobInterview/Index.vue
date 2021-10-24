@@ -5,7 +5,7 @@
         <CCard>
           <CCardBody>
             <router-link
-              v-if="$ability.can('store', 'job-interviews')"
+              v-if="$ability.can('create', 'job-interviews')"
               class="btn btn-success"
               to="/recruitment/jobInterviews/create"
               >Create Job Interview</router-link
