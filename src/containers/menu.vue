@@ -1,5 +1,4 @@
 <script>
-import ability from "@/defineAbility";
 import store from "@/store";
 
 export default {
@@ -89,29 +88,37 @@ export default {
               icon: "cil-lan",
               _children: [
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Departments",
-                  to: "/departments/index",
-                  // icon: "cil-laptop",
-                  permission: "department-read",
+                  ...(store.state.permissions.includes("read departments") && {
+                    _name: "CSidebarNavItem",
+                    name: "Departments",
+                    to: "/departments/index",
+                    // icon: "cil-laptop",
+                    permission: "department-read",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Designations",
-                  to: "/designations/index",
-                  // icon: "cil-moon",
+                  ...(store.state.permissions.includes("read designations") && {
+                    _name: "CSidebarNavItem",
+                    name: "Designations",
+                    to: "/designations/index",
+                    // icon: "cil-moon",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Letter Templates",
-                  to: "/letterTemplates/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read letter-templates") && {
+                    _name: "CSidebarNavItem",
+                    name: "Letter Templates",
+                    to: "/letterTemplates/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Employees",
-                  to: "/employees/index",
-                  // icon: "cil-people",
+                  ...(store.state.permissions.includes("read employees") && {
+                    _name: "CSidebarNavItem",
+                    name: "Employees",
+                    to: "/employees/index",
+                    // icon: "cil-people",
+                  }),
                 },
                 {
                   _name: "CSidebarNavItem",
@@ -120,58 +127,78 @@ export default {
                   // icon: "cil-bell",
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Leaves",
-                  to: "/leaves/index",
-                  // icon: "cil-userFollow",
+                  ...(store.state.permissions.includes("read leaves") && {
+                    _name: "CSidebarNavItem",
+                    name: "Leaves",
+                    to: "/leaves/index",
+                    // icon: "cil-userFollow",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Salary",
-                  to: "/salary/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes(
+                    "read employee-salary-adjustments"
+                  ) && {
+                    _name: "CSidebarNavItem",
+                    name: "Salary",
+                    to: "/salary/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Complains",
-                  to: "/complains/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read employee-complains") && {
+                    _name: "CSidebarNavItem",
+                    name: "Complains",
+                    to: "/complains/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Warnings",
-                  to: "/warnings/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read employee-warnings") && {
+                    _name: "CSidebarNavItem",
+                    name: "Warnings",
+                    to: "/warnings/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Resignations",
-                  to: "/resignations/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read employee-resignations") && {
+                    _name: "CSidebarNavItem",
+                    name: "Resignations",
+                    to: "/resignations/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Assets",
-                  to: "/assets/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read assets") && {
+                    _name: "CSidebarNavItem",
+                    name: "Assets",
+                    to: "/assets/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Awards",
-                  to: "/awards/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read awards") && {
+                    _name: "CSidebarNavItem",
+                    name: "Awards",
+                    to: "/awards/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Grades",
-                  to: "/grades/index",
-                  // icon: "cil-basket",
+                  ...(store.state.permissions.includes("read employee-grades") && {
+                    _name: "CSidebarNavItem",
+                    name: "Grades",
+                    to: "/grades/index",
+                    // icon: "cil-basket",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Terminations",
-                  to: "/terminations/index",
-                  // icon: "cil-chartPie",
+                  ...(store.state.permissions.includes("read employee-terminations") && {
+                    _name: "CSidebarNavItem",
+                    name: "Terminations",
+                    to: "/terminations/index",
+                    // icon: "cil-chartPie",
+                  }),
                 },
                 {
                   _name: "CSidebarNavDropdown",
@@ -180,42 +207,54 @@ export default {
                   // icon: "cil-speech",
                   _children: [
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Job Category",
-                      to: "/recruitment/jobCategories/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read job-categories") && {
+                        _name: "CSidebarNavItem",
+                        name: "Job Category",
+                        to: "/recruitment/jobCategories/index",
+                        icon: "cil-lan",
+                      }),
                     },
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Job Post",
-                      to: "/recruitment/jobPosts/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read job-posts") && {
+                        _name: "CSidebarNavItem",
+                        name: "Job Post",
+                        to: "/recruitment/jobPosts/index",
+                        icon: "cil-lan",
+                      }),
                     },
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Job Candidates",
-                      to: "/recruitment/jobCandidates/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read job-candidates") && {
+                        _name: "CSidebarNavItem",
+                        name: "Job Candidates",
+                        to: "/recruitment/jobCandidates/index",
+                        icon: "cil-lan",
+                      }),
                     },
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Job Interviewers",
-                      to: "/recruitment/jobInterviewers/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read job-interviewers") && {
+                        _name: "CSidebarNavItem",
+                        name: "Job Interviewers",
+                        to: "/recruitment/jobInterviewers/index",
+                        icon: "cil-lan",
+                      }),
                     },
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Job Interviewes",
-                      to: "/recruitment/jobInterviews/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read job-interviews") && {
+                        _name: "CSidebarNavItem",
+                        name: "Job Interviewes",
+                        to: "/recruitment/jobInterviews/index",
+                        icon: "cil-lan",
+                      }),
                     },
                   ],
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Transfers",
-                  to: "/transfers/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read employee-transfers") && {
+                    _name: "CSidebarNavItem",
+                    name: "Transfers",
+                    to: "/transfers/index",
+                    // icon: "cil-lan",
+                  }),
                 },
                 {
                   _name: "CSidebarNavDropdown",
@@ -224,30 +263,38 @@ export default {
                   // icon: "cil-layers",
                   _children: [
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Traning Type",
-                      to: "/trainingTypes/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read training-types") && {
+                        _name: "CSidebarNavItem",
+                        name: "Traning Type",
+                        to: "/trainingTypes/index",
+                        icon: "cil-lan",
+                      }),
                     },
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Trainers",
-                      to: "/trainers/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read trainers") && {
+                        _name: "CSidebarNavItem",
+                        name: "Trainers",
+                        to: "/trainers/index",
+                        icon: "cil-lan",
+                      }),
                     },
                     {
-                      _name: "CSidebarNavItem",
-                      name: "Training",
-                      to: "/trainings/index",
-                      icon: "cil-lan",
+                      ...(store.state.permissions.includes("read trainings") && {
+                        _name: "CSidebarNavItem",
+                        name: "Training",
+                        to: "/trainings/index",
+                        icon: "cil-lan",
+                      }),
                     },
                   ],
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Courses",
-                  to: "/courses/index",
-                  // icon: "cil-lan",
+                  ...(store.state.permissions.includes("read courses") && {
+                    _name: "CSidebarNavItem",
+                    name: "Courses",
+                    to: "/courses/index",
+                    // icon: "cil-lan",
+                  }),
                 },
               ],
             },
@@ -257,16 +304,20 @@ export default {
               icon: "cil-lan",
               items: [
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Accounts",
-                  to: "/accounting/accounts/index",
-                  icon: "cil-lan",
+                  ...(store.state.permissions.includes("read departments") && {
+                    _name: "CSidebarNavItem",
+                    name: "Accounts",
+                    to: "/accounting/accounts/index",
+                    icon: "cil-lan",
+                  }),
                 },
                 {
-                  _name: "CSidebarNavItem",
-                  name: "Payment Methods",
-                  to: "/accounting/paymentMethods/index",
-                  icon: "cil-lan",
+                  ...(store.state.permissions.includes("read departments") && {
+                    _name: "CSidebarNavItem",
+                    name: "Payment Methods",
+                    to: "/accounting/paymentMethods/index",
+                    icon: "cil-lan",
+                  }),
                 },
               ],
             },
@@ -695,20 +746,6 @@ export default {
           ],
         },
       ];
-      // .map(function (item) {
-      //   return item._children
-      //     .map(function (i) {
-      //       if (
-      //         i &&
-      //         i.meta &&
-      //         i.meta.permission &&
-      //         ability.can(i.meta.permission[0], i.meta.permission[1])
-      //       ) {
-      //         return i;
-      //       }
-      //     })
-      //     .filter((notUndefined) => notUndefined !== undefined)[0];
-      // });
     },
   },
 };
