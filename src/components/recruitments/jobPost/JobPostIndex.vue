@@ -47,6 +47,7 @@
                   >View</CButton
                 > -->
                 <CButton
+                  v-if="$ability.can('edit', 'job-posts')"
                   @click="editRow(item.uuid)"
                   class="btn-sm text-white"
                   color="warning"
@@ -55,6 +56,7 @@
                   <CIcon :content="$options.cilPencil"
                 /></CButton>
                 <CButton
+                  v-if="$ability.can('delete', 'job-posts')"
                   @click="deleteRow(item.uuid)"
                   class="btn-sm"
                   color="danger"

@@ -4,7 +4,10 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/salary/create"
+            <router-link
+              v-if="$ability.can('create', 'employee-salary-adjustments')"
+              class="btn btn-success"
+              to="/salary/create"
               >Create Salary</router-link
             >
             <SalaryIndex />

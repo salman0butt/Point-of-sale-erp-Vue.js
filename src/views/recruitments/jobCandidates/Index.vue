@@ -4,7 +4,10 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/recruitment/jobCandidates/create"
+            <router-link
+              v-if="$ability.can('create', 'job-candidates')"
+              class="btn btn-success"
+              to="/recruitment/jobCandidates/create"
               >Create Job Candidate</router-link
             >
             <JobCandidateIndex />

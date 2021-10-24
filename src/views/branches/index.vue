@@ -6,6 +6,7 @@
           <CCardHeader> Branches </CCardHeader>
           <CCol col="6" sm="4" md="2" xl class="mb-0 mt-3 mb-xl-0">
             <CButton
+              v-if="$ability.can('create', 'branches')"
               block
               variant="outline"
               @click="addBranchBtn()"
@@ -30,23 +31,24 @@
               >
                 <template #select="{ item }">
                   <td>
-                    <CInputCheckbox
-                      @update:checked="() => check(item)"
-                      custom
-                    />
+                    <CInputCheckbox @update:checked="() => check(item)" custom />
                   </td>
                 </template>
 
                 <template #actions="{ item }">
                   <td>
                     <CButtonGroup>
-                      <CButton @click="viewRow(item.uuid)" color="success"
-                        >View</CButton
-                      >
-                      <CButton @click="editRow(item.uuid)" color="warning"
+                      <CButton @click="viewRow(item.uuid)" color="success">View</CButton>
+                      <CButton
+                        v-if="$ability.can('edit', 'branches')"
+                        @click="editRow(item.uuid)"
+                        color="warning"
                         >Edit</CButton
                       >
-                      <CButton @click="deleteRow(item.uuid)" color="danger"
+                      <CButton
+                        @click="deleteRow(item.uuid)"
+                        color="danger"
+                        v-if="$ability.can('delete', 'branches')"
                         >Delete</CButton
                       >
                     </CButtonGroup>
