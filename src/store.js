@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import http from '../src/http-common'
 
+
 Vue.use(Vuex)
 
 const state = {

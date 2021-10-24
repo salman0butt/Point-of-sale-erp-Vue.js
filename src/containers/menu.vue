@@ -282,6 +282,12 @@ export default {
               to: { name: "Index Roles" },
               icon: "cil-lan",
             },
+            {
+              _name: "CSidebarNavItem",
+              name: "Customers",
+              to: { name: "Index Customers" },
+              icon: "cil-lan",
+            },
 
             // {
             //   _name: 'CSidebarNavTitle',

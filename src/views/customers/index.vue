@@ -55,8 +55,14 @@
         </CRow>
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/customers/create"
+            <router-link
+              class="btn btn-success"
+              to="/customers/create"
+              style="float: right"
               >Create Customer</router-link
+            >
+            <router-link class="btn btn-success" to="/groups/create"
+              >Create Groups</router-link
             >
             <CDataTable
               :items="items"

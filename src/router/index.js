@@ -27,6 +27,8 @@ import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 import accountingRoutes from '@/router/accounting/accountingRoutes';
 import rolesandpermissions from '@/router/rolesandpermissions/RolesAndPermissionsRoutes';
+import customersRoutes from '@/router/customers/customersRoutes';
+import groupRoutes from '@/router/groups/groupRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -203,6 +205,8 @@ const router = new Router({
         profileRoutes,
         leaveRoutes,
         rolesandpermissions,
+        customersRoutes,
+        groupRoutes,
 
         {
           path: 'theme',
