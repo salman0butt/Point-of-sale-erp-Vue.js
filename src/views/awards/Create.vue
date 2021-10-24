@@ -15,7 +15,9 @@
                     @input="$v.form.name.$touch()"
                   />
                   <div v-if="$v.form.name.$error">
-                    <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                    <p v-if="!$v.form.name.required" class="errorMsg">
+                      Name is required
+                    </p>
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
@@ -25,7 +27,9 @@
                     :value.sync="form.type"
                   />
                   <div v-if="$v.form.type.$error">
-                    <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
+                    <p v-if="!$v.form.type.required" class="errorMsg">
+                      Type is required
+                    </p>
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
@@ -37,7 +41,9 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4">
                 <CButton
                   progress
@@ -49,11 +55,17 @@
                   @click="saveAndExit = false"
                   >Save & Continue</CButton
                 >
+
                 <CButton
                   timeout="2000"
                   block
                   color="danger"
-                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                  style="
+                    float: right;
+                    width: 140px;
+                    margin-left: 20px;
+                    margin-top: 0;
+                  "
                   @click="saveAndExit = true"
                   type="submit"
                   >Save & Exit</CButton
@@ -82,7 +94,9 @@ export default {
       description: "",
     },
     options: {
-      award_type: [{ value: "", label: "Choose Awards", disabled: true, selected: "" }],
+      award_type: [
+        { value: "", label: "Choose Awards", disabled: true, selected: "" },
+      ],
     },
   }),
   validations() {

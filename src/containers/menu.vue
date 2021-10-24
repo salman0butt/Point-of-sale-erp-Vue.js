@@ -1,6 +1,5 @@
 <script>
-import store from "@/store";
-// console.log("menu", store.state.permissions);
+import ability from "@/defineAbility";
 
 export default {
   name: "nav",
@@ -29,6 +28,9 @@ export default {
               name: "Branches",
               to: "/branches",
               icon: "cil-lan",
+              meta: {
+                permission: ["read", "branches"],
+              },
             },
             // {
             //   _name: "CSidebarNavItem",
@@ -278,6 +280,12 @@ export default {
               _name: "CSidebarNavItem",
               name: "Roles & Permissions",
               to: { name: "Index Roles" },
+              icon: "cil-lan",
+            },
+            {
+              _name: "CSidebarNavItem",
+              name: "Customers",
+              to: { name: "Index Customers" },
               icon: "cil-lan",
             },
 
@@ -686,6 +694,20 @@ export default {
           ],
         },
       ];
+      // .map(function (item) {
+      //   return item._children
+      //     .map(function (i) {
+      //       if (
+      //         i &&
+      //         i.meta &&
+      //         i.meta.permission &&
+      //         ability.can(i.meta.permission[0], i.meta.permission[1])
+      //       ) {
+      //         return i;
+      //       }
+      //     })
+      //     .filter((notUndefined) => notUndefined !== undefined)[0];
+      // });
     },
   },
 };
