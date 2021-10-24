@@ -124,6 +124,7 @@ const getters = {
   errors: state => state.errors,
   msgs: state => state.msgs,
   get_employee_name: state => state.employee_name,
+  getPermissions: state => state.permissions,
 }
 
 export default new Vuex.Store({

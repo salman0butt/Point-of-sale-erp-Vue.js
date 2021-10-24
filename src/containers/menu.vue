@@ -11,10 +11,12 @@ export default {
           _name: "CSidebarNav",
           _children: [
             {
-              _name: "CSidebarNavItem",
-              name: this.$t("menu.dashboard"),
-              to: "/dashboard",
-              icon: "cil-speedometer",
+              ...(store.state.permissions.includes("read dashboard") && {
+                _name: "CSidebarNavItem",
+                name: this.$t("menu.dashboard"),
+                to: "/dashboard",
+                icon: "cil-speedometer",
+              }),
             },
 
             {
