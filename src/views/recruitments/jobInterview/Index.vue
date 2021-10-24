@@ -4,7 +4,10 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/recruitment/jobInterviews/create"
+            <router-link
+              v-if="$ability.can('store', 'job-interviews')"
+              class="btn btn-success"
+              to="/recruitment/jobInterviews/create"
               >Create Job Interview</router-link
             >
             <JobInterviewIndex />

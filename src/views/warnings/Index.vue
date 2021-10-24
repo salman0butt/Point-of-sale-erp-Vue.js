@@ -4,7 +4,10 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/warnings/create"
+            <router-link
+              v-if="$ability.can('store', 'employee-warnings')"
+              class="btn btn-success"
+              to="/warnings/create"
               >Create Warnings</router-link
             >
             <WarningIndex />

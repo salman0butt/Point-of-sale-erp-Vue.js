@@ -4,7 +4,10 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/trainers/create"
+            <router-link
+              v-if="$ability.can('store', 'trainers')"
+              class="btn btn-success"
+              to="/trainers/create"
               >Create Trainer</router-link
             >
             <TrainerIndex />

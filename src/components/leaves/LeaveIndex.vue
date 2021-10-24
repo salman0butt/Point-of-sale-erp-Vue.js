@@ -68,6 +68,7 @@
                       >View</CButton
                     > -->
                     <CButton
+                      v-if="$ability.can('update', 'leaves')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -76,6 +77,7 @@
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
+                      v-if="$ability.can('destroy', 'leaves')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
