@@ -2,6 +2,7 @@ import 'core-js/stable'
 import Vue from 'vue'
 //import CoreuiVuePro from '@coreui/vue-pro'
 import CoreuiVuePro from '../node_modules/@coreui/vue-pro/src/index.js'
+import "regenerator-runtime/runtime.js";
 import App from './App'
 import router from './router/index'
 import { iconsSet as icons } from './assets/icons/icons.js'
@@ -12,12 +13,10 @@ import http from '../src/http-common';
 import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
 import Skeleton from 'vue-loading-skeleton';
-// import { abilitiesPlugin } from '@casl/vue';
-import defineAbility from './defineAbility'
+import { abilitiesPlugin } from '@casl/vue';
+import defineAbilityFor from './defineAbility'
 
-// Vue.use(abilitiesPlugin, defineAbility)
-
-
+Vue.use(abilitiesPlugin, defineAbilityFor());
 
 Vue.use(Skeleton)
 
@@ -26,7 +25,7 @@ Vue.use(CoreuiVuePro);
 Vue.prototype.$log = console.log.bind(console);
 Vue.prototype.$swal = Swal;
 Vue.prototype.$http = http;
-Vue.prototype.$ability = defineAbility;
+// Vue.prototype.$ability = defineAbility;
 
 
 

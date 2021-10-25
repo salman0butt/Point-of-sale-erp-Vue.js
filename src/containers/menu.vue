@@ -3,7 +3,14 @@ import store from "@/store";
 
 export default {
   name: "nav",
-
+  data() {
+    return {
+      permissions: [],
+    };
+  },
+  created() {
+    this.permissions = store.getters.getPermissions;
+  },
   computed: {
     sidebarItems() {
       return [
@@ -11,7 +18,7 @@ export default {
           _name: "CSidebarNav",
           _children: [
             {
-              ...(store.state.permissions.includes("read dashboard") && {
+              ...(this.permissions.includes("read dashboard") && {
                 _name: "CSidebarNavItem",
                 name: this.$t("menu.dashboard"),
                 to: "/dashboard",
@@ -26,7 +33,7 @@ export default {
               icon: "cil-institution",
             },
             {
-              ...(store.state.permissions.includes("read branches") && {
+              ...(this.permissions.includes("read branches") && {
                 _name: "CSidebarNavItem",
                 _attrs: { class: "hide-me" },
                 name: "Branches",
@@ -90,7 +97,7 @@ export default {
               icon: "cil-lan",
               _children: [
                 {
-                  ...(store.state.permissions.includes("read departments") && {
+                  ...(this.permissions.includes("read departments") && {
                     _name: "CSidebarNavItem",
                     name: "Departments",
                     to: "/departments/index",
@@ -99,7 +106,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read designations") && {
+                  ...(this.permissions.includes("read designations") && {
                     _name: "CSidebarNavItem",
                     name: "Designations",
                     to: "/designations/index",
@@ -107,7 +114,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read letter-templates") && {
+                  ...(this.permissions.includes("read letter-templates") && {
                     _name: "CSidebarNavItem",
                     name: "Letter Templates",
                     to: "/letterTemplates/index",
@@ -115,7 +122,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read employees") && {
+                  ...(this.permissions.includes("read employees") && {
                     _name: "CSidebarNavItem",
                     name: "Employees",
                     to: "/employees/index",
@@ -129,7 +136,7 @@ export default {
                   // icon: "cil-bell",
                 },
                 {
-                  ...(store.state.permissions.includes("read leaves") && {
+                  ...(this.permissions.includes("read leaves") && {
                     _name: "CSidebarNavItem",
                     name: "Leaves",
                     to: "/leaves/index",
@@ -137,9 +144,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes(
-                    "read employee-salary-adjustments"
-                  ) && {
+                  ...(this.permissions.includes("read employee-salary-adjustments") && {
                     _name: "CSidebarNavItem",
                     name: "Salary",
                     to: "/salary/index",
@@ -147,7 +152,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read employee-complains") && {
+                  ...(this.permissions.includes("read employee-complains") && {
                     _name: "CSidebarNavItem",
                     name: "Complains",
                     to: "/complains/index",
@@ -155,7 +160,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read employee-warnings") && {
+                  ...(this.permissions.includes("read employee-warnings") && {
                     _name: "CSidebarNavItem",
                     name: "Warnings",
                     to: "/warnings/index",
@@ -163,7 +168,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read employee-resignations") && {
+                  ...(this.permissions.includes("read employee-resignations") && {
                     _name: "CSidebarNavItem",
                     name: "Resignations",
                     to: "/resignations/index",
@@ -171,7 +176,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read assets") && {
+                  ...(this.permissions.includes("read assets") && {
                     _name: "CSidebarNavItem",
                     name: "Assets",
                     to: "/assets/index",
@@ -179,7 +184,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read awards") && {
+                  ...(this.permissions.includes("read awards") && {
                     _name: "CSidebarNavItem",
                     name: "Awards",
                     to: "/awards/index",
@@ -187,7 +192,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read employee-grades") && {
+                  ...(this.permissions.includes("read employee-grades") && {
                     _name: "CSidebarNavItem",
                     name: "Grades",
                     to: "/grades/index",
@@ -195,7 +200,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read employee-terminations") && {
+                  ...(this.permissions.includes("read employee-terminations") && {
                     _name: "CSidebarNavItem",
                     name: "Terminations",
                     to: "/terminations/index",
@@ -209,7 +214,7 @@ export default {
                   // icon: "cil-speech",
                   _children: [
                     {
-                      ...(store.state.permissions.includes("read job-categories") && {
+                      ...(this.permissions.includes("read job-categories") && {
                         _name: "CSidebarNavItem",
                         name: "Job Category",
                         to: "/recruitment/jobCategories/index",
@@ -217,7 +222,7 @@ export default {
                       }),
                     },
                     {
-                      ...(store.state.permissions.includes("read job-posts") && {
+                      ...(this.permissions.includes("read job-posts") && {
                         _name: "CSidebarNavItem",
                         name: "Job Post",
                         to: "/recruitment/jobPosts/index",
@@ -225,7 +230,7 @@ export default {
                       }),
                     },
                     {
-                      ...(store.state.permissions.includes("read job-candidates") && {
+                      ...(this.permissions.includes("read job-candidates") && {
                         _name: "CSidebarNavItem",
                         name: "Job Candidates",
                         to: "/recruitment/jobCandidates/index",
@@ -233,7 +238,7 @@ export default {
                       }),
                     },
                     {
-                      ...(store.state.permissions.includes("read job-interviewers") && {
+                      ...(this.permissions.includes("read job-interviewers") && {
                         _name: "CSidebarNavItem",
                         name: "Job Interviewers",
                         to: "/recruitment/jobInterviewers/index",
@@ -241,7 +246,7 @@ export default {
                       }),
                     },
                     {
-                      ...(store.state.permissions.includes("read job-interviews") && {
+                      ...(this.permissions.includes("read job-interviews") && {
                         _name: "CSidebarNavItem",
                         name: "Job Interviewes",
                         to: "/recruitment/jobInterviews/index",
@@ -251,7 +256,7 @@ export default {
                   ],
                 },
                 {
-                  ...(store.state.permissions.includes("read employee-transfers") && {
+                  ...(this.permissions.includes("read employee-transfers") && {
                     _name: "CSidebarNavItem",
                     name: "Transfers",
                     to: "/transfers/index",
@@ -265,7 +270,7 @@ export default {
                   // icon: "cil-layers",
                   _children: [
                     {
-                      ...(store.state.permissions.includes("read training-types") && {
+                      ...(this.permissions.includes("read training-types") && {
                         _name: "CSidebarNavItem",
                         name: "Traning Type",
                         to: "/trainingTypes/index",
@@ -273,7 +278,7 @@ export default {
                       }),
                     },
                     {
-                      ...(store.state.permissions.includes("read trainers") && {
+                      ...(this.permissions.includes("read trainers") && {
                         _name: "CSidebarNavItem",
                         name: "Trainers",
                         to: "/trainers/index",
@@ -281,7 +286,7 @@ export default {
                       }),
                     },
                     {
-                      ...(store.state.permissions.includes("read trainings") && {
+                      ...(this.permissions.includes("read trainings") && {
                         _name: "CSidebarNavItem",
                         name: "Training",
                         to: "/trainings/index",
@@ -291,7 +296,7 @@ export default {
                   ],
                 },
                 {
-                  ...(store.state.permissions.includes("read courses") && {
+                  ...(this.permissions.includes("read courses") && {
                     _name: "CSidebarNavItem",
                     name: "Courses",
                     to: "/courses/index",
@@ -306,7 +311,7 @@ export default {
               icon: "cil-lan",
               items: [
                 {
-                  ...(store.state.permissions.includes("read departments") && {
+                  ...(this.permissions.includes("read account") && {
                     _name: "CSidebarNavItem",
                     name: "Accounts",
                     to: "/accounting/accounts/index",
@@ -314,7 +319,7 @@ export default {
                   }),
                 },
                 {
-                  ...(store.state.permissions.includes("read departments") && {
+                  ...(this.permissions.includes("read paymentMethod") && {
                     _name: "CSidebarNavItem",
                     name: "Payment Methods",
                     to: "/accounting/paymentMethods/index",

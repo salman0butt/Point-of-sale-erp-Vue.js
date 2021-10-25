@@ -16,7 +16,7 @@ const state = {
   errors: [],
   msgs: [],
   employee_name: "",
-  permissions: JSON.parse(localStorage.getItem("permissions")) || '',
+  permissions: JSON.parse(localStorage.getItem("permissions")) || [],
 
 }
 
@@ -79,8 +79,8 @@ const actions = {
         localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
         http.defaults.headers.common['Authorization'] = "Bearer " + token;
         const permissions = JSON.parse(localStorage.getItem("permissions"));
-        commit('auth_success', token);
         commit('set_permissions', permissions);
+        commit('auth_success', token);
         resolve(res);
       }).catch(err => {
         commit('auth_error');
