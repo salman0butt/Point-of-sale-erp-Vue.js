@@ -31,14 +31,19 @@
               >
                 <template #select="{ item }">
                   <td>
-                    <CInputCheckbox @update:checked="() => check(item)" custom />
+                    <CInputCheckbox
+                      @update:checked="() => check(item)"
+                      custom
+                    />
                   </td>
                 </template>
 
                 <template #actions="{ item }">
                   <td>
                     <CButtonGroup>
-                      <CButton @click="viewRow(item.uuid)" color="success">View</CButton>
+                      <CButton @click="viewRow(item.uuid)" color="success"
+                        >View</CButton
+                      >
                       <CButton
                         v-if="$ability.can('edit', 'branches')"
                         @click="editRow(item.uuid)"
