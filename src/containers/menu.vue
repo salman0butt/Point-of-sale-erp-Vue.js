@@ -8,9 +8,6 @@ export default {
       permissions: [],
     };
   },
-  created() {
-    this.permissions = store.getters.getPermissions;
-  },
   computed: {
     sidebarItems() {
       return [
@@ -18,12 +15,10 @@ export default {
           _name: "CSidebarNav",
           _children: [
             {
-              ...(this.permissions.includes("read dashboard") && {
-                _name: "CSidebarNavItem",
-                name: this.$t("menu.dashboard"),
-                to: "/dashboard",
-                icon: "cil-speedometer",
-              }),
+              _name: "CSidebarNavItem",
+              name: this.$t("menu.dashboard"),
+              to: "/dashboard",
+              icon: "cil-speedometer",
             },
 
             {
@@ -33,13 +28,11 @@ export default {
               icon: "cil-institution",
             },
             {
-              ...(this.permissions.includes("read branches") && {
-                _name: "CSidebarNavItem",
-                _attrs: { class: "hide-me" },
-                name: "Branches",
-                to: "/branches",
-                icon: "cil-lan",
-              }),
+              _name: "CSidebarNavItem",
+              _attrs: { class: "hide-me" },
+              name: "Branches",
+              to: "/branches",
+              icon: "cil-lan",
             },
             // {
             //   _name: "CSidebarNavItem",
@@ -97,37 +90,29 @@ export default {
               icon: "cil-lan",
               _children: [
                 {
-                  ...(this.permissions.includes("read departments") && {
-                    _name: "CSidebarNavItem",
-                    name: "Departments",
-                    to: "/departments/index",
-                    // icon: "cil-laptop",
-                    permission: "department-read",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Departments",
+                  to: "/departments/index",
+                  // icon: "cil-laptop",
+                  permission: "department-read",
                 },
                 {
-                  ...(this.permissions.includes("read designations") && {
-                    _name: "CSidebarNavItem",
-                    name: "Designations",
-                    to: "/designations/index",
-                    // icon: "cil-moon",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Designations",
+                  to: "/designations/index",
+                  // icon: "cil-moon",
                 },
                 {
-                  ...(this.permissions.includes("read letter-templates") && {
-                    _name: "CSidebarNavItem",
-                    name: "Letter Templates",
-                    to: "/letterTemplates/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Letter Templates",
+                  to: "/letterTemplates/index",
+                  // icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read employees") && {
-                    _name: "CSidebarNavItem",
-                    name: "Employees",
-                    to: "/employees/index",
-                    // icon: "cil-people",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Employees",
+                  to: "/employees/index",
+                  // icon: "cil-people",
                 },
                 {
                   _name: "CSidebarNavItem",
@@ -136,76 +121,58 @@ export default {
                   // icon: "cil-bell",
                 },
                 {
-                  ...(this.permissions.includes("read leaves") && {
-                    _name: "CSidebarNavItem",
-                    name: "Leaves",
-                    to: "/leaves/index",
-                    // icon: "cil-userFollow",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Leaves",
+                  to: "/leaves/index",
+                  // icon: "cil-userFollow",
                 },
                 {
-                  ...(this.permissions.includes("read employee-salary-adjustments") && {
-                    _name: "CSidebarNavItem",
-                    name: "Salary",
-                    to: "/salary/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Salary",
+                  to: "/salary/index",
+                  // icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read employee-complains") && {
-                    _name: "CSidebarNavItem",
-                    name: "Complains",
-                    to: "/complains/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Complains",
+                  to: "/complains/index",
+                  // icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read employee-warnings") && {
-                    _name: "CSidebarNavItem",
-                    name: "Warnings",
-                    to: "/warnings/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Warnings",
+                  to: "/warnings/index",
+                  // icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read employee-resignations") && {
-                    _name: "CSidebarNavItem",
-                    name: "Resignations",
-                    to: "/resignations/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Resignations",
+                  to: "/resignations/index",
+                  // icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read assets") && {
-                    _name: "CSidebarNavItem",
-                    name: "Assets",
-                    to: "/assets/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Assets",
+                  to: "/assets/index",
+                  // icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read awards") && {
-                    _name: "CSidebarNavItem",
-                    name: "Awards",
-                    to: "/awards/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Awards",
+                  to: "/awards/index",
+                  // icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read employee-grades") && {
-                    _name: "CSidebarNavItem",
-                    name: "Grades",
-                    to: "/grades/index",
-                    // icon: "cil-basket",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Grades",
+                  to: "/grades/index",
+                  // icon: "cil-basket",
                 },
                 {
-                  ...(this.permissions.includes("read employee-terminations") && {
-                    _name: "CSidebarNavItem",
-                    name: "Terminations",
-                    to: "/terminations/index",
-                    // icon: "cil-chartPie",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Terminations",
+                  to: "/terminations/index",
+                  // icon: "cil-chartPie",
                 },
                 {
                   _name: "CSidebarNavDropdown",
@@ -214,54 +181,42 @@ export default {
                   // icon: "cil-speech",
                   _children: [
                     {
-                      ...(this.permissions.includes("read job-categories") && {
-                        _name: "CSidebarNavItem",
-                        name: "Job Category",
-                        to: "/recruitment/jobCategories/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Job Category",
+                      to: "/recruitment/jobCategories/index",
+                      icon: "cil-lan",
                     },
                     {
-                      ...(this.permissions.includes("read job-posts") && {
-                        _name: "CSidebarNavItem",
-                        name: "Job Post",
-                        to: "/recruitment/jobPosts/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Job Post",
+                      to: "/recruitment/jobPosts/index",
+                      icon: "cil-lan",
                     },
                     {
-                      ...(this.permissions.includes("read job-candidates") && {
-                        _name: "CSidebarNavItem",
-                        name: "Job Candidates",
-                        to: "/recruitment/jobCandidates/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Job Candidates",
+                      to: "/recruitment/jobCandidates/index",
+                      icon: "cil-lan",
                     },
                     {
-                      ...(this.permissions.includes("read job-interviewers") && {
-                        _name: "CSidebarNavItem",
-                        name: "Job Interviewers",
-                        to: "/recruitment/jobInterviewers/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Job Interviewers",
+                      to: "/recruitment/jobInterviewers/index",
+                      icon: "cil-lan",
                     },
                     {
-                      ...(this.permissions.includes("read job-interviews") && {
-                        _name: "CSidebarNavItem",
-                        name: "Job Interviewes",
-                        to: "/recruitment/jobInterviews/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Job Interviewes",
+                      to: "/recruitment/jobInterviews/index",
+                      icon: "cil-lan",
                     },
                   ],
                 },
                 {
-                  ...(this.permissions.includes("read employee-transfers") && {
-                    _name: "CSidebarNavItem",
-                    name: "Transfers",
-                    to: "/transfers/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Transfers",
+                  to: "/transfers/index",
+                  // icon: "cil-lan",
                 },
                 {
                   _name: "CSidebarNavDropdown",
@@ -270,38 +225,30 @@ export default {
                   // icon: "cil-layers",
                   _children: [
                     {
-                      ...(this.permissions.includes("read training-types") && {
-                        _name: "CSidebarNavItem",
-                        name: "Traning Type",
-                        to: "/trainingTypes/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Traning Type",
+                      to: "/trainingTypes/index",
+                      icon: "cil-lan",
                     },
                     {
-                      ...(this.permissions.includes("read trainers") && {
-                        _name: "CSidebarNavItem",
-                        name: "Trainers",
-                        to: "/trainers/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Trainers",
+                      to: "/trainers/index",
+                      icon: "cil-lan",
                     },
                     {
-                      ...(this.permissions.includes("read trainings") && {
-                        _name: "CSidebarNavItem",
-                        name: "Training",
-                        to: "/trainings/index",
-                        icon: "cil-lan",
-                      }),
+                      _name: "CSidebarNavItem",
+                      name: "Training",
+                      to: "/trainings/index",
+                      icon: "cil-lan",
                     },
                   ],
                 },
                 {
-                  ...(this.permissions.includes("read courses") && {
-                    _name: "CSidebarNavItem",
-                    name: "Courses",
-                    to: "/courses/index",
-                    // icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Courses",
+                  to: "/courses/index",
+                  // icon: "cil-lan",
                 },
               ],
             },
@@ -311,20 +258,16 @@ export default {
               icon: "cil-lan",
               items: [
                 {
-                  ...(this.permissions.includes("read account") && {
-                    _name: "CSidebarNavItem",
-                    name: "Accounts",
-                    to: "/accounting/accounts/index",
-                    icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Accounts",
+                  to: "/accounting/accounts/index",
+                  icon: "cil-lan",
                 },
                 {
-                  ...(this.permissions.includes("read paymentMethod") && {
-                    _name: "CSidebarNavItem",
-                    name: "Payment Methods",
-                    to: "/accounting/paymentMethods/index",
-                    icon: "cil-lan",
-                  }),
+                  _name: "CSidebarNavItem",
+                  name: "Payment Methods",
+                  to: "/accounting/paymentMethods/index",
+                  icon: "cil-lan",
                 },
               ],
             },

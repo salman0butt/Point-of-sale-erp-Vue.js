@@ -21,8 +21,8 @@ import { AbilityBuilder, Ability } from '@casl/ability'
 export default function defineAbilityFor() {
   const { can, cannot, build } = new AbilityBuilder(Ability);
 
-  // const permissions = store.getters.getPermissions ?? [];
-  const permissions = ['create branches'];
+  const permissions = store.getters.getPermissions ?? [];
+  // const permissions = ['create branches'];
   console.log('perm',permissions);
   if (permissions) {
     permissions.map(function (item) {

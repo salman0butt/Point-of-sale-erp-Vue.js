@@ -4,10 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link
-              v-if="$ability.can('create', 'assets')"
-              class="btn btn-success"
-              to="/assets/create"
+            <router-link class="btn btn-success" to="/assets/create"
               >Create Asset</router-link
             >
             <CDataTable
@@ -46,19 +43,13 @@
                       >View</CButton
                     > -->
                     <CButton
-                      v-if="$ability.can('edit', 'assets')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      v-if="$ability.can('delete', 'assets')"
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>

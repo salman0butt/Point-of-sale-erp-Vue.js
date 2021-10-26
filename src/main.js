@@ -13,10 +13,10 @@ import http from '../src/http-common';
 import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
 import Skeleton from 'vue-loading-skeleton';
-import { abilitiesPlugin } from '@casl/vue';
-import defineAbilityFor from './defineAbility'
+// import { abilitiesPlugin } from '@casl/vue';
+// import defineAbilityFor from './defineAbility'
 
-Vue.use(abilitiesPlugin, defineAbilityFor());
+// Vue.use(abilitiesPlugin, defineAbilityFor());
 
 Vue.use(Skeleton)
 
