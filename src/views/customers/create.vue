@@ -44,7 +44,7 @@
 </template>
 <script>
 import General from "@/components/customers/General";
-import Address from "@/components/customers/Address";
+import Address from "@/components/general/Address/AddressTab";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
