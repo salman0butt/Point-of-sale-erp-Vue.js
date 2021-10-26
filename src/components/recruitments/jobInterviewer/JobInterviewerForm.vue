@@ -4,6 +4,18 @@
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateJobInterviewer() : saveJobInterviewer()">
           <CRow>
+            <CCol sm="12" md="12" class="pt-2">
+              <CSelect
+                label="Employee"
+                :options="options.employees"
+                :value.sync="form.employee_id"
+                @change="employeeSelected()"
+              />
+              <p class="text-center">OR</p>
+              <hr />
+            </CCol>
+          </CRow>
+          <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Name"
@@ -103,6 +115,7 @@
 <script>
 import JobInterviewerService from "@/services/recruitments/jobInterviewer/JobInterviewerService";
 import { required } from "vuelidate/lib/validators";
+import EmployeeService from "@/services/employees/EmployeeService";
 
 export default {
   name: "JobInterviewerForm",
@@ -124,6 +137,7 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
+      employees: [{ value: "", label: "Choose Employee", disabled: true, selected: "" }],
     },
   }),
   validations() {
@@ -139,6 +153,7 @@ export default {
   },
   created() {
     this.form.id = this.$route.params.id;
+    this.getAllEmployees();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getJobInterviewer();
@@ -233,6 +248,35 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+        });
+    },
+    getAllEmployees() {
+      this.$http
+        .get("/employees-create")
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            const employees = this.options.employees;
+
+            data.employees.map(function (val) {
+              employees.push({ value: val.uuid, label: val.full_name.en });
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    employeeSelected() {
+      EmployeeService.get(this.form.employee_id)
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            this.form.name = data.full_name;
+            this.form.email = data.email;
+            this.form.phone = data.phone_number;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     resetForm() {
