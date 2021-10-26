@@ -4,9 +4,11 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/departments/create"
-              >Create Department</router-link
-            >
+            <div v-if="canCreateBranch">
+              <router-link class="btn btn-success" to="/departments/create"
+                >Create Department</router-link
+              >
+            </div>
             <CDataTable
               :items="departments"
               :fields="fields"
@@ -53,7 +55,11 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -105,11 +111,13 @@ export default {
       activePage: 1,
       pages: 0,
       perPage: 10,
+      permissions: localStorage.getItem("permissions"),
     };
   },
   created() {
     this.loading = true;
     this.getDepartmentData();
+    console.log();
   },
   watch: {
     reloadParams() {
@@ -122,6 +130,9 @@ export default {
   computed: {
     departments() {
       return this.departmentsData;
+    },
+    canCreateBranch() {
+      return this.permissions.includes("create branches");
     },
   },
   methods: {
