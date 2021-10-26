@@ -49,10 +49,7 @@
         </CRow>
         <CCard>
           <CCardBody>
-            <router-link
-              v-if="$ability.can('create', 'employees')"
-              class="btn btn-success"
-              to="/employees/create"
+            <router-link class="btn btn-success" to="/employees/create"
               >Create Employee</router-link
             >
             <CDataTable
@@ -97,19 +94,13 @@
                       >View</CButton
                     > -->
                     <CButton
-                      v-if="$ability.can('edit', 'employees')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      v-if="$ability.can('delete', 'employees')"
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>

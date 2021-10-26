@@ -4,10 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link
-              v-if="$ability.can('create', 'employee-transfers')"
-              class="btn btn-success"
-              to="/transfers/create"
+            <router-link class="btn btn-success" to="/transfers/create"
               >Create Transfers</router-link
             >
             <TransferIndex />

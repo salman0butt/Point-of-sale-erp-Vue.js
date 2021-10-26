@@ -22,8 +22,13 @@ export default function defineAbilityFor() {
   const { can, cannot, build } = new AbilityBuilder(Ability);
 
   const permissions = store.getters.getPermissions ?? [];
+<<<<<<< HEAD
   // const permissions = ['create branches', 'edit branches'];
   console.log('perm', permissions);
+=======
+  // const permissions = ['create branches'];
+  console.log('perm',permissions);
+>>>>>>> 0a455cd73bf064c050252fcc3805412ca78ac943
   if (permissions) {
     permissions.map(function (item) {
       let permission = item.split(" ");

@@ -4,10 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link
-              v-if="$ability.can('create', 'courses')"
-              class="btn btn-success"
-              to="/courses/create"
+            <router-link class="btn btn-success" to="/courses/create"
               >Create Courses</router-link
             >
             <CourseIndex />
