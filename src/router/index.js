@@ -131,6 +131,11 @@ const test = () => import('@/views/Testing')
 Vue.use(Router)
 
 
+
+
+
+
+
 const router = new Router({
   mode: 'history', // https://router.vuejs.org/api/#mode
   linkActiveClass: 'open active',
@@ -650,10 +655,39 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
-  } else {
-    next();
   }
+
+
+  next();
 });
+
+// hasAccess(name){
+//   let permissions = localStorage.getItem("permissions")
+
+//   switch (name) {
+
+//     case "home":
+//       return true;
+
+//     case "IndexDepartment":
+//       return permissions.includes("IndexDepartment")
+
+//     case "permissions":
+//       return permissions.includes("View All Permissions")
+
+//     case "roles":
+//       return permissions.includes("View All Roles")
+
+//     default:
+//       return false;
+//   }
+// }
+
+
+
+
+
+
 
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {

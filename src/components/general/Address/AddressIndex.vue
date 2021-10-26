@@ -4,13 +4,8 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <div v-if="canCreateBranch">
-              <router-link class="btn btn-success" to="/departments/create"
-                >Create Department</router-link
-              >
-            </div>
             <CDataTable
-              :items="departments"
+              :items="Addresses"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -23,7 +18,7 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <!-- <template #select="{ item }">
+              <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -31,7 +26,7 @@
                     custom
                   />
                 </td>
-              </template> -->
+              </template>
               <template #business="{ item }">
                 <td>
                   {{ item.name }}
@@ -45,13 +40,11 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
-                      >View</CButton
-                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
+                      title="Edit"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
@@ -59,6 +52,7 @@
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
+                      title="Delete"
                     >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
@@ -79,99 +73,98 @@
 </template>
 
 <script>
-import DepartmentService from "@/services/departments/DepartmentService";
+import CustomerAddressServices from "@/services/customers/CustomerAddressServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  // {
-  //   key: "select",
-  //   label: "",
-  //   _style: "min-width:1%",
-  //   sorter: false,
-  //   filter: false,
-  // },
-  { key: "name", label: "DEPARTMENT NAME", _style: "min-width:40%" },
-  { key: "business", label: "BUSINESS", _style: "min-width:15%;" },
-  { key: "parent", label: "PARENT", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
+  { key: "flat", label: "FLAT", _style: "min-width:40%" },
+  { key: "floor", label: "FLOOR", _style: "min-width:15%;" },
+  { key: "building", label: "BUILDING", _style: "min-width:15%;" },
+  { key: "street", label: "STREET", _style: "min-width:15%;" },
+  { key: "block", label: "BLOCK", _style: "min-width:15%;" },
+  { key: "area", label: "AREA", _style: "min-width:15%;" },
+  { key: "set_default", label: "DEFAULT", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "IndexDepartment",
+  name: "AddressIndex",
   cilPencil,
   cilTrash,
   cilEye,
+
   data() {
     return {
-      departmentsData: [],
+      AddressesData: [],
       fields,
-      loading: false,
+      loading: true,
       deleteRows: [],
+      uuid: null,
       activePage: 1,
       pages: 0,
       perPage: 10,
-      permissions: localStorage.getItem("permissions"),
     };
   },
+  props: {
+    module: String,
+  },
+
   created() {
-    this.loading = true;
-    this.getDepartmentData();
-    console.log();
+    this.loading = false;
+    this.getAddressData();
+  },
+  computed: {
+    Addresses() {
+      return this.AddressesData;
+    },
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getDepartmentData(this.activePage, this.perPage);
-    },
-  },
-  computed: {
-    departments() {
-      return this.departmentsData;
-    },
-    canCreateBranch() {
-      return this.permissions.includes("create branches");
+      this.getAddressData(this.activePage, this.perPage);
     },
   },
   methods: {
-    getDepartmentData(page = "", per_page = "") {
-      DepartmentService.getAll(page, per_page)
-        .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
-            this.departmentsData = [];
-            this.loading = true;
-            if (data.data) {
-              data.data.map((item, id) => {
-                this.departmentsData.push({ ...item, id });
-              });
+    getAddressData(page = "", per_page = "") {
+      this.uuid = this.$route.params.id;
+      if (this.module == "customer") {
+        CustomerAddressServices.getCustomerAddresses(this.uuid, page, per_page)
+          .then(({ data }) => {
+            if (data !== "" && data !== undefined) {
+              this.AddressesData = [];
+              this.loading = true;
+              if (data.data) {
+                data.data.map((item, id) => {
+                  this.AddressesData.push({ ...item, id });
+                });
+              }
+              if (data.meta) {
+                this.setPagination(data.meta);
+              }
             }
-            if (data.meta) {
-              this.setPagination(data.meta);
-            }
-
             this.loading = false;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    rowClicked(item, index, column, e) {
-      if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
-        this.check(item);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
-    check(item) {
-      const val = Boolean(this.departmentsData[item.id]._selected);
-      this.$set(this.departmentsData[item.id], "_selected", !val);
-    },
+    // rowClicked(item, index, column, e) {
+    //   if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
+    //     this.check(item);
+    //   }
+    // },
+    // check(item) {
+    //   const val = Boolean(this.AddressesData[item.id]._selected);
+    //   this.$set(this.AddressesData[item.id], "_selected", !val);
+    // },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/departments/edit/" + uuid });
+      this.$emit("employeeAddressEdit", uuid);
     },
 
     deleteRow(uuid) {
@@ -186,16 +179,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            DepartmentService.delete(this.deleteRows)
+            EmployeeAddressService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Department Deleted Successfully",
+                    text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.departmentsData = this.departmentsData.filter(
+                  this.AddressesData = this.AddressesData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -221,13 +214,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.departmentsData = agent.currentItems;
+        this.AddressesData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getDepartmentData("", this.perPage);
+      this.getAddressData("", this.perPage);
     },
   },
 };
