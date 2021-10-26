@@ -5,12 +5,7 @@
         <CCard>
           <CCardHeader> Branches </CCardHeader>
           <CCol col="6" sm="4" md="2" xl class="mb-0 mt-3 mb-xl-0">
-            <CButton
-              v-if="$ability.can('create', 'branches')"
-              block
-              variant="outline"
-              @click="addBranchBtn()"
-              color="success"
+            <CButton block variant="outline" @click="addBranchBtn()" color="success"
               >Add Branch</CButton
             >
           </CCol>
@@ -41,6 +36,7 @@
                 <template #actions="{ item }">
                   <td>
                     <CButtonGroup>
+<<<<<<< HEAD
                       <CButton @click="viewRow(item.uuid)" color="success"
                         >View</CButton
                       >
@@ -54,6 +50,11 @@
                         @click="deleteRow(item.uuid)"
                         color="danger"
                         v-if="$ability.can('delete', 'branches')"
+=======
+                      <CButton @click="viewRow(item.uuid)" color="success">View</CButton>
+                      <CButton @click="editRow(item.uuid)" color="warning">Edit</CButton>
+                      <CButton @click="deleteRow(item.uuid)" color="danger"
+>>>>>>> 0a455cd73bf064c050252fcc3805412ca78ac943
                         >Delete</CButton
                       >
                     </CButtonGroup>

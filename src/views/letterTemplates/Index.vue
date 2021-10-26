@@ -4,10 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link
-              v-if="$ability.can('create', 'letter-templates')"
-              class="btn btn-success"
-              to="/letterTemplates/create"
+            <router-link class="btn btn-success" to="/letterTemplates/create"
               >Create Letter Templates</router-link
             >
             <LetterTemplateIndex />

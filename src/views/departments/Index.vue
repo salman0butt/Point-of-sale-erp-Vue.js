@@ -4,12 +4,11 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link
-              v-if="$ability.can('create', 'departments')"
-              class="btn btn-success"
-              to="/departments/create"
-              >Create Department</router-link
-            >
+            <div v-if="canCreateBranch">
+              <router-link class="btn btn-success" to="/departments/create"
+                >Create Department</router-link
+              >
+            </div>
             <CDataTable
               :items="departments"
               :fields="fields"
@@ -50,7 +49,6 @@
                       >View</CButton
                     > -->
                     <CButton
-                      v-if="$ability.can('edit', 'departments')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -58,7 +56,6 @@
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      v-if="$ability.can('delete', 'departments')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
@@ -114,11 +111,13 @@ export default {
       activePage: 1,
       pages: 0,
       perPage: 10,
+      permissions: localStorage.getItem("permissions"),
     };
   },
   created() {
     this.loading = true;
     this.getDepartmentData();
+    console.log();
   },
   watch: {
     reloadParams() {
@@ -131,6 +130,9 @@ export default {
   computed: {
     departments() {
       return this.departmentsData;
+    },
+    canCreateBranch() {
+      return this.permissions.includes("create branches");
     },
   },
   methods: {

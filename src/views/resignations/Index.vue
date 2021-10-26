@@ -4,10 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link
-              v-if="$ability.can('create', 'employee-resignations')"
-              class="btn btn-success"
-              to="/resignations/create"
+            <router-link class="btn btn-success" to="/resignations/create"
               >Create Resignations</router-link
             >
             <ResignationIndex />
