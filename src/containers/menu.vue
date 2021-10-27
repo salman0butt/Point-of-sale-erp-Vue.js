@@ -14,7 +14,6 @@ export default {
   },
   created() {
     this.pushingSideBarItems();
-
     this.sidebarItems.push({
       _name: "CSidebarNav",
       _children: this.sideBarItems,
@@ -23,12 +22,12 @@ export default {
   methods: {
     pushingSideBarItems() {
       if (this.permissions.includes("read dashboard")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: this.$t("menu.dashboard"),
-          to: "/dashboard",
-          icon: "cil-speedometer",
-        });
+        // this.sideBarItems.push({
+        //   _name: "CSidebarNavItem",
+        //   name: this.$t("menu.dashboard"),
+        //   to: "/dashboard",
+        //   icon: "cil-speedometer",
+        // });
       }
       if (this.permissions.includes("read merchant")) {
         this.sideBarItems.push(

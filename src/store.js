@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import http from '../src/http-common'
+import http from '@/http-common'
 
 
 Vue.use(Vuex)
@@ -17,6 +17,9 @@ const state = {
   msgs: [],
   employee_name: "",
   permissions: JSON.parse(localStorage.getItem("permissions")) || [],
+  selected_branches: "",
+  list_branches: JSON.parse(localStorage.getItem("list_branches")),
+  showBranchModel: false,
 
 }
 
@@ -65,6 +68,15 @@ const mutations = {
   },
   set_permissions(state, permissions) {
     state.permissions = permissions;
+  },
+  set_branches(state, branches) {
+    state.selected_branches = branches;
+  },
+  set_list_branches(state, branch_list) {
+    state.list_branches = branch_list;
+  },
+  set_show_branch_model(state, status) {
+    state.showBranchModel = status;
   }
 }
 
@@ -77,9 +89,13 @@ const actions = {
         localStorage.setItem('token', token);
         localStorage.setItem('employee_id', res.data.employee_id);
         localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
+        localStorage.setItem('list_branches', JSON.stringify(res.data.branches));
+        if(res.data.branches && res.data.branches.length == 1){
+          localStorage.setItem('selected_branches', JSON.stringify([res.data.branches[0].uuid]));
+        }
         http.defaults.headers.common['Authorization'] = "Bearer " + token;
-        const permissions = JSON.parse(localStorage.getItem("permissions"));
-        commit('set_permissions', permissions);
+        commit('set_permissions', res.data.permissions);
+        commit('set_list_branches', res.data.branches);
         commit('auth_success', token);
         resolve(res);
       }).catch(err => {
@@ -125,6 +141,9 @@ const getters = {
   msgs: state => state.msgs,
   get_employee_name: state => state.employee_name,
   getPermissions: state => state.permissions,
+  getBranches: state => state.branches,
+  branchLists: state => state.list_branches,
+  showBranchModel: state => state.showBranchModel,
 }
 
 export default new Vuex.Store({
