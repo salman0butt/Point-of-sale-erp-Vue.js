@@ -26,35 +26,16 @@
               >
                 <template #select="{ item }">
                   <td>
-                    <CInputCheckbox
-                      @update:checked="() => check(item)"
-                      custom
-                    />
+                    <CInputCheckbox @update:checked="() => check(item)" custom />
                   </td>
                 </template>
 
                 <template #actions="{ item }">
                   <td>
                     <CButtonGroup>
-<<<<<<< HEAD
-                      <CButton @click="viewRow(item.uuid)" color="success"
-                        >View</CButton
-                      >
-                      <CButton
-                        v-if="$ability.can('edit', 'branches')"
-                        @click="editRow(item.uuid)"
-                        color="warning"
-                        >Edit</CButton
-                      >
-                      <CButton
-                        @click="deleteRow(item.uuid)"
-                        color="danger"
-                        v-if="$ability.can('delete', 'branches')"
-=======
                       <CButton @click="viewRow(item.uuid)" color="success">View</CButton>
                       <CButton @click="editRow(item.uuid)" color="warning">Edit</CButton>
                       <CButton @click="deleteRow(item.uuid)" color="danger"
->>>>>>> 0a455cd73bf064c050252fcc3805412ca78ac943
                         >Delete</CButton
                       >
                     </CButtonGroup>
