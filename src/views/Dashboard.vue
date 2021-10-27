@@ -405,13 +405,12 @@ export default {
       ],
     };
   },
-  created() {
-    let selected_branch = localStorage.getItem("selected_branch");
-    console.log(selected_branch);
-    if (selected_branch === "" || selected_branch === null) {
-      this.$store.commit("set_show_branch_model", true);
-    }
-  },
+  // created() {
+  // let selected_branch = localStorage.getItem("selected_branch");
+  // if (selected_branch === "" || selected_branch === null) {
+  //   this.$store.commit("set_show_branch_model", true);
+  // }
+  // },
   methods: {
     color(value) {
       let $color;

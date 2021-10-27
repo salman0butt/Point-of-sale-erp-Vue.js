@@ -90,6 +90,7 @@ const actions = {
         localStorage.setItem('employee_id', res.data.employee_id);
         localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
         localStorage.setItem('list_branches', JSON.stringify(res.data.branches));
+        localStorage.setItem('selected_branch', res.data.branches[0]?.uuid);
         http.defaults.headers.common['Authorization'] = "Bearer " + token;
         commit('set_permissions', res.data.permissions);
         commit('set_list_branches', res.data.branches);
