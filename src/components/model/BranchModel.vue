@@ -35,7 +35,9 @@ export default {
       },
       // showBranchModel: this.$store.getters.showBranchModel,
       options: {
-        branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
+        branches: [
+          { value: "", label: "Choose Branch", disabled: true, selected: "" },
+        ],
       },
     };
   },
@@ -56,7 +58,10 @@ export default {
   methods: {
     saveBranch() {
       if (this.form.branches !== "" && this.form.branches !== undefined) {
-        localStorage.setItem("selected_branches", JSON.stringify([this.form.branches]));
+        localStorage.setItem(
+          "selected_branches",
+          JSON.stringify([this.form.branches])
+        );
         this.$store.commit("set_show_branch_model", false);
         this.$store.commit("set_branches", this.form.branches);
       }
