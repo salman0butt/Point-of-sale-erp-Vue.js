@@ -1,14 +1,21 @@
 <template>
-  <router-view></router-view>
+  <div>
+    <router-view></router-view>
+    <BranchModel />
+  </div>
 </template>
 
 <script>
+import BranchModel from "@/components/model/BranchModel";
 export default {
-  name: 'App'
-}
+  name: "App",
+  components: {
+    BranchModel,
+  },
+};
 </script>
 
 <style lang="scss">
-  // Import Main styles for this application
-  @import 'assets/scss/style';
+// Import Main styles for this application
+@import "assets/scss/style";
 </style>

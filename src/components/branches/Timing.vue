@@ -36,8 +36,12 @@
             <template #actions="{ item }">
               <td>
                 <CButtonGroup>
-                  <CButton @click="editShift(item.uuid)" color="warning">Edit</CButton>
-                  <CButton @click="deleteShift(item.uuid)" color="danger">Delete</CButton>
+                  <CButton @click="editShift(item.uuid)" color="warning"
+                    >Edit</CButton
+                  >
+                  <CButton @click="deleteShift(item.uuid)" color="danger"
+                    >Delete</CButton
+                  >
                 </CButtonGroup>
               </td>
             </template>
@@ -64,13 +68,19 @@
                   <p v-if="!$v.storeTiming.shiftname.required" class="errorMsg">
                     Shift name is required
                   </p>
-                  <p v-if="!$v.storeTiming.shiftname.minLength" class="errorMsg">
+                  <p
+                    v-if="!$v.storeTiming.shiftname.minLength"
+                    class="errorMsg"
+                  >
                     Shift name should be at least 4 character
                   </p>
                 </div>
               </CCol>
             </CRow>
-            <CCardBody v-for="(item, index) in storeTiming.timelist" :key="item.date">
+            <CCardBody
+              v-for="(item, index) in storeTiming.timelist"
+              :key="item.date"
+            >
               <CRow>
                 <CCol sm="6" md="3" class="pt-2">
                   <p>{{ item.day }}</p>
@@ -95,7 +105,11 @@
                     block
                     color="default"
                     @click="
-                      Addtiming(index, form[item.day + 'from'], form[item.day + 'to'])
+                      Addtiming(
+                        index,
+                        form[item.day + 'from'],
+                        form[item.day + 'to']
+                      )
                     "
                     style="width: 39px; border-radius: 35px; margin: auto"
                     ><CIcon name="cil-plus"
@@ -150,13 +164,19 @@
                   <p v-if="!$v.storeTiming.shiftname.required" class="errorMsg">
                     Shift name is required
                   </p>
-                  <p v-if="!$v.storeTiming.shiftname.minLength" class="errorMsg">
+                  <p
+                    v-if="!$v.storeTiming.shiftname.minLength"
+                    class="errorMsg"
+                  >
                     Shift name should be at least 4 character
                   </p>
                 </div>
               </CCol>
             </CRow>
-            <CCardBody v-for="(item, index) in storeTiming.timelist" :key="item.date">
+            <CCardBody
+              v-for="(item, index) in storeTiming.timelist"
+              :key="item.date"
+            >
               <CRow>
                 <CCol sm="6" md="3" class="pt-2">
                   <p>{{ item.day }}</p>
@@ -181,7 +201,11 @@
                     block
                     color="default"
                     @click="
-                      Addtiming(index, form[item.day + 'from'], form[item.day + 'to'])
+                      Addtiming(
+                        index,
+                        form[item.day + 'from'],
+                        form[item.day + 'to']
+                      )
                     "
                     style="width: 39px; border-radius: 35px; margin: auto"
                     ><CIcon name="cil-plus"
@@ -341,9 +365,11 @@ export default {
     getAllShifts() {
       this.url_data = this.$route.params.id;
       this.$http
-        .get("/branch-shifts")
+        .get("/branch-shifts", {
+          params: { branch_uuid: this.url_data },
+        })
         .then(({ data }) => {
-          data.data.map((item, id) => {
+          data.map((item, id) => {
             this.shifts.push({ ...item, id });
           });
         })

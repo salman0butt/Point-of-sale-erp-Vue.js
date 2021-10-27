@@ -30,16 +30,14 @@
                   />
                 </td>
               </template> -->
-              <template #business="{ item }">
-                <td>
-                  {{ item.name }}
+              <template #description="{ item }">
+                <td v-if="item.description">
+                  {{ item.description }}
                 </td>
+
+                <td v-else>-</td>
               </template>
-              <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
+
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -53,12 +51,15 @@
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                    >
-                      <CIcon :content="$options.cilPencil"
+                      >Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <!-- <CButton
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
-                    </CButton>
+                    </CButton> -->
                   </CButtonGroup>
                 </td>
               </template>

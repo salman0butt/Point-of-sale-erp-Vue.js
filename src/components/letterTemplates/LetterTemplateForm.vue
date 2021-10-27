@@ -2,7 +2,11 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateLetterTemplate() : saveLetterTemplate()">
+        <form
+          @submit.prevent="
+            isEditing ? updateLetterTemplate() : saveLetterTemplate()
+          "
+        >
           <CRow>
             <CCol sm="6" md="12" class="pt-2">
               <CInput
@@ -12,11 +16,18 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Name is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="12">
               <vue-editor v-model="form.template"></vue-editor>
+              <div v-if="$v.form.template.$error">
+                <p v-if="!$v.form.template.required" class="errorMsg">
+                  Template is required
+                </p>
+              </div>
             </CCol>
 
             <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
@@ -27,7 +38,9 @@
               />
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -43,7 +56,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -85,6 +103,7 @@ export default {
     return {
       form: {
         name: { required },
+        template: { required },
       },
     };
   },
@@ -116,7 +135,9 @@ export default {
               if (this.saveAndExit) {
                 this.$router.push({ path: "/letterTemplates/index" });
               } else {
-                this.$router.push({ path: "/letterTemplates/edit/" + res.data.uuid });
+                this.$router.push({
+                  path: "/letterTemplates/edit/" + res.data.uuid,
+                });
               }
             }
           })
@@ -149,7 +170,9 @@ export default {
               if (this.saveAndExit) {
                 this.$router.push({ path: "/letterTemplates/index" });
               } else {
-                this.$router.push({ path: "/letterTemplates/edit/" + res.data.uuid });
+                this.$router.push({
+                  path: "/letterTemplates/edit/" + res.data.uuid,
+                });
               }
             }
           })
