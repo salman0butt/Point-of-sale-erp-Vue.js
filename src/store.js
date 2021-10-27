@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import http from '../src/http-common'
+import http from '@/http-common'
 
 
 Vue.use(Vuex)
@@ -90,7 +90,9 @@ const actions = {
         localStorage.setItem('employee_id', res.data.employee_id);
         localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
         localStorage.setItem('list_branches', JSON.stringify(res.data.branches));
-        localStorage.setItem('selected_branch', res.data.branches[0]?.uuid);
+        if(res.data.branches && res.data.branches.length == 1){
+          localStorage.setItem('selected_branches', JSON.stringify([res.data.branches[0].uuid]));
+        }
         http.defaults.headers.common['Authorization'] = "Bearer " + token;
         commit('set_permissions', res.data.permissions);
         commit('set_list_branches', res.data.branches);

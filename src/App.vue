@@ -1,17 +1,17 @@
 <template>
   <div>
     <router-view></router-view>
-    <!-- <BranchModel /> -->
+    <BranchModel />
   </div>
 </template>
 
 <script>
-// import BranchModel from "@/components/model/BranchModel";
+import BranchModel from "@/components/model/BranchModel";
 export default {
   name: "App",
-  // components: {
-  //   BranchModel,
-  // },
+  components: {
+    BranchModel,
+  },
 };
 </script>
 
