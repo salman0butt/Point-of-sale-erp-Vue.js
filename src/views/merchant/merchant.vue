@@ -95,7 +95,7 @@
                   </CCol>
                 </CRow>
               </CTab>
-              <CTab>
+              <CTab disabled>
                 <template slot="title">
                   {{ tabs[1] }}
                 </template>
@@ -187,7 +187,7 @@
                   </CCol>
                 </CRow>
               </CTab>
-              <CTab>
+              <CTab disabled>
                 <template slot="title">
                   {{ tabs[2] }}
                 </template>
@@ -273,7 +273,7 @@
 
 <script>
 // import { cibHtmlacademy } from "@coreui/icons";
-import { mapActions } from 'vuex'
+import { mapActions } from "vuex";
 
 export default {
   name: "Tabs",
@@ -346,7 +346,7 @@ export default {
     this.$el.querySelector(".col-sm-8").classList.add("col-sm-10");
     this.$el.querySelector(".col-sm-8").classList.remove("col-sm-8");
 
-     this.$store.commit('remove_errors');
+    this.$store.commit("remove_errors");
   },
   created() {
     this.pluginlist = this.PluginLst;
@@ -356,12 +356,14 @@ export default {
       .get("/business/" + business_id)
       .then(({ data }) => {
         this.general_items.business_name = JSON.parse(data.business_name).en;
-        this.general_items.business_activity = JSON.parse(data.business_activity).en;
+        this.general_items.business_activity = JSON.parse(
+          data.business_activity
+        ).en;
         this.general_items.name = JSON.parse(data.owner_name).en;
         this.general_items.email = data.business_email;
         this.general_items.mobile = data.business_mobile_no;
         this.general_items.country = data.country;
-        if (data.logo != '') {
+        if (data.logo != "") {
           this.general_items.previewImage = data.logo;
         }
       })
@@ -376,7 +378,11 @@ export default {
       var initial = this.PluginLst;
       if (initial.length > 0 && this.pluginname != "") {
         for (var i = 0; i < initial.length; i++) {
-          if (initial[i]["name"].toUpperCase().includes(this.pluginname.toUpperCase())) {
+          if (
+            initial[i]["name"]
+              .toUpperCase()
+              .includes(this.pluginname.toUpperCase())
+          ) {
             data.push(initial[i]);
           }
         }
@@ -390,7 +396,7 @@ export default {
       let formData = new FormData();
       formData.append("business_email", this.general_items.email);
       formData.append("business_mobile_no", this.general_items.mobile);
-      if(this.general_items.logo != ''){
+      if (this.general_items.logo != "") {
         formData.append("logo", this.general_items.logo);
       }
       formData.append("_method", "PATCH");
@@ -398,22 +404,22 @@ export default {
       const config = {
         headers: { "Content-Type": "multipart/form-data" },
       };
-      this.$store.commit('remove_errors');
+      this.$store.commit("remove_errors");
 
       this.$http
         .post("/business/" + business_id, formData, config)
         .then((response) => {
           if (response.status == 200) {
-          this.$swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Detail Updated Successfully",
-            timer: 3600,
-          });
-        }
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Detail Updated Successfully",
+              timer: 3600,
+            });
+          }
         })
         .catch((error) => {
-          if (error.response.status == 422){
+          if (error.response.status == 422) {
             let errors = error.response.data.errors;
             for (const err in errors) {
               this.set_errors(errors[err][0]);
@@ -442,9 +448,9 @@ export default {
   background-color: #10163a !important;
 }
 .success {
-  color:green;
+  color: green;
 }
 .error {
-  color:red;
+  color: red;
 }
 </style>

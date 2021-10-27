@@ -4,64 +4,51 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardHeader> Branches </CCardHeader>
-          <CCol col="6" sm="4" md="2" xl class="mb-0 mt-3 mb-xl-0">
-            <CButton block variant="outline" @click="addBranchBtn()" color="success"
-              >Add Branch</CButton
-            >
-          </CCol>
-          <CCardBody>
-            <CCardBody>
-              <CDataTable
-                :items="branches"
-                :fields="fields"
-                table-filter
-                items-per-page-select
-                :items-per-page="5"
-                sorter
-                pagination:false
-                clickable-rows
-                :loading="loading"
-                hover
-                @row-clicked="rowClicked"
-              >
-                <template #select="{ item }">
-                  <td>
-                    <CInputCheckbox
-                      @update:checked="() => check(item)"
-                      custom
-                    />
-                  </td>
-                </template>
 
-                <template #actions="{ item }">
-                  <td>
-                    <CButtonGroup>
-<<<<<<< HEAD
-                      <CButton @click="viewRow(item.uuid)" color="success"
+          <CCardBody>
+            <div>
+              <router-link
+                class="btn btn-success"
+                to="/branch/create"
+                style="text-align: right"
+                >Create Branch</router-link
+              >
+            </div>
+            <CDataTable
+              :items="branches"
+              :fields="fields"
+              table-filter
+              items-per-page-select
+              :items-per-page="5"
+              sorter
+              pagination:false
+              clickable-rows
+              :loading="loading"
+              hover
+              @row-clicked="rowClicked"
+            >
+              <template #select="{ item }">
+                <td>
+                  <CInputCheckbox @update:checked="() => check(item)" custom />
+                </td>
+              </template>
+
+              <template #actions="{ item }">
+                <td>
+                  <CButtonGroup>
+                    <!-- <CButton @click="viewRow(item.uuid)" color="success"
                         >View</CButton
-                      >
-                      <CButton
-                        v-if="$ability.can('edit', 'branches')"
-                        @click="editRow(item.uuid)"
-                        color="warning"
-                        >Edit</CButton
-                      >
-                      <CButton
-                        @click="deleteRow(item.uuid)"
-                        color="danger"
-                        v-if="$ability.can('delete', 'branches')"
-=======
-                      <CButton @click="viewRow(item.uuid)" color="success">View</CButton>
-                      <CButton @click="editRow(item.uuid)" color="warning">Edit</CButton>
-                      <CButton @click="deleteRow(item.uuid)" color="danger"
->>>>>>> 0a455cd73bf064c050252fcc3805412ca78ac943
-                        >Delete</CButton
-                      >
-                    </CButtonGroup>
-                  </td>
-                </template>
-              </CDataTable>
-            </CCardBody>
+                      > -->
+                    <CButton @click="editRow(item.uuid)" color="warning"
+                      >Edit</CButton
+                    >
+                    <!-- <CButton @click="deleteRow(item.uuid)" color="danger"
+                      >Delete</CButton
+                    > -->
+                  </CButtonGroup>
+                </td>
+              </template>
+            </CDataTable>
           </CCardBody>
         </CCard>
       </CCol>

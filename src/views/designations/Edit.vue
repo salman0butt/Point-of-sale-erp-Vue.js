@@ -36,9 +36,11 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4">
-                <CButton
+                <!-- <CButton
                   progress
                   timeout="2000"
                   block
@@ -47,15 +49,20 @@
                   type="submit"
                   @click="saveAndExit = false"
                   >Save & Continue</CButton
-                >
+                > -->
                 <CButton
                   timeout="2000"
                   block
-                  color="danger"
-                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                  color="success"
+                  style="
+                    float: right;
+                    width: 140px;
+                    margin-left: 20px;
+                    margin-top: 0;
+                  "
                   @click="saveAndExit = true"
                   type="submit"
-                  >Save & Exit</CButton
+                  >Update</CButton
                 >
               </CRow>
             </form>
@@ -129,7 +136,9 @@ export default {
               if (this.saveAndExit) {
                 this.$router.push({ path: "/designations/index" });
               } else {
-                this.$router.push({ path: "/designations/edit/" + res.data.uuid });
+                this.$router.push({
+                  path: "/designations/edit/" + res.data.uuid,
+                });
               }
             }
           })
