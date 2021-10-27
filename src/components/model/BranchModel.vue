@@ -33,7 +33,6 @@ export default {
       form: {
         branches: "",
       },
-      // showBranchModel: this.$store.getters.showBranchModel,
       options: {
         branches: [
           { value: "", label: "Choose Branch", disabled: true, selected: "" },
@@ -41,19 +40,18 @@ export default {
       },
     };
   },
+  watch: {
+    listBranches(branch_list) {
+      this.getbranches(branch_list);
+    },
+  },
   computed: {
     showBranchModel() {
       return this.$store.getters.showBranchModel;
     },
-  },
-  mounted() {
-    let branch_list = this.$store.getters.branchLists;
-    let branches = this.options.branches;
-    if (branch_list) {
-      branch_list.map(function (val) {
-        branches.push({ value: val.uuid, label: val.name });
-      });
-    }
+    listBranches() {
+      return this.$store.getters.branchLists;
+    },
   },
   methods: {
     saveBranch() {
@@ -64,6 +62,18 @@ export default {
         );
         this.$store.commit("set_show_branch_model", false);
         this.$store.commit("set_branches", this.form.branches);
+      }
+    },
+    getbranches(list) {
+      let branch_list = list;
+      this.options.branches = [
+        { value: "", label: "Choose Branch", disabled: true, selected: "" },
+      ];
+      let branches = this.options.branches;
+      if (branch_list) {
+        branch_list.map(function (val) {
+          branches.push({ value: val.uuid, label: val.name });
+        });
       }
     },
   },
