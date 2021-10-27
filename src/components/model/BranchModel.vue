@@ -12,7 +12,7 @@
         <CSelect
           label="Branches"
           :options="options.branches"
-          :value.sync="form.branches_id"
+          :value.sync="form.branches"
         />
       </form>
       <template #header>
@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       form: {
-        branches_id: "",
+        branches: "",
       },
       // showBranchModel: this.$store.getters.showBranchModel,
       options: {
@@ -55,10 +55,10 @@ export default {
   },
   methods: {
     saveBranch() {
-      if (this.form.branches_id !== "" && this.form.branches_id !== undefined) {
-        localStorage.setItem("selected_branch", this.form.branches_id);
+      if (this.form.branches !== "" && this.form.branches !== undefined) {
+        localStorage.setItem("selected_branches", JSON.stringify([this.form.branches]));
         this.$store.commit("set_show_branch_model", false);
-        this.$store.commit("set_branches", this.form.branches_id);
+        this.$store.commit("set_branches", this.form.branches);
       }
     },
   },

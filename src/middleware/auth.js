@@ -1,6 +1,7 @@
-import store from '../store'
+import store from '@/store'
 
 const auth = (to, from, next) => {
+
   if (!store.getters.isLoggedIn) {
     next('/login');
     return;

@@ -646,6 +646,15 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+
+  let selected_branches = JSON.parse(localStorage.getItem("selected_branches"));
+  if (
+    (selected_branches === "" || selected_branches === null) &&
+    store.getters.isLoggedIn
+  ) {
+    store.commit("set_show_branch_model", true);
+  }
+
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.getters.isLoggedIn) {
       next({
