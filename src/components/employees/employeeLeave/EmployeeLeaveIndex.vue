@@ -102,7 +102,7 @@ const fields = [
   { key: "to_date", label: "TO DATE", _style: "min-width:15%;" },
   { key: "return_date", label: "RETURN DATE", _style: "min-width:15%;" },
   { key: "total_days", label: "TOTAL DAYS", _style: "min-width:15%;" },
-  { key: "note", label: "STATUS", _style: "min-width:15%;" },
+  { key: "note", label: "NOTE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];

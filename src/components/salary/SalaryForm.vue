@@ -109,6 +109,7 @@
                     placeholder="0.00"
                     @input="calculateSalary()"
                   />
+                  <CTextarea label="Note" placeholder="Content..." v-model="input.note" />
                   <span>
                     <i
                       @click="removeDeduction(k)"
@@ -299,6 +300,7 @@ export default {
       this.salary.deductions.inputs.push({
         name: "Name",
         value: "",
+        note: "",
       });
       this.calculateSalary();
     },
@@ -463,6 +465,7 @@ export default {
                 this.salary.deductions.inputs.push({
                   name: deductions[index].name,
                   value: deductions[index].value,
+                  note: deductions[index].note,
                 });
               }
             } else {
@@ -584,6 +587,7 @@ export default {
                   this.salary.deductions.inputs.unshift({
                     name: element.name.en,
                     value: parseInt(element.amount),
+                    note: element.note,
                   });
                 });
               } else {

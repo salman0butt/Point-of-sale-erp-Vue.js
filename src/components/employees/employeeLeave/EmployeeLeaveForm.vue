@@ -143,7 +143,7 @@ export default {
   methods: {
     saveEmployeeLeave() {
       this.form.employee_id = this.$route.params.id;
-      this.form.status = "status";
+      this.form.status = "pending";
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;

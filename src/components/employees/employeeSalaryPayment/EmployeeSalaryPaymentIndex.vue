@@ -34,7 +34,11 @@
               </template>
               <template #employee_salary_adjustment="{ item }">
                 <td>
-                  {{ item.employee_salary_adjustment.month }}
+                  {{
+                    item.employee_salary_adjustment.month +
+                    " " +
+                    item.employee_salary_adjustment.year
+                  }}
                 </td>
               </template>
               <template #bank_account="{ item }">
