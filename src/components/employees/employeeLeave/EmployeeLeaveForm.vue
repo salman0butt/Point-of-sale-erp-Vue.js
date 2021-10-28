@@ -134,6 +134,7 @@ export default {
     "form.to_date"(val) {
       let day_start = new Date(Date.parse(this.form.from_date));
       let day_end = new Date(Date.parse(val));
+      day_start.setDate(day_start.getDate() - 1);
       // To calculate the no. of days between two dates
       this.form.total_days = Math.round((day_end - day_start) / (1000 * 60 * 60 * 24));
     },
