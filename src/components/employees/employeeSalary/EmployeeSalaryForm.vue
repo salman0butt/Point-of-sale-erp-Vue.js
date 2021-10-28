@@ -511,10 +511,18 @@ export default {
     },
     genrateSalary() {
       if (this.year !== "" && this.month !== "") {
-        EmployeeSalaryService.genrateSalary(this.empId, this.year, this.month)
+        EmployeeSalaryService.genrateSalary(
+          this.empId,
+          this.year,
+          this.month,
+          this.months[this.month - 1]
+        )
           .then(({ data }) => {
-            console.log(data);
             if (data != undefined && data != "") {
+              if (data.already_genrated && data.already_genrated === true) {
+                return this.getEditData(data.uuid);
+              }
+
               this.salary.basic_salary = data.emp.salary.basic_salary
                 ? data.emp.salary.basic_salary
                 : 0;
@@ -587,6 +595,8 @@ export default {
       this.salary.net_salary = 0;
       this.isEditing = false;
       this.showSalaryForm = false;
+      this.year = "";
+      this.month = "";
     },
   },
 };

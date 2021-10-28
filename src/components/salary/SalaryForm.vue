@@ -548,11 +548,14 @@ export default {
         EmployeeSalaryService.genrateSalary(
           this.salary.employee_id,
           this.year,
-          this.month
+          this.month,
+          this.months[this.month - 1]
         )
           .then(({ data }) => {
-            console.log(data);
             if (data != undefined && data != "") {
+              if (data.already_genrated && data.already_genrated === true) {
+                this.$router.push({ path: "/salary/edit/" + data.uuid });
+              }
               this.salary.basic_salary = data.emp.salary.basic_salary
                 ? data.emp.salary.basic_salary
                 : 0;
