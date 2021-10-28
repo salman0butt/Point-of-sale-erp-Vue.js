@@ -4,13 +4,17 @@ import Helper from "@/helpers/Helper";
 class DesignationService extends Helper {
   getAll(page, per_page) {
     let url = "/designations";
-    if(page !== '')
-     url = super.updateQueryStringParameter(url,"page",page);
+    if (page !== '')
+      url = super.updateQueryStringParameter(url, "page", page);
 
-    if(per_page !== '')
-     url = super.updateQueryStringParameter(url,"per_page",per_page);
+    if (per_page !== '')
+      url = super.updateQueryStringParameter(url, "per_page", per_page);
 
-    return http.get(url);
+    return http.get(url, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   get(id) {
@@ -18,7 +22,11 @@ class DesignationService extends Helper {
   }
 
   create(data) {
-    return http.post("/designations", data);
+    return http.post("/designations", data, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   update(id, data) {

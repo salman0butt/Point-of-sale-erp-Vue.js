@@ -6,13 +6,17 @@ class LetterTemplateService extends Helper {
   getAll(page, per_page) {
     let url = "/letter-templates";
 
-    if(page !== '')
-     url = super.updateQueryStringParameter(url,"page",page);
+    if (page !== '')
+      url = super.updateQueryStringParameter(url, "page", page);
 
-    if(per_page !== '')
-     url = super.updateQueryStringParameter(url,"per_page",per_page);
+    if (per_page !== '')
+      url = super.updateQueryStringParameter(url, "per_page", per_page);
 
-    return http.get(url);
+    return http.get(url, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   get(id) {
@@ -20,7 +24,11 @@ class LetterTemplateService extends Helper {
   }
 
   create(data) {
-    return http.post("/letter-templates", data);
+    return http.post("/letter-templates", data, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   update(id, data) {
