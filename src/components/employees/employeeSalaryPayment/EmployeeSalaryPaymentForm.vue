@@ -10,7 +10,7 @@
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
               <CSelect
-                label="Select Salary Adjustment"
+                label="Select Salary Month"
                 :options="options.employee_salary_adjustments"
                 :value.sync="form.employee_salary_adjustment_id"
               />
@@ -275,7 +275,10 @@ export default {
             const bank_accounts = this.options.bank_accounts;
             if (data.employee_salary_adjustments) {
               data.employee_salary_adjustments.map(function (val) {
-                employee_salary_adjustments.push({ value: val.uuid, label: val.month });
+                employee_salary_adjustments.push({
+                  value: val.uuid,
+                  label: val.month + " " + val.year,
+                });
               });
             }
             if (data.bank_accounts) {
