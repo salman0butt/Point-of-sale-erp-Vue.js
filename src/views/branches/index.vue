@@ -93,9 +93,13 @@ export default {
     },
     dataCall() {
       this.$http
-        .get("/branches")
+        .get("/branches", {
+          headers: {
+            "selected-branches": localStorage.getItem("selected_branches"),
+          },
+        })
         .then(({ data }) => {
-          data.data.map((item, id) => {
+          data.map((item, id) => {
             this.Branches.push({ ...item, id });
           });
           this.loading = false;

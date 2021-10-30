@@ -104,7 +104,7 @@ const fields = [
   // { key: "employee", label: "EMPLOYEE", _style: "min-width:40%" },
   {
     key: "employee_salary_adjustment",
-    label: "SALARY ADJUSTMENT MONTH",
+    label: "SALARY MONTH",
     _style: "min-width:15%;",
   },
   { key: "bank_account", label: "BANK ACCOUNT", _style: "min-width:15%;" },

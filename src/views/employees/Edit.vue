@@ -45,9 +45,9 @@
         </CCard>
       </CCol>
       <CCol xs="12" lg="9">
-        <keep-alive>
-          <component v-bind:is="activeTab"></component>
-        </keep-alive>
+        <!-- <keep-alive> -->
+        <component v-bind:is="activeTab"></component>
+        <!-- </keep-alive> -->
       </CCol>
     </CRow>
   </div>

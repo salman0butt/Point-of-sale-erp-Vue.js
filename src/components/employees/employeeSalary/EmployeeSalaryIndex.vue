@@ -27,6 +27,11 @@
                   />
                 </td>
               </template>
+              <template #month="{ item }">
+                <td>
+                  {{ item.month + " " + item.year }}
+                </td>
+              </template>
               <template #payment="{ item }">
                 <td>
                   <CBadge color="danger" v-if="item.payment === 0"> Unpaid</CBadge>

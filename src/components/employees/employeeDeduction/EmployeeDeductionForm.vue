@@ -101,6 +101,7 @@
               color="success"
               style="float: right; width: 150px; margin-right: 20px"
               type="submit"
+              :disabled="loading"
               >{{ loading ? "loading..." : "Save" }}</CButton
             >
           </CRow>

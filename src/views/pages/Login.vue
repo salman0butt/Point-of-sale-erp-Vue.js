@@ -44,7 +44,7 @@
                 </p>
                   <CRow>
                     <CCol col="6" class="text-left">
-                      <CButton :disabled="$v.$invalid" style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
+                      <CButton :disabled="$v.$invalid || loading" style="background-color:#52b947;color:white" @click="login" class="px-4">{{ loading ? 'loading...' : 'Login'}}</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
                       <router-link to="/forget-password"  color="link" class="px-0">Forgot password?</router-link>
@@ -96,6 +96,11 @@ export default {
       password: { required },
     };
   },
+computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   created() {
     if (this.$store.getters.isLoggedIn) {
       this.$router.push("/dashboard");
@@ -113,14 +118,17 @@ export default {
         password != undefined &&
         password != ""
       ) {
+        this.$store.commit('set_loader');
         this.$store
           .dispatch("login", { username, password })
           .then((res) => {
             localStorage.setItem("username", this.username);
             this.$store.commit("remove_errors");
+            this.$store.commit('close_loader');
             this.$router.push({ path: "/dashboard" });
           })
           .catch(() => {
+            this.$store.commit('close_loader');
             this.set_errors("Username Or Password Incorrect");
           });
       }
