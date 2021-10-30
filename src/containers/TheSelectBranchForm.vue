@@ -5,6 +5,7 @@
         :options="options.branches"
         :value.sync="form.branches"
         @change="saveBranch()"
+        readonly
       />
     </form>
   </div>
@@ -48,6 +49,7 @@ export default {
           text: "Branch Updated Successfully",
           timer: 3600,
         });
+        this.$router.go(this.$router.currentRoute);
       }
     },
     getbranches(list) {
