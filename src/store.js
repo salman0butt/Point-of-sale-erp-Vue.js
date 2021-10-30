@@ -151,6 +151,7 @@ const getters = {
   getBranches: state => state.branches,
   branchLists: state => state.list_branches,
   showBranchModel: state => state.showBranchModel,
+  loading: state => state.loading,
 }
 
 export default new Vuex.Store({

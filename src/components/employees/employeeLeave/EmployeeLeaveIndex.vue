@@ -30,16 +30,16 @@
               <template #status="{ item }">
                 <td>
                   <CBadge color="primary" v-if="item.status === 'pending'">
-                    {{ item.status }}</CBadge
+                    Pending</CBadge
                   >
                   <CBadge color="danger" v-if="item.status === 'cancel'">
-                    {{ item.status }}</CBadge
+                    Canceled</CBadge
                   >
-                  <CBadge color="success" v-if="item.status === 'approved_by_hr'">
-                    {{ item.status }}</CBadge
+                  <CBadge color="success" v-if="item.status === 'approved_by_hr'"
+                    >Approved By HR</CBadge
                   >
                   <CBadge color="success" v-if="item.status === 'approved_by_manager'">
-                    {{ item.status }}</CBadge
+                    Approved By Manager</CBadge
                   >
                 </td>
               </template>

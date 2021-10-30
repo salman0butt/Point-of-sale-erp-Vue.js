@@ -2,23 +2,21 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CCard>
-          <CCardBody>
-            <CDataTable
-              :items="employeeLeave"
-              :fields="fields"
-              table-filter
-              items-per-page-select
-              @pagination-change="changePagination"
-              :items-per-page="perPage"
-              sorter
-              clickable-rows
-              hover
-              :loading="loading"
-              @row-clicked="rowClicked"
-              ref="externalAgent"
-            >
-              <!-- <template #select="{ item }">
+        <CDataTable
+          :items="employeeLeave"
+          :fields="fields"
+          table-filter
+          items-per-page-select
+          @pagination-change="changePagination"
+          :items-per-page="perPage"
+          sorter
+          clickable-rows
+          hover
+          :loading="loading"
+          @row-clicked="rowClicked"
+          ref="externalAgent"
+        >
+          <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -27,73 +25,63 @@
                   />
                 </td>
               </template> -->
-              <template #employee="{ item }">
-                <td>
-                  {{ item.employee.full_name }}
-                </td>
-              </template>
-              <template #status="{ item }">
-                <td>
-                  <CBadge color="primary" v-if="item.status === 'pending'">
-                    {{ item.status }}</CBadge
-                  >
-                  <CBadge color="danger" v-if="item.status === 'cancel'">
-                    {{ item.status }}</CBadge
-                  >
-                  <CBadge color="success" v-if="item.status === 'approved_by_hr'">
-                    {{ item.status }}</CBadge
-                  >
-                  <CBadge color="success" v-if="item.status === 'approved_by_manager'">
-                    {{ item.status }}</CBadge
-                  >
-                </td>
-              </template>
-              <template #approve="{ item }">
-                <td>
-                  <CSelect
-                    :options="options.status"
-                    :value.sync="item.status"
-                    @change="changeLeaveStatus(item.uuid, item.status)"
-                  /></td
-              ></template>
+          <template #employee="{ item }">
+            <td>
+              {{ item.employee.full_name }}
+            </td>
+          </template>
+          <template #status="{ item }">
+            <td>
+              <CBadge color="primary" v-if="item.status === 'pending'"> Pending</CBadge>
+              <CBadge color="danger" v-if="item.status === 'cancel'"> Canceled</CBadge>
+              <CBadge color="success" v-if="item.status === 'approved_by_hr'"
+                >Approved By HR</CBadge
+              >
+              <CBadge color="success" v-if="item.status === 'approved_by_manager'">
+                Approved By Manager</CBadge
+              >
+            </td>
+          </template>
+          <template #approve="{ item }">
+            <td>
+              <CSelect
+                :options="options.status"
+                :value.sync="item.status"
+                @change="changeLeaveStatus(item.uuid, item.status)"
+              /></td
+          ></template>
 
-              <template #actions="{ item }">
-                <td>
-                  <CButtonGroup>
-                    <!-- <CButton
+          <template #actions="{ item }">
+            <td>
+              <CButtonGroup>
+                <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
                     > -->
-                    <CButton
-                      @click="editRow(item.uuid)"
-                      class="btn-sm text-white"
-                      color="warning"
-                      title="Edit"
-                    >
-                      <CIcon :content="$options.cilPencil"
-                    /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                      title="Delete"
-                    >
-                      <CIcon :content="$options.cilTrash" />
-                    </CButton>
-                  </CButtonGroup>
-                </td>
-              </template>
-            </CDataTable>
-            <CPagination
-              v-show="pages > 1"
-              :pages="pages"
-              :active-page.sync="activePage"
-            />
-          </CCardBody>
-        </CCard>
+                <CButton
+                  @click="editRow(item.uuid)"
+                  class="btn-sm text-white"
+                  color="warning"
+                  title="Edit"
+                >
+                  <CIcon :content="$options.cilPencil"
+                /></CButton>
+                <CButton
+                  @click="deleteRow(item.uuid)"
+                  class="btn-sm"
+                  color="danger"
+                  title="Delete"
+                >
+                  <CIcon :content="$options.cilTrash" />
+                </CButton>
+              </CButtonGroup>
+            </td>
+          </template>
+        </CDataTable>
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
       </CCol>
     </CRow>
   </div>
@@ -111,7 +99,7 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "employee", label: "TYPE", _style: "min-width:15%;" },
+  { key: "employee", label: "EMPLOYEE", _style: "min-width:15%;" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "from_date", label: "FROM DATE", _style: "min-width:15%;" },
   { key: "to_date", label: "TO DATE", _style: "min-width:15%;" },
