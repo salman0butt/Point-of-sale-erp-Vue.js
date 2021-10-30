@@ -4,7 +4,9 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <form @submit.prevent="isEditing ? updateEmployee() : saveEmployee()">
+            <form
+              @submit.prevent="isEditing ? updateEmployee() : saveEmployee()"
+            >
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -23,6 +25,7 @@
                   <CInput
                     label="Full Name"
                     v-model="form.full_name"
+                    placeholder="Jackson"
                     :class="{ error: $v.form.full_name.$error }"
                     @input="$v.form.full_name.$touch()"
                   />
@@ -146,7 +149,10 @@
                     track-by="label"
                     :preselect-first="true"
                   >
-                    <template slot="selection" slot-scope="{ values, search, isOpen }">
+                    <template
+                      slot="selection"
+                      slot-scope="{ values, search, isOpen }"
+                    >
                       <span
                         class="multiselect__single"
                         v-if="values.value &amp;&amp; !isOpen"
@@ -217,7 +223,10 @@
                     @input="$v.form.branch_shift_id.$touch()"
                   />
                   <div v-if="$v.form.branch_shift_id.$error">
-                    <p v-if="!$v.form.branch_shift_id.required" class="errorMsg">
+                    <p
+                      v-if="!$v.form.branch_shift_id.required"
+                      class="errorMsg"
+                    >
                       Branch Shift is required
                     </p>
                   </div>
@@ -292,7 +301,9 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4">
                 <CButton
                   progress
@@ -308,7 +319,12 @@
                   timeout="2000"
                   block
                   color="danger"
-                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                  style="
+                    float: right;
+                    width: 140px;
+                    margin-left: 20px;
+                    margin-top: 0;
+                  "
                   @click="saveAndExit = true"
                   type="submit"
                   >Save & Exit</CButton
@@ -323,7 +339,13 @@
 </template>
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
-import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
+import {
+  required,
+  email,
+  numeric,
+  minLength,
+  maxLength,
+} from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 
 export default {
@@ -334,7 +356,7 @@ export default {
     saveAndExit: false,
     form: {
       serial_no: "",
-      full_name: "e.g name",
+      full_name: "",
       gender: "",
       marital_status: "",
       phone_number: "",
@@ -365,7 +387,9 @@ export default {
     empId: null,
     options: {
       branches: [],
-      managers: [{ value: "", label: "Choose Manager", disabled: true, selected: "" }],
+      managers: [
+        { value: "", label: "Choose Manager", disabled: true, selected: "" },
+      ],
       departments: [
         {
           value: "",
@@ -397,7 +421,9 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
-      user_role: [{ value: "", label: "Choose Role", disabled: true, selected: "" }],
+      user_role: [
+        { value: "", label: "Choose Role", disabled: true, selected: "" },
+      ],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },

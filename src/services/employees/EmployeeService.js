@@ -4,12 +4,16 @@ import Helper from "@/helpers/Helper";
 class EmployeeService extends Helper {
   getAll(page, per_page) {
     let url = "/employees";
-    if(page !== '')
-     url = super.updateQueryStringParameter(url,"page",page);
+    if (page !== '')
+      url = super.updateQueryStringParameter(url, "page", page);
 
-    if(per_page !== '')
-     url = super.updateQueryStringParameter(url,"per_page",per_page);
-    return http.get(url);
+    if (per_page !== '')
+      url = super.updateQueryStringParameter(url, "per_page", per_page);
+    return http.get(url, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   getTotalCount() {
@@ -17,7 +21,11 @@ class EmployeeService extends Helper {
   }
 
   getCreateDetail() {
-    return http.get("/employees-create");
+    return http.get("/employees-create", {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      }
+    });
   }
 
   get(id) {

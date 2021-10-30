@@ -50,27 +50,24 @@
                 </CCol> -->
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4">
                 <CButton
-                  progress
                   timeout="2000"
                   block
                   color="success"
-                  style="float: right; width: 200px; margin-left: 20px"
-                  type="submit"
-                  @click="saveAndExit = false"
-                  >Save & Continue</CButton
-                >
-                <CButton
-                  timeout="2000"
-                  block
-                  color="danger"
-                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                  style="
+                    float: right;
+                    width: 140px;
+                    margin-left: 20px;
+                    margin-top: 0;
+                  "
                   @click="saveAndExit = true"
                   type="submit"
-                  >Save & Exit</CButton
-                >
+                  >Save
+                </CButton>
               </CRow>
             </form>
           </CCardBody>
@@ -97,10 +94,20 @@ export default {
     },
     options: {
       departments: [
-        { value: "", label: "Choose Departments", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose Departments",
+          disabled: true,
+          selected: "",
+        },
       ],
       business: [
-        { value: "", label: "Choose Departments", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose Departments",
+          disabled: true,
+          selected: "",
+        },
       ],
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
@@ -156,7 +163,9 @@ export default {
               if (this.saveAndExit) {
                 this.$router.push({ path: "/departments/index" });
               } else {
-                this.$router.push({ path: "/departments/edit/" + res.data.uuid });
+                this.$router.push({
+                  path: "/departments/edit/" + res.data.uuid,
+                });
               }
             }
           })

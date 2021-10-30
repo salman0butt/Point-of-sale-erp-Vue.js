@@ -236,6 +236,7 @@ export default {
         closing_date: "",
       },
       dates: "",
+      saveAndExit: true,
 
       tabs: ["General", "Timing", "Traget", "Social media"],
       activeTab: 1,

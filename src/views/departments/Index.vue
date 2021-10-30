@@ -23,24 +23,12 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <!-- <template #select="{ item }">
-                <td>
-                  <CInputCheckbox
-                    :checked="item._selected"
-                    @update:checked="() => check(item)"
-                    custom
-                  />
-                </td>
-              </template> -->
-              <template #business="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
               <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
+                <td v-if="item.parent.name">
+                  {{ item.parent.name }}
                 </td>
+
+                <td v-else>-</td>
               </template>
               <template #actions="{ item }">
                 <td>
@@ -52,16 +40,15 @@
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                    >
-                      <CIcon :content="$options.cilPencil"
+                      >Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
+                    <!-- <CButton
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
                     >
                       <CIcon :content="$options.cilTrash" />
-                    </CButton>
+                    </CButton> -->
                   </CButtonGroup>
                 </td>
               </template>
@@ -83,15 +70,7 @@ import DepartmentService from "@/services/departments/DepartmentService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  // {
-  //   key: "select",
-  //   label: "",
-  //   _style: "min-width:1%",
-  //   sorter: false,
-  //   filter: false,
-  // },
   { key: "name", label: "DEPARTMENT NAME", _style: "min-width:40%" },
-  { key: "business", label: "BUSINESS", _style: "min-width:15%;" },
   { key: "parent", label: "PARENT", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
