@@ -1,42 +1,25 @@
 <template>
   <div>
-    <CModal
-      title="Modal title"
-      :fade="true"
-      :centered="true"
-      :closeOnBackdrop="false"
-      color="success"
-      :show.sync="showBranchModel"
-    >
-      <form>
-        <CSelect
-          label="Branches"
-          :options="options.branches"
-          :value.sync="form.branches"
-        />
-      </form>
-      <template #header>
-        <h6 class="modal-title">Select Branches</h6>
-      </template>
-      <template #footer>
-        <CButton @click="saveBranch()" color="success">Save</CButton>
-      </template>
-    </CModal>
+    <form>
+      <CSelect
+        :options="options.branches"
+        :value.sync="form.branches"
+        @change="saveBranch()"
+      />
+    </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "BranchModel",
+  name: "TheSelectBranchForm",
   data() {
     return {
       form: {
         branches: "",
       },
       options: {
-        branches: [
-          { value: "", label: "Choose Branch", disabled: true, selected: "" },
-        ],
+        branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
       },
     };
   },
@@ -49,9 +32,6 @@ export default {
     this.getbranches(this.$store.getters.branchLists);
   },
   computed: {
-    showBranchModel() {
-      return this.$store.getters.showBranchModel;
-    },
     listBranches() {
       return this.$store.getters.branchLists;
     },
@@ -59,12 +39,15 @@ export default {
   methods: {
     saveBranch() {
       if (this.form.branches !== "" && this.form.branches !== undefined) {
-        localStorage.setItem(
-          "selected_branches",
-          JSON.stringify([this.form.branches])
-        );
+        localStorage.setItem("selected_branches", JSON.stringify([this.form.branches]));
         this.$store.commit("set_show_branch_model", false);
         this.$store.commit("set_branches", this.form.branches);
+        this.$swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Branch Updated Successfully",
+          timer: 3600,
+        });
       }
     },
     getbranches(list) {
@@ -74,11 +57,23 @@ export default {
       ];
       let branches = this.options.branches;
       if (branch_list) {
+        const selected_branch = JSON.parse(localStorage.getItem("selected_branches"));
+        if (selected_branch) {
+          this.form.branches = selected_branch[0];
+        }
         branch_list.map(function (val) {
-          branches.push({ value: val.uuid, label: val.name });
+          branches.push({
+            value: val.uuid,
+            label: val.name,
+          });
         });
       }
     },
   },
 };
 </script>
+<style scoped>
+.form-group {
+  margin-bottom: 0 !important;
+}
+</style>
