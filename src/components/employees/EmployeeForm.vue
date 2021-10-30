@@ -371,6 +371,7 @@ export default {
       branch_shift_id: "",
       department_id: "",
       designation_id: "",
+      manager_id: "",
       status: "",
       personal_photo: "",
       documents: "",
@@ -552,7 +553,6 @@ export default {
           this.form.create_user = data.create_user == "true" ? true : false;
           this.form.user_name = data.user.name;
           this.form.user_email = data.user.email;
-          console.log(data.user.role[0]);
 
           this.form.user_role = data.user.role[0];
           this.options.user_role.value = data.user.role[0];

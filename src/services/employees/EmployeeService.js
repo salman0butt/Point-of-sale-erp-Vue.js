@@ -21,7 +21,11 @@ class EmployeeService extends Helper {
   }
 
   getCreateDetail() {
-    return http.get("/employees-create");
+    return http.get("/employees-create", {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      }
+    });
   }
 
   get(id) {

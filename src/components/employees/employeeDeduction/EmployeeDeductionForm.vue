@@ -39,14 +39,7 @@
                 label="Description"
                 placeholder="Content..."
                 v-model="form.description"
-                :class="{ error: $v.form.description.$error }"
-                @input="$v.form.description.$touch()"
               />
-              <div v-if="$v.form.description.$error">
-                <p v-if="!$v.form.description.required" class="errorMsg">
-                  Description is required
-                </p>
-              </div>
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
@@ -108,6 +101,7 @@
               color="success"
               style="float: right; width: 150px; margin-right: 20px"
               type="submit"
+              :disabled="loading"
               >{{ loading ? "loading..." : "Save" }}</CButton
             >
           </CRow>
@@ -158,7 +152,6 @@ export default {
       form: {
         name: { required },
         type: { required },
-        description: { required },
         amount: { required },
         repeat: { required },
       },

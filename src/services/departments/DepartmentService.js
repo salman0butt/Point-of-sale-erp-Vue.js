@@ -12,7 +12,7 @@ class DepartmentService extends Helper {
 
     return http.get(url, {
       headers: {
-        "selected-branches": "trers"
+        "selected-branches": localStorage.getItem("selected_branches"),
       }
     });
   }

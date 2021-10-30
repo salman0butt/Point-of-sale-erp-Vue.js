@@ -34,7 +34,11 @@
               </template>
               <template #employee_salary_adjustment="{ item }">
                 <td>
-                  {{ item.employee_salary_adjustment.month }}
+                  {{
+                    item.employee_salary_adjustment.month +
+                    " " +
+                    item.employee_salary_adjustment.year
+                  }}
                 </td>
               </template>
               <template #bank_account="{ item }">
@@ -100,7 +104,7 @@ const fields = [
   // { key: "employee", label: "EMPLOYEE", _style: "min-width:40%" },
   {
     key: "employee_salary_adjustment",
-    label: "SALARY ADJUSTMENT MONTH",
+    label: "SALARY MONTH",
     _style: "min-width:15%;",
   },
   { key: "bank_account", label: "BANK ACCOUNT", _style: "min-width:15%;" },

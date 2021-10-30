@@ -7,7 +7,7 @@ class EmployeeSalaryService extends Helper{
     return http.get(`/employee-salary/${id}`);
   }
 
-  genrateSalary(id, year, month) {
+  genrateSalary(id, year, month, monthName) {
     let url = `/salary/${id}`;
 
     if(year !== '' && year != undefined)
@@ -15,6 +15,9 @@ class EmployeeSalaryService extends Helper{
 
     if(month !== '' && month != undefined)
      url = super.updateQueryStringParameter(url,"month",month);
+
+    if(monthName !== '' && monthName != undefined)
+     url = super.updateQueryStringParameter(url,"month_name",monthName);
 
     return http.get(url);
   }

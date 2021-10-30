@@ -2,23 +2,23 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CCard>
-          <CCardBody>
-            <CDataTable
-              :items="warning"
-              :fields="fields"
-              table-filter
-              items-per-page-select
-              @pagination-change="changePagination"
-              :items-per-page="perPage"
-              sorter
-              clickable-rows
-              hover
-              :loading="loading"
-              @row-clicked="rowClicked"
-              ref="externalAgent"
-            >
-              <!-- <template #select="{ item }">
+        <!-- <CCard>
+          <CCardBody> -->
+        <CDataTable
+          :items="warning"
+          :fields="fields"
+          table-filter
+          items-per-page-select
+          @pagination-change="changePagination"
+          :items-per-page="perPage"
+          sorter
+          clickable-rows
+          hover
+          :loading="loading"
+          @row-clicked="rowClicked"
+          ref="externalAgent"
+        >
+          <!-- <template #select="{ item }">
                 <td>
                   <CInputCheckbox
                     :checked="item._selected"
@@ -27,53 +27,49 @@
                   />
                 </td>
               </template> -->
-              <template #from_employee="{ item }">
-                <td>
-                  {{ item.from_employee.full_name }}
-                </td>
-              </template>
-              <template #to_employee="{ item }">
-                <td>
-                  {{ item.to_employee.full_name }}
-                </td>
-              </template>
-              <template #actions="{ item }">
-                <td>
-                  <CButtonGroup>
-                    <!-- <CButton
+          <template #from_employee="{ item }">
+            <td>
+              {{ item.from_employee.full_name }}
+            </td>
+          </template>
+          <template #to_employee="{ item }">
+            <td>
+              {{ item.to_employee.full_name }}
+            </td>
+          </template>
+          <template #actions="{ item }">
+            <td>
+              <CButtonGroup>
+                <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
                     > -->
-                    <CButton
-                      @click="editRow(item.uuid)"
-                      class="btn-sm text-white"
-                      color="warning"
-                      title="Edit"
-                    >
-                      <CIcon :content="$options.cilPencil"
-                    /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                      title="Delete"
-                    >
-                      <CIcon :content="$options.cilTrash" />
-                    </CButton>
-                  </CButtonGroup>
-                </td>
-              </template>
-            </CDataTable>
-            <CPagination
-              v-show="pages > 1"
-              :pages="pages"
-              :active-page.sync="activePage"
-            />
-          </CCardBody>
-        </CCard>
+                <CButton
+                  @click="editRow(item.uuid)"
+                  class="btn-sm text-white"
+                  color="warning"
+                  title="Edit"
+                >
+                  <CIcon :content="$options.cilPencil"
+                /></CButton>
+                <CButton
+                  @click="deleteRow(item.uuid)"
+                  class="btn-sm"
+                  color="danger"
+                  title="Delete"
+                >
+                  <CIcon :content="$options.cilTrash" />
+                </CButton>
+              </CButtonGroup>
+            </td>
+          </template>
+        </CDataTable>
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <!-- </CCardBody>
+        </CCard> -->
       </CCol>
     </CRow>
   </div>

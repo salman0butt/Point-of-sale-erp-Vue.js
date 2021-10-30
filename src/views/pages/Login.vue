@@ -11,7 +11,7 @@
                   <p class="text-muted">Sign In to your account</p>
 
                   <CInput
-                    placeholder="username or email or Employee ID"
+                    placeholder="Username or Email or Employee ID"
                     autocomplete="username"
                     v-model="username"
                     :class="{ error: $v.username.$error }"
@@ -20,7 +20,7 @@
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
                   <div v-if="$v.username.$error">
-                <p v-if="!$v.username.required" class="errorMsg">username or email or Employee ID is required</p>
+                <p v-if="!$v.username.required" class="errorMsg">Username or Email or Employee ID is required</p>
               </div>
                   <CInput
                     placeholder="Password"
@@ -29,6 +29,7 @@
                      v-model="password"
                      :class="{ error: $v.password.$error }"
                     @input="$v.password.$touch()"
+                    @keyup.enter.native="login"
                   >
                     <template #prepend-content><CIcon name="cil-lock-locked"/></template>
                   </CInput>
@@ -43,7 +44,7 @@
                 </p>
                   <CRow>
                     <CCol col="6" class="text-left">
-                      <CButton :disabled="$v.$invalid" style="background-color:#52b947;color:white" @click="login" class="px-4">Login</CButton>
+                      <CButton :disabled="$v.$invalid || loading" style="background-color:#52b947;color:white" @click="login" class="px-4">{{ loading ? 'loading...' : 'Login'}}</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
                       <router-link to="/forget-password"  color="link" class="px-0">Forgot password?</router-link>
@@ -95,6 +96,11 @@ export default {
       password: { required },
     };
   },
+computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   created() {
     if (this.$store.getters.isLoggedIn) {
       this.$router.push("/dashboard");
@@ -112,14 +118,17 @@ export default {
         password != undefined &&
         password != ""
       ) {
+        this.$store.commit('set_loader');
         this.$store
           .dispatch("login", { username, password })
           .then((res) => {
             localStorage.setItem("username", this.username);
             this.$store.commit("remove_errors");
+            this.$store.commit('close_loader');
             this.$router.push({ path: "/dashboard" });
           })
           .catch(() => {
+            this.$store.commit('close_loader');
             this.set_errors("Username Or Password Incorrect");
           });
       }

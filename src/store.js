@@ -20,6 +20,7 @@ const state = {
   selected_branches: "",
   list_branches: JSON.parse(localStorage.getItem("list_branches")),
   showBranchModel: false,
+  loading: false,
 
 }
 
@@ -77,7 +78,13 @@ const mutations = {
   },
   set_show_branch_model(state, status) {
     state.showBranchModel = status;
-  }
+  },
+  set_loader(state) {
+    state.loading = true;
+  },
+  close_loader(state) {
+    state.loading = false;
+  },
 }
 
 const actions = {
@@ -144,6 +151,7 @@ const getters = {
   getBranches: state => state.branches,
   branchLists: state => state.list_branches,
   showBranchModel: state => state.showBranchModel,
+  loading: state => state.loading,
 }
 
 export default new Vuex.Store({
