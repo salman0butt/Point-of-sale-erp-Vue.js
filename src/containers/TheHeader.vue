@@ -25,6 +25,7 @@
         <CHeaderNavLink class="headerFont"> </CHeaderNavLink>
       </CHeaderNavItem>
     </CHeaderNav>
+    <CHeaderNav> <TheSelectBranchForm /></CHeaderNav>
     <CHeaderNav>
       <CHeaderNavItem class="px-3 c-d-legacy-none headerFont">
         <button
@@ -51,12 +52,14 @@ import TheHeaderDropdownAccnt from "./TheHeaderDropdownAccnt";
 import TheHeaderDropdownNotif from "./TheHeaderDropdownNotif";
 // import TheHeaderDropdownTasks from "./TheHeaderDropdownTasks";
 // import TheHeaderDropdownMssgs from "./TheHeaderDropdownMssgs";
+import TheSelectBranchForm from "@/containers/TheSelectBranchForm";
 
 export default {
   name: "TheHeader",
   components: {
     TheHeaderDropdownAccnt,
     TheHeaderDropdownNotif,
+    TheSelectBranchForm,
     // TheHeaderDropdownTasks,
     // TheHeaderDropdownMssgs,
   },
