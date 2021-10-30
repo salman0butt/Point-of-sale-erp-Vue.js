@@ -17,7 +17,7 @@ const state = {
   msgs: [],
   employee_name: "",
   permissions: JSON.parse(localStorage.getItem("permissions")) || [],
-  selected_branches: "",
+  selected_branches: JSON.parse(localStorage.getItem("selected_branches")) || [],
   list_branches: JSON.parse(localStorage.getItem("list_branches")),
   showBranchModel: false,
   loading: false,
@@ -97,6 +97,7 @@ const actions = {
         localStorage.setItem('employee_id', res.data.employee_id);
         localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
         localStorage.setItem('list_branches', JSON.stringify(res.data.branches));
+        localStorage.setItem('business_id', res.data.business_id);
         if(res.data.branches && res.data.branches.length == 1){
           localStorage.setItem('selected_branches', JSON.stringify([res.data.branches[0].uuid]));
         }
