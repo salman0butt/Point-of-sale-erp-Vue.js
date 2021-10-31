@@ -28,6 +28,9 @@ export default {
     listBranches(branch_list) {
       this.getbranches(branch_list);
     },
+    selectedBranches() {
+      this.getbranches(this.$store.getters.branchLists);
+    },
   },
   created() {
     this.getbranches(this.$store.getters.branchLists);
@@ -35,6 +38,9 @@ export default {
   computed: {
     listBranches() {
       return this.$store.getters.branchLists;
+    },
+    selectedBranches() {
+      return this.$store.getters.getBranches;
     },
   },
   methods: {

@@ -10,7 +10,11 @@ class AssetService extends Helper {
    if(per_page !== '')
     url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   getAllBranches() {
@@ -22,7 +26,11 @@ class AssetService extends Helper {
   }
 
   create(data) {
-    return http.post("/assets", data);
+    return http.post("/assets", data, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   update(id, data) {

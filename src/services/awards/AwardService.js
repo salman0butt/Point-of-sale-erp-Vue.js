@@ -10,7 +10,11 @@ class AwardService extends Helper {
    if(per_page !== '')
     url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   get(id) {
@@ -18,7 +22,11 @@ class AwardService extends Helper {
   }
 
   create(data) {
-    return http.post("/awards", data);
+    return http.post("/awards", data, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   update(id, data) {
