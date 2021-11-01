@@ -195,7 +195,11 @@ export default {
     },
     getOptions() {
       this.$http
-        .get("/employees-create")
+        .get("/employees-create", {
+          headers: {
+            "selected-branches": localStorage.getItem("selected_branches"),
+          },
+        })
         .then(({ data }) => {
           if (data != null && data != "") {
             const branches = this.options.branches;

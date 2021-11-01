@@ -17,7 +17,11 @@ class EmployeeWarningService extends Helper {
      if(all_data !== '' && all_data !== undefined)
      url = super.updateQueryStringParameter(url,"all_data",true);
 
-    return http.get(url);
+    return http.get(url, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   get(id) {
@@ -25,7 +29,11 @@ class EmployeeWarningService extends Helper {
   }
 
   create(data) {
-    return http.post("/employee-warnings", data);
+    return http.post("/employee-warnings", data, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   update(id, data) {

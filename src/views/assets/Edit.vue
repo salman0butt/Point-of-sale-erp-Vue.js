@@ -7,7 +7,7 @@
           <CCardBody>
             <form @submit.prevent="updateAsset">
               <CRow>
-                <CCol sm="6" md="4" class="pt-2">
+                <!-- <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Branch"
                     :options="options.branches"
@@ -20,7 +20,7 @@
                       Branch is required
                     </p>
                   </div>
-                </CCol>
+                </CCol> -->
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Asset Name"
@@ -95,7 +95,7 @@ export default {
   data: () => ({
     saveAndExit: false,
     form: {
-      branch_id: "",
+      // branch_id: "",
       name: "",
       type: "",
       description: "",
@@ -103,14 +103,14 @@ export default {
     },
     assetId: null,
     options: {
-      branches: [{ value: "", label: "Choose branch", disabled: true, selected: "" }],
+      // branches: [{ value: "", label: "Choose branch", disabled: true, selected: "" }],
       asset_type: [{ value: "", label: "Choose Assets", disabled: true, selected: "" }],
     },
   }),
   validations() {
     return {
       form: {
-        branch_id: { required },
+        // branch_id: { required },
         name: { required },
         type: { required },
         description: { required },
@@ -122,27 +122,27 @@ export default {
     this.assetId = this.$route.params.id;
     this.getAsset();
     this.getOptions();
-    this.getDetail();
+    // this.getDetail();
   },
   methods: {
-    getDetail() {
-      AssetService.getAllBranches()
-        .then(({ data }) => {
-          let branches = this.options.branches;
-          if (data.data) {
-            data.data.map(function (val) {
-              branches.push({ value: val.uuid, label: val.name });
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+    // getDetail() {
+    //   AssetService.getAllBranches()
+    //     .then(({ data }) => {
+    //       let branches = this.options.branches;
+    //       if (data.data) {
+    //         data.data.map(function (val) {
+    //           branches.push({ value: val.uuid, label: val.name });
+    //         });
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
     getAsset() {
       AssetService.get(this.assetId)
         .then(({ data }) => {
-          this.form.branch_id = data.branch.uuid;
+          // this.form.branch_id = data.branch.uuid;
           this.form.name = data.name;
           this.form.type = data.type;
           this.form.description = data.description;

@@ -115,6 +115,14 @@ export default {
             // icon: "cil-lan",
           });
         }
+        if (this.permissions.includes("read hr-salary")) {
+          this.sideBarItems_hr.push({
+            _name: "CSidebarNavItem",
+            name: "Payments",
+            to: "/payments/index",
+            // icon: "cil-lan",
+          });
+        }
         if (this.permissions.includes("read hr-complains")) {
           this.sideBarItems_hr.push({
             _name: "CSidebarNavItem",

@@ -5,6 +5,7 @@
         :options="options.branches"
         :value.sync="form.branches"
         @change="saveBranch()"
+        readonly
       />
     </form>
   </div>
@@ -27,6 +28,9 @@ export default {
     listBranches(branch_list) {
       this.getbranches(branch_list);
     },
+    selectedBranches() {
+      this.getbranches(this.$store.getters.branchLists);
+    },
   },
   created() {
     this.getbranches(this.$store.getters.branchLists);
@@ -34,6 +38,9 @@ export default {
   computed: {
     listBranches() {
       return this.$store.getters.branchLists;
+    },
+    selectedBranches() {
+      return this.$store.getters.getBranches;
     },
   },
   methods: {
@@ -48,6 +55,7 @@ export default {
           text: "Branch Updated Successfully",
           timer: 3600,
         });
+        this.$router.go(this.$router.currentRoute);
       }
     },
     getbranches(list) {

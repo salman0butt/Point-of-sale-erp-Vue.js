@@ -4,9 +4,7 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <form
-              @submit.prevent="isEditing ? updateEmployee() : saveEmployee()"
-            >
+            <form @submit.prevent="isEditing ? updateEmployee() : saveEmployee()">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -149,10 +147,7 @@
                     track-by="label"
                     :preselect-first="true"
                   >
-                    <template
-                      slot="selection"
-                      slot-scope="{ values, search, isOpen }"
-                    >
+                    <template slot="selection" slot-scope="{ values, search, isOpen }">
                       <span
                         class="multiselect__single"
                         v-if="values.value &amp;&amp; !isOpen"
@@ -223,10 +218,7 @@
                     @input="$v.form.branch_shift_id.$touch()"
                   />
                   <div v-if="$v.form.branch_shift_id.$error">
-                    <p
-                      v-if="!$v.form.branch_shift_id.required"
-                      class="errorMsg"
-                    >
+                    <p v-if="!$v.form.branch_shift_id.required" class="errorMsg">
                       Branch Shift is required
                     </p>
                   </div>
@@ -301,9 +293,7 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">
-                Please Fill the required data
-              </p>
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4">
                 <CButton
                   progress
@@ -319,12 +309,7 @@
                   timeout="2000"
                   block
                   color="danger"
-                  style="
-                    float: right;
-                    width: 140px;
-                    margin-left: 20px;
-                    margin-top: 0;
-                  "
+                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                   @click="saveAndExit = true"
                   type="submit"
                   >Save & Exit</CButton
@@ -339,13 +324,7 @@
 </template>
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
-import {
-  required,
-  email,
-  numeric,
-  minLength,
-  maxLength,
-} from "vuelidate/lib/validators";
+import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 
 export default {
@@ -387,9 +366,7 @@ export default {
     empId: null,
     options: {
       branches: [],
-      managers: [
-        { value: "", label: "Choose Manager", disabled: true, selected: "" },
-      ],
+      managers: [{ value: "", label: "Choose Manager", disabled: true, selected: "" }],
       departments: [
         {
           value: "",
@@ -421,9 +398,7 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
-      user_role: [
-        { value: "", label: "Choose Role", disabled: true, selected: "" },
-      ],
+      user_role: [{ value: "", label: "Choose Role", disabled: true, selected: "" }],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },
@@ -529,36 +504,36 @@ export default {
     getEmployee() {
       EmployeeService.get(this.empId)
         .then(({ data }) => {
-          this.form.serial_no = data.serial_no;
-          this.form.full_name = data.full_name;
-          this.form.gender = data.gender;
-          this.form.marital_status = data.marital_status;
-          this.form.phone_number = data.phone_number;
-          this.form.email = data.email;
-          this.form.dob = data.dob;
-          this.form.nationality = data.nationality;
-          this.form.cpr_no = data.cpr_no;
-          this.form.cpr_no_expiry = data.cpr_no_expiry;
-          this.form.passport_no = data.passport_no;
-          this.form.passport_expiry = data.passport_expiry;
+          this.form.serial_no = data.serial_no ?? "";
+          this.form.full_name = data.full_name ?? "";
+          this.form.gender = data.gender ?? "";
+          this.form.marital_status = data.marital_status ?? "";
+          this.form.phone_number = data.phone_number ?? "";
+          this.form.email = data.email ?? "";
+          this.form.dob = data.dob ?? "";
+          this.form.nationality = data.nationality ?? "";
+          this.form.cpr_no = data.cpr_no ?? "";
+          this.form.cpr_no_expiry = data.cpr_no_expiry ?? "";
+          this.form.passport_no = data.passport_no ?? "";
+          this.form.passport_expiry = data.passport_expiry ?? "";
           this.form.branch_id = data.branches.map(function (item) {
             return { label: item.name.en, value: item.uuid };
           });
-          this.form.department_id = data.department_id;
-          this.form.designation_id = data.designation_id;
-          this.form.manager_id = data.manager_id;
+          this.form.department_id = data.department_id ?? "";
+          this.form.designation_id = data.designation_id ?? "";
+          this.form.manager_id = data.manager_id ?? "";
           this.form.personal_photo = data.personal_photo;
           this.form.documents = data.documents;
-          this.form.status = data.status;
+          this.form.status = data.status ?? "";
           this.form.create_user = data.create_user == "true" ? true : false;
-          this.form.user_name = data.user.name;
-          this.form.user_email = data.user.email;
+          this.form.user_name = data.user.name ?? "";
+          this.form.user_email = data.user.email ?? "";
 
-          this.form.user_role = data.user.role[0];
-          this.options.user_role.value = data.user.role[0];
-          this.form.user_status = data.user.status?.toString();
-          this.form.user_language = data.user.user_language;
-          this.form.branch_shift_id = data.branch_shift_id;
+          this.form.user_role = data.user.role[0] ?? "";
+          this.options.user_role.value = data.user.role[0] ?? "";
+          this.form.user_status = data.user.status?.toString() ?? "";
+          this.form.user_language = data.user.user_language ?? "";
+          this.form.branch_shift_id = data.branch_shift_id ?? "";
         })
         .catch((error) => {
           console.log(error);
