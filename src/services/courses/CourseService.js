@@ -12,11 +12,19 @@ class CourseService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   getAllEmployees() {
-    return http.get(`/employees`);
+    return http.get(`/employees`, {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      },
+    });
   }
 
   get(id) {
