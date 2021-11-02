@@ -5,6 +5,7 @@ import auth from '@/middleware/auth'
 const IndexSalary = () => import('@/views/salary/Index')
 const CreateSalary = () => import('@/views/salary/Create')
 const EditSalary = () => import('@/views/salary/Edit')
+const ShowSalary = () => import('@/views/salary/Show')
 
 
 const salaryRoutes = {
@@ -30,6 +31,11 @@ const salaryRoutes = {
             path: 'edit/:id',
             name: 'EditSalary',
             component: EditSalary
+        },
+        {
+            path: 'show/:id',
+            name: 'ShowSalary',
+            component: ShowSalary
         }
     ]
 };
