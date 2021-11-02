@@ -4,7 +4,7 @@ import Helper from "@/helpers/Helper";
 class CustomerAddressServices extends Helper {
     getCustomerAddresses(uuid, page, per_page) {
 
-        let url = "/customer-addresses/" + uuid;
+        let url = "/addresses/customer/" + uuid;
         if (page !== '')
             url = super.updateQueryStringParameter(url, "page", page);
 
@@ -14,20 +14,20 @@ class CustomerAddressServices extends Helper {
         return http.get(url);
     }
 
-    get(id) {
-        return http.get(`/customers/${id}`);
+    get(uuid) {
+        return http.get(`addresses-single/${uuid}`);
     }
 
     store(data) {
-        return http.post("/customer-addresses", data);
+        return http.post("/addresses/customer", data);
     }
 
     update(id, data) {
-        return http.put(`/customers/${id}`, data);
+        return http.put(`addresses-single/${id}`, data);
     }
 
     delete(id) {
-        return http.delete(`/assets/${id}`);
+        return http.delete(`addresses/${id}`);
     }
 }
 

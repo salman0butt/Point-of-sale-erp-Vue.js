@@ -2,50 +2,61 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CButton
-          @click="ToggleAddress()"
-          color="primary"
-          class="mb-2 mt-3"
-          style="float: right"
-        >
-          {{ toggleName }}
-        </CButton>
+        <CCard>
+          <CCardHeader>Address</CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol xs="12" lg="12">
+                <CButton
+                  @click="ToggleAddress()"
+                  color="primary"
+                  class="mb-2 mt-3"
+                  style="float: right"
+                >
+                  {{ toggleName }}
+                </CButton>
+              </CCol>
+            </CRow>
+
+            <CRow>
+              <CCol xs="12" lg="12">
+                <CCollapse :show="collapse_table">
+                  <AddressIndex
+                    module="customer"
+                    ref="AddressRef"
+                    @AddressEdit="AddressEdited"
+                  />
+                </CCollapse>
+                <CCollapse :show="collapse">
+                  <AddressForm
+                    module="customer"
+                    ref="AddressEditRef"
+                    @AddressCreated="AddressCreatedSend"
+                  />
+                </CCollapse>
+              </CCol>
+            </CRow>
+          </CCardBody>
+        </CCard>
       </CCol>
     </CRow>
-    <CCard>
-      <CCardBody>
-        <CRow>
-          <CCol xs="12" lg="12">
-            <CCollapse :show="collapse_table">
-              <AddressIndex module="customer" />
-            </CCollapse>
-            <CCollapse :show="collapse">
-              <EmployeeAddressForm
-                ref="employeeAddressEditRef"
-                @employeeAddressCreated="employeeAddressCreatedSend"
-              />
-            </CCollapse>
-          </CCol>
-        </CRow>
-      </CCardBody>
-    </CCard>
   </div>
 </template>
 <script>
 import AddressIndex from "@/components/general/Address/AddressIndex";
-import EmployeeAddressForm from "@/components/employees/employeeAddress/EmployeeAddressForm";
+import AddressForm from "@/components/general/Address/AddressForm";
 
 export default {
   name: "AddressTab",
-  components: { AddressIndex, EmployeeAddressForm },
+  components: { AddressIndex, AddressForm },
   data: () => ({
     toggleName: "Add New Address",
     collapse: false,
     collapse_table: true,
   }),
+
   methods: {
     ToggleAddress() {
-      this.resetEmployeeAddressForm();
       this.collapse = !this.collapse;
       this.collapse_table = !this.collapse_table;
       if (this.toggleName == "Add New Address") {
@@ -54,16 +65,16 @@ export default {
         this.toggleName = "Add New Address";
       }
     },
-    employeeAddressCreatedSend() {
-      this.ToggleEmployeeAddress();
-      this.$refs.employeeAddressRef.getEmployeeAddressData();
+    AddressCreatedSend() {
+      this.ToggleAddress();
+      this.$refs.AddressRef.getAddressData();
     },
-    employeeAddressEdited(uuid) {
-      this.ToggleEmployeeAddress();
-      this.$refs.employeeAddressEditRef.getEditData(uuid);
+    AddressEdited(uuid) {
+      this.ToggleAddress();
+      this.$refs.AddressEditRef.getEditData(uuid);
     },
-    resetEmployeeAddressForm() {
-      this.$refs.employeeAddressEditRef.resetForm();
+    resetAddressForm() {
+      this.$refs.AddressEditRef.resetForm();
     },
   },
 };
