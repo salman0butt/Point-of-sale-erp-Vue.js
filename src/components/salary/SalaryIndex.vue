@@ -47,13 +47,13 @@
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
-                <!-- <CButton
+                <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       title="View"
                       >View</CButton
-                    > -->
+                    >
                 <CButton
                   @click="editRow(item.uuid)"
                   class="btn-sm text-white"
@@ -175,7 +175,7 @@ export default {
       this.$set(this.employeeSalaryData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/salary/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/salary/edit/" + uuid });

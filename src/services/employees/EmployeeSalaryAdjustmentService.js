@@ -21,6 +21,12 @@ class EmployeeSalaryAdjustmentService extends Helper{
     return http.get(url);
   }
 
+  genrateSalary(id) {
+    return http.get(`/genrate-salary-pdf/${id}`, {
+      responseType: 'blob',
+    });
+  }
+
   get(id) {
     return http.get(`/employee-salary-adjustments/${id}`);
   }

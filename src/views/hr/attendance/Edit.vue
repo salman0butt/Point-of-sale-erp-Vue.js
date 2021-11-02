@@ -7,9 +7,7 @@
           <CCardBody>
             <CRow>
               <CCol xs="12" lg="12">
-                <CCardHeader>
-                  <strong>Employee</strong> Information
-                </CCardHeader>
+                <CCardHeader> <strong>Employee</strong> Information </CCardHeader>
                 <CCardBody>
                   <CForm>
                     <CInput
@@ -33,9 +31,7 @@
                     />
                   </CForm>
                 </CCardBody>
-                <CCardHeader>
-                  <strong>Attendance</strong> Information
-                </CCardHeader>
+                <CCardHeader> <strong>Attendance</strong> Information </CCardHeader>
                 <CCardBody>
                   <CForm>
                     <CInput
@@ -101,21 +97,19 @@ export default {
   },
   methods: {
     getData() {
-      this.$http
-        .get("attendances/" + window.atob(this.$route.params.id))
-        .then((res) => {
-          this.employee.name = res.data.employee.full_name.en;
-          this.employee.serial = res.data.employee.emp_serial;
-          this.employee.designation = res.data.employee.designation.name;
-          if (res.data.check_in != null) {
-            this.attendance.date = res.data.check_in.date;
-            this.attendance.check_in = res.data.check_in.time;
-            this.attendance.check_out = res.data.check_out.time;
-          } else {
-            this.attendance.date = res.data.check_out.date;
-            this.attendance.check_out = res.data.check_out.time;
-          }
-        });
+      this.$http.get("attendances/" + window.atob(this.$route.params.id)).then((res) => {
+        this.employee.name = res.data.employee.full_name.en;
+        this.employee.serial = res.data.employee.emp_serial;
+        this.employee.designation = res.data.employee.designation.name;
+        if (res.data.check_in != null) {
+          this.attendance.date = res.data.check_in.date;
+          this.attendance.check_in = res.data.check_in.time;
+          this.attendance.check_out = res.data.check_out.time;
+        } else {
+          this.attendance.date = res.data.check_out.date;
+          this.attendance.check_out = res.data.check_out.time;
+        }
+      });
     },
     updateData() {
       let array = window.atob(this.$route.params.id);
