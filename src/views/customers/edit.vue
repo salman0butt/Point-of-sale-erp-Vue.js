@@ -25,10 +25,11 @@
                 href="#"
                 v-bind:class="{
                   active: activeTab === tab.key,
-                  disabled: disabled,
+                  disabled: tab.disabled,
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
+                <CBadge v-if="tab.disabled" color="danger"> coming soon</CBadge>
               </a>
             </div>
           </CCardBody>
@@ -46,6 +47,7 @@
 import CustomerServices from "@/services/customers/CustomerServices";
 import General from "@/components/customers/General";
 import Address from "@/components/general/Address/AddressTab";
+import Contact from "@/components/general/Contact/Contact";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
@@ -56,6 +58,7 @@ export default {
   components: {
     General,
     Address,
+    Contact,
   },
   data() {
     return {
@@ -67,8 +70,19 @@ export default {
       tabs: [
         { key: "General", name: "General" },
         { key: "Address", name: "Address" },
-        { key: "Mobile", name: "Mobile" },
-        { key: "Notes", name: "Notes" },
+        { key: "Contact", name: "Contact" },
+        { key: "Notes", name: "Notes", disabled: true },
+        { key: "Quotations", name: "Quotations", disabled: true },
+        { key: "Invoice", name: "Invoice", disabled: true },
+        { key: "Sales", name: "Sales", disabled: true },
+        { key: "Payments", name: "Payments", disabled: true },
+        { key: "Returns", name: "Returns", disabled: true },
+        {
+          key: "Credit Account Payment",
+          name: "Credit Account Payment",
+          disabled: true,
+        },
+        { key: "Discounts", name: "Discounts", disabled: true },
       ],
     };
   },
