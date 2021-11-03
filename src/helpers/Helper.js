@@ -11,6 +11,14 @@ class Helper {
     }
   }
 
+  selectedBranch() {
+    return {
+      headers: {
+        "selected-branches": localStorage.getItem("selected_branches"),
+      }
+    }
+  }
+
 }
 
 export default Helper;

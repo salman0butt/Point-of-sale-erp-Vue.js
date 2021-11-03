@@ -12,7 +12,7 @@ class JobCategoryService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   get(id) {
@@ -20,7 +20,7 @@ class JobCategoryService extends Helper {
   }
 
   create(data) {
-    return http.post("/job-categories", data);
+    return http.post("/job-categories", data, super.selectedBranch());
   }
 
   update(id, data) {

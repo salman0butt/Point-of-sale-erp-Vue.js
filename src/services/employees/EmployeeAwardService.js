@@ -18,7 +18,7 @@ class EmployeeAwardService extends Helper {
   }
 
   getAllAwards() {
-    return http.get(`/awards`);
+    return http.get(`/awards`, super.selectedBranch());
   }
 
   get(id) {

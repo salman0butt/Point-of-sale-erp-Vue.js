@@ -615,7 +615,11 @@ export default {
     },
     getAllEmployees() {
       this.$http
-        .get("/employees-create")
+        .get("/employees-create", {
+          headers: {
+            "selected-branches": localStorage.getItem("selected_branches"),
+          },
+        })
         .then(({ data }) => {
           if (data != undefined && data != "") {
             const employees = this.options.employees;
