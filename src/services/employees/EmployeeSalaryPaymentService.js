@@ -18,7 +18,7 @@ class EmployeeSalaryPaymentService extends Helper{
      if(all_data !== '' && all_data !== undefined)
      url = super.updateQueryStringParameter(url,"all_data",true);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   get(id) {
@@ -26,7 +26,7 @@ class EmployeeSalaryPaymentService extends Helper{
   }
 
   getAllOptions() {
-    return http.get(`/employee-salary-payments-options`);
+    return http.get(`/employee-salary-payments-options`, super.selectedBranch());
   }
 
   create(data, config) {

@@ -12,19 +12,19 @@ class TrainingService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   getAllEmployees() {
-    return http.get(`/employees`);
+    return http.get(`/employees`, super.selectedBranch());
   }
 
   getAllTrainers() {
-    return http.get(`/trainers`);
+    return http.get(`/trainers`, super.selectedBranch());
   }
 
   getTrainingTypes() {
-    return http.get(`/training-types`);
+    return http.get(`/training-types`, super.selectedBranch());
   }
 
   get(id) {
@@ -32,7 +32,7 @@ class TrainingService extends Helper {
   }
 
   create(data) {
-    return http.post("/trainings", data);
+    return http.post("/trainings", data, super.selectedBranch());
   }
 
   update(id, data) {

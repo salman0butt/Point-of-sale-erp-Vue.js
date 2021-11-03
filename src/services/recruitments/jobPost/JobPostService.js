@@ -12,14 +12,14 @@ class JobPostService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   getAllJobCategories() {
     let url = "/job-categories";
     url = super.updateQueryStringParameter(url,"all_data",true);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   get(id) {
@@ -27,7 +27,7 @@ class JobPostService extends Helper {
   }
 
   create(data) {
-    return http.post("/job-posts", data);
+    return http.post("/job-posts", data, super.selectedBranch());
   }
 
   update(id, data) {

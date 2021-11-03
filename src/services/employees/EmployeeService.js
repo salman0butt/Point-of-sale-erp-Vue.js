@@ -9,23 +9,15 @@ class EmployeeService extends Helper {
 
     if (per_page !== '')
       url = super.updateQueryStringParameter(url, "per_page", per_page);
-    return http.get(url, {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      },
-    });
+    return http.get(url, super.selectedBranch());
   }
 
   getTotalCount() {
-    return http.get("/employees-total-counts");
+    return http.get("/employees-total-counts", super.selectedBranch());
   }
 
   getCreateDetail() {
-    return http.get("/employees-create", {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      }
-    });
+    return http.get("/employees-create", super.selectedBranch());
   }
 
   get(id) {

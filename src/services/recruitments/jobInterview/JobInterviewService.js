@@ -12,7 +12,7 @@ class JobInterviewService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   get(id) {
@@ -20,11 +20,11 @@ class JobInterviewService extends Helper {
   }
 
   getInterviewOptions() {
-    return http.get('job-interviews-options');
+    return http.get('job-interviews-options', super.selectedBranch());
   }
 
   create(data) {
-    return http.post("/job-interviews", data);
+    return http.post("/job-interviews", data, super.selectedBranch());
   }
 
   update(id, data) {

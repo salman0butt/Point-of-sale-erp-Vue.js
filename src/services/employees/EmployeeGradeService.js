@@ -12,27 +12,15 @@ class EmployeeGradeService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url, {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      },
-    });
+    return http.get(url, super.selectedBranch());
   }
 
   getAllDesignations() {
-    return http.get(`/designations`, {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      },
-    });
+    return http.get(`/designations`, super.selectedBranch());
   }
 
   getAllEmployees() {
-    return http.get(`/employees`, {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      },
-    });
+    return http.get(`/employees`, super.selectedBranch());
   }
 
   get(id) {

@@ -17,11 +17,7 @@ class EmployeeLeaveService extends Helper {
      if(all_data !== '' && all_data !== undefined)
      url = super.updateQueryStringParameter(url,"all_data",true);
 
-    return http.get(url, {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      },
-    });
+    return http.get(url, super.selectedBranch());
   }
 
   get(id) {

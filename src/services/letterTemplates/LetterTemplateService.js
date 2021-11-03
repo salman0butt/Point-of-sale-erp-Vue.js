@@ -12,11 +12,7 @@ class LetterTemplateService extends Helper {
     if (per_page !== '')
       url = super.updateQueryStringParameter(url, "per_page", per_page);
 
-    return http.get(url, {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      },
-    });
+    return http.get(url, super.selectedBranch());
   }
 
   get(id) {
@@ -24,11 +20,7 @@ class LetterTemplateService extends Helper {
   }
 
   create(data) {
-    return http.post("/letter-templates", data, {
-      headers: {
-        "selected-branches": localStorage.getItem("selected_branches"),
-      },
-    });
+    return http.post("/letter-templates", data, super.selectedBranch());
   }
 
   update(id, data) {

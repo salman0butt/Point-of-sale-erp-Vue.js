@@ -12,7 +12,7 @@ class TrainingTypeService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   get(id) {
@@ -20,7 +20,7 @@ class TrainingTypeService extends Helper {
   }
 
   create(data) {
-    return http.post("/training-types", data);
+    return http.post("/training-types", data, super.selectedBranch());
   }
 
   update(id, data) {

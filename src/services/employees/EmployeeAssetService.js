@@ -18,7 +18,7 @@ class EmployeeAssetService extends Helper {
   }
 
   getAllAssets() {
-    return http.get(`/assets`);
+    return http.get(`/assets`, super.selectedBranch());
   }
 
   get(id) {

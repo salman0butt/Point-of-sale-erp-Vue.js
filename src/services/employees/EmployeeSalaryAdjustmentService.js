@@ -18,7 +18,7 @@ class EmployeeSalaryAdjustmentService extends Helper{
      if(all_data !== '' && all_data !== undefined)
      url = super.updateQueryStringParameter(url,"all_data",true);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   genrateSalary(id) {

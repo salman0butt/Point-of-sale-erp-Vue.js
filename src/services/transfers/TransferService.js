@@ -12,15 +12,15 @@ class TransferService extends Helper {
     if(per_page !== '')
      url = super.updateQueryStringParameter(url,"per_page",per_page);
 
-    return http.get(url);
+    return http.get(url, super.selectedBranch());
   }
 
   getAllEmployees() {
-    return http.get(`/employees`);
+    return http.get(`/employees`, super.selectedBranch());
   }
 
   getAllBranches() {
-    return http.get(`/branches`);
+    return http.get(`/branches?all_data=true`, super.selectedBranch());
   }
 
   get(id) {
