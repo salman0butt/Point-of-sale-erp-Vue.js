@@ -10,6 +10,16 @@ const IndexPaymentMethods = () => import('@/views/accounting/paymentMethods/inde
 const CreatePaymentMethods = () => import('@/views/accounting/paymentMethods/create')
 const EditpaymentMethod = () => import('@/views/accounting/paymentMethods/edit')
 
+// Category
+const IndexAccountCategory = () => import('@/views/accounting/category/Index')
+const CreateAccountCategory = () => import('@/views/accounting/category/Create')
+const EditAccountCategory = () => import('@/views/accounting/category/Edit')
+
+// Income
+const IndexIncome = () => import('@/views/accounting/income/Index')
+const CreateIncome = () => import('@/views/accounting/income/Create')
+const EditIncome = () => import('@/views/accounting/income/Edit')
+
 
 
 
@@ -52,6 +62,36 @@ const accountingRoutes =
             path: 'paymentMethods/:id',
             name: 'Edit paymentMethod',
             component: EditpaymentMethod,
+        },
+        {
+            path: 'category/index',
+            name: 'IndexAccountCategory',
+            component: IndexAccountCategory,
+        },
+        {
+            path: 'category/create',
+            name: 'CreateAccountCategory',
+            component: CreateAccountCategory,
+        },
+        {
+            path: 'category/edit/:id',
+            name: 'EditAccountCategory',
+            component: EditAccountCategory,
+        },
+        {
+            path: 'income/index',
+            name: 'IndexIncome',
+            component: IndexIncome,
+        },
+        {
+            path: 'income/create',
+            name: 'CreateIncome',
+            component: CreateIncome,
+        },
+        {
+            path: 'income/edit/:id',
+            name: 'EditIncome',
+            component: EditIncome,
         },
 
 

@@ -292,6 +292,27 @@ export default {
             },
           ]);
         }
+
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Category",
+              to: "/accounting/category/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Income",
+              to: "/accounting/income/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: "Accounting",
