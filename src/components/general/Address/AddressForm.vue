@@ -106,6 +106,8 @@
 </template>
 <script>
 import CustomerAddressServices from "@/services/customers/CustomerAddressServices";
+import SupplierAddressServices from "@/services/supplier/SupplierAddressServices";
+
 import { required } from "vuelidate/lib/validators";
 
 export default {
@@ -183,6 +185,37 @@ export default {
             });
         }
       }
+      if (this.module == "supplier") {
+        this.form.module_uuid = this.$route.params.id;
+        this.form.module = this.module;
+        this.$v.$touch();
+        if (!this.$v.$invalid) {
+          let data = this.form;
+          SupplierAddressServices.store(data)
+            .then((res) => {
+              if (res.status == 201) {
+                this.$swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: "Address Added Successfully",
+                  timer: 3600,
+                });
+                this.$emit("AddressCreated");
+                this.$v.$reset();
+                this.resetForm();
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong.",
+                timer: 3600,
+              });
+            });
+        }
+      }
     },
     getEditData(uuid) {
       this.isEditing = true;
@@ -208,34 +241,81 @@ export default {
             console.log(error);
           });
       }
-    },
-    updateAddress() {
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
-        let data = this.form;
-        CustomerAddressServices.update(this.form.data_uuid, data)
-          .then((res) => {
-            if (res.status == 200) {
-              this.$swal.fire({
-                icon: "success",
-                title: "Success",
-                text: "Address Updated Successfully",
-                timer: 3600,
-              });
-              this.$emit("AddressCreated");
-              this.$v.$reset();
-              this.resetForm();
+      if (this.module == "supplier") {
+        SupplierAddressServices.get(this.form.data_uuid)
+          .then(({ data }) => {
+            if (data != null && data != "") {
+              this.form.flat = data.flat.en;
+              this.form.floor = data.floor.en;
+              this.form.building = data.building.en;
+              this.form.street = data.street.en;
+              this.form.block = data.block.en;
+              this.form.area = data.area.en;
+              this.form.set_default = data.set_default;
             }
           })
           .catch((error) => {
             console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
           });
+      }
+    },
+    updateAddress() {
+      this.$v.$touch();
+      if (this.module == "customer") {
+        if (!this.$v.$invalid) {
+          let data = this.form;
+          CustomerAddressServices.update(this.form.data_uuid, data)
+            .then((res) => {
+              if (res.status == 200) {
+                this.$swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: "Address Updated Successfully",
+                  timer: 3600,
+                });
+                this.$emit("AddressCreated");
+                this.$v.$reset();
+                this.resetForm();
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong.",
+                timer: 3600,
+              });
+            });
+        }
+      }
+      if (this.module == "supplier") {
+        if (!this.$v.$invalid) {
+          let data = this.form;
+          SupplierAddressServices.update(this.form.data_uuid, data)
+            .then((res) => {
+              if (res.status == 200) {
+                this.$swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: "Address Updated Successfully",
+                  timer: 3600,
+                });
+                this.$emit("AddressCreated");
+                this.$v.$reset();
+                this.resetForm();
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong.",
+                timer: 3600,
+              });
+            });
+        }
       }
     },
 

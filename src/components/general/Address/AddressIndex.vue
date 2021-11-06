@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import SupplierAddressServices from "@/services/supplier/SupplierAddressServices";
 import CustomerAddressServices from "@/services/customers/CustomerAddressServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
@@ -132,6 +133,33 @@ export default {
             console.log(err);
           });
       }
+      if (this.module == "supplier") {
+        SupplierAddressServices.getCustomerAddresses(this.uuid, page, per_page)
+          .then(({ data }) => {
+            if (data !== "" && data !== undefined) {
+              this.AddressesData = [];
+              this.loading = true;
+              if (data.data) {
+                data.data.map((item, id) => {
+                  item.floor = item.floor.en;
+                  item.building = item.building.en;
+                  item.street = item.street.en;
+                  item.block = item.block.en;
+                  item.area = item.area.en;
+                  item.flat = item.flat.en;
+                  this.AddressesData.push({ ...item, id });
+                });
+              }
+              if (data.meta) {
+                this.setPagination(data.meta);
+              }
+            }
+            this.loading = false;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     },
     // rowClicked(item, index, column, e) {
     //   if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
@@ -161,7 +189,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            CustomerAddressServices.delete(this.deleteRows)
+            SupplierAddressServices.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({

@@ -48,6 +48,22 @@ export default {
           icon: "cil-lan",
         });
       }
+      if (this.permissions.includes("read customers")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          name: "Customers",
+          to: { name: "Index Customers" },
+          icon: "cil-lan",
+        });
+      }
+      if (this.permissions.includes("read suppliers")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          name: "Suppliers",
+          to: { name: "Index Supplier" },
+          icon: "cil-lan",
+        });
+      }
       if (this.permissions.includes("read profile")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
@@ -312,14 +328,6 @@ export default {
           _name: "CSidebarNavItem",
           name: "Roles & Permissions",
           to: { name: "Index Roles" },
-          icon: "cil-lan",
-        });
-      }
-      if (this.permissions.includes("read customers")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: "Customers",
-          to: { name: "Index Customers" },
           icon: "cil-lan",
         });
       }
