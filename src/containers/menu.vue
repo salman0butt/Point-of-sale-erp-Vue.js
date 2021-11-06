@@ -48,6 +48,22 @@ export default {
           icon: "cil-lan",
         });
       }
+      if (this.permissions.includes("read customers")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          name: "Customers",
+          to: { name: "Index Customers" },
+          icon: "cil-lan",
+        });
+      }
+      if (this.permissions.includes("read suppliers")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          name: "Suppliers",
+          to: { name: "Index Supplier" },
+          icon: "cil-lan",
+        });
+      }
       if (this.permissions.includes("read profile")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
@@ -366,11 +382,12 @@ export default {
           icon: "cil-lan",
         });
       }
-      if (this.permissions.includes("read customers")) {
+      if (this.permissions.includes("read group")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
-          name: "Customers",
-          to: { name: "Index Customers" },
+          _attrs: { class: "hide-me" },
+          name: "Groups",
+          to: "/groups/index",
           icon: "cil-lan",
         });
       }

@@ -2,77 +2,54 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CCard>
-          <CCardBody>
-            <CDataTable
-              :items="Addresses"
-              :fields="fields"
-              table-filter
-              items-per-page-select
-              @pagination-change="changePagination"
-              :items-per-page="perPage"
-              sorter
-              clickable-rows
-              hover
-              :loading="loading"
-              @row-clicked="rowClicked"
-              ref="externalAgent"
-            >
-              <template #select="{ item }">
-                <td>
-                  <CInputCheckbox
-                    :checked="item._selected"
-                    @update:checked="() => check(item)"
-                    custom
-                  />
-                </td>
-              </template>
-              <template #business="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
-              <template #parent="{ item }">
-                <td>
-                  {{ item.name }}
-                </td>
-              </template>
-              <template #actions="{ item }">
-                <td>
-                  <CButtonGroup>
-                    <CButton
-                      @click="editRow(item.uuid)"
-                      class="btn-sm text-white"
-                      color="warning"
-                      title="Edit"
-                    >
-                      <CIcon :content="$options.cilPencil"
-                    /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                      title="Delete"
-                    >
-                      <CIcon :content="$options.cilTrash" />
-                    </CButton>
-                  </CButtonGroup>
-                </td>
-              </template>
-            </CDataTable>
-            <CPagination
-              v-show="pages > 1"
-              :pages="pages"
-              :active-page.sync="activePage"
-            />
-          </CCardBody>
-        </CCard>
+        <CDataTable
+          :items="Addresses"
+          :fields="fields"
+          table-filter
+          items-per-page-select
+          @pagination-change="changePagination"
+          :items-per-page="perPage"
+          sorter
+          clickable-rows
+          hover
+          :loading="loading"
+          ref="externalAgent"
+        >
+          <template #actions="{ item }">
+            <td>
+              <CButtonGroup>
+                <CButton
+                  @click="editRow(item.uuid)"
+                  class="btn-sm text-white"
+                  color="warning"
+                  title="Edit"
+                >
+                  <CIcon :content="$options.cilPencil"
+                /></CButton>
+                <CButton
+                  @click="deleteRow(item.uuid)"
+                  class="btn-sm"
+                  color="danger"
+                  title="Delete"
+                >
+                  <CIcon :content="$options.cilTrash" />
+                </CButton>
+              </CButtonGroup>
+            </td>
+          </template>
+        </CDataTable>
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
       </CCol>
     </CRow>
   </div>
 </template>
 
 <script>
+import SupplierAddressServices from "@/services/supplier/SupplierAddressServices";
 import CustomerAddressServices from "@/services/customers/CustomerAddressServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
@@ -137,6 +114,39 @@ export default {
               this.loading = true;
               if (data.data) {
                 data.data.map((item, id) => {
+                  item.floor = item.floor.en;
+                  item.building = item.building.en;
+                  item.street = item.street.en;
+                  item.block = item.block.en;
+                  item.area = item.area.en;
+                  item.flat = item.flat.en;
+                  this.AddressesData.push({ ...item, id });
+                });
+              }
+              if (data.meta) {
+                this.setPagination(data.meta);
+              }
+            }
+            this.loading = false;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      if (this.module == "supplier") {
+        SupplierAddressServices.getCustomerAddresses(this.uuid, page, per_page)
+          .then(({ data }) => {
+            if (data !== "" && data !== undefined) {
+              this.AddressesData = [];
+              this.loading = true;
+              if (data.data) {
+                data.data.map((item, id) => {
+                  item.floor = item.floor.en;
+                  item.building = item.building.en;
+                  item.street = item.street.en;
+                  item.block = item.block.en;
+                  item.area = item.area.en;
+                  item.flat = item.flat.en;
                   this.AddressesData.push({ ...item, id });
                 });
               }
@@ -164,7 +174,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$emit("employeeAddressEdit", uuid);
+      this.$emit("AddressEdit", uuid);
     },
 
     deleteRow(uuid) {
@@ -179,7 +189,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeAddressService.delete(this.deleteRows)
+            SupplierAddressServices.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({

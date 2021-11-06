@@ -449,7 +449,8 @@ export default {
 
       // Customer Groups
       let active = "active";
-      GroupServices.getActivegroups(active)
+      let module_type = "customer";
+      GroupServices.getActivegroups(active, module_type)
         .then(({ data }) => {
           let group = this.options.group;
           data.map(function (val) {

@@ -10,15 +10,26 @@ class GroupServices extends Helper {
         if (per_page !== '')
             url = super.updateQueryStringParameter(url, "per_page", per_page);
 
-        return http.get(url);
+        return http.get(url, {
+            headers: {
+                "selected-branches": localStorage.getItem("selected_branches"),
+            },
+        });
     }
 
-    getActivegroups(active) {
+    getActivegroups(active, module_type) {
         let url = "/groups";
         if (active !== '')
             url = super.updateQueryStringParameter(url, "active", active);
 
-        return http.get(url);
+        if (module_type !== '')
+            url = super.updateQueryStringParameter(url, "module_type", module_type);
+
+        return http.get(url, {
+            headers: {
+                "selected-branches": localStorage.getItem("selected_branches"),
+            },
+        });
 
     }
     create(data) {

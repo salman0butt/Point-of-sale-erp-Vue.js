@@ -11,7 +11,11 @@
               aria-orientation="vertical"
             >
               <div class="side-avatar">
-                <img src="/img/avatars/7.jpg" class="c-avatar-img" alt="Profile" />
+                <img
+                  src="/img/avatars/7.jpg"
+                  class="c-avatar-img"
+                  alt="Profile"
+                />
                 <CIcon :content="$options.cisCircle" class="online" />
                 <div>
                   <template v-if="emp_name">
@@ -20,7 +24,9 @@
                   <PuSkeleton v-else width="100px" />
                   <br />
                   <template v-if="employee_designation">
-                    <span class="emp-designation">{{ employee_designation }}</span>
+                    <span class="emp-designation">{{
+                      employee_designation
+                    }}</span>
                   </template>
                   <PuSkeleton v-else />
                 </div>
@@ -38,7 +44,9 @@
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
-                <CBadge v-if="tab.disabled" color="danger"> comming soon</CBadge></a
+                <CBadge v-if="tab.disabled" color="danger">
+                  coming soon</CBadge
+                ></a
               >
             </div>
           </CCardBody>

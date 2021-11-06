@@ -1,10 +1,10 @@
 import http from "../../http-common";
 import Helper from "@/helpers/Helper";
 
-class CustomerAddressServices extends Helper {
+class SupplierAddressServices extends Helper {
     getCustomerAddresses(uuid, page, per_page) {
 
-        let url = "/addresses/customer/" + uuid;
+        let url = "/addresses/supplier/" + uuid;
         if (page !== '')
             url = super.updateQueryStringParameter(url, "page", page);
 
@@ -19,7 +19,7 @@ class CustomerAddressServices extends Helper {
     }
 
     store(data) {
-        return http.post("/addresses/customer", data);
+        return http.post("/addresses/supplier", data);
     }
 
     update(id, data) {
@@ -31,4 +31,4 @@ class CustomerAddressServices extends Helper {
     }
 }
 
-export default new CustomerAddressServices();
+export default new SupplierAddressServices();
