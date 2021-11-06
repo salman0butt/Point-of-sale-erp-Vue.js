@@ -323,6 +323,16 @@ export default {
             },
           ]);
         }
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Transfer",
+              to: "/accounting/transfer/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: "Accounting",
