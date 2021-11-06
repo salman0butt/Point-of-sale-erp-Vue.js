@@ -30,8 +30,10 @@ const IndexTransfer = () => import('@/views/accounting/transfer/Index')
 const CreateTransfer = () => import('@/views/accounting/transfer/Create')
 const EditTransfer = () => import('@/views/accounting/transfer/Edit')
 
-
-
+// Biller
+const IndexBiller = () => import('@/views/accounting/biller/Index')
+const CreateBiller = () => import('@/views/accounting/biller/Create')
+const EditBiller = () => import('@/views/accounting/biller/Edit')
 
 
 const accountingRoutes =
@@ -133,6 +135,21 @@ const accountingRoutes =
             path: 'transfer/edit/:id',
             name: 'EditTransfer',
             component: EditTransfer,
+        },
+        {
+            path: 'biller/index',
+            name: 'IndexBiller',
+            component: IndexBiller,
+        },
+        {
+            path: 'biller/create',
+            name: 'CreateBiller',
+            component: CreateBiller,
+        },
+        {
+            path: 'biller/edit/:id',
+            name: 'EditBiller',
+            component: EditBiller,
         },
 
 
