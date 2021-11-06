@@ -2,7 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateIncome() : saveIncome()">
+        <form @submit.prevent="isEditing ? updateTransfer() : saveTransfer()">
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -20,7 +20,21 @@
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Payment Method"
+                label="From Payment Method"
+                :options="options.payment_methods"
+                :value.sync="form.from_payment_method_id"
+                :class="{ error: $v.form.from_payment_method_id.$error }"
+                @input="$v.form.from_payment_method_id.$touch()"
+              />
+              <div v-if="$v.form.from_payment_method_id.$error">
+                <p v-if="!$v.form.from_payment_method_id.required" class="errorMsg">
+                  Payment Method is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="To Payment Method"
                 :options="options.payment_methods"
                 :value.sync="form.to_payment_method_id"
                 :class="{ error: $v.form.to_payment_method_id.$error }"
@@ -30,6 +44,19 @@
                 <p v-if="!$v.form.to_payment_method_id.required" class="errorMsg">
                   Payment Method is required
                 </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Debit"
+                type="number"
+                placeholder="0.00"
+                v-model="form.debit"
+                :class="{ error: $v.form.debit.$error }"
+                @input="$v.form.debit.$touch()"
+              />
+              <div v-if="$v.form.debit.$error">
+                <p v-if="!$v.form.debit.required" class="errorMsg">Debit is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -104,11 +131,11 @@
   </div>
 </template>
 <script>
-import IncomeService from "@/services/accounting/income/IncomeService";
+import TransferService from "@/services/accounting/transfer/TransferService";
 import { required } from "vuelidate/lib/validators";
 
 export default {
-  name: "IncomeForm",
+  name: "TransferForm",
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -116,7 +143,9 @@ export default {
       id: "",
       category_id: "",
       to_payment_method_id: "",
+      from_payment_method_id: "",
       ref_id: "",
+      debit: "",
       credit: "",
       date: "",
       status: "",
@@ -138,7 +167,9 @@ export default {
     return {
       form: {
         category_id: { required },
+        from_payment_method_id: { required },
         to_payment_method_id: { required },
+        debit: { required },
         credit: { required },
         date: { required },
       },
@@ -146,34 +177,34 @@ export default {
   },
   created() {
     this.form.id = this.$route.params.id;
-    this.getIncomeOptions();
+    this.getTransferOptions();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
-      this.getIncome();
+      this.getTransfer();
     }
   },
   methods: {
-    saveIncome() {
+    saveTransfer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        IncomeService.create(data)
+        TransferService.create(data)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Income Added Successfully",
+                text: "Transfer Added Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
               this.resetForm();
 
               if (this.saveAndExit) {
-                this.$router.push({ path: "/accounting/income/index" });
+                this.$router.push({ path: "/accounting/transfer/index" });
               } else {
                 this.$router.push({
-                  path: "/accounting/income/edit/" + res.data.uuid,
+                  path: "/accounting/transfer/edit/" + res.data.uuid,
                 });
               }
             }
@@ -189,26 +220,26 @@ export default {
           });
       }
     },
-    updateIncome() {
+    updateTransfer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
-        IncomeService.update(this.form.id, data)
+        TransferService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Income Updated Successfully",
+                text: "Transfer Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
 
               if (this.saveAndExit) {
-                this.$router.push({ path: "/accounting/income/index" });
+                this.$router.push({ path: "/accounting/transfer/index" });
               } else {
                 this.$router.push({
-                  path: "/accounting/income/edit/" + res.data.uuid,
+                  path: "/accounting/transfer/edit/" + res.data.uuid,
                 });
               }
             }
@@ -224,16 +255,18 @@ export default {
           });
       }
     },
-    getIncome() {
-      IncomeService.get(this.form.id)
+    getTransfer() {
+      TransferService.get(this.form.id)
         .then(({ data }) => {
           console.log(data);
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.category_id = data.category.uuid;
+            this.form.from_payment_method_id = data.from_payment_method.uuid;
             this.form.to_payment_method_id = data.to_payment_method.uuid;
             this.form.ref_id = data.ref_id;
+            this.form.debit = data.debit;
             this.form.credit = data.credit;
             this.form.date = data.date;
             this.form.description = data.description;
@@ -245,8 +278,8 @@ export default {
           this.isEditing = false;
         });
     },
-    getIncomeOptions() {
-      IncomeService.getIncomeOptions()
+    getTransferOptions() {
+      TransferService.getTransferOptions()
         .then(({ data }) => {
           if (data != undefined && data != "") {
             const payment_methods = this.options.payment_methods;

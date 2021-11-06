@@ -20,6 +20,17 @@ const IndexIncome = () => import('@/views/accounting/income/Index')
 const CreateIncome = () => import('@/views/accounting/income/Create')
 const EditIncome = () => import('@/views/accounting/income/Edit')
 
+// Expense
+const IndexExpense = () => import('@/views/accounting/expense/Index')
+const CreateExpense = () => import('@/views/accounting/expense/Create')
+const EditExpense = () => import('@/views/accounting/expense/Edit')
+
+// Transfer
+const IndexTransfer = () => import('@/views/accounting/transfer/Index')
+const CreateTransfer = () => import('@/views/accounting/transfer/Create')
+const EditTransfer = () => import('@/views/accounting/transfer/Edit')
+
+
 
 
 
@@ -92,6 +103,36 @@ const accountingRoutes =
             path: 'income/edit/:id',
             name: 'EditIncome',
             component: EditIncome,
+        },
+        {
+            path: 'expense/index',
+            name: 'IndexExpense',
+            component: IndexExpense,
+        },
+        {
+            path: 'expense/create',
+            name: 'CreateExpense',
+            component: CreateExpense,
+        },
+        {
+            path: 'expense/edit/:id',
+            name: 'EditExpense',
+            component: EditExpense,
+        },
+        {
+            path: 'transfer/index',
+            name: 'IndexTransfer',
+            component: IndexTransfer,
+        },
+        {
+            path: 'transfer/create',
+            name: 'CreateTransfer',
+            component: CreateTransfer,
+        },
+        {
+            path: 'transfer/edit/:id',
+            name: 'EditTransfer',
+            component: EditTransfer,
         },
 
 
