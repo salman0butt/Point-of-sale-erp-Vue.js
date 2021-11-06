@@ -331,6 +331,15 @@ export default {
           icon: "cil-lan",
         });
       }
+      if (this.permissions.includes("read group")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          _attrs: { class: "hide-me" },
+          name: "Groups",
+          to: "/groups/index",
+          icon: "cil-lan",
+        });
+      }
     },
   },
 };
