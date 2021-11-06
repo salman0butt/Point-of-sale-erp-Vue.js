@@ -12,8 +12,8 @@
             >
               <div class="side-avatar">
                 <div>
-                  <span class="emp-name">{{ customer_name }} </span><br />
-                  <span class="emp-designation">{{ customer_group }}</span>
+                  <span class="emp-name">{{ name }} </span><br />
+                  <span class="emp-designation">{{ group }}</span>
                 </div>
               </div>
               <br />
@@ -43,14 +43,14 @@
   </div>
 </template>
 <script>
-import General from "@/components/customers/General";
-import Address from "@/components/customers/AddressTab";
+import General from "@/components/supplier/General";
+import Address from "@/components/supplier/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
-  name: "AddCustomer",
+  name: "AddSupplier",
   cilUser,
   cisCircle,
   components: {
@@ -60,8 +60,8 @@ export default {
   },
   data() {
     return {
-      customer_name: "name",
-      customer_group: "customer group",
+      name: "name",
+      group: "Supplier group",
       activeTab: "General",
       disabled: true,
       tabs: [

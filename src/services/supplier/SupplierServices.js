@@ -1,9 +1,9 @@
 import http from "../../http-common";
 import Helper from "@/helpers/Helper";
 
-class CustomerServices extends Helper {
+class SupplierServices extends Helper {
     getAll(page, per_page) {
-        let url = "/customers";
+        let url = "/supplier";
         if (page !== '')
             url = super.updateQueryStringParameter(url, "page", page);
 
@@ -16,23 +16,25 @@ class CustomerServices extends Helper {
             },
         });
     }
-
-
     get(id) {
-        return http.get(`/customers/${id}`);
+        return http.get(`/supplier/${id}`);
     }
 
-    create(data) {
-        return http.post("/customers", data);
+    store(data) {
+        return http.post("/supplier", data, {
+            headers: {
+                "selected-branches": localStorage.getItem("selected_branches"),
+            },
+        });
     }
 
     update(id, data) {
-        return http.put(`/customers/${id}`, data);
+        return http.put(`/supplier/${id}`, data);
     }
 
-    delete(id) {
-        return http.delete(`/assets/${id}`);
-    }
+    // delete(id) {
+    //     return http.delete(`/assets/${id}`);
+    // }
 }
 
-export default new CustomerServices();
+export default new SupplierServices();

@@ -83,6 +83,10 @@ export default {
           value: "Customer",
           label: "Customer",
         },
+        {
+          value: "Supplier",
+          label: "Supplier",
+        },
       ],
     },
   }),

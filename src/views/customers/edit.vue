@@ -36,9 +36,7 @@
         </CCard>
       </CCol>
       <CCol xs="12" lg="9">
-        <keep-alive>
-          <component v-bind:is="activeTab"></component>
-        </keep-alive>
+        <component v-bind:is="activeTab" module="customer"></component>
       </CCol>
     </CRow>
   </div>
@@ -46,7 +44,7 @@
 <script>
 import CustomerServices from "@/services/customers/CustomerServices";
 import General from "@/components/customers/General";
-import Address from "@/components/general/Address/AddressTab";
+import Address from "@/components/customers/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";

@@ -13,7 +13,6 @@
                 <vue-country-code
                   class="mt-4"
                   @onSelect="onSelectCountry"
-                  ignoredCountries="[IL]"
                   v-model="mediaitem.country"
                 >
                 </vue-country-code>
@@ -74,6 +73,7 @@
 <script>
 import VueCountryCode from "vue-country-code-select";
 import CustomerContactServices from "@/services/customers/CustomerContactServices";
+import SupplierContactServices from "@/services/supplier/SupplierContactServices";
 
 export default {
   name: "Contact",
@@ -81,13 +81,16 @@ export default {
   components: {
     VueCountryCode: VueCountryCode,
   },
+  props: {
+    module: String,
+  },
 
   data() {
     return {
       form: {
         mediaLst: [],
         uuid: "",
-        module: "customer",
+        module: "",
       },
       mediaitem: { name: "", number: "", country: "" },
       usersData: [],
@@ -97,6 +100,7 @@ export default {
   },
 
   created() {
+    this.form.module = this.module;
     this.getAllMedia();
   },
 
@@ -104,20 +108,38 @@ export default {
     getAllMedia() {
       this.form.uuid = this.$route.params.id;
 
-      CustomerContactServices.getCustomerContacts(this.form.uuid)
-        .then(({ data }) => {
-          data.forEach((value, index) => {
-            var data = {
-              name: value.name.en,
-              country: value.country,
-              number: value.number.en,
-            };
-            this.form.mediaLst.push(data);
+      if (this.form.module == "customer") {
+        CustomerContactServices.getCustomerContacts(this.form.uuid)
+          .then(({ data }) => {
+            data.forEach((value, index) => {
+              var data = {
+                name: value.name.en,
+                country: value.country,
+                number: value.number.en,
+              };
+              this.form.mediaLst.push(data);
+            });
+          })
+          .catch((err) => {
+            console.log(err);
           });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      }
+      if (this.form.module == "supplier") {
+        SupplierContactServices.getSupplierContacts(this.form.uuid)
+          .then(({ data }) => {
+            data.forEach((value, index) => {
+              var data = {
+                name: value.name.en,
+                country: value.country,
+                number: value.number.en,
+              };
+              this.form.mediaLst.push(data);
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     },
     onSelectCountry({ name, iso2, dialCode }) {
       this.mediaitem.country = { name, iso2, dialCode };
@@ -147,6 +169,34 @@ export default {
       if (this.form.module == "customer") {
         if (data.mediaLst.length > 0) {
           CustomerContactServices.store(data)
+            .then((res) => {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Contact Added Successfully",
+                timer: 3600,
+              });
+            })
+            .catch((error) => {
+              this.$swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!Try Again",
+                footer: '<a href="">Why do I have this issue?</a>',
+              });
+            });
+        } else {
+          this.$swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Please Add By Pressing Plus Button",
+            footer: '<a href="">Why do I have this issue?</a>',
+          });
+        }
+      }
+      if (this.form.module == "supplier") {
+        if (data.mediaLst.length > 0) {
+          SupplierContactServices.store(data)
             .then((res) => {
               this.$swal.fire({
                 icon: "success",
