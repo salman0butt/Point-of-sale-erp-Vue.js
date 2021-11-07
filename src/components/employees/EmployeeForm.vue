@@ -522,7 +522,7 @@ export default {
           this.form.department_id = data.department_id ?? "";
           this.form.designation_id = data.designation_id ?? "";
           this.form.manager_id = data.manager_id ?? "";
-          this.form.personal_photo = data.personal_photo;
+          // this.form.personal_photo = data.personal_photo;
           this.form.documents = data.documents;
           this.form.status = data.status ?? "";
           this.form.create_user = data.create_user == "true" ? true : false;
