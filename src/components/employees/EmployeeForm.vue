@@ -522,7 +522,7 @@ export default {
           this.form.department_id = data.department_id ?? "";
           this.form.designation_id = data.designation_id ?? "";
           this.form.manager_id = data.manager_id ?? "";
-          this.form.personal_photo = data.personal_photo;
+          // this.form.personal_photo = data.personal_photo;
           this.form.documents = data.documents;
           this.form.status = data.status ?? "";
           this.form.create_user = data.create_user == "true" ? true : false;
@@ -592,6 +592,13 @@ export default {
                 text: "Employee Updated Successfully",
                 timer: 3600,
               });
+              if (res.data.personal_photo !== "") {
+                this.$store.commit("set_emp_img", res.data.personal_photo);
+                if (res.data.uuid && res.data.uuid === this.$store.state.employee_id) {
+                  this.$store.commit("set_profile_img", res.data.personal_photo);
+                }
+              }
+
               this.$v.$reset();
               if (this.saveAndExit) {
                 this.$router.push({ path: "/employees/index" });

@@ -12,7 +12,8 @@
             >
               <div class="side-avatar">
                 <img
-                  src="/img/avatars/7.jpg"
+                  v-if="employeeImg"
+                  :src="employeeImg"
                   class="c-avatar-img"
                   alt="Profile"
                 />
@@ -24,9 +25,7 @@
                   <PuSkeleton v-else width="100px" />
                   <br />
                   <template v-if="employee_designation">
-                    <span class="emp-designation">{{
-                      employee_designation
-                    }}</span>
+                    <span class="emp-designation">{{ employee_designation }}</span>
                   </template>
                   <PuSkeleton v-else />
                 </div>
@@ -44,9 +43,7 @@
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
-                <CBadge v-if="tab.disabled" color="danger">
-                  coming soon</CBadge
-                ></a
+                <CBadge v-if="tab.disabled" color="danger"> coming soon</CBadge></a
               >
             </div>
           </CCardBody>
@@ -148,9 +145,13 @@ export default {
     emp_name() {
       return this.$store.getters.get_employee_name;
     },
+    employeeImg() {
+      return this.$store.getters.getEmployeeImg ?? "/img/avatars/placeholder.png";
+    },
   },
   beforeDestroy() {
     this.$store.commit("set_employee_name", "");
+    this.$store.commit("set_emp_img", "");
   },
   methods: {
     changeActiveTab(value) {
@@ -164,6 +165,7 @@ export default {
             // this.$store.commit("set_employee_name", data.full_name);
             this.employee_name = data.full_name;
             this.employee_designation = data.designation;
+            this.$store.commit("set_emp_img", data.personal_photo);
           }
         })
         .catch((error) => {

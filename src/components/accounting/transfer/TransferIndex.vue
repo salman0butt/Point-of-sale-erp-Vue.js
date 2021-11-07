@@ -195,7 +195,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Account Category Deleted Successfully",
+                    text: "Transfer Deleted Successfully",
                     timer: 3600,
                   });
                   this.TransferData = this.TransferData.filter(

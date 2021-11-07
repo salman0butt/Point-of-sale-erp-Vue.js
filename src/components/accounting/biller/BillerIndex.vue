@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CDataTable
-          :items="Expense"
+          :items="Biller"
           :fields="fields"
           table-filter
           items-per-page-select
@@ -31,16 +31,7 @@
               {{ item.category.name }}
             </td>
           </template>
-          <template #from_payment_method="{ item }">
-            <td>
-              {{ item.from_payment_method.name }}
-            </td>
-          </template>
-          <template #status="{ item }">
-            <td>
-              {{ item.status ? item.status : "" }}
-            </td>
-          </template>
+
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
@@ -78,7 +69,7 @@
 </template>
 
 <script>
-import ExpenseService from "@/services/accounting/expense/ExpenseService";
+import BillerService from "@/services/accounting/biller/BillerService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -90,22 +81,22 @@ const fields = [
   //   filter: false,
   // },
   { key: "category", label: "CATEGORY", _style: "min-width:15%;" },
-  { key: "from_payment_method", label: "PAYMENT METHOD", _style: "min-width:15%;" },
-  { key: "debit", label: "DEBIT", _style: "min-width:15%;" },
-  { key: "date", label: "DATE", _style: "min-width:15%;" },
-  { key: "ref_id", label: "REFERNCE NO", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
+  { key: "title", label: "TITLE", _style: "min-width:15%;" },
+  { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
+  { key: "bill_date", label: "BILL DATE", _style: "min-width:15%;" },
+  { key: "remind_date", label: "REMIND DATE", _style: "min-width:15%;" },
+  { key: "due_date", label: "DUE DATE", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "ExpenseIndex",
+  name: "BillerIndex",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      ExpenseData: [],
+      BillerData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -116,11 +107,11 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getExpense();
+    this.getBiller();
   },
   computed: {
-    Expense() {
-      return this.ExpenseData;
+    Biller() {
+      return this.BillerData;
     },
   },
   watch: {
@@ -128,20 +119,20 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getExpense(this.activePage, this.perPage);
+      this.getBiller(this.activePage, this.perPage);
     },
   },
   methods: {
-    getExpense(page = "", per_page = "") {
+    getBiller(page = "", per_page = "") {
       this.empId = this.$route.params.id;
-      ExpenseService.getAll(page, per_page)
+      BillerService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.ExpenseData = [];
+            this.BillerData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.ExpenseData.push({ ...item, id });
+                this.BillerData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -160,14 +151,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.ExpenseData[item.id]._selected);
-      this.$set(this.ExpenseData[item.id], "_selected", !val);
+      const val = Boolean(this.BillerData[item.id]._selected);
+      this.$set(this.BillerData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/accounting/expense/edit/" + uuid });
+      this.$router.push({ path: "/accounting/biller/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -182,16 +173,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            ExpenseService.delete(this.deleteRows)
+            BillerService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Expense Deleted Successfully",
+                    text: "Biller Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ExpenseData = this.ExpenseData.filter((item) => item.uuid != uuid);
+                  this.BillerData = this.BillerData.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })
@@ -215,13 +206,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.ExpenseData = agent.currentItems;
+        this.BillerData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getExpense("", this.perPage);
+      this.getBiller("", this.perPage);
     },
   },
 };

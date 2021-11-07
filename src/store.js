@@ -21,7 +21,9 @@ const state = {
   list_branches: JSON.parse(localStorage.getItem("list_branches")),
   showBranchModel: false,
   loading: false,
-
+  emp_img: "",
+  profile_img: localStorage.getItem("profile_pic") || "",
+  employee_id: localStorage.getItem('employee_id') || '',
 }
 
 const mutations = {
@@ -85,6 +87,13 @@ const mutations = {
   close_loader(state) {
     state.loading = false;
   },
+  set_profile_img(state, img) {
+    localStorage.setItem("profile_pic", img)
+    state.profile_img = img;
+  },
+  set_emp_img(state, img) {
+    state.emp_img = img;
+  }
 }
 
 const actions = {
@@ -94,7 +103,7 @@ const actions = {
       http.post('/auth/login', user).then(res => {
         const token = res.data.token;
         localStorage.setItem('token', token);
-        localStorage.setItem('employee_id', res.data.employee_id);
+        localStorage.setItem('employee_id', res.data.employee.uuid);
         localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
         localStorage.setItem('list_branches', JSON.stringify(res.data.branches));
         localStorage.setItem('business_id', res.data.business_id);
@@ -102,6 +111,7 @@ const actions = {
           localStorage.setItem('selected_branches', JSON.stringify([res.data.branches[0].uuid]));
         }
         http.defaults.headers.common['Authorization'] = "Bearer " + token;
+        commit('set_profile_img', res.data.employee.personal_photo);
         commit('set_permissions', res.data.permissions);
         commit('set_list_branches', res.data.branches);
         commit('auth_success', token);
@@ -140,7 +150,16 @@ const actions = {
       commit('post_errors', errorMsg);
       resolve();
     });
-  }
+  },
+  deleteAttachment({commit}, uuid){
+    return new Promise((resolve, reject) => {
+        http.delete('/attachments/'+uuid).then(res => {
+          resolve(res);
+        }).catch(err => {
+          reject(err);
+        });
+    })
+  },
 }
 const getters = {
   isLoggedIn: state => !!state.token,
@@ -153,6 +172,8 @@ const getters = {
   branchLists: state => state.list_branches,
   showBranchModel: state => state.showBranchModel,
   loading: state => state.loading,
+  getEmployeeImg: state => state.emp_img,
+  getProfileImg: state => state.profile_img,
 }
 
 export default new Vuex.Store({

@@ -189,7 +189,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Account Category Deleted Successfully",
+                    text: "Income Deleted Successfully",
                     timer: 3600,
                   });
                   this.IncomeData = this.IncomeData.filter((item) => item.uuid != uuid);
