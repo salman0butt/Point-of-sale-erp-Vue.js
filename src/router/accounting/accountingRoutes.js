@@ -35,6 +35,11 @@ const IndexBiller = () => import('@/views/accounting/biller/Index')
 const CreateBiller = () => import('@/views/accounting/biller/Create')
 const EditBiller = () => import('@/views/accounting/biller/Edit')
 
+// Payment Biller
+const IndexPaymentBiller = () => import('@/views/accounting/paymentBiller/Index')
+const CreatePaymentBiller = () => import('@/views/accounting/paymentBiller/Create')
+const EditPaymentBiller = () => import('@/views/accounting/paymentBiller/Edit')
+
 
 const accountingRoutes =
 {
@@ -150,6 +155,21 @@ const accountingRoutes =
             path: 'biller/edit/:id',
             name: 'EditBiller',
             component: EditBiller,
+        },
+        {
+            path: 'paymentBiller/index',
+            name: 'IndexPaymentBiller',
+            component: IndexPaymentBiller,
+        },
+        {
+            path: 'paymentBiller/create',
+            name: 'CreatePaymentBiller',
+            component: CreatePaymentBiller,
+        },
+        {
+            path: 'paymentBiller/edit/:id',
+            name: 'EditPaymentBiller',
+            component: EditPaymentBiller,
         },
 
 
