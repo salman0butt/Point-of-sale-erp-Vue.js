@@ -83,6 +83,10 @@
                   />
                 </td>
               </template>
+              <template #parent="{ item }">
+                <td v-if="item.parent.name">{{ item.parent.name }}</td>
+                <td v-else>-</td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -130,7 +134,7 @@ const fields = [
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "banks", label: "BANK NAME", _style: "min-width:15%;" },
-  { key: "currency", label: "CURRENCY", _style: "min-width:15%;" },
+  { key: "parent", label: "Parent Account", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
@@ -181,6 +185,7 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
+              // item.parent = item.parent.name.en;
               this.serverData.push({ ...item, id });
             });
             this.loading = false;
@@ -193,21 +198,21 @@ export default {
           console.log(err);
         });
     },
-    getTotalCardData() {
-      EmployeeService.getTotalCount()
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            this.cards.employees_count = data.employees_count;
-            this.cards.female_count = data.female_count;
-            this.cards.male_count = data.male_count;
-            this.cards.departments_count = data.departments_count;
-            this.cards.manager_count = data.manager_count;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
+    // getTotalCardData() {
+    //   EmployeeService.getTotalCount()
+    //     .then(({ data }) => {
+    //       if (data != null && data != "") {
+    //         this.cards.employees_count = data.employees_count;
+    //         this.cards.female_count = data.female_count;
+    //         this.cards.male_count = data.male_count;
+    //         this.cards.departments_count = data.departments_count;
+    //         this.cards.manager_count = data.manager_count;
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
