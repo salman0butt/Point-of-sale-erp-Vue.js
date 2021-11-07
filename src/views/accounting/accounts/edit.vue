@@ -78,6 +78,13 @@
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
+                    label="Parent Account"
+                    :options="options.parent"
+                    :value.sync="form.parent"
+                  />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
                     label="Status"
                     :options="options.status"
                     :value.sync="form.status"
@@ -125,6 +132,7 @@ export default {
       banks: "",
       opening_amount: "0.000",
       status: "",
+      parent: "",
     },
     options: {
       type: [
@@ -146,6 +154,13 @@ export default {
       status: [
         { value: "active", label: "Active" },
         { value: "inactive", label: "Inactive" },
+      ],
+      parent: [
+        {
+          value: "",
+          label: "Choose Parent",
+          selected: "",
+        },
       ],
     },
   }),
@@ -196,6 +211,19 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+      AccountServices.getActiveAccounts("active")
+        .then(({ data }) => {
+          let parent = this.options.parent;
+          data.map(function (val) {
+            parent.push({
+              value: val.uuid,
+              label: val.name,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     getEditDetail() {
       this.url_data = this.$route.params.id;
@@ -206,6 +234,7 @@ export default {
           this.form.banks = res.data.banks;
           this.form.opening_amount = res.data.opening_amount;
           this.form.status = res.data.status;
+          this.form.parent = res.data.parent.uuid;
         }
       });
     },

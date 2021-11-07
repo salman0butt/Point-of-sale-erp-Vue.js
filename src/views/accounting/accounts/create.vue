@@ -40,7 +40,7 @@
 
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
-                    label="Bank Account"
+                    label="Bank"
                     :options="options.banks"
                     :value.sync="form.banks"
                     :class="{ error: $v.form.banks.$error }"
@@ -75,6 +75,13 @@
                       Minimum number must be zero
                     </p>
                   </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Parent Account"
+                    :options="options.parent"
+                    :value.sync="form.parent"
+                  />
                 </CCol>
                 <!-- <CCol sm="6" md="4" class="pt-2">
                   <CSelect
@@ -124,6 +131,7 @@ export default {
       banks: "",
       opening_amount: "0.000",
       currency: "BHD",
+      parent: "",
     },
     options: {
       type: [
@@ -145,6 +153,13 @@ export default {
       currency: [
         { value: "", label: "Choose Currency", disabled: true, selected: "" },
         { value: "BHD", label: "Bahraini Dinar" },
+      ],
+      parent: [
+        {
+          value: "",
+          label: "Choose Parent",
+          selected: "",
+        },
       ],
     },
   }),
@@ -189,6 +204,20 @@ export default {
                 });
               });
             }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      AccountServices.getActiveAccounts("active")
+        .then(({ data }) => {
+          let parent = this.options.parent;
+          data.map(function (val) {
+            parent.push({
+              value: val.uuid,
+              label: val.name,
+            });
           });
         })
         .catch((error) => {
