@@ -8,7 +8,7 @@
     <template #toggler>
       <CHeaderNavLink>
         <div class="c-avatar">
-          <img src="/img/avatars/6.jpg" class="c-avatar-img" />
+          <img v-if="profileImg" :src="profileImg" class="c-avatar-img" />
         </div>
       </CHeaderNavLink>
     </template>
@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import http from "../http-common";
-
 export default {
   name: "TheHeaderDropdownAccnt",
   data() {
@@ -32,16 +30,23 @@ export default {
       itemsCount: 42,
     };
   },
+  computed: {
+    profileImg() {
+      return this.$store.getters.getProfileImg ?? "/img/avatars/placeholder.png";
+    },
+  },
   methods: {
     logout() {
       this.$store.dispatch("logout");
       return this.$router.push("/login");
     },
     profile() {
-      http
-        .get("/me")
-        .then((res) => console.log(res))
-        .catch((err) => console.log(err));
+      const emp_id = localStorage.getItem("employee_id");
+      if (emp_id !== "" || emp_id !== undefined) {
+        this.$router.push("/profile/" + localStorage.getItem("employee_id"));
+      } else {
+        this.$router.dispatch("auto_logout");
+      }
     },
   },
 };
