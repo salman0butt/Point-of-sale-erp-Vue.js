@@ -189,7 +189,7 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "PaymentBiller Deleted Successfully",
+                    text: "Payment Biller Deleted Successfully",
                     timer: 3600,
                   });
                   this.PaymentBillerData = this.PaymentBillerData.filter(

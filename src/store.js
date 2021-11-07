@@ -140,7 +140,16 @@ const actions = {
       commit('post_errors', errorMsg);
       resolve();
     });
-  }
+  },
+  deleteAttachment({commit}, uuid){
+    return new Promise((resolve, reject) => {
+        http.delete('/attachments/'+uuid).then(res => {
+          resolve(res);
+        }).catch(err => {
+          reject(err);
+        });
+    })
+  },
 }
 const getters = {
   isLoggedIn: state => !!state.token,
