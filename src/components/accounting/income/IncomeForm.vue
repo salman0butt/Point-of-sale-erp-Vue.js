@@ -282,9 +282,9 @@ export default {
           formData.append(index, this.form[index]);
         }
       }
-      // if (this.isEditing) {
-      formData.append("_method", "PATCH");
-      // }
+      if (this.isEditing) {
+        formData.append("_method", "PATCH");
+      }
       return formData;
     },
     getIncome() {
