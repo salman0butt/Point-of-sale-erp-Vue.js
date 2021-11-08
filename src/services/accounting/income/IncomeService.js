@@ -23,12 +23,13 @@ class IncomeService extends Helper {
     return http.get(`/income/${id}`);
   }
 
-  create(data) {
-    return http.post("/income", data, super.selectedBranch());
+  create(data, config) {
+    config = Object.assign(config,super.selectedBranch());
+    return http.post("/income", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/income/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/income/${id}`, data, config);
   }
 
   delete(id) {

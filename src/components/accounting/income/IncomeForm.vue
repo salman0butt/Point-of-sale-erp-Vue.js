@@ -76,6 +76,32 @@
               />
             </CCol>
           </CRow>
+          <CRow>
+            <CCol sm="12" md="12" class="pt-2">
+              <app-upload ref="fileUpload" @file:changed="handleFile" />
+
+              <div class="attachment-display">
+                <ul v-if="isEditing && display_documents">
+                  <li
+                    v-for="(doc, index) in display_documents"
+                    v-bind:key="index"
+                    class="display-attachment-row"
+                  >
+                    <CIcon :content="$options.cisFile" />
+                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
+                      {{ doc.name }}</a
+                    >
+                    <a
+                      @click.prevent="deleteAttachment(doc.uuid)"
+                      class="delete-attachment"
+                    >
+                      <CIcon :content="$options.cilTrash" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </CCol>
+          </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4">
             <CButton
@@ -106,9 +132,16 @@
 <script>
 import IncomeService from "@/services/accounting/income/IncomeService";
 import { required } from "vuelidate/lib/validators";
+import AppUpload from "@/components/uploads/Upload.vue";
+import { cilTrash, cisFile } from "@coreui/icons-pro";
 
 export default {
   name: "IncomeForm",
+  components: {
+    AppUpload,
+  },
+  cilTrash,
+  cisFile,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -121,7 +154,9 @@ export default {
       date: "",
       status: "",
       description: "",
+      documents: [],
     },
+    display_documents: [],
     options: {
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
@@ -156,8 +191,13 @@ export default {
     saveIncome() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        IncomeService.create(data)
+        let formData = this.formData();
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+
+        // let data = this.form;
+        IncomeService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -192,8 +232,13 @@ export default {
     updateIncome() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        IncomeService.update(this.form.id, data)
+        let formData = this.formData();
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+
+        // let data = this.form;
+        IncomeService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -207,9 +252,11 @@ export default {
               if (this.saveAndExit) {
                 this.$router.push({ path: "/accounting/income/index" });
               } else {
-                this.$router.push({
-                  path: "/accounting/income/edit/" + res.data.uuid,
-                });
+                this.$refs.fileUpload.reset();
+                this.getIncome();
+                // this.$router.push({
+                //   path: "/accounting/income/edit/" + res.data.uuid,
+                // });
               }
             }
           })
@@ -224,10 +271,25 @@ export default {
           });
       }
     },
+    formData() {
+      let formData = new FormData();
+      for (const index in this.form) {
+        if (index === "documents") {
+          for (const doc of this.form.documents) {
+            formData.append("documents[]", doc);
+          }
+        } else {
+          formData.append(index, this.form[index]);
+        }
+      }
+      // if (this.isEditing) {
+      formData.append("_method", "PATCH");
+      // }
+      return formData;
+    },
     getIncome() {
       IncomeService.get(this.form.id)
         .then(({ data }) => {
-          console.log(data);
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
@@ -238,6 +300,14 @@ export default {
             this.form.date = data.date;
             this.form.description = data.description;
             this.form.status = data.status;
+
+            if (data.documents) {
+              this.display_documents = [];
+              let display_docs = this.display_documents;
+              data.documents.map(function (item) {
+                display_docs.push(item);
+              });
+            }
           }
         })
         .catch((error) => {
@@ -268,11 +338,58 @@ export default {
           console.log(error);
         });
     },
+    handleFile(files) {
+      this.form.documents = Object.values(files);
+    },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this Attachment",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.display_documents = this.display_documents.filter(
+                    (item) => item.uuid != uuid
+                  );
+                }
+              })
+              .catch((err) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+                console.log(err);
+              });
+          }
+        });
+    },
     resetForm() {
       for (let index in this.form) {
-        this.form[index] = "";
+        if (index === "documents") {
+          this.form[index] = [];
+        } else {
+          this.form[index] = "";
+        }
       }
+      this.display_documents = [];
       this.isEditing = false;
+      this.$refs.fileUpload.reset();
     },
   },
 };
