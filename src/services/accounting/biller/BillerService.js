@@ -23,12 +23,13 @@ class BillerService extends Helper {
     return http.get(`/biller/${id}`);
   }
 
-  create(data) {
-    return http.post("/biller", data, super.selectedBranch());
+  create(data, config) {
+    config = Object.assign(config,super.selectedBranch());
+    return http.post("/biller", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/biller/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/biller/${id}`, data, config);
   }
 
   delete(id) {
