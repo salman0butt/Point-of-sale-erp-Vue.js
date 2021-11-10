@@ -1,5 +1,5 @@
 <template>
-  <div id="test">
+  <div id="salary-pdf">
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
@@ -143,6 +143,7 @@
               style="float: right; width: 200px; margin-left: 20px"
               type="button"
               @click="makePDF()"
+              id="printpagebutton"
               >Genrate PDF</CButton
             >
           </CCardBody>
@@ -260,17 +261,42 @@ export default {
         });
     },
     makePDF() {
-      EmployeeSalaryAdjustmentService.genrateSalary(this.salary.id).then((response) => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]));
-        var fileLink = document.createElement("a");
+      var printButton = document.getElementById("printpagebutton");
+      //Set the print button visibility to 'hidden'
+      printButton.style.visibility = "hidden";
+      // Get HTML to print from element
+      const prtHtml = document.getElementById("salary-pdf").innerHTML;
+      // Get all stylesheets HTML
+      let stylesHtml = "";
+      for (const node of [
+        ...document.querySelectorAll('link[rel="stylesheet"], style'),
+      ]) {
+        stylesHtml += node.outerHTML;
+      }
+      // Open the print window
+      const WinPrint = window.open(
+        "",
+        "",
+        "left=250,top=100,width=900,height=800,toolbar=0,scrollbars=0,status=0"
+      );
 
-        fileLink.href = fileURL;
-        fileLink.setAttribute("download", "file.pdf");
-        document.body.appendChild(fileLink);
+      WinPrint.document.write(`<!DOCTYPE html>
+<html>
+  <head>
+    ${stylesHtml}
+  </head>
+  <body>
+    ${prtHtml}
+  </body>
+</html>`);
 
-        fileLink.click();
-      });
+      WinPrint.document.close();
+      WinPrint.focus();
+      WinPrint.print();
+      WinPrint.close();
+      printButton.style.visibility = "visible";
     },
   },
 };
 </script>
+<style scoped></style>
