@@ -302,7 +302,7 @@ export default {
 <style scoped>
 .container {
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   background: #f7fafc;
   border: 0.5px solid #a3a8b1;
   border-radius: 10px;

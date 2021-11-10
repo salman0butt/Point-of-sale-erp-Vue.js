@@ -3,8 +3,8 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>New Complain</CCardHeader>
-          <CCardBody> <ComplainForm /> </CCardBody>
+          <CCardHeader>New Course</CCardHeader>
+          <CCardBody> <CourseForm /> </CCardBody>
         </CCard>
       </CCol>
     </CRow>
@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import ComplainForm from "@/components/complains/ComplainForm";
+import CourseForm from "@/components/courses/CourseForm";
 export default {
-  name: "CreateComplain",
-  components: { ComplainForm },
+  name: "CreateCourse",
+  components: { CourseForm },
   data: () => ({}),
   methods: {},
 };

@@ -28,7 +28,7 @@
 
           <template #biller="{ item }">
             <td>
-              {{ item.biller.title }}
+              {{ item.biller && item.biller.title ? item.biller.title : "" }}
             </td>
           </template>
           <template #from_payment_method="{ item }">

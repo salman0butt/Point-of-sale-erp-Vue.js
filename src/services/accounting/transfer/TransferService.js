@@ -23,12 +23,13 @@ class TransferService extends Helper {
     return http.get(`/transfer/${id}`);
   }
 
-  create(data) {
-    return http.post("/transfer", data, super.selectedBranch());
+  create(data, config) {
+    config = Object.assign(config,super.selectedBranch());
+    return http.post("/transfer", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/transfer/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/transfer/${id}`, data, config);
   }
 
   delete(id) {

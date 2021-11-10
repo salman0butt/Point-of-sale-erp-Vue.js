@@ -23,12 +23,13 @@ class ExpenseService extends Helper {
     return http.get(`/expense/${id}`);
   }
 
-  create(data) {
-    return http.post("/expense", data, super.selectedBranch());
+  create(data, config) {
+    config = Object.assign(config,super.selectedBranch());
+    return http.post("/expense", data, config);
   }
 
-  update(id, data) {
-    return http.patch(`/expense/${id}`, data);
+  update(id, data, config) {
+    return http.post(`/expense/${id}`, data, config);
   }
 
   delete(id) {

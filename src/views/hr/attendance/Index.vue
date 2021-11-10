@@ -20,6 +20,13 @@
                 </CCol>
               </CRow> -->
               <CRow>
+                <CCol v-if="shouldShow" sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Branch"
+                    :options="options.branches"
+                    :value.sync="branch_id"
+                  />
+                </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput label="From" type="date" v-model="from_date" />
                 </CCol>
@@ -81,7 +88,6 @@
 
 <script>
 import HrSettingService from "@/services/settings/HrSettingService";
-
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import moment from "moment";
 
@@ -113,12 +119,18 @@ export default {
       from_date: "",
       to_date: "",
       import_btn: false,
+      shouldShow: false,
+      branch_id: "",
+      options: {
+        branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
+      },
     };
   },
   created() {
     this.getAttendanceType();
     this.currentDateTime();
     this.getAttendance();
+    this.getAllBranches();
   },
   computed: {},
   methods: {
@@ -145,9 +157,7 @@ export default {
           params: {
             from_date: this.from_date,
             to_date: this.to_date,
-          },
-          headers: {
-            branches: "[1]",
+            branch_id: this.branch_id,
           },
         })
         .then((res) => {
@@ -155,9 +165,7 @@ export default {
           res.data.map((item, id) => {
             item.working_hours = moment
               .utc(
-                moment(item.check_out, "HH:mm:ss").diff(
-                  moment(item.check_in, "HH:mm:ss")
-                )
+                moment(item.check_out, "HH:mm:ss").diff(moment(item.check_in, "HH:mm:ss"))
               )
               .format("HH:mm:ss");
             this.attendance.push({ ...item, id });
@@ -166,6 +174,24 @@ export default {
         })
         .catch((error) => {
           // console.log(error);
+        });
+    },
+    getAllBranches() {
+      this.$http
+        .get(`/attendance-options`)
+        .then(({ data }) => {
+          if (data != null && data != "") {
+            let branches = this.options.branches;
+            if (data.branches) {
+              data.branches.map(function (val) {
+                branches.push({ value: val.uuid, label: val.name });
+              });
+            }
+            this.shouldShow = data.shouldShow;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     rowClicked(item, index, column, e) {

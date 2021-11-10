@@ -19,6 +19,18 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="HR As"
+                    :options="options.hr_branches"
+                    :value.sync="form.hr_branch_setting"
+                  />
+                  <div v-if="$v.form.hr_branch_setting.$error">
+                    <p v-if="!$v.form.hr_branch_setting.required" class="errorMsg">
+                      HR As is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Target Types"
                     v-model="form.target_types"
@@ -31,6 +43,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Expense Types"
@@ -44,8 +58,7 @@
                     </p>
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="License Types"
@@ -67,14 +80,13 @@
                     @input="$v.form.qualification_type.$touch()"
                   />
                   <div v-if="$v.form.qualification_type.$error">
-                    <p
-                      v-if="!$v.form.qualification_type.required"
-                      class="errorMsg"
-                    >
+                    <p v-if="!$v.form.qualification_type.required" class="errorMsg">
                       Qualification Types is required
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Periodic Types"
@@ -88,8 +100,7 @@
                     </p>
                   </div>
                 </CCol>
-              </CRow>
-              <CRow>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Allowances Types"
@@ -98,10 +109,7 @@
                     @input="$v.form.allowances_type.$touch()"
                   />
                   <div v-if="$v.form.allowances_type.$error">
-                    <p
-                      v-if="!$v.form.allowances_type.required"
-                      class="errorMsg"
-                    >
+                    <p v-if="!$v.form.allowances_type.required" class="errorMsg">
                       Allowances Types is required
                     </p>
                   </div>
@@ -119,6 +127,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Loan Types"
@@ -158,6 +168,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Award Types"
@@ -179,10 +191,7 @@
                     @input="$v.form.termination_type.$touch()"
                   />
                   <div v-if="$v.form.termination_type.$error">
-                    <p
-                      v-if="!$v.form.termination_type.required"
-                      class="errorMsg"
-                    >
+                    <p v-if="!$v.form.termination_type.required" class="errorMsg">
                       Termination Types is required
                     </p>
                   </div>
@@ -200,6 +209,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Experiance Certifcate Types"
@@ -220,9 +231,7 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">
-                Please Fill the required data
-              </p>
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -265,6 +274,7 @@ export default {
       termination_type: "",
       course_types: "",
       experiance_certifcate_types: "",
+      hr_branch_setting: "",
     },
     options: {
       attendance_by: [
@@ -272,12 +282,18 @@ export default {
         { value: "login", label: "By Login" },
         { value: "import", label: "By Import" },
       ],
+      hr_branches: [
+        { value: "", label: "Choose Type", disabled: true, selected: "" },
+        { value: "head", label: "Head Branch" },
+        { value: "individual", label: "Individual Branch" },
+      ],
     },
   }),
   validations() {
     return {
       form: {
         attendance_by: { required },
+        hr_branch_setting: { required },
         target_types: { required },
         expense_types: { required },
         license_type: { required },
@@ -363,9 +379,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>

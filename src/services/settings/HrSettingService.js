@@ -11,7 +11,7 @@ class HrSettingService {
   }
 
   update(data) {
-    return http.patch(`/hr-settings`, data);
+    return http.patch(`/settings`, data);
   }
 
 }
