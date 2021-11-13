@@ -19,7 +19,33 @@
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect label="Type" :options="options.types" :value.sync="form.type" />
+              <!-- <CSelect label="Type" :options="options.types" :value.sync="form.type" /> -->
+              <CRow>
+                <CCol sm="4" md="4" class="pt-4">
+                  <CInputCheckbox
+                    custom
+                    @change="toggleIncome"
+                    :checked="income"
+                    label="Income"
+                  />
+                </CCol>
+                <CCol sm="4" md="4" class="pt-4">
+                  <CInputCheckbox
+                    custom
+                    @change="toggleExpense"
+                    :checked="expense"
+                    label="Expense"
+                  />
+                </CCol>
+                <CCol sm="4" md="4" class="pt-4">
+                  <CInputCheckbox
+                    custom
+                    @change="toggleTransfer"
+                    :checked="transfer"
+                    label="Transfer"
+                  />
+                </CCol>
+              </CRow>
             </CCol>
           </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -61,22 +87,25 @@ export default {
     form: {
       id: null,
       name: "",
-      type: "",
+      type: [],
     },
-    options: {
-      types: [
-        { value: "", label: "Choose Type", disabled: true, selected: "" },
-        { value: "income", label: "Income" },
-        { value: "expense", label: "Expense" },
-        { value: "transaction", label: "Transaction" },
-      ],
-    },
+    income: false,
+    expense: false,
+    transfer: false,
+    // options: {
+    //   types: [
+    //     { value: "", label: "Choose Type", disabled: true, selected: "" },
+    //     { value: "income", label: "Income" },
+    //     { value: "expense", label: "Expense" },
+    //     { value: "transaction", label: "Transaction" },
+    //   ],
+    // },
   }),
   validations() {
     return {
       form: {
         name: { required },
-        type: { required },
+        // type: { required },
       },
     };
   },
@@ -91,7 +120,10 @@ export default {
     saveAccountCategory() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
+        let data = {
+          name: this.form.name,
+          type: JSON.stringify(this.form.type),
+        };
         AccountCategoryService.create(data)
           .then((res) => {
             if (res.status == 201) {
@@ -127,7 +159,10 @@ export default {
     updateAccountCategory() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
+        let data = {
+          name: this.form.name,
+          type: JSON.stringify(this.form.type),
+        };
         AccountCategoryService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
@@ -159,15 +194,54 @@ export default {
           });
       }
     },
+    toggleTransfer() {
+      this.transfer = !this.transfer;
+      if (this.transfer) {
+        this.form.type.push("transfer");
+      } else {
+        this.form.type = this.form.type.filter((item) => item !== "transfer");
+      }
+    },
+    toggleExpense() {
+      this.expense = !this.expense;
+      if (this.expense) {
+        this.form.type.push("expense");
+      } else {
+        this.form.type = this.form.type.filter((item) => item !== "expense");
+      }
+    },
+    toggleIncome() {
+      this.income = !this.income;
+      if (this.income) {
+        this.form.type.push("income");
+      } else {
+        this.form.type = this.form.type.filter((item) => item !== "income");
+      }
+    },
     getAccountCategory() {
       AccountCategoryService.get(this.form.id)
         .then(({ data }) => {
-          console.log(data);
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.name = data.name;
-            this.form.type = data.type;
+
+            let types = JSON.parse(data.type);
+
+            for (let i = 0; i < types.length; i++) {
+              if (types[i] == "income") {
+                this.toggleIncome();
+              }
+
+              if (types[i] == "expense") {
+                this.expense = true;
+                this.toggleExpense();
+              }
+
+              if (types[i] == "transfer") {
+                this.toggleTransfer();
+              }
+            }
           }
         })
         .catch((error) => {

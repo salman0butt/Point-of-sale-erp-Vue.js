@@ -26,6 +26,17 @@
             </td>
           </template> -->
 
+          <template #type="{ item }">
+            <td>
+              {{
+                JSON.parse(item.type)
+                  .map((element) => {
+                    return element;
+                  })
+                  .join(", ")
+              }}
+            </td>
+          </template>
           <template #status="{ item }">
             <td>
               {{ item.status ? item.status : "" }}
