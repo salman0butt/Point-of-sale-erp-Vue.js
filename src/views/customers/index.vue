@@ -3,7 +3,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CRow>
+        <!-- <CRow>
           <CCol sm="6" md="3" class="pt-2">
             <CCard>
               <CCardHeader>
@@ -52,7 +52,7 @@
               </CCardBody>
             </CCard>
           </CCol>
-        </CRow>
+        </CRow> -->
         <CCard>
           <CCardBody>
             <router-link

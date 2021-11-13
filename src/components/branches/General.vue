@@ -95,18 +95,10 @@
         </CRow>
         <CRow>
           <CCol sm="6" md="4" class="pt-2">
-            <CSelect
-              label="Opening Date"
-              :options="dates"
-              :value.sync="form.opening_date"
-            />
+            <CInput label="CR Number" v-model="form.cr" />
           </CCol>
           <CCol sm="6" md="4" class="pt-2">
-            <CSelect
-              label="Closing Date"
-              :options="dates"
-              :value.sync="form.closing_date"
-            />
+            <CInput label="Tax ID" v-model="form.tax_id" />
           </CCol>
           <CCol sm="6" md="4" class="pt-2">
             <CSelect
@@ -132,7 +124,7 @@
           style="float: right; width: 140px; margin-right: 20px; margin-top: 0"
           @click="saveAndExit = true"
           type="submit"
-          >Save</CButton
+          >Save & Exit</CButton
         >
       </CCardBody>
     </form>
@@ -188,6 +180,8 @@ export default {
         location: "",
         opening_date: "",
         closing_date: "",
+        cr: "",
+        tax_id: "",
         status: "",
       },
       status: [
@@ -273,8 +267,10 @@ export default {
           this.form.tel = data.tel;
           this.form.mob = data.mob;
           this.form.location = data.location;
-          this.form.opening_date = data.opening_date;
-          this.form.closing_date = data.closing_date;
+          this.form.cr = data.cr;
+          this.form.tax_id = data.tax_id;
+          // this.form.opening_date = data.opening_date;
+          // this.form.closing_date = data.closing_date;
           this.form.status = data.status;
         })
         .catch((err) => {
@@ -295,8 +291,10 @@ export default {
               text: "Branch Updated Successfully",
               timer: 3600,
             });
-            if (!this.saveAndExit) {
-              this.activeTab = 1;
+            if (this.saveAndExit) {
+              this.$router.push({ path: "/branches" });
+            } else {
+              // alert("sec");
             }
           })
           .catch((error) => {

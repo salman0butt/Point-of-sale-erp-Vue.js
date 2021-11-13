@@ -117,18 +117,10 @@
                     </CRow>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CSelect
-                          label="Opening Date"
-                          :options="dates"
-                          :value.sync="form.opening_date"
-                        />
+                        <CInput label="CR Number" v-model="form.cr" />
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CSelect
-                          label="Closing Date"
-                          :options="dates"
-                          :value.sync="form.closing_date"
-                        />
+                        <CInput label="Tax ID" v-model="form.tax_id" />
                       </CCol>
                     </CRow>
 
@@ -232,11 +224,11 @@ export default {
         tel: "",
         mob: "",
         location: "",
-        opening_date: "",
-        closing_date: "",
+        cr: "",
+        tax_id: "",
       },
       dates: "",
-      saveAndExit: true,
+      saveAndExit: "",
 
       tabs: ["General", "Timing", "Traget", "Social media"],
       activeTab: 1,
@@ -286,6 +278,7 @@ export default {
               text: "Branch Created Successfully",
               timer: 3600,
             });
+
             if (this.saveAndExit) {
               this.$router.push({ path: "/branches" });
             } else {

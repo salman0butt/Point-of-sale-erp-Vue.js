@@ -3,7 +3,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CRow>
+        <!-- <CRow>
           <CCol sm="6" md="3" class="pt-2">
             <CCard>
               <CCardHeader>
@@ -52,7 +52,7 @@
               </CCardBody>
             </CCard>
           </CCol>
-        </CRow>
+        </CRow> -->
         <CCard>
           <CCardBody>
             <router-link class="btn btn-success" to="/groups/create"
@@ -85,18 +85,18 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
-                      <CIcon :content="$options.cilPencil"
+                      Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <!-- <CButton
                       @click="deleteRow(item.uuid)"
