@@ -99,7 +99,7 @@
               </CCol>
             </CRow>
             <CRow>
-              <CCol sm="6" md="6" class="pt-2">
+              <!-- <CCol sm="6" md="6" class="pt-2">
                 <CSelect
                   label="Type"
                   :value.sync="target.type"
@@ -116,12 +116,13 @@
                   ]"
                   :class="{ error: $v.target.type.$error }"
                 />
-              </CCol>
-              <div v-if="$v.target.type.$error">
-                <p v-if="!$v.target.type.required" class="errorMsg">
-                  Type is required
-                </p>
-              </div>
+                <div v-if="$v.target.type.$error">
+                  <p v-if="!$v.target.type.required" class="errorMsg">
+                    Type is required
+                  </p>
+                </div>
+              </CCol> -->
+
               <CCol sm="6" md="6" class="pt-2">
                 <CInput
                   label="Amount"
@@ -131,15 +132,13 @@
                   v-model="target.amount"
                   :class="{ error: $v.target.amount.$error }"
                 />
+                <div v-if="$v.target.amount.$error">
+                  <p v-if="!$v.target.amount.required" class="errorMsg">
+                    Amount is required
+                  </p>
+                </div>
               </CCol>
-              <div v-if="$v.target.amount.$error">
-                <p v-if="!$v.target.amount.required" class="errorMsg">
-                  Amount is required
-                </p>
-              </div>
-            </CRow>
-            <CRow>
-              <CCol sm="12" md="12">
+              <CCol sm="6" md="6" class="pt-2">
                 <CTextarea
                   label="Note"
                   placeholder="Content..."
@@ -147,6 +146,7 @@
                 />
               </CCol>
             </CRow>
+
             <CButton
               block
               color="success"
@@ -208,29 +208,6 @@
             </CRow>
             <CRow>
               <CCol sm="6" md="6" class="pt-2">
-                <CSelect
-                  label="Type"
-                  :value.sync="target.type"
-                  :options="[
-                    {
-                      label: 'Choose Severity',
-                      value: '',
-                      selected: '',
-                      disabled: true,
-                    },
-                    'option2',
-                    'option3',
-                    'option4',
-                  ]"
-                  :class="{ error: $v.target.type.$error }"
-                />
-              </CCol>
-              <div v-if="$v.target.type.$error">
-                <p v-if="!$v.target.type.required" class="errorMsg">
-                  Type is required
-                </p>
-              </div>
-              <CCol sm="6" md="6" class="pt-2">
                 <CInput
                   label="Amount"
                   type="number"
@@ -245,9 +222,7 @@
                   Amount is required
                 </p>
               </div>
-            </CRow>
-            <CRow>
-              <CCol sm="12" md="12">
+              <CCol sm="6" md="6" class="pt-2">
                 <CTextarea
                   label="Note"
                   placeholder="Content..."
@@ -286,7 +261,7 @@ const fields = [
 const fields2 = [
   { key: "name", label: "Name", _style: "min-width:40%" },
   { key: "periodic", label: "Periodic", _style: "min-width:15%;" },
-  { key: "type", label: "Type", _style: "min-width:15%;" },
+  // { key: "type", label: "Type", _style: "min-width:15%;" },
   { key: "amount", label: "Amount", _style: "min-width:15%;" },
   { key: "detail", label: "Detail", _style: "min-width:15%;" },
   { key: "actions", label: "Action", _style: "min-width:15%;" },
@@ -301,44 +276,6 @@ export default {
       tabs: ["General", "Timing", "Target", "Social media"],
       isEditing: false,
 
-      // General
-      form: {
-        name: "",
-        address: "",
-        area: "",
-        tel: "",
-        mob: "",
-        location: "",
-        opening_date: "",
-        closing_date: "",
-        status: "",
-      },
-      status: [
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "Inactive" },
-      ],
-      url_data: null,
-
-      // Timing tab
-      shiftToggle: "Add New Shift",
-      shifts: [],
-      fields,
-      collapse: false,
-      collapse_table: true,
-      storeTiming: {
-        shiftname: "",
-        timelist: [
-          { day: "Sunday", status: false, time: [] },
-          { day: "Monday", status: false, time: [] },
-          { day: "Tuesday", status: true, time: [] },
-          { day: "Wednesday", status: true, time: [] },
-          { day: "Thursday", status: true, time: [] },
-          { day: "Friday", status: true, time: [] },
-          { day: "Saturday", status: true, time: [] },
-        ],
-      },
-      updateTimingUuid: "",
-
       // Target
       fields2,
       collapse_target: false,
@@ -347,20 +284,11 @@ export default {
       targetList: [],
       target: {
         name: "",
-        type: "",
         period: "",
         amount: "",
         detail: "",
         uuid: "",
       },
-
-      // Social Media
-
-      mediaLst: [],
-      mediaitem: { channel: "", name: "", link: "" },
-      usersData: [],
-      details: [],
-      errors: [],
     };
   },
   validations() {
@@ -368,13 +296,11 @@ export default {
       target: {
         name: { required, minLength: minLength(4) },
         period: { required },
-        type: { required },
         amount: { required },
       },
     };
   },
   created() {
-    // Targets
     this.getAllTargets();
   },
 
@@ -394,7 +320,7 @@ export default {
             var data = {
               name: value.name,
               periodic: value.periodic,
-              type: value.type,
+              // type: value.type,
               amount: value.amount,
               detail: value.detail,
               uuid: value.uuid,
@@ -529,12 +455,12 @@ export default {
               text: "Target Updated Successfully",
               timer: 3600,
             });
-            console.log(res.data);
+            // console.log(res.data);
             this.targetList.map((item, id) => {
               if (item.uuid == this.target.uuid) {
                 item.name = res.data.name;
                 item.periodic = res.data.periodic;
-                item.type = res.data.type;
+                // item.type = res.data.type;
                 item.amount = res.data.amount;
                 item.detail = res.data.detail;
               }

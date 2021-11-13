@@ -77,19 +77,8 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Parent Account"
-                    :options="options.parent"
-                    :value.sync="form.parent"
-                  />
+                  <AccountDropdown @getAccountDropdown="getAccountDropdown" />
                 </CCol>
-                <!-- <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Currency"
-                    :options="options.currency"
-                    :value.sync="form.currency"
-                  />
-                </CCol> -->
               </CRow>
 
               <CRow class="mt-4">
@@ -114,6 +103,7 @@
 <script>
 import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
+import AccountDropdown from "@/components/accounting/general/AccountDropdown";
 
 import {
   required,
@@ -124,6 +114,9 @@ import {
 
 export default {
   name: "CreateAccount",
+  components: {
+    AccountDropdown,
+  },
   data: () => ({
     form: {
       name: "",
@@ -153,13 +146,6 @@ export default {
       currency: [
         { value: "", label: "Choose Currency", disabled: true, selected: "" },
         { value: "BHD", label: "Bahraini Dinar" },
-      ],
-      parent: [
-        {
-          value: "",
-          label: "Choose Parent",
-          selected: "",
-        },
       ],
     },
   }),
@@ -209,20 +195,6 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-
-      AccountServices.getActiveAccounts("active")
-        .then(({ data }) => {
-          let parent = this.options.parent;
-          data.map(function (val) {
-            parent.push({
-              value: val.uuid,
-              label: val.name,
-            });
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     },
     saveAccount() {
       this.$v.$touch();
@@ -252,6 +224,9 @@ export default {
             });
           });
       }
+    },
+    getAccountDropdown(value) {
+      this.form.parent = value;
     },
   },
 };

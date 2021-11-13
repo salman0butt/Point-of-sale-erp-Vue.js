@@ -57,7 +57,7 @@
             <CRow>
               <CCol sm="6" md="4" class="pt-2">
                 <CInput
-                  label="Name"
+                  label="Shift Name"
                   ref="shiftname"
                   v-model="storeTiming.shiftname"
                   :class="{

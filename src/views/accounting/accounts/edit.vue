@@ -77,10 +77,9 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Parent Account"
-                    :options="options.parent"
-                    :value.sync="form.parent"
+                  <AccountDropdown
+                    :uuid="form.parent"
+                    @getAccountDropdown="getAccountDropdown"
                   />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
@@ -114,6 +113,7 @@
 <script>
 import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
+import AccountDropdown from "@/components/accounting/general/AccountDropdown";
 
 import {
   required,
@@ -124,6 +124,9 @@ import {
 
 export default {
   name: "EditAccount",
+  components: {
+    AccountDropdown,
+  },
   data: () => ({
     url_data: "",
     form: {
@@ -154,13 +157,6 @@ export default {
       status: [
         { value: "active", label: "Active" },
         { value: "inactive", label: "Inactive" },
-      ],
-      parent: [
-        {
-          value: "",
-          label: "Choose Parent",
-          selected: "",
-        },
       ],
     },
   }),
@@ -211,19 +207,6 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-      AccountServices.getActiveAccounts("active")
-        .then(({ data }) => {
-          let parent = this.options.parent;
-          data.map(function (val) {
-            parent.push({
-              value: val.uuid,
-              label: val.name,
-            });
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     },
     getEditDetail() {
       this.url_data = this.$route.params.id;
@@ -238,7 +221,6 @@ export default {
         }
       });
     },
-
     updateMethod() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -267,6 +249,9 @@ export default {
             });
           });
       }
+    },
+    getAccountDropdown(value) {
+      this.form.parent = value;
     },
   },
 };

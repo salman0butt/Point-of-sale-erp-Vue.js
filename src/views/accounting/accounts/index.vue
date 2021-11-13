@@ -2,56 +2,6 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CRow>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader>
-                <span class="bolder">No of Accounts</span>
-              </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>123456</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader>
-                <span class="bolder">Total Departments</span>
-              </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>123456</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Genders</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong
-                    ><span>Man 123456</span> | <span>Women 123456</span></strong
-                  >
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader>
-                <span class="bolder">Total Managers</span>
-              </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>123456</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        </CRow>
         <CCard>
           <CCardBody>
             <router-link
@@ -84,8 +34,8 @@
                 </td>
               </template>
               <template #parent="{ item }">
-                <td v-if="item.parent.name">{{ item.parent.name }}</td>
-                <td v-else>-</td>
+                <td v-if="item.parent">{{ item.parent.name.en }}</td>
+                <td v-else>Main</td>
               </template>
               <template #actions="{ item }">
                 <td>
@@ -198,21 +148,6 @@ export default {
           console.log(err);
         });
     },
-    // getTotalCardData() {
-    //   EmployeeService.getTotalCount()
-    //     .then(({ data }) => {
-    //       if (data != null && data != "") {
-    //         this.cards.employees_count = data.employees_count;
-    //         this.cards.female_count = data.female_count;
-    //         this.cards.male_count = data.male_count;
-    //         this.cards.departments_count = data.departments_count;
-    //         this.cards.manager_count = data.manager_count;
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);

@@ -1,5 +1,5 @@
 <template>
-  <div id="test">
+  <div id="salary-pdf">
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
@@ -154,6 +154,8 @@
 
 <script>
 import EmployeeSalaryAdjustmentService from "@/services/employees/EmployeeSalaryAdjustmentService";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default {
   name: "ShowSalary",
@@ -260,17 +262,156 @@ export default {
         });
     },
     makePDF() {
-      EmployeeSalaryAdjustmentService.genrateSalary(this.salary.id).then((response) => {
-        var fileURL = window.URL.createObjectURL(new Blob([response.data]));
-        var fileLink = document.createElement("a");
+      // EmployeeSalaryAdjustmentService.genrateSalary(this.salary.id).then((response) => {
+      //   var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+      //   var fileLink = document.createElement("a");
 
-        fileLink.href = fileURL;
-        fileLink.setAttribute("download", "file.pdf");
-        document.body.appendChild(fileLink);
+      //   fileLink.href = fileURL;
+      //   fileLink.setAttribute("download", "file.pdf");
+      //   document.body.appendChild(fileLink);
 
-        fileLink.click();
-      });
+      //   fileLink.click();
+      // });
+      window.html2canvas = html2canvas;
+      let doc = new jsPDF("p", "pt", "a4");
+      let x = 20;
+      let y = 20;
+
+      y = y + 20;
+      doc.setFontSize(16);
+
+      doc.text("Detail", x, y);
+      y = y + 20;
+
+      doc.setFontSize(9);
+
+      doc.text("Employee ID", x, y);
+      doc.text(this.salary.employee.serial_no, x + 500, y);
+
+      y = y + 20;
+
+      doc.text("Employee Name", x, y);
+      doc.text(this.salary.employee.full_name, x + 500, y);
+
+      y = y + 20;
+
+      doc.text("Year", x, y);
+      doc.text(this.year, x + 500, y);
+
+      y = y + 20;
+
+      doc.text("Month", x, y);
+      doc.text(this.month, x + 500, y);
+
+      y = y + 20;
+
+      doc.text("Total Days", x, y);
+      doc.text(this.salary.total_days.toString(), x + 500, y);
+
+      y = y + 20;
+
+      doc.text("Total Working Days", x, y);
+      doc.text(this.salary.total_working_days.toString(), x + 500, y);
+
+      y = y + 20;
+
+      doc.text("Total Leaves", x, y);
+      doc.text(this.salary.total_leaves.toString(), x + 500, y);
+
+      y = y + 20;
+
+      doc.text("Total Absent", x, y);
+      doc.text(this.salary.total_absent.toString(), x + 500, y);
+
+      //Earnings
+      y = y + 40;
+      doc.setFontSize(16);
+
+      doc.text("Earnings", x, y);
+      y = y + 20;
+
+      doc.setFontSize(9);
+      doc.text("Basic Salary", x, y);
+      doc.text(this.salary.basic_salary, x + 500, y);
+      if (this.salary.earnings.inputs && this.salary.earnings.inputs.length > 0) {
+        for (const index in this.salary.earnings.inputs) {
+          y = y + 20;
+          doc.text(this.salary.earnings.inputs[index].name, x, y);
+          doc.text(this.salary.earnings.inputs[index].value, x + 500, y);
+        }
+      }
+      //Deductions
+      if (this.salary.deductions.inputs && this.salary.deductions.inputs.length > 0) {
+        y = y + 40;
+        doc.setFontSize(16);
+
+        doc.text("Deductions", x, y);
+
+        doc.setFontSize(9);
+        for (const index in this.salary.deductions.inputs) {
+          y = y + 20;
+          doc.text(this.salary.deductions.inputs[index].name, x, y);
+          doc.text(this.salary.deductions.inputs[index].value, x + 500, y);
+          y = y + 20;
+          doc.text("Note: ", x, y);
+          doc.text(this.salary.deductions.inputs[index].note, x + 30, y);
+        }
+      }
+
+      //Expesne
+      if (this.salary.expenses.inputs && this.salary.expenses.inputs.length > 0) {
+        y = y + 40;
+        doc.setFontSize(16);
+
+        doc.text("Expenses", x, y);
+
+        doc.setFontSize(9);
+        for (const index in this.salary.expenses.inputs) {
+          y = y + 20;
+          doc.text(this.salary.expenses.inputs[index].name, x, y);
+          doc.text(this.salary.expenses.inputs[index].value, x + 500, y);
+        }
+      }
+      y = y + 40;
+      doc.setFontSize(10);
+      doc.text("Basic Salary", x, y);
+      doc.text(this.salary.basic_salary, x + 500, y);
+
+      y = y + 20;
+      doc.text("Total Earnings", x, y);
+      doc.text(this.salary.total_earnings, x + 500, y);
+
+      y = y + 20;
+      doc.text("Total Deductions", x, y);
+      doc.text(this.salary.total_deductions, x + 500, y);
+
+      y = y + 20;
+      doc.text("Total Expense", x, y);
+      doc.text(this.salary.total_expenses, x + 500, y);
+
+      y = y + 20;
+      doc.setFontSize(14);
+      doc.text("Total Payable Salary", x, y);
+      doc.text(this.salary.payable_salary, x + 500, y);
+
+      doc.save("salary.pdf");
+
+      //       Employee ID:	00001
+      // Employee:	admin
+      // Year:	2021
+      // Month:	Dec
+      // Total Days:	30
+      // Total Working Days:	25
+      // Total Leaves:	0
+      // Total Absent:	25
+      // https://rawgit.com/MrRio/jsPDF/master/docs/jsPDF.html#text
+      // doc.html(document.getElementById("salary-pdf"), {
+      //   callback: function (doc) {
+      //     doc.save("salary.pdf");
+      //   },
+      // });
     },
   },
 };
 </script>
+<style scoped></style>
