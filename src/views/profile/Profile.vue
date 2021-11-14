@@ -161,7 +161,7 @@ export default {
             this.employee_designation = data.designation;
             this.$store.commit("set_emp_img", data.personal_photo);
 
-            if (data.uuid === this.$store.state.employee_id) {
+            if (data.personal_photo && data.uuid === this.$store.state.employee_id) {
               this.$store.commit("set_profile_img", data.personal_photo);
             }
           }

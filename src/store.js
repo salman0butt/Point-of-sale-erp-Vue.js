@@ -22,7 +22,7 @@ const state = {
   showBranchModel: false,
   loading: false,
   emp_img: "",
-  profile_img: localStorage.getItem("profile_pic") || "/img/avatars/placeholder.png",
+  profile_img: localStorage.getItem("profile_pic") ?? "/img/avatars/placeholder.png",
   employee_id: localStorage.getItem('employee_id') || '',
 }
 
