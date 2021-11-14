@@ -105,6 +105,15 @@
                     :value.sync="form.status"
                   />
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Tax Percent"
+                    type="number"
+                    min="0"
+                    step="any"
+                    v-model="form.tax"
+                  />
+                </CCol>
               </CRow>
 
               <CRow class="mt-4">
@@ -149,6 +158,7 @@ export default {
       percent: "0.000",
       amount: "0.000",
       status: "",
+      tax: "",
     },
     active: "active",
     options: {
@@ -238,6 +248,7 @@ export default {
             this.form.account = res.data.account;
             this.form.percent = res.data.percent;
             this.form.amount = res.data.amount;
+            this.form.tax = res.data.tax;
             this.form.status = res.data.status;
           }
         })

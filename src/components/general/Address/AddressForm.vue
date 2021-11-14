@@ -105,8 +105,8 @@
   </div>
 </template>
 <script>
-import CustomerAddressServices from "@/services/customers/CustomerAddressServices";
-import SupplierAddressServices from "@/services/supplier/SupplierAddressServices";
+import CustomerAddressServices from "@/services/contacts/customers/CustomerAddressServices";
+import SupplierAddressServices from "@/services/contacts/supplier/SupplierAddressServices";
 
 import { required } from "vuelidate/lib/validators";
 

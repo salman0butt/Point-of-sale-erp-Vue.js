@@ -1,9 +1,9 @@
 import auth from '@/middleware/auth'
 
 
-const IndexSupplier = () => import('@/views/supplier/index')
-const CreateSupplier = () => import('@/views/supplier/create')
-const EditSupplier = () => import('@/views/supplier/edit')
+const IndexSupplier = () => import('@/views/contacts/supplier/index')
+const CreateSupplier = () => import('@/views/contacts/supplier/create')
+const EditSupplier = () => import('@/views/contacts/supplier/edit')
 
 
 const supplierRoutes =
