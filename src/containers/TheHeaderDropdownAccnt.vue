@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     profileImg() {
-      return this.$store.getters.getProfileImg ?? "/img/avatars/placeholder.png";
+      return this.$store.getters.getProfileImg;
     },
   },
   methods: {
