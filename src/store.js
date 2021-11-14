@@ -22,7 +22,7 @@ const state = {
   showBranchModel: false,
   loading: false,
   emp_img: "",
-  profile_img: localStorage.getItem("profile_pic") || "",
+  profile_img: localStorage.getItem("profile_pic") || "/img/avatars/placeholder.png",
   employee_id: localStorage.getItem('employee_id') || '',
 }
 
@@ -111,7 +111,10 @@ const actions = {
           localStorage.setItem('selected_branches', JSON.stringify([res.data.branches[0].uuid]));
         }
         http.defaults.headers.common['Authorization'] = "Bearer " + token;
-        commit('set_profile_img', res.data.employee.personal_photo);
+        const profile_pic = res.data.employee.profile_pic;
+        if(profile_pic && profile_pic != "" && profile_pic != null){
+          commit('set_profile_img', res.data.employee.personal_photo);
+        }
         commit('set_permissions', res.data.permissions);
         commit('set_list_branches', res.data.branches);
         commit('auth_success', token);
