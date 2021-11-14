@@ -18,7 +18,7 @@
               </div>
             </CCol>
 
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol v-if="!isEditing" sm="6" md="4" class="pt-2">
               <!-- <CSelect label="Type" :options="options.types" :value.sync="form.type" /> -->
               <CRow>
                 <CCol sm="4" md="4" class="pt-4">
@@ -122,7 +122,7 @@ export default {
       if (!this.$v.$invalid) {
         let data = {
           name: this.form.name,
-          type: JSON.stringify(this.form.type),
+          type: this.form.type,
         };
         AccountCategoryService.create(data)
           .then((res) => {
@@ -161,7 +161,6 @@ export default {
       if (!this.$v.$invalid) {
         let data = {
           name: this.form.name,
-          type: JSON.stringify(this.form.type),
         };
         AccountCategoryService.update(this.form.id, data)
           .then((res) => {
@@ -172,15 +171,16 @@ export default {
                 text: "Account Category Updated Successfully",
                 timer: 3600,
               });
-              this.$v.$reset();
+              // this.$v.$reset();
 
               if (this.saveAndExit) {
                 this.$router.push({ path: "/accounting/category/index" });
-              } else {
-                this.$router.push({
-                  path: "/accounting/category/edit/" + res.data.uuid,
-                });
               }
+              // else {
+              //   this.$router.push({
+              //     path: "/accounting/category/edit/" + res.data.uuid,
+              //   });
+              // }
             }
           })
           .catch((error) => {
@@ -226,22 +226,22 @@ export default {
             this.form.id = data.uuid;
             this.form.name = data.name;
 
-            let types = JSON.parse(data.type);
+            // let types = JSON.parse(data.type);
 
-            for (let i = 0; i < types.length; i++) {
-              if (types[i] == "income") {
-                this.toggleIncome();
-              }
+            // for (let i = 0; i < types.length; i++) {
+            //   if (types[i] == "income") {
+            //     this.toggleIncome();
+            //   }
 
-              if (types[i] == "expense") {
-                this.expense = true;
-                this.toggleExpense();
-              }
+            //   if (types[i] == "expense") {
+            //     this.expense = true;
+            //     this.toggleExpense();
+            //   }
 
-              if (types[i] == "transfer") {
-                this.toggleTransfer();
-              }
-            }
+            //   if (types[i] == "transfer") {
+            //     this.toggleTransfer();
+            //   }
+            // }
           }
         })
         .catch((error) => {
