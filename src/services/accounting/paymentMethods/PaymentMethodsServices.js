@@ -27,7 +27,7 @@ class PaymentMethodsServices extends Helper {
     }
 
     delete(id) {
-        return http.delete(`/assets/${id}`);
+        return http.delete(`/paymentMethod/${id}`);
     }
 }
 

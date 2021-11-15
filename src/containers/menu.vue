@@ -74,6 +74,15 @@ export default {
           icon: "cil-lan",
         });
       }
+      if (this.permissions.includes("read suppliers")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          _attrs: { class: "hide-me" },
+          name: "Products",
+          to: "/products",
+          icon: "cil-lan",
+        });
+      }
       if (this.permissions.includes("read profile")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
@@ -289,6 +298,7 @@ export default {
             // icon: "cil-lan",
           });
         }
+
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: "HR",
