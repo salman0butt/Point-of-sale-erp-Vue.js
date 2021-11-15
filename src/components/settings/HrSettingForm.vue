@@ -321,9 +321,9 @@ export default {
         const regx = /type/gm;
         if (regx.test(key)) {
           let data = JSON.stringify(this.form[key].split(","));
-          this.settingData.push({ key: key, value: data });
+          this.settingData.push({ key: key, value: data, type: "hr" });
         } else {
-          this.settingData.push({ key: key, value: this.form[key] });
+          this.settingData.push({ key: key, value: this.form[key], type: "hr" });
         }
       }
 
