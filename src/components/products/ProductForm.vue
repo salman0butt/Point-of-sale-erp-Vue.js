@@ -143,7 +143,7 @@
                 </CCol>
               </CRow>
               <CRow>
-                <CCol sm="12" md="12" class="pt-2">
+                <CCol sm="12" md="12" class="pt-2 short_desc">
                   <label class="typo__label">Short Description</label>
                   <vue-editor v-model="form.short_description"></vue-editor>
                   <!-- <CTextarea
@@ -171,11 +171,14 @@
                     :value.sync="form.status"
                   />
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInputCheckbox
                     custom
                     :checked="form.is_ecommerce_product"
                     label="is Ecommerce Product"
+                    @change="toggleIsEcommerce"
                   />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
@@ -183,6 +186,7 @@
                     custom
                     :checked="form.is_vat_include"
                     label="is Vat (included)"
+                    @change="toggleIsVat"
                   />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
@@ -190,6 +194,7 @@
                     custom
                     :checked="form.is_favorite"
                     label="is Favorite"
+                    @change="toggleIsFavruite"
                   />
                 </CCol>
               </CRow>
@@ -292,9 +297,9 @@ export default {
       selling_price: "",
       short_description: "",
       product_description: "",
-      is_ecommerce_product: "",
-      is_vat_include: "",
-      is_favorite: "",
+      is_ecommerce_product: false,
+      is_vat_include: false,
+      is_favorite: false,
       categories: "",
       branches: "",
       images: "",
@@ -412,29 +417,53 @@ export default {
         });
     },
     addSerial() {
-      this.form.serial_numbers.push({ name: "", cost_price: "", selling_price: "" });
+      this.form.serial_numbers.push({ serial_no: "", cost_price: "", selling_price: "" });
     },
     removeSerial(index) {
       this.form.serial_numbers.splice(index, 1);
+    },
+    toggleIsEcommerce() {
+      this.form.is_ecommerce_product = !this.form.is_ecommerce_product;
+    },
+    toggleIsFavruite() {
+      this.form.is_favorite = !this.form.is_favorite;
+    },
+    toggleIsVat() {
+      this.form.is_vat_include = !this.form.is_vat_include;
     },
     getProduct() {
       ProductService.get(this.productId)
         .then(({ data }) => {
           this.form.name = data.name ?? "";
           this.form.type = data.type ?? "";
-          this.form.supplier_id = data.supplier_id ?? "";
-          this.form.brand_id = data.brand_id ?? "";
+          this.form.supplier_id = data.supplier.uuid ?? "";
+          this.form.brand_id = data.brand.uuid ?? "";
           this.form.barcode = data.barcode ?? "";
           this.form.cost_price = data.cost_price ?? "";
           this.form.selling_price = data.selling_price ?? "";
           this.form.short_description = data.short_description ?? "";
           this.form.product_description = data.product_description ?? "";
-          this.form.is_ecommerce_product = data.is_ecommerce_product ?? "";
-          this.form.is_vat_include = data.is_vat_include ?? "";
-          this.form.is_favorite = data.is_favorite ?? "";
-          this.form.categories = data.categories ?? "";
-          this.form.branches = data.branches ?? "";
-          this.form.images = data.images ?? "";
+          this.form.is_ecommerce_product =
+            data.is_ecommerce_product == "yes" ? true : false;
+          this.form.is_vat_include = data.is_vat_include == "yes" ? true : false;
+          this.form.is_favorite = data.is_favorite == "yes" ? true : false;
+          this.form.categories = data.categories.map(function (item) {
+            return { label: item.name, value: item.uuid };
+          });
+          this.form.branches = data.branches.map(function (item) {
+            return { label: item.name, value: item.uuid };
+          });
+
+          if (data.serial_numbers && data.serial_numbers.length) {
+            data.serial_numbers.forEach((element) => {
+              this.form.serial_numbers.unshift({
+                serial_no: element.serial_no,
+                cost_price: parseInt(element.cost_price),
+                selling_price: parseInt(element.selling_price),
+              });
+            });
+          }
+          // this.form.images = data.images ?? "";
           this.form.status = data.status ?? "";
         })
         .catch((error) => {
@@ -529,7 +558,7 @@ export default {
           }
         } else if (index === "categories") {
           const cats = this.form.categories;
-          if (cats !== "" || cats !== undefined) {
+          if (cats !== "" && cats !== undefined) {
             const get_cats = cats?.map(function (item) {
               return item.value;
             });
@@ -539,7 +568,7 @@ export default {
           }
         } else if (index === "branches") {
           const branches = this.form.branches;
-          if (branches !== "" || branches !== undefined) {
+          if (branches !== "" && branches !== undefined) {
             const get_branchs = branches?.map(function (item) {
               return item.value;
             });
@@ -550,12 +579,10 @@ export default {
           }
         } else if (index === "serial_numbers") {
           const serial_numbers = this.form.serial_numbers;
-          if (serial_numbers !== "" || serial_numbers !== undefined) {
-            const get_serial_numbers = serial_numbers?.map(function (item) {
-              return item.value;
-            });
-            for (const numb of get_serial_numbers) {
-              formData.append("serial_numbers[]", numb);
+          if (serial_numbers !== "" && serial_numbers !== undefined) {
+            for (const numb of serial_numbers) {
+              const obj = JSON.stringify(numb);
+              formData.append("serial_no[]", obj);
             }
           }
         } else {
@@ -575,5 +602,8 @@ export default {
 <style>
 .thumb {
   cursor: pointer;
+}
+.short_desc .ql-editor {
+  min-height: 110px !important;
 }
 </style>

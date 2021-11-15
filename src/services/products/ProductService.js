@@ -28,7 +28,7 @@ class ProductService extends Helper {
     }
 
     update(id, data, config) {
-        return http.patch(`/products/${id}`, data, config);
+        return http.post(`/products/${id}`, data, config);
     }
 
     delete(id) {

@@ -30,7 +30,7 @@
                   <PuSkeleton v-else />
                 </div>
               </div> -->
-              <br />
+              <!-- <br /> -->
               <a
                 class="nav-link bborder"
                 v-for="(tab, index) in tabs"
@@ -58,32 +58,27 @@
   </div>
 </template>
 <script>
-import EmployeeTab from "@/components/employees/EmployeeTab";
-import EmployeeQualificationTab from "@/components/employees/employeeQualification/EmployeeQualificationTab";
-import EmployeeContractTab from "@/components/employees/employeeContract/EmployeeContractTab";
+import ProductTab from "@/components/products/ProductTab";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
-import EmployeeService from "@/services/employees/EmployeeService";
-import EmployeeSalaryPaymentTab from "@/components/employees/employeeSalaryPayment/EmployeeSalaryPaymentTab";
 
 export default {
   name: "EditEmployee",
   cilUser,
   cisCircle,
   components: {
-    EmployeeTab,
-    EmployeeQualificationTab,
-    EmployeeContractTab,
-    EmployeeSalaryPaymentTab,
+    ProductTab,
   },
   data() {
     return {
-      employee_name: "e.g name",
-      employee_designation: "Designation",
-      activeTab: "EmployeeTab",
+      // employee_name: "e.g name",
+      // employee_designation: "Designation",
+      activeTab: "ProductTab",
       tabs: [
-        { key: "EmployeeTab", name: "General" },
-        { key: "EmployeeQualificationTab", name: "Qualifications" },
-        { key: "EmployeeLoanTab", name: "Loans", disabled: true },
+        { key: "ProductTab", name: "General" },
+        { key: "Attributes", name: "Attributes", disabled: true },
+        { key: "Variations", name: "Variations", disabled: true },
+        { key: "Inventory", name: "Inventory", disabled: true },
+        { key: "Images", name: "Images", disabled: true },
       ],
     };
   },
@@ -107,21 +102,21 @@ export default {
     changeActiveTab(value) {
       this.activeTab = value;
     },
-    getEmployeeDetail() {
-      let id = this.$route.params.id;
-      EmployeeService.get(id)
-        .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
-            // this.$store.commit("set_employee_name", data.full_name);
-            this.employee_name = data.full_name;
-            this.employee_designation = data.designation;
-            this.$store.commit("set_emp_img", data.personal_photo);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+    // getEmployeeDetail() {
+    //   let id = this.$route.params.id;
+    //   EmployeeService.get(id)
+    //     .then(({ data }) => {
+    //       if (data !== "" && data !== undefined) {
+    //         // this.$store.commit("set_employee_name", data.full_name);
+    //         this.employee_name = data.full_name;
+    //         this.employee_designation = data.designation;
+    //         this.$store.commit("set_emp_img", data.personal_photo);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
   },
 };
 </script>

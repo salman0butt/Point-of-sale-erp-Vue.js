@@ -8,16 +8,15 @@
             <CTabs add-tab-classes="mt-1" variant="pills" fade>
               <CTab active id="show">
                 <template slot="title">
-                  {{ tabs.employee }}
+                  {{ tabs.product }}
                 </template>
-                <EmployeeForm />
+                <ProductForm />
               </CTab>
-
-              <CTab>
+              <CTab disabled id="show">
                 <template slot="title">
-                  {{ tabs.address }}
+                  {{ tabs.detail }}
                 </template>
-                <EmployeeAddressTab />
+                <ProductForm />
               </CTab>
             </CTabs>
           </CCardBody>
@@ -27,22 +26,17 @@
   </div>
 </template>
 <script>
-import EmployeeAddressTab from "@/components/employees/employeeAddress/EmployeeAddressTab";
-
-import EmployeeForm from "@/components/employees/EmployeeForm";
+import ProductForm from "@/components/products/ProductForm";
 
 export default {
   name: "EmployeeTab",
   components: {
-    EmployeeAddressTab,
-    EmployeeForm,
+    ProductForm,
   },
   data: () => ({
     tabs: {
-      employee: "Employee",
-      target: "Traget",
-      address: "Address",
-      emergencyContanct: "Emergency Contancts",
+      product: "Product",
+      detail: "Detail",
     },
   }),
 };

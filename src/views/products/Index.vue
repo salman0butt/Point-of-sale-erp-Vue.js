@@ -8,7 +8,7 @@
               >Create Products</router-link
             >
             <CDataTable
-              :items="users"
+              :items="Product"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -36,10 +36,20 @@
                   {{
                     item.branches
                       .map(function (item) {
-                        return item.name.en;
+                        return item.name;
                       })
                       .join(",")
                   }}
+                </td>
+              </template>
+              <template #supplier="{ item }">
+                <td>
+                  {{ item.supplier.name }}
+                </td>
+              </template>
+              <template #brand="{ item }">
+                <td>
+                  {{ item.brand.name }}
                 </td>
               </template>
               <template #actions="{ item }">
@@ -75,7 +85,7 @@
 </template>
 
 <script>
-import EmployeeService from "@/services/employees/EmployeeService";
+import ProductService from "@/services/products/ProductService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -86,31 +96,27 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "full_name", label: "EMPLOYEE NAME", _style: "min-width:40%" },
-  { key: "email", label: "EMAIL", _style: "min-width:15%;" },
-  { key: "phone_number", label: "MOBILE", _style: "min-width:15%;" },
-  { key: "department", label: "DEPARTMENT", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "supplier", label: "SUPPLER", _style: "min-width:15%;" },
+  { key: "brand", label: "BRAND", _style: "min-width:15%;" },
+  { key: "cost_price", label: "COST PRICE", _style: "min-width:15%;" },
+  { key: "selling_price", label: "SELLING PRICE", _style: "min-width:15%;" },
   { key: "branches", label: "BRANCH", _style: "min-width:15%;" },
+  { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "IndexEmployee",
+  name: "IndexProduct",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      usersData: [],
+      ProductData: [],
       fields,
       loading: false,
-      cards: {
-        employees_count: 0,
-        female_count: 0,
-        male_count: 0,
-        departments_count: 0,
-        manager_count: 0,
-      },
       deleteRows: [],
       activePage: 1,
       pages: 0,
@@ -119,32 +125,31 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getTotalCardData();
-    this.getEmployeeData();
+    this.getProductData();
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getEmployeeData(this.activePage, this.perPage);
+      this.getProductData(this.activePage, this.perPage);
     },
   },
   computed: {
-    users() {
-      return this.usersData;
+    Product() {
+      return this.ProductData;
     },
   },
   methods: {
-    getEmployeeData(page = "", per_page = "") {
-      EmployeeService.getAll(page, per_page)
+    getProductData(page = "", per_page = "") {
+      ProductService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
             this.designationsData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.usersData.push({ ...item, id });
+                this.ProductData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -157,35 +162,20 @@ export default {
           console.log(err);
         });
     },
-    getTotalCardData() {
-      EmployeeService.getTotalCount()
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            this.cards.employees_count = data.employees_count;
-            this.cards.female_count = data.female_count;
-            this.cards.male_count = data.male_count;
-            this.cards.departments_count = data.departments_count;
-            this.cards.manager_count = data.manager_count;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
       }
     },
     check(item) {
-      const val = Boolean(this.usersData[item.id]._selected);
-      this.$set(this.usersData[item.id], "_selected", !val);
+      const val = Boolean(this.ProductData[item.id]._selected);
+      this.$set(this.ProductData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/employees/edit/" + uuid });
+      this.$router.push({ path: "/products/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -200,17 +190,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeService.delete(this.deleteRows)
+            ProductService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Employee Deleted Successfully",
+                    text: "Product Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
-                  this.getTotalCardData();
+                  this.ProductData = this.ProductData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {
@@ -240,7 +229,7 @@ export default {
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getEmployeeData("", this.perPage);
+      this.getProductData("", this.perPage);
     },
   },
 };
