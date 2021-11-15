@@ -1,4 +1,4 @@
-import http from "../../http-common";
+import http from "../../../http-common";
 import Helper from "@/helpers/Helper";
 
 class CustomerServices extends Helper {

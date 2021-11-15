@@ -110,7 +110,7 @@
 </template>
 <script>
 import GroupServices from "@/services/groups/GroupServices";
-import SupplierServices from "@/services/supplier/SupplierServices";
+import SupplierServices from "@/services/contacts/supplier/SupplierServices";
 
 import { required, numeric } from "vuelidate/lib/validators";
 

@@ -25,32 +25,32 @@
                 href="#"
                 v-bind:class="{
                   active: activeTab === tab.key,
-                  disabled: tab.disabled,
+                  disabled: disabled,
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
-                <CBadge v-if="tab.disabled" color="danger"> coming soon</CBadge>
               </a>
             </div>
           </CCardBody>
         </CCard>
       </CCol>
       <CCol xs="12" lg="9">
-        <component v-bind:is="activeTab" module="supplier"></component>
+        <keep-alive>
+          <component v-bind:is="activeTab"></component>
+        </keep-alive>
       </CCol>
     </CRow>
   </div>
 </template>
 <script>
-import SupplierServices from "@/services/supplier/SupplierServices";
-import General from "@/components/supplier/General";
-import Address from "@/components/supplier/AddressTab";
+import General from "@/components/contacts/supplier/General";
+import Address from "@/components/contacts/supplier/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
-  name: "EditSupplier",
+  name: "AddSupplier",
   cilUser,
   cisCircle,
   components: {
@@ -60,11 +60,10 @@ export default {
   },
   data() {
     return {
-      url_data: "",
-      name: "",
-      group: "",
+      name: "name",
+      group: "Supplier group",
       activeTab: "General",
-      disabled: false,
+      disabled: true,
       tabs: [
         { key: "General", name: "General" },
         { key: "Address", name: "Address" },
@@ -84,30 +83,10 @@ export default {
       ],
     };
   },
-  created() {
-    this.getServerData();
-  },
+  created() {},
   methods: {
     changeActiveTab(value) {
       this.activeTab = value;
-    },
-    getServerData() {
-      this.url_data = this.$route.params.id;
-      SupplierServices.get(this.url_data)
-        .then((res) => {
-          this.name = res.data.name;
-          this.group = res.data.group.name.en;
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went Wrong",
-            timer: 3600,
-          });
-        });
     },
   },
 };

@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import CustomerServices from "@/services/customers/CustomerServices";
+import CustomerServices from "@/services/contacts/customers/CustomerServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [

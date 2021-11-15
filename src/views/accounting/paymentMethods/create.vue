@@ -98,6 +98,15 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Tax Percent"
+                    type="number"
+                    min="0"
+                    step="any"
+                    v-model="form.tax"
+                  />
+                </CCol>
                 <!-- <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Currency"
@@ -147,6 +156,7 @@ export default {
       account: "",
       percent: "0.000",
       amount: "0.000",
+      tax: "0.000",
     },
     active: "active",
     options: {

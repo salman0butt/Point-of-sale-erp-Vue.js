@@ -388,7 +388,7 @@
 <script>
 import CustomerSettingService from "@/services/settings/CustomerSettingService";
 import GroupServices from "@/services/groups/GroupServices";
-import CustomerServices from "@/services/customers/CustomerServices";
+import CustomerServices from "@/services/contacts/customers/CustomerServices";
 import { required, numeric } from "vuelidate/lib/validators";
 
 export default {
