@@ -1,9 +1,9 @@
 import auth from '@/middleware/auth'
 
 //Product
-const IndexProduct = () => import('@/views/products/Index')
-const CreateProduct = () => import('@/views/products/Create')
-const EditProduct = () => import('@/views/products/Edit')
+const IndexProduct = () => import('@/views/products/product/Index')
+const CreateProduct = () => import('@/views/products/product/Create')
+const EditProduct = () => import('@/views/products/product/Edit')
 
 const productRoutes = {
   path: 'products',

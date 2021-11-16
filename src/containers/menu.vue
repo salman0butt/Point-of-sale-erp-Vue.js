@@ -7,6 +7,7 @@ export default {
       sideBarItems_hr: [],
       sideBarItems_contacts: [],
       sideBarItems_accounting: [],
+      sideBarItems_products: [],
       permissions: localStorage.getItem("permissions"),
     };
   },
@@ -86,13 +87,33 @@ export default {
           _children: this.sideBarItems_contacts,
         });
       }
-      if (this.permissions.includes("read suppliers")) {
+      if (this.permissions.includes("read accounting")) {
+        // different modules of Products
+        if (this.permissions.includes("read accounts")) {
+          this.sideBarItems_products.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Category",
+              to: "/product/category/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.permissions.includes("read accounts")) {
+          this.sideBarItems_products.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Products",
+              to: "/products/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
         this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          _attrs: { class: "hide-me" },
-          name: "Products",
-          to: "/products",
+          _name: "CSidebarNavDropdown",
+          name: "Catelogs",
           icon: "cil-lan",
+          items: this.sideBarItems_products,
         });
       }
 

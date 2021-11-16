@@ -31,6 +31,7 @@ import customersRoutes from '@/router/contacts/customers/customersRoutes';
 import supplierRoutes from '@/router/contacts/supplier/supplierRoutes';
 import groupRoutes from '@/router/contacts/groups/groupRoutes';
 import productRoutes from '@/router/products/productRoutes';
+import productCategoryRoutes from '@/router/products/productCategoryRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -210,6 +211,7 @@ const router = new Router({
         groupRoutes,
         supplierRoutes,
         productRoutes,
+        productCategoryRoutes,
 
         {
           path: 'theme',
