@@ -93,6 +93,17 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
+              name: "Brand",
+              to: "/brands/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        // different modules of Products
+        if (this.permissions.includes("read accounts")) {
+          this.sideBarItems_products.push([
+            {
+              _name: "CSidebarNavItem",
               name: "Category",
               to: "/product/category/index",
               icon: "cil-lan",
