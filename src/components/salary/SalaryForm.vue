@@ -83,11 +83,13 @@
                   />
                   <span>
                     <i
+                      class="thumb"
                       @click="removeEarnings(k)"
                       v-show="k || (!k && salary.earnings.inputs.length > 1)"
                       ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                     ><br />
                     <i
+                      class="thumb"
                       @click="addEarnings(k)"
                       v-show="k == salary.earnings.inputs.length - 1"
                       ><CIcon :content="$options.cibAddthis" /> Add fields</i
@@ -112,11 +114,13 @@
                   <CTextarea label="Note" placeholder="Content..." v-model="input.note" />
                   <span>
                     <i
+                      class="thumb"
                       @click="removeDeduction(k)"
                       v-show="k || (!k && salary.deductions.inputs.length > 1)"
                       ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                     ><br />
                     <i
+                      class="thumb"
                       @click="addDeduction(k)"
                       v-show="k == salary.deductions.inputs.length - 1"
                       ><CIcon :content="$options.cibAddthis" /> Add fields</i
@@ -158,10 +162,12 @@
                   <span>
                     <i
                       @click="removeExpense(k)"
+                      class="thumb"
                       v-show="k || (!k && salary.expenses.inputs.length > 1)"
                       ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                     ><br />
                     <i
+                      class="thumb"
                       @click="addExpense(k)"
                       v-show="k == salary.expenses.inputs.length - 1"
                       ><CIcon :content="$options.cibAddthis" /> Add fields</i
@@ -658,7 +664,7 @@ export default {
 </script>
 
 <style>
-.errorMsg {
-  color: red;
+.thumb {
+  cursor: pointer;
 }
 </style>

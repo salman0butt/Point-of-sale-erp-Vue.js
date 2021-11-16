@@ -30,6 +30,7 @@ import rolesandpermissions from '@/router/rolesandpermissions/RolesAndPermission
 import customersRoutes from '@/router/contacts/customers/customersRoutes';
 import supplierRoutes from '@/router/contacts/supplier/supplierRoutes';
 import groupRoutes from '@/router/contacts/groups/groupRoutes';
+import productRoutes from '@/router/products/productRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
@@ -131,12 +132,6 @@ const test = () => import('@/views/Testing')
 
 Vue.use(Router)
 
-
-
-
-
-
-
 const router = new Router({
   mode: 'history', // https://router.vuejs.org/api/#mode
   linkActiveClass: 'open active',
@@ -214,6 +209,7 @@ const router = new Router({
         customersRoutes,
         groupRoutes,
         supplierRoutes,
+        productRoutes,
 
         {
           path: 'theme',
