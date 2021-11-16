@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import SupplierAddressServices from "@/services/supplier/SupplierAddressServices";
-import CustomerAddressServices from "@/services/customers/CustomerAddressServices";
+import SupplierAddressServices from "@/services/contacts/supplier/SupplierAddressServices";
+import CustomerAddressServices from "@/services/contacts/customers/CustomerAddressServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -161,15 +161,7 @@ export default {
           });
       }
     },
-    // rowClicked(item, index, column, e) {
-    //   if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
-    //     this.check(item);
-    //   }
-    // },
-    // check(item) {
-    //   const val = Boolean(this.AddressesData[item.id]._selected);
-    //   this.$set(this.AddressesData[item.id], "_selected", !val);
-    // },
+
     viewRow(uuid) {
       alert("page not ready");
     },

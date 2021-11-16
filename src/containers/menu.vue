@@ -5,6 +5,7 @@ export default {
     return {
       sideBarItems: [],
       sideBarItems_hr: [],
+      sideBarItems_contacts: [],
       sideBarItems_accounting: [],
       permissions: localStorage.getItem("permissions"),
     };
@@ -48,30 +49,41 @@ export default {
           icon: "cil-lan",
         });
       }
-      if (this.permissions.includes("read group")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          _attrs: { class: "hide-me" },
-          name: "Groups",
-          to: "/groups/index",
-          icon: "cil-lan",
-        });
-      }
-      if (this.permissions.includes("read customers")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: "Customers",
-          to: { name: "Index Customers" },
-          icon: "cil-lan",
-        });
-      }
 
-      if (this.permissions.includes("read suppliers")) {
+      if (this.permissions.includes("read contacts")) {
+        // different modules of hr
+        if (this.permissions.includes("read group")) {
+          this.sideBarItems_contacts.push({
+            _name: "CSidebarNavItem",
+            _attrs: { class: "hide-me" },
+            name: "Groups",
+            to: "/groups/index",
+            icon: "cil-lan",
+          });
+        }
+        if (this.permissions.includes("read customers")) {
+          this.sideBarItems_contacts.push({
+            _name: "CSidebarNavItem",
+            name: "Customers",
+            to: { name: "Index Customers" },
+            icon: "cil-lan",
+          });
+        }
+
+        if (this.permissions.includes("read suppliers")) {
+          this.sideBarItems_contacts.push({
+            _name: "CSidebarNavItem",
+            name: "Suppliers",
+            to: { name: "Index Supplier" },
+            icon: "cil-lan",
+          });
+        }
+
         this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: "Suppliers",
-          to: { name: "Index Supplier" },
+          _name: "CSidebarNavDropdown",
+          name: "Contacts",
           icon: "cil-lan",
+          _children: this.sideBarItems_contacts,
         });
       }
       if (this.permissions.includes("read suppliers")) {
@@ -83,6 +95,7 @@ export default {
           icon: "cil-lan",
         });
       }
+
       if (this.permissions.includes("read profile")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",

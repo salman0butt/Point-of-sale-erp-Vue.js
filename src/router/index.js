@@ -27,9 +27,9 @@ import store from '@/store'
 import attendanceRoutes from '@/router/attendance/attendanceRoutes';
 import accountingRoutes from '@/router/accounting/accountingRoutes';
 import rolesandpermissions from '@/router/rolesandpermissions/RolesAndPermissionsRoutes';
-import customersRoutes from '@/router/customers/customersRoutes';
-import supplierRoutes from '@/router/supplier/supplierRoutes';
-import groupRoutes from '@/router/groups/groupRoutes';
+import customersRoutes from '@/router/contacts/customers/customersRoutes';
+import supplierRoutes from '@/router/contacts/supplier/supplierRoutes';
+import groupRoutes from '@/router/contacts/groups/groupRoutes';
 import productRoutes from '@/router/products/productRoutes';
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')

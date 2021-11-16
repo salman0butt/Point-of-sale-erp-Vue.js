@@ -1,9 +1,9 @@
 import auth from '@/middleware/auth'
 
 
-const IndexCustomers = () => import('@/views/customers/index')
-const CreateCustomer = () => import('@/views/customers/create')
-const EditCustomer = () => import('@/views/customers/edit')
+const IndexCustomers = () => import('@/views/contacts/customers/index')
+const CreateCustomer = () => import('@/views/contacts/customers/create')
+const EditCustomer = () => import('@/views/contacts/customers/edit')
 
 
 const customersRoutes =

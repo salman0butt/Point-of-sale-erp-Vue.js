@@ -43,8 +43,8 @@
   </div>
 </template>
 <script>
-import General from "@/components/customers/General";
-import Address from "@/components/customers/AddressTab";
+import General from "@/components/contacts/customers/General";
+import Address from "@/components/contacts/customers/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";

@@ -72,8 +72,8 @@
 </template>
 <script>
 import VueCountryCode from "vue-country-code-select";
-import CustomerContactServices from "@/services/customers/CustomerContactServices";
-import SupplierContactServices from "@/services/supplier/SupplierContactServices";
+import CustomerContactServices from "@/services/contacts/customers/CustomerContactServices";
+import SupplierContactServices from "@/services/contacts/supplier/SupplierContactServices";
 
 export default {
   name: "Contact",

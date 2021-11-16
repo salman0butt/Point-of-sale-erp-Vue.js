@@ -1,9 +1,9 @@
 import auth from '@/middleware/auth'
 
 
-const IndexGroups = () => import('@/views/groups/index')
-const CreateGroups = () => import('@/views/groups/create')
-const EditGroups = () => import('@/views/groups/edit')
+const IndexGroups = () => import('@/views/contacts/groups/index')
+const CreateGroups = () => import('@/views/contacts/groups/create')
+const EditGroups = () => import('@/views/contacts/groups/edit')
 
 const groupRoutes =
 {
