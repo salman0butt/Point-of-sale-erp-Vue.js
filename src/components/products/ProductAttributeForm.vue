@@ -120,7 +120,7 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          this.router.push("/products");
+          this.$router.push("/products");
         });
     },
     saveProductAttribute() {
