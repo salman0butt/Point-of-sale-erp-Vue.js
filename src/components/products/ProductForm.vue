@@ -523,12 +523,6 @@ export default {
                 text: "Product Updated Successfully",
                 timer: 3600,
               });
-              if (res.data.personal_photo !== "") {
-                this.$store.commit("set_emp_img", res.data.personal_photo);
-                if (res.data.uuid && res.data.uuid === this.$store.state.employee_id) {
-                  this.$store.commit("set_profile_img", res.data.personal_photo);
-                }
-              }
 
               this.$v.$reset();
               if (this.saveAndExit) {
