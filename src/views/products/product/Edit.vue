@@ -60,6 +60,7 @@
 <script>
 import ProductTab from "@/components/products/ProductTab";
 import ProductAttributeForm from "@/components/products/ProductAttributeForm";
+import ProductVariationForm from "@/components/products/ProductVariationForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -69,6 +70,7 @@ export default {
   components: {
     ProductTab,
     ProductAttributeForm,
+    ProductVariationForm,
   },
   data() {
     return {
@@ -78,7 +80,7 @@ export default {
       tabs: [
         { key: "ProductTab", name: "General" },
         { key: "ProductAttributeForm", name: "Attributes" },
-        { key: "Variations", name: "Variations", disabled: true },
+        { key: "ProductVariationForm", name: "Variations" },
         { key: "Inventory", name: "Inventory", disabled: true },
         { key: "Images", name: "Images", disabled: true },
       ],

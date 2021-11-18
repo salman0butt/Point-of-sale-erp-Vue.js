@@ -91,14 +91,13 @@ export default {
   created() {
     this.productId = this.$route.params.id;
     this.form.product_id = this.$route.params.id;
-    if (this.productId) {
+    if (this.productId !== "" && this.productId !== undefined) {
       this.getProductAttribute();
-      this.isEditing = true;
     }
   },
   methods: {
     addAttribute() {
-      this.form.attributes.push({ serial_no: "", cost_price: "", selling_price: "" });
+      this.form.attributes.push({ name: "", values: [], tag: "" });
     },
     removeAttribute(index) {
       this.form.attributes.splice(index, 1);
@@ -107,6 +106,8 @@ export default {
       ProductAttributeService.get(this.productId)
         .then(({ data }) => {
           if (data && data.length) {
+            this.isEditing = true;
+            this.form.attributes = [];
             data.forEach((element) => {
               this.form.attributes.unshift({
                 name: element.name,
@@ -120,14 +121,14 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          this.$router.push("/products");
+          this.$router.push({ path: "/products" });
         });
     },
     saveProductAttribute() {
       let formData = this.form;
       ProductAttributeService.create(formData)
         .then((res) => {
-          if (res.status == 200) {
+          if (res.status == 200 || res.status == 201) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
@@ -150,11 +151,11 @@ export default {
       let formData = this.form;
       ProductAttributeService.update(this.productId, formData)
         .then((res) => {
-          if (res.status == 200) {
+          if (res.status == 200 || res.status == 201) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
-              text: "ProductAttribute Updated Successfully",
+              text: "Product Attribute Updated Successfully",
               timer: 3600,
             });
           }
