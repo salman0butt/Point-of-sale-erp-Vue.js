@@ -16,7 +16,7 @@
                 <template slot="title">
                   {{ tabs.detail }}
                 </template>
-                <ProductForm />
+                <!-- <ProductForm /> -->
               </CTab>
             </CTabs>
           </CCardBody>
