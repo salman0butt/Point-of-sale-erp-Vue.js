@@ -67,7 +67,7 @@ export default {
       this.$emit("file:changed", this.files);
       this.$refs.uploadInput.value = null;
     },
-    previewImgs(event) {
+    async previewImgs(event) {
       if (
         this.$props.max &&
         event &&
@@ -92,10 +92,11 @@ export default {
         } else {
           readers.push({
             name: this.files[i].name,
-            src: this.readAsDataURL(this.files[i]),
+            src: await this.readAsDataURL(this.files[i]),
           });
         }
       }
+
       Promise.all(readers).then((values) => {
         this.Imgs = values;
       });
@@ -128,7 +129,7 @@ export default {
       <input
         type="file"
         style="z-index: 1"
-        accept="application/pdf"
+        accept="application/pdf,image/*"
         ref="uploadInput"
         @change="previewImgs"
         multiple
