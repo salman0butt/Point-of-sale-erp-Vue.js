@@ -63,6 +63,7 @@ import ProductAttributeForm from "@/components/products/ProductAttributeForm";
 import ProductVariationForm from "@/components/products/ProductVariationForm";
 import ProductImageForm from "@/components/products/ProductImageForm";
 import ProductInventoryForm from "@/components/products/ProductInventoryForm";
+import ProductModifierForm from "@/components/products/ProductModifierForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -75,6 +76,7 @@ export default {
     ProductVariationForm,
     ProductImageForm,
     ProductInventoryForm,
+    ProductModifierForm,
   },
   data() {
     return {
@@ -87,6 +89,7 @@ export default {
         { key: "ProductVariationForm", name: "Variations" },
         { key: "ProductInventoryForm", name: "Inventory" },
         { key: "ProductImageForm", name: "Images" },
+        { key: "ProductModifierForm", name: "Modifiers" },
       ],
     };
   },

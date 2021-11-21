@@ -79,10 +79,11 @@ export default {
     activeTab: "ProductTab",
     tabs: [
       { key: "ProductTab", name: "General" },
-      { key: "Attributes", name: "Attributes" },
-      { key: "Variations", name: "Variations" },
-      { key: "Inventory", name: "Inventory" },
-      { key: "Images", name: "Images" },
+      { key: "", name: "Attributes" },
+      { key: "", name: "Variations" },
+      { key: "", name: "Inventory" },
+      { key: "", name: "Images" },
+      { key: "", name: "Modifiers" },
     ],
   }),
   // computed: {
