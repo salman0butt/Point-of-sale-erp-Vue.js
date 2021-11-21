@@ -15,11 +15,11 @@
                   <div class="form-group" v-for="(input, k) in form.variations" :key="k">
                     <CRow>
                       <CSelect
-                        label="Attribute"
+                        label="Variation"
                         class="col-md-3"
                         :options="options.attributes"
                         :value.sync="input.product_attribute_id"
-                        @change="selectAttribute(k)"
+                        @change="selectVariation(k)"
                       />
                       <CSelect
                         label="Value"
@@ -43,7 +43,7 @@
                       />
                       <span class="ml-4">
                         <i
-                          @click="removeAttribute(k)"
+                          @click="removeVariation(k)"
                           class="thumb"
                           v-show="k || (!k && form.variations.length > 1)"
                         >
@@ -51,7 +51,7 @@
                         ><br />
                         <i
                           class="thumb"
-                          @click="addAttribute(k)"
+                          @click="addVariation(k)"
                           v-show="k == form.variations.length - 1"
                           ><CIcon :content="$options.cibAddthis" /> Add More</i
                         >
@@ -122,7 +122,7 @@ export default {
     }
   },
   methods: {
-    addAttribute() {
+    addVariation() {
       this.form.variations.push({
         product_attribute_id: "",
         product_attribute_value_id: "",
@@ -135,7 +135,7 @@ export default {
         },
       });
     },
-    removeAttribute(index) {
+    removeVariation(index) {
       this.form.variations.splice(index, 1);
     },
     getProductVariation() {
@@ -160,7 +160,7 @@ export default {
                 },
               });
             });
-            this.getSelectAttribute();
+            this.getSelectVariation();
           }
         })
         .catch((error) => {
@@ -196,7 +196,7 @@ export default {
           console.log(error);
         });
     },
-    getSelectAttribute() {
+    getSelectVariation() {
       this.form.variations.map((element, index) => {
         this.allOptions.map((option) => {
           if (element.product_attribute_id === option.uuid) {
@@ -222,7 +222,7 @@ export default {
       //   }
       // });
     },
-    selectAttribute(index) {
+    selectVariation(index) {
       let attribute_id = this.form.variations[index].product_attribute_id;
       this.allOptions.map((element) => {
         if (element.uuid === attribute_id) {
