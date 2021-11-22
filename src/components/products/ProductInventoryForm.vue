@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> inventory</CCardHeader>
+          <CCardHeader> Inventory </CCardHeader>
           <CCardBody>
             <form
               @submit.prevent="
