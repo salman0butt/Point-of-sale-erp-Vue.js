@@ -14,12 +14,13 @@
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.variations" :key="k">
                     <CRow>
+                      <CInput label="Name" class="col-md-3" :value.sync="input.name" />
                       <CSelect
-                        label="Variation"
+                        label="Attribute"
                         class="col-md-3"
                         :options="options.attributes"
                         :value.sync="input.product_attribute_id"
-                        @change="selectVariation(k)"
+                        @change="selectAttribute(k)"
                       />
                       <CSelect
                         label="Value"
@@ -41,7 +42,7 @@
                         class="col-md-3"
                         :value.sync="input.selling_price"
                       />
-                      <span class="ml-4">
+                      <span class="ml-4 mt-4">
                         <i
                           @click="removeVariation(k)"
                           class="thumb"
@@ -93,6 +94,7 @@ export default {
       product_id: "",
       variations: [
         {
+          name: "",
           product_attribute_id: "",
           product_attribute_value_id: "",
           cost_price: "",
@@ -124,6 +126,7 @@ export default {
   methods: {
     addVariation() {
       this.form.variations.push({
+        name: "",
         product_attribute_id: "",
         product_attribute_value_id: "",
         cost_price: "",
@@ -146,6 +149,7 @@ export default {
             this.form.variations = [];
             data.forEach((element, index) => {
               this.form.variations.unshift({
+                name: element.name,
                 product_attribute_id: element.product_attribute.uuid,
                 product_attribute_value_id: element.product_attribute_value.uuid,
                 cost_price: element.product_sku.cost_price,
@@ -222,7 +226,7 @@ export default {
       //   }
       // });
     },
-    selectVariation(index) {
+    selectAttribute(index) {
       let attribute_id = this.form.variations[index].product_attribute_id;
       this.allOptions.map((element) => {
         if (element.uuid === attribute_id) {
