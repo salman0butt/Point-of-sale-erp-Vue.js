@@ -12,11 +12,11 @@
                 </template>
                 <ProductForm />
               </CTab>
-              <CTab disabled id="show">
+              <CTab id="show">
                 <template slot="title">
                   {{ tabs.detail }}
                 </template>
-                <!-- <ProductForm /> -->
+                <ProductGeneralForm />
               </CTab>
             </CTabs>
           </CCardBody>
@@ -27,11 +27,13 @@
 </template>
 <script>
 import ProductForm from "@/components/products/ProductForm";
+import ProductGeneralForm from "@/components/products/ProductGeneralForm";
 
 export default {
   name: "EmployeeTab",
   components: {
     ProductForm,
+    ProductGeneralForm,
   },
   data: () => ({
     tabs: {
