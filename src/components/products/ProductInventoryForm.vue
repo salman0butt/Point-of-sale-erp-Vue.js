@@ -139,6 +139,7 @@ const fields = [
   { key: "date", label: "DATE", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "add_subtract_stock", label: "In/Out Qty", _style: "min-width:15%;" },
+  { key: "stock", label: "STOCK", _style: "min-width:15%;" },
   { key: "recieving_price", label: "RECIEVING PRICE", _style: "min-width:15%;" },
   { key: "remarks", label: "REMARKS", _style: "min-width:15%;" },
 ];
