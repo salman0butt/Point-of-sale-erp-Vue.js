@@ -122,7 +122,7 @@ export default {
         }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
-          name: "Catelogs",
+          name: "Catalogs",
           icon: "cil-lan",
           items: this.sideBarItems_products,
         });

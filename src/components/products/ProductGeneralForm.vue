@@ -2,95 +2,81 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <CCard>
-          <CCardBody>
-            <form
-              @submit.prevent="isEditing ? updateProductGeneral() : saveProductGeneral()"
-            >
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Weight"
-                    v-model="form.weight"
-                    :class="{ error: $v.form.weight.$error }"
-                    @input="$v.form.weight.$touch()"
-                  />
-                  <div v-if="$v.form.weight.$error">
-                    <p v-if="!$v.form.weight.required" class="errorMsg">
-                      Weight is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Weight Unit"
-                    :options="options.weight_units"
-                    :value.sync="form.weight_unit"
-                    :class="{ error: $v.form.weight_unit.$error }"
-                    @input="$v.form.weight_unit.$touch()"
-                  />
-                  <div v-if="$v.form.weight_unit.$error">
-                    <p v-if="!$v.form.weight_unit.required" class="errorMsg">
-                      Weight Unit is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Length"
-                    v-model="form.length"
-                    :class="{ error: $v.form.length.$error }"
-                    @input="$v.form.length.$touch()"
-                  />
-                  <div v-if="$v.form.length.$error">
-                    <p v-if="!$v.form.length.required" class="errorMsg">
-                      Length is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Width"
-                    v-model="form.width"
-                    :class="{ error: $v.form.width.$error }"
-                    @input="$v.form.width.$touch()"
-                  />
-                  <div v-if="$v.form.width.$error">
-                    <p v-if="!$v.form.width.required" class="errorMsg">
-                      Width is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Height"
-                    v-model="form.height"
-                    :class="{ error: $v.form.height.$error }"
-                    @input="$v.form.height.$touch()"
-                  />
-                  <div v-if="$v.form.height.$error">
-                    <p v-if="!$v.form.height.required" class="errorMsg">
-                      Height is required
-                    </p>
-                  </div>
-                </CCol>
-              </CRow>
+        <form @submit.prevent="isEditing ? updateProductGeneral() : saveProductGeneral()">
+          <CRow>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Weight"
+                v-model="form.weight"
+                :class="{ error: $v.form.weight.$error }"
+                @input="$v.form.weight.$touch()"
+              />
+              <div v-if="$v.form.weight.$error">
+                <p v-if="!$v.form.weight.required" class="errorMsg">Weight is required</p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Weight Unit"
+                :options="options.weight_units"
+                :value.sync="form.weight_unit"
+                :class="{ error: $v.form.weight_unit.$error }"
+                @input="$v.form.weight_unit.$touch()"
+              />
+              <div v-if="$v.form.weight_unit.$error">
+                <p v-if="!$v.form.weight_unit.required" class="errorMsg">
+                  Weight Unit is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Length"
+                v-model="form.length"
+                :class="{ error: $v.form.length.$error }"
+                @input="$v.form.length.$touch()"
+              />
+              <div v-if="$v.form.length.$error">
+                <p v-if="!$v.form.length.required" class="errorMsg">Length is required</p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Width"
+                v-model="form.width"
+                :class="{ error: $v.form.width.$error }"
+                @input="$v.form.width.$touch()"
+              />
+              <div v-if="$v.form.width.$error">
+                <p v-if="!$v.form.width.required" class="errorMsg">Width is required</p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Height"
+                v-model="form.height"
+                :class="{ error: $v.form.height.$error }"
+                @input="$v.form.height.$touch()"
+              />
+              <div v-if="$v.form.height.$error">
+                <p v-if="!$v.form.height.required" class="errorMsg">Height is required</p>
+              </div>
+            </CCol>
+          </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-              <CRow class="mt-4 d-block">
-                <CButton
-                  progress
-                  timeout="2000"
-                  block
-                  color="success"
-                  style="float: right; width: 150px; margin-right: 20px"
-                  type="submit"
-                  >Save</CButton
-                >
-              </CRow>
-            </form>
-          </CCardBody>
-        </CCard>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <CRow class="mt-4 d-block">
+            <CButton
+              progress
+              timeout="2000"
+              block
+              color="success"
+              style="float: right; width: 150px; margin-right: 20px"
+              type="submit"
+              >Save</CButton
+            >
+          </CRow>
+        </form>
       </CCol>
     </CRow>
   </div>
