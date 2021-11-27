@@ -233,6 +233,16 @@
             </CCol>
           </CRow>
 
+          <CRow>
+            <vue-tags-input
+              v-model="form.tag"
+              class="col-md-4"
+              placeholder="Tags"
+              :tags="form.tags"
+              @tags-changed="(newTags) => (form.tags = newTags)"
+            />
+          </CRow>
+
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4">
             <CButton
@@ -266,10 +276,11 @@ import { required } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { VueEditor } from "vue2-editor";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
+import { VueTagsInput, createTag } from "@johmun/vue-tags-input";
 
 export default {
   name: "ProductForm",
-  components: { Multiselect, VueEditor },
+  components: { Multiselect, VueEditor, VueTagsInput },
   cibAddthis,
   cisMinusSquare,
   data: () => ({
@@ -292,6 +303,8 @@ export default {
       branches: "",
       images: "",
       status: "",
+      tags: [],
+      tag: "",
       serial_numbers: [
         {
           serial_no: "",
@@ -451,6 +464,12 @@ export default {
               });
             });
           }
+
+          if (data.tags && data.tags.length > 0) {
+            data.tags.forEach((element) => {
+              this.form.tags.unshift({ text: element.name, tiClasses: ["ti-valid"] });
+            });
+          }
           // this.form.images = data.images ?? "";
           this.form.status = data.status ?? "";
         })
@@ -502,6 +521,7 @@ export default {
           headers: { "Content-Type": "multipart/form-data" },
         };
         let formData = this.formData(true);
+        console.log(this.form);
         ProductService.update(this.productId, formData, config)
           .then((res) => {
             if (res.status == 200) {
@@ -565,6 +585,13 @@ export default {
             for (const numb of serial_numbers) {
               const obj = JSON.stringify(numb);
               formData.append("serial_no[]", obj);
+            }
+          }
+        } else if (index === "tags") {
+          const tags = this.form.tags;
+          if (tags !== "" && tags !== undefined) {
+            for (const tag of tags) {
+              formData.append("tags[]", tag.text);
             }
           }
         } else {
