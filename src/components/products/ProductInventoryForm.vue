@@ -9,6 +9,7 @@
               @submit.prevent="
                 isEditing ? updateProductInventory() : saveProductInventory()
               "
+              v-if="!shouldShow"
             >
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
@@ -16,6 +17,7 @@
                     label="Reorder Level"
                     type="number"
                     min="0"
+                    placeholder="0"
                     v-model="form.reorder_level"
                     :class="{ error: $v.form.reorder_level.$error }"
                     @input="$v.form.reorder_level.$touch()"
@@ -31,6 +33,7 @@
                     label="Replenish Level"
                     type="number"
                     min="0"
+                    placeholder="0"
                     v-model="form.replenish_level"
                     :class="{ error: $v.form.replenish_level.$error }"
                     @input="$v.form.replenish_level.$touch()"
@@ -48,6 +51,7 @@
                     @change="currentStock()"
                     type="number"
                     min="0"
+                    placeholder="0"
                     v-model="form.current_quantity"
                     :class="{ error: $v.form.current_quantity.$error }"
                     @input="$v.form.current_quantity.$touch()"
@@ -64,6 +68,7 @@
                     label="Add/Subtract Stock"
                     type="number"
                     @change="addSubtract()"
+                    placeholder="0"
                     v-model="form.add_subtract_stock"
                     :class="{ error: $v.form.add_subtract_stock.$error }"
                     @input="$v.form.add_subtract_stock.$touch()"
@@ -79,6 +84,7 @@
                     label="Recieving Price"
                     type="number"
                     min="0"
+                    placeholder="0"
                     v-model="form.recieving_price"
                     :class="{ error: $v.form.recieving_price.$error }"
                     @input="$v.form.recieving_price.$touch()"
@@ -119,10 +125,101 @@
               </CRow>
             </form>
 
+            <form
+              v-if="shouldShow"
+              @submit.prevent="
+                isVariationEditing
+                  ? updateProductVariationInventory()
+                  : saveProductVariationInventory()
+              "
+            >
+              <CRow v-for="(input, k) in variations_form" :key="k">
+                <CCol sm="6" md="2" class="pt-2">
+                  <CInput label="Name" v-model="input.variation_name" disabled />
+                </CCol>
+                <CCol sm="6" md="2" class="pt-2">
+                  <CInput label="Value" v-model="input.product_attribute" disabled />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Reorder Level"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    v-model="input.reorder_level"
+                  />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Replenish Level"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    v-model="input.replenish_level"
+                  />
+                </CCol>
+
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Current Stock"
+                    @change="currentVariationStock(k)"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    v-model="input.current_quantity"
+                  />
+                </CCol>
+
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Add/Subtract Stock"
+                    type="number"
+                    @change="addSubtractVariation(k)"
+                    placeholder="0"
+                    v-model="input.add_subtract_stock"
+                  />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Recieving Price"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    v-model="input.recieving_price"
+                  />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CTextarea
+                    label="Remarks"
+                    placeholder="Content..."
+                    v-model="input.remarks"
+                  />
+                </CCol>
+              </CRow>
+
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <CRow class="mt-4 d-block">
+                <CButton
+                  progress
+                  timeout="2000"
+                  block
+                  color="success"
+                  style="float: right; width: 150px; margin-right: 20px"
+                  type="submit"
+                  >Save</CButton
+                >
+              </CRow>
+            </form>
             <div>
               <br />
               <br />
-              <CDataTable :items="stockHistory" :fields="fields"> </CDataTable>
+              <CDataTable :items="stockHistory" :fields="fields">
+                <template #product_variation="{ item }">
+                  <td>
+                    {{ item.product_variation ? item.product_variation : "" }}
+                  </td>
+                </template>
+              </CDataTable>
             </div>
           </CCardBody>
         </CCard>
@@ -137,6 +234,7 @@ import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 
 const fields = [
   { key: "date", label: "DATE", _style: "min-width:40%" },
+  { key: "product_variation", label: "VARIATION", _style: "min-width:15%;" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "add_subtract_stock", label: "In/Out Qty", _style: "min-width:15%;" },
   { key: "stock", label: "STOCK", _style: "min-width:15%;" },
@@ -149,7 +247,9 @@ export default {
   cibAddthis,
   cisMinusSquare,
   data: () => ({
+    shouldShow: false,
     isEditing: false,
+    isVariationEditing: false,
     stockHistory: [],
     fields,
     form: {
@@ -162,6 +262,8 @@ export default {
       remarks: "",
       recieving_price: "",
     },
+    isVariation: false,
+    variations_form: [],
     productId: "",
   }),
   validations() {
@@ -180,7 +282,12 @@ export default {
   created() {
     this.productId = this.$route.params.id;
     this.form.product_id = this.$route.params.id;
-    if (this.productId) {
+    this.getVariationsInventory();
+    if (
+      this.productId !== null &&
+      this.productId !== "" &&
+      this.productId !== undefined
+    ) {
       this.getProductInventory();
     }
   },
@@ -204,6 +311,11 @@ export default {
               });
             }
           }
+          if (this.variations_form && this.variations_form.length > 0) {
+            this.shouldShow = true;
+          } else {
+            this.shouldShow = false;
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -214,9 +326,68 @@ export default {
       this.form.current_quantity =
         Number(this.form.original_stock) + Number(this.form.add_subtract_stock);
     },
+    addSubtractVariation(key) {
+      this.variations_form[key].current_quantity =
+        Number(this.variations_form[key].original_stock) +
+        Number(this.variations_form[key].add_subtract_stock);
+    },
     currentStock() {
       this.form.add_subtract_stock =
         Number(this.form.current_quantity) - Number(this.form.original_stock);
+    },
+    currentVariationStock(key) {
+      this.variations_form[key].add_subtract_stock =
+        Number(this.variations_form[key].current_quantity) -
+        Number(this.variations_form[key].original_stock);
+    },
+    getVariationsInventory() {
+      ProductInventoryService.getVariations(this.productId)
+        .then(({ data }) => {
+          if (data && data.length) {
+            this.isVariationEditing = true;
+            this.variations_form = [];
+            data.forEach((element) => {
+              this.variations_form.unshift({
+                uuid: element.inventable.inventory.uuid,
+                variation_name: element.inventable.name,
+                product_variation_id: element.inventable.uuid,
+                product_attribute:
+                  element.inventable.product_attribute.name +
+                  ":" +
+                  element.inventable.product_attribute_value.value,
+                reorder_level: element.reorder_level,
+                replenish_level: element.replenish_level,
+                current_quantity: element.current_quantity,
+                original_stock: element.current_quantity,
+                add_subtract_stock: "",
+                remarks: "",
+                recieving_price: "",
+              });
+            });
+
+            if (data.length > 0) {
+              console.log(data);
+              data.forEach((element) => {
+                element.history.map((item, id) => {
+                  this.stockHistory.push({ ...item, id });
+                });
+              });
+              // data.history.map((item, id) => {
+              //   this.stockHistory.push({ ...item, id });
+              // });
+            }
+          }
+
+          if (this.variations_form && this.variations_form.length > 0) {
+            this.shouldShow = true;
+          } else {
+            this.shouldShow = false;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.isVariationEditing = false;
+        });
     },
     saveProductInventory() {
       this.$v.$touch();
@@ -274,6 +445,64 @@ export default {
             });
           });
       }
+    },
+    saveProductVariationInventory() {
+      let formData = {
+        isVariation: true,
+        product_id: this.productId,
+        variations: this.variations_form,
+      };
+
+      ProductInventoryService.createVariations(formData)
+        .then((res) => {
+          if (res.status == 201) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Product Variation Inventory Created Successfully",
+              timer: 3600,
+            });
+            this.getVariationsInventory();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went wrong.",
+            timer: 3600,
+          });
+        });
+    },
+    updateProductVariationInventory() {
+      let formData = {
+        isVariation: true,
+        product_id: this.productId,
+        variations: this.variations_form,
+      };
+      ProductInventoryService.updateVariations(this.productId, formData)
+        .then((res) => {
+          if (res.status == 200) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Product Variation Inventory Updated Successfully",
+              timer: 3600,
+            });
+            this.$v.$reset();
+            this.getVariationsInventory();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something went Wrong",
+            timer: 3600,
+          });
+        });
     },
   },
 };
