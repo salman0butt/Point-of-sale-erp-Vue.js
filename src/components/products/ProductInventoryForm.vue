@@ -62,7 +62,19 @@
                     </p>
                   </div>
                 </CCol>
-
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Damage Qty"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    v-model="form.damage_qty"
+                    @change="addDamage()"
+                  />
+                </CCol>
+                <CCol v-if="form.damage_qty" sm="6" md="4" class="pt-2">
+                  <CInput label="Damage Reason" v-model="form.damage_reason" />
+                </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Add/Subtract Stock"
@@ -95,6 +107,7 @@
                     </p>
                   </div>
                 </CCol>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <CTextarea
                     label="Remarks"
@@ -168,6 +181,20 @@
                     placeholder="0"
                     v-model="input.current_quantity"
                   />
+                </CCol>
+
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Damage Qty"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    v-model="input.damage_qty"
+                    @change="addVariationDamage(k)"
+                  />
+                </CCol>
+                <CCol v-if="input.damage_qty" sm="6" md="4" class="pt-2">
+                  <CInput label="Damage Reason" v-model="input.damage_reason" />
                 </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
@@ -261,6 +288,8 @@ export default {
       add_subtract_stock: "",
       remarks: "",
       recieving_price: "",
+      damage_qty: "",
+      damage_reason: "",
     },
     isVariation: false,
     variations_form: [],
@@ -303,9 +332,12 @@ export default {
             this.form.add_subtract_stock = "";
             this.form.remarks = "";
             this.form.recieving_price = "";
+            this.form.damage_qty = "";
+            this.form.damage_reason = "";
             this.isEditing = true;
 
             if (data.history) {
+              this.stockHistory = [];
               data.history.map((item, id) => {
                 this.stockHistory.push({ ...item, id });
               });
@@ -331,6 +363,14 @@ export default {
         Number(this.variations_form[key].original_stock) +
         Number(this.variations_form[key].add_subtract_stock);
     },
+    addDamage() {
+      this.form.current_quantity =
+        Number(this.form.original_stock) - Number(this.form.damage_qty);
+      this.form.add_subtract_stock = "-" + Number(this.form.damage_qty);
+      if (this.form.damage_qty == "") {
+        this.form.add_subtract_stock = "";
+      }
+    },
     currentStock() {
       this.form.add_subtract_stock =
         Number(this.form.current_quantity) - Number(this.form.original_stock);
@@ -339,6 +379,16 @@ export default {
       this.variations_form[key].add_subtract_stock =
         Number(this.variations_form[key].current_quantity) -
         Number(this.variations_form[key].original_stock);
+    },
+    addVariationDamage(key) {
+      this.variations_form[key].current_quantity =
+        Number(this.variations_form[key].original_stock) -
+        Number(this.variations_form[key].damage_qty);
+      this.variations_form[key].add_subtract_stock =
+        "-" + Number(this.variations_form[key].damage_qty);
+      if (this.variations_form[key].damage_qty == "") {
+        this.variations_form[key].add_subtract_stock = "";
+      }
     },
     getVariationsInventory() {
       ProductInventoryService.getVariations(this.productId)
@@ -362,19 +412,18 @@ export default {
                 add_subtract_stock: "",
                 remarks: "",
                 recieving_price: "",
+                damage_qty: "",
+                damage_reason: "",
               });
             });
 
             if (data.length > 0) {
-              console.log(data);
+              this.stockHistory = [];
               data.forEach((element) => {
                 element.history.map((item, id) => {
                   this.stockHistory.push({ ...item, id });
                 });
               });
-              // data.history.map((item, id) => {
-              //   this.stockHistory.push({ ...item, id });
-              // });
             }
           }
 

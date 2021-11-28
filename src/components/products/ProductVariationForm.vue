@@ -149,6 +149,7 @@ export default {
             this.form.variations = [];
             data.forEach((element, index) => {
               this.form.variations.unshift({
+                uuid: element.uuid,
                 name: element.name,
                 product_attribute_id: element.product_attribute.uuid,
                 product_attribute_value_id: element.product_attribute_value.uuid,
@@ -170,7 +171,7 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          // this.$router.push({ path: "/products" });
+          this.$router.push({ path: "/products" });
         });
     },
     getProductVariationOptions() {
