@@ -59,38 +59,6 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Cost Price"
-                type="number"
-                :value.sync="form.cost_price"
-                placeholder="0.00"
-                :class="{ error: $v.form.cost_price.$error }"
-                @input="$v.form.cost_price.$touch()"
-              />
-              <div v-if="$v.form.cost_price.$error">
-                <p v-if="!$v.form.cost_price.required" class="errorMsg">
-                  Cost Price is required
-                </p>
-              </div>
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Selling Price"
-                type="number"
-                placeholder="0.00"
-                :value.sync="form.selling_price"
-                :class="{ error: $v.form.selling_price.$error }"
-                @input="$v.form.selling_price.$touch()"
-              />
-              <div v-if="$v.form.selling_price.$error">
-                <p v-if="!$v.form.selling_price.required" class="errorMsg">
-                  Selling Price is required
-                </p>
-              </div>
-            </CCol>
-          </CRow>
-          <CRow>
-            <CCol sm="6" md="4" class="pt-2">
               <CInput label="Barcode" :value.sync="form.barcode" />
             </CCol>
             <CCol sm="6" md="4" class="pt-2" id="categories">
@@ -140,20 +108,10 @@
             <CCol sm="12" md="12" class="pt-2 short_desc">
               <label class="typo__label">Short Description</label>
               <vue-editor v-model="form.short_description"></vue-editor>
-              <!-- <CTextarea
-                    label="Short Description"
-                    placeholder="Content..."
-                    v-model="form.short_description"
-                  /> -->
             </CCol>
             <CCol sm="12" md="12" class="pt-2">
               <label class="typo__label">Long Description</label>
               <vue-editor v-model="form.product_description"></vue-editor>
-              <!-- <CTextarea
-                    label="Long Description"
-                    placeholder="Content..."
-                    v-model="form.product_description"
-                  /> -->
             </CCol>
           </CRow>
 
@@ -167,22 +125,6 @@
             </CCol>
           </CRow>
           <CRow>
-            <CCol sm="3" md="3" class="pt-2">
-              <CInputCheckbox
-                custom
-                :checked="form.is_ecommerce_product"
-                label="is Ecommerce Product"
-                @change="toggleIsEcommerce"
-              />
-            </CCol>
-            <CCol sm="3" md="3" class="pt-2">
-              <CInputCheckbox
-                custom
-                :checked="form.is_vat_include"
-                label="is Vat (included)"
-                @change="toggleIsVat"
-              />
-            </CCol>
             <CCol sm="3" md="3" class="pt-2">
               <CInputCheckbox
                 custom
@@ -200,18 +142,6 @@
                     label="Serial Number"
                     class="col-md-4"
                     :value.sync="input.serial_no"
-                  />
-                  <CInput
-                    type="number"
-                    label="Cost Price"
-                    class="col-md-4"
-                    :value.sync="input.cost_price"
-                  />
-                  <CInput
-                    type="number"
-                    label="Selling Price"
-                    class="col-md-4"
-                    :value.sync="input.selling_price"
                   />
                   <span class="ml-4">
                     <i
@@ -276,7 +206,7 @@ import { required } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { VueEditor } from "vue2-editor";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
-import { VueTagsInput, createTag } from "@johmun/vue-tags-input";
+import { VueTagsInput } from "@johmun/vue-tags-input";
 
 export default {
   name: "ProductForm",
@@ -292,8 +222,6 @@ export default {
       supplier_id: "",
       brand_id: "",
       barcode: "",
-      cost_price: "",
-      selling_price: "",
       short_description: "",
       product_description: "",
       is_ecommerce_product: false,
@@ -308,8 +236,6 @@ export default {
       serial_numbers: [
         {
           serial_no: "",
-          cost_price: "",
-          selling_price: "",
         },
       ],
     },
@@ -344,14 +270,14 @@ export default {
           value: "product",
           label: "Product",
         },
-        {
-          value: "service",
-          label: "Service",
-        },
-        {
-          value: "subscription",
-          label: "Subscription",
-        },
+        // {
+        //   value: "service",
+        //   label: "Service",
+        // },
+        // {
+        //   value: "subscription",
+        //   label: "Subscription",
+        // },
       ],
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
@@ -423,14 +349,8 @@ export default {
     removeSerial(index) {
       this.form.serial_numbers.splice(index, 1);
     },
-    toggleIsEcommerce() {
-      this.form.is_ecommerce_product = !this.form.is_ecommerce_product;
-    },
     toggleIsFavruite() {
       this.form.is_favorite = !this.form.is_favorite;
-    },
-    toggleIsVat() {
-      this.form.is_vat_include = !this.form.is_vat_include;
     },
     getProduct() {
       ProductService.get(this.productId)
@@ -444,9 +364,6 @@ export default {
           this.form.selling_price = data.selling_price ?? "";
           this.form.short_description = data.short_description ?? "";
           this.form.product_description = data.product_description ?? "";
-          this.form.is_ecommerce_product =
-            data.is_ecommerce_product == "yes" ? true : false;
-          this.form.is_vat_include = data.is_vat_include == "yes" ? true : false;
           this.form.is_favorite = data.is_favorite == "yes" ? true : false;
           this.form.categories = data.categories.map(function (item) {
             return { label: item.name, value: item.uuid };
