@@ -131,17 +131,20 @@ export default {
     getProductGeneral() {
       ProductGeneralService.get(this.productId)
         .then(({ data }) => {
-          this.isEditing = true;
-          this.id = data.uuid;
-          this.form.weight = data.weight ?? "";
-          this.form.weight_unit = data.weight_unit ?? "";
-          this.form.length = data.length ?? "";
-          this.form.width = data.width ?? "";
-          this.form.height = data.height ?? "";
+          if (data !== "" && data !== null && data !== undefined && data.length) {
+            this.isEditing = true;
+            this.id = data.uuid;
+            this.form.weight = data.weight ?? "";
+            this.form.weight_unit = data.weight_unit ?? "";
+            this.form.length = data.length ?? "";
+            this.form.width = data.width ?? "";
+            this.form.height = data.height ?? "";
+          }
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+          this.$router.push({ path: "/products" });
         });
     },
     saveProductGeneral() {
