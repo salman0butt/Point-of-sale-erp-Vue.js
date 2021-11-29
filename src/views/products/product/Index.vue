@@ -42,11 +42,22 @@
                   }}
                 </td>
               </template>
-              <template #supplier="{ item }">
+              <template #categories="{ item }">
+                <td>
+                  {{
+                    item.categories
+                      .map(function (item) {
+                        return item.name;
+                      })
+                      .join(",")
+                  }}
+                </td>
+              </template>
+              <!-- <template #supplier="{ item }">
                 <td>
                   {{ item.supplier.name }}
                 </td>
-              </template>
+              </template> -->
               <template #brand="{ item }">
                 <td>
                   {{ item.brand.name }}
@@ -98,10 +109,10 @@ const fields = [
   // },
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "supplier", label: "SUPPLER", _style: "min-width:15%;" },
+  // { key: "supplier", label: "SUPPLER", _style: "min-width:15%;" },
   { key: "brand", label: "BRAND", _style: "min-width:15%;" },
-  { key: "cost_price", label: "COST PRICE", _style: "min-width:15%;" },
-  { key: "selling_price", label: "SELLING PRICE", _style: "min-width:15%;" },
+  { key: "serial_number", label: "SERIAL NUMBER", _style: "min-width:15%;" },
+  { key: "categories", label: "CATEGORY", _style: "min-width:15%;" },
   { key: "branches", label: "BRANCH", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },

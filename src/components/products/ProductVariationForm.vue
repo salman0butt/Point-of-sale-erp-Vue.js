@@ -15,32 +15,27 @@
                   <div class="form-group" v-for="(input, k) in form.variations" :key="k">
                     <CRow>
                       <CInput label="Name" class="col-md-3" :value.sync="input.name" />
-                      <CSelect
-                        label="Attribute"
+                      <div class="form-group">
+                        <label class="typo__label">Attributes</label>
+                        <vue-tags-input
+                          v-model="input.value"
+                          class="col-md-6"
+                          placeholder="Attributes"
+                          :autocomplete-items="filteredItems(k)"
+                          :add-only-from-autocomplete="true"
+                          :tags="input.values"
+                          @tags-changed="(newTags) => (input.values = newTags)"
+                        />
+                      </div>
+                      <CInput
+                        label="Serial Number"
                         class="col-md-3"
-                        :options="options.attributes"
-                        :value.sync="input.product_attribute_id"
-                        @change="selectAttribute(k)"
-                      />
-                      <CSelect
-                        label="Value"
-                        class="col-md-3"
-                        :options="input.options.attribute_values"
-                        :value.sync="input.product_attribute_value_id"
+                        :value.sync="input.serial_number"
                       />
                       <CInput
-                        label="Cost Price"
-                        placeholder="0.00"
-                        type="number"
+                        label="Barcode"
                         class="col-md-3"
-                        :value.sync="input.cost_price"
-                      />
-                      <CInput
-                        label="Selling Price"
-                        placeholder="0.00"
-                        type="number"
-                        class="col-md-3"
-                        :value.sync="input.selling_price"
+                        :value.sync="input.barcode"
                       />
                       <span class="ml-4 mt-4">
                         <i
@@ -83,27 +78,25 @@
 <script>
 import ProductVariationService from "@/services/products/ProductVariationService";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
+import { VueTagsInput } from "@johmun/vue-tags-input";
 
 export default {
   name: "ProductVariationForm",
+  components: { VueTagsInput },
   cibAddthis,
   cisMinusSquare,
   data: () => ({
     isEditing: false,
+    autocompleteItems: [],
     form: {
       product_id: "",
       variations: [
         {
           name: "",
-          product_attribute_id: "",
-          product_attribute_value_id: "",
-          cost_price: "",
-          selling_price: "",
-          options: {
-            attribute_values: [
-              { value: "", label: "Choose Value", disabled: true, selected: "" },
-            ],
-          },
+          serial_number: "",
+          barcode: "",
+          values: [],
+          value: "",
         },
       ],
     },
@@ -127,45 +120,49 @@ export default {
     addVariation() {
       this.form.variations.push({
         name: "",
-        product_attribute_id: "",
-        product_attribute_value_id: "",
-        cost_price: "",
-        selling_price: "",
-        options: {
-          attribute_values: [
-            { value: "", label: "Choose Value", disabled: true, selected: "" },
-          ],
-        },
+        serial_number: "",
+        barcode: "",
+        values: [],
+        value: "",
       });
     },
     removeVariation(index) {
       this.form.variations.splice(index, 1);
+    },
+    filteredItems(key) {
+      if (this.autocompleteItems.length === 0) return;
+      return this.autocompleteItems.filter((i) => {
+        return (
+          i.text.toLowerCase().indexOf(this.form.variations[key].value.toLowerCase()) !==
+          -1
+        );
+      });
     },
     getProductVariation() {
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
           if (data && data.length) {
             this.isEditing = true;
-            this.form.variations = [];
-            data.forEach((element, index) => {
-              this.form.variations.unshift({
-                uuid: element.uuid,
-                name: element.name,
-                product_attribute_id: element.product_attribute.uuid,
-                product_attribute_value_id: element.product_attribute_value.uuid,
-                cost_price: element.product_sku.cost_price,
-                selling_price: element.product_sku.selling_price,
-                options: {
-                  attribute_values: [
-                    {
-                      value: element.product_attribute_value.uuid,
-                      label: "Choose Value",
-                    },
-                  ],
-                },
-              });
-            });
-            this.getSelectVariation();
+            // this.form.variations = [];
+            // data.forEach((element, index) => {
+            //   this.form.variations.unshift({
+            //     uuid: element.uuid,
+            //     name: element.name,
+            //     product_attribute_id: element.product_attribute.uuid,
+            //     product_attribute_value_id: element.product_attribute_value.uuid,
+            //     cost_price: element.product_sku.cost_price,
+            //     selling_price: element.product_sku.selling_price,
+            //     options: {
+            //       attribute_values: [
+            //         {
+            //           value: element.product_attribute_value.uuid,
+            //           label: "Choose Value",
+            //         },
+            //       ],
+            //     },
+            //   });
+            // });
+            // this.getSelectVariation();
           }
         })
         .catch((error) => {
@@ -179,20 +176,20 @@ export default {
         .then(({ data }) => {
           if (data && data.length) {
             data.forEach((element) => {
-              this.options.attributes.push({
-                label: element.name,
-                value: element.uuid,
-              });
-              this.allOptions.push({
-                uuid: element.uuid,
-                name: element.name,
-                values: element.values,
-              });
-              // element.values.forEach((value) => {
-              //   this.options.attribute_values.push({
-              //     label: value.value,
-              //     value: value.uuid,
-              //   });
+              let name = element.name;
+              if (element.values && element.values.length) {
+                element.values.forEach((value) => {
+                  this.autocompleteItems.push({
+                    text: name + ": " + value.value,
+                    value: value.uuid,
+                  });
+                });
+              }
+
+              // this.allOptions.push({
+              //   uuid: element.uuid,
+              //   name: element.name,
+              //   values: element.values,
               // });
             });
           }
@@ -202,13 +199,13 @@ export default {
         });
     },
     getSelectVariation() {
-      this.form.variations.map((element, index) => {
+      this.form.variations.map((element) => {
         this.allOptions.map((option) => {
           if (element.product_attribute_id === option.uuid) {
             element.options.attribute_values = option.values.map((value) => {
               return {
                 label: value.value,
-                value: value.uuid,
+                // value: value.uuid,
               };
             });
           }
@@ -234,7 +231,7 @@ export default {
           this.form.variations[index].options.attribute_values = element.values.map(
             (value) => {
               return {
-                label: value.value,
+                text: value.value,
                 value: value.uuid,
               };
             }
@@ -297,3 +294,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.vue-tags-input.col-md-6 {
+  min-width: 230px;
+}
+</style>
