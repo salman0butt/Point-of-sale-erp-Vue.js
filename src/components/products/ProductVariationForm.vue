@@ -101,12 +101,6 @@ export default {
       ],
     },
     productId: "",
-    allOptions: [],
-    options: {
-      attributes: [
-        { value: "", label: "Choose Attribute", disabled: true, selected: "" },
-      ],
-    },
   }),
   created() {
     this.productId = this.$route.params.id;
@@ -143,26 +137,28 @@ export default {
         .then(({ data }) => {
           if (data && data.length) {
             this.isEditing = true;
-            // this.form.variations = [];
-            // data.forEach((element, index) => {
-            //   this.form.variations.unshift({
-            //     uuid: element.uuid,
-            //     name: element.name,
-            //     product_attribute_id: element.product_attribute.uuid,
-            //     product_attribute_value_id: element.product_attribute_value.uuid,
-            //     cost_price: element.product_sku.cost_price,
-            //     selling_price: element.product_sku.selling_price,
-            //     options: {
-            //       attribute_values: [
-            //         {
-            //           value: element.product_attribute_value.uuid,
-            //           label: "Choose Value",
-            //         },
-            //       ],
-            //     },
-            //   });
-            // });
-            // this.getSelectVariation();
+            this.form.variations = [];
+            data.forEach((element) => {
+              this.form.variations.unshift({
+                uuid: element.uuid,
+                name: JSON.parse(element.name).en,
+                serial_number: element.serial_number,
+                barcode: element.barcode,
+                values: element.values.map((value) => {
+                  return {
+                    text: value.product_attribute.name + ": " + value.value,
+                    value: value.uuid,
+                  };
+
+                  // return this.autocompleteItems.map((item) => {
+                  //   if (item.value === value.uuid) {
+                  //     return item;
+                  //   }
+                  // });
+                }),
+                value: "",
+              });
+            });
           }
         })
         .catch((error) => {
@@ -198,58 +194,11 @@ export default {
           console.log(error);
         });
     },
-    getSelectVariation() {
-      this.form.variations.map((element) => {
-        this.allOptions.map((option) => {
-          if (element.product_attribute_id === option.uuid) {
-            element.options.attribute_values = option.values.map((value) => {
-              return {
-                label: value.value,
-                // value: value.uuid,
-              };
-            });
-          }
-        });
-      });
-      // this.allOptions.map((element) => {
-      //   if (element.uuid === attribute_id) {
-      //     this.form.variations[index].options.attribute_values = element.values.map(
-      //       (value) => {
-      //         return {
-      //           label: value.value,
-      //           value: value.uuid,
-      //         };
-      //       }
-      //     );
-      //   }
-      // });
-    },
-    selectAttribute(index) {
-      let attribute_id = this.form.variations[index].product_attribute_id;
-      this.allOptions.map((element) => {
-        if (element.uuid === attribute_id) {
-          this.form.variations[index].options.attribute_values = element.values.map(
-            (value) => {
-              return {
-                text: value.value,
-                value: value.uuid,
-              };
-            }
-          );
-        }
-      });
-      this.form.variations[index].options.attribute_values.unshift({
-        value: "",
-        label: "Choose Value",
-        disabled: true,
-        selected: "",
-      });
-    },
     saveProductVariation() {
       let formData = this.form;
       ProductVariationService.create(formData)
         .then((res) => {
-          if (res.status == 200 || res.status == 201) {
+          if ((res && res.status == 200) || res.status == 201) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
@@ -272,7 +221,7 @@ export default {
       let formData = this.form;
       ProductVariationService.update(this.productId, formData)
         .then((res) => {
-          if (res.status == 200 || res.status == 201) {
+          if ((res && res.status == 200) || res.status == 201) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
