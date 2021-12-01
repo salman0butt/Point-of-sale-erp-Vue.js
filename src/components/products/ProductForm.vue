@@ -29,18 +29,25 @@
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Supplier"
+              <label class="typo__label">Suppliers</label>
+              <multiselect
+                v-model="form.suppliers"
                 :options="options.suppliers"
-                :value.sync="form.supplier_id"
-                :class="{ error: $v.form.supplier_id.$error }"
-                @input="$v.form.supplier_id.$touch()"
-              />
-              <div v-if="$v.form.supplier_id.$error">
-                <p v-if="!$v.form.supplier_id.required" class="errorMsg">
-                  Supplier is required
-                </p>
-              </div>
+                :multiple="true"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :preserve-search="true"
+                placeholder="Select Supplier"
+                label="label"
+                track-by="label"
+                :preselect-first="true"
+              >
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }} options selected</span
+                  ></template
+                >
+              </multiselect>
             </CCol>
           </CRow>
           <CRow>
@@ -58,9 +65,7 @@
                 </p>
               </div>
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Barcode" :value.sync="form.barcode" />
-            </CCol>
+
             <CCol sm="6" md="4" class="pt-2" id="categories">
               <label class="typo__label">Categories</label>
               <multiselect
@@ -103,6 +108,12 @@
                 >
               </multiselect>
             </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput label="Barcode" :value.sync="form.barcode" />
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput label="Serial Number" :value.sync="form.serial_number" />
+            </CCol>
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2 short_desc">
@@ -129,41 +140,13 @@
               <CInputCheckbox
                 custom
                 :checked="form.is_favorite"
-                label="is Favorite"
+                label="Is Favorite"
                 @change="toggleIsFavruite"
               />
             </CCol>
           </CRow>
-          <CRow>
-            <CCol sm="12" md="12" class="pt-2">
-              <div class="form-group" v-for="(input, k) in form.serial_numbers" :key="k">
-                <CRow>
-                  <CInput
-                    label="Serial Number"
-                    class="col-md-4"
-                    :value.sync="input.serial_no"
-                  />
-                  <span class="ml-4">
-                    <i
-                      @click="removeSerial(k)"
-                      class="thumb"
-                      v-show="k || (!k && form.serial_numbers.length > 1)"
-                    >
-                      <CIcon :content="$options.cisMinusSquare" /> Remove</i
-                    ><br />
-                    <i
-                      class="thumb"
-                      @click="addSerial(k)"
-                      v-show="k == form.serial_numbers.length - 1"
-                      ><CIcon :content="$options.cibAddthis" /> Add More</i
-                    >
-                  </span>
-                </CRow>
-              </div>
-            </CCol>
-          </CRow>
 
-          <CRow>
+          <CRow class="mt-2">
             <vue-tags-input
               v-model="form.tag"
               class="col-md-4"
@@ -219,13 +202,12 @@ export default {
     form: {
       name: "",
       type: "",
-      supplier_id: "",
+      suppliers: "",
       brand_id: "",
       barcode: "",
+      serial_number: "",
       short_description: "",
       product_description: "",
-      is_ecommerce_product: false,
-      is_vat_include: false,
       is_favorite: false,
       categories: "",
       branches: "",
@@ -233,22 +215,10 @@ export default {
       status: "",
       tags: [],
       tag: "",
-      serial_numbers: [
-        {
-          serial_no: "",
-        },
-      ],
     },
     productId: null,
     options: {
-      suppliers: [
-        {
-          value: "",
-          label: "Choose Supplier",
-          disabled: true,
-          selected: "",
-        },
-      ],
+      suppliers: [],
       brands: [
         {
           value: "",
@@ -291,10 +261,7 @@ export default {
       form: {
         name: { required },
         type: { required },
-        supplier_id: { required },
         brand_id: { required },
-        cost_price: { required },
-        selling_price: { required },
       },
     };
   },
@@ -343,12 +310,6 @@ export default {
           console.log(error);
         });
     },
-    addSerial() {
-      this.form.serial_numbers.push({ serial_no: "", cost_price: "", selling_price: "" });
-    },
-    removeSerial(index) {
-      this.form.serial_numbers.splice(index, 1);
-    },
     toggleIsFavruite() {
       this.form.is_favorite = !this.form.is_favorite;
     },
@@ -357,11 +318,9 @@ export default {
         .then(({ data }) => {
           this.form.name = data.name ?? "";
           this.form.type = data.type ?? "";
-          this.form.supplier_id = data.supplier.uuid ?? "";
+          // this.form.supplier_id = data.supplier.uuid ?? "";
           this.form.brand_id = data.brand.uuid ?? "";
           this.form.barcode = data.barcode ?? "";
-          this.form.cost_price = data.cost_price ?? "";
-          this.form.selling_price = data.selling_price ?? "";
           this.form.short_description = data.short_description ?? "";
           this.form.product_description = data.product_description ?? "";
           this.form.is_favorite = data.is_favorite == "yes" ? true : false;
@@ -371,16 +330,6 @@ export default {
           this.form.branches = data.branches.map(function (item) {
             return { label: item.name, value: item.uuid };
           });
-
-          if (data.serial_numbers && data.serial_numbers.length) {
-            data.serial_numbers.forEach((element) => {
-              this.form.serial_numbers.unshift({
-                serial_no: element.serial_no,
-                cost_price: parseInt(element.cost_price),
-                selling_price: parseInt(element.selling_price),
-              });
-            });
-          }
 
           if (data.tags && data.tags.length > 0) {
             data.tags.forEach((element) => {
@@ -485,6 +434,16 @@ export default {
               formData.append("categories[]", cts);
             }
           }
+        } else if (index === "suppliers") {
+          const suppliers = this.form.suppliers;
+          if (suppliers !== "" && suppliers !== undefined) {
+            const get_suppliers = suppliers?.map(function (item) {
+              return item.value;
+            });
+            for (const sup of get_suppliers) {
+              formData.append("suppliers[]", sup);
+            }
+          }
         } else if (index === "branches") {
           const branches = this.form.branches;
           if (branches !== "" && branches !== undefined) {
@@ -494,14 +453,6 @@ export default {
 
             for (const brnch of get_branchs) {
               formData.append("branches[]", brnch);
-            }
-          }
-        } else if (index === "serial_numbers") {
-          const serial_numbers = this.form.serial_numbers;
-          if (serial_numbers !== "" && serial_numbers !== undefined) {
-            for (const numb of serial_numbers) {
-              const obj = JSON.stringify(numb);
-              formData.append("serial_no[]", obj);
             }
           }
         } else if (index === "tags") {
