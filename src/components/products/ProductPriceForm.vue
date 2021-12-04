@@ -74,9 +74,9 @@
                       <CCol sm="6" md="3" class="pt-2">
                         <CInput label="Name" readonly :value.sync="input.name" />
                       </CCol>
-                      <CCol sm="6" md="3" class="pt-2">
+                      <!-- <CCol sm="6" md="3" class="pt-2">
                         <CInput label="Attributes" readonly :value.sync="input.values" />
-                      </CCol>
+                      </CCol> -->
                       <CCol sm="6" md="3" class="pt-2">
                         <CInput
                           label="Cost Price"
@@ -172,7 +172,7 @@ export default {
     getProductPrice() {
       ProductPriceService.get(this.productId)
         .then(({ data }) => {
-          if (data !== "" && data !== null && data !== undefined) {
+          if (data !== "" && data !== null && data !== undefined && data.uuid) {
             this.isEditing = true;
             this.product.id = data.uuid;
             this.product.cost_price = data.cost_price;
@@ -189,20 +189,20 @@ export default {
     getProductVariation() {
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
-          if (data && data.length) {
+          if (data !== "" && data !== null && data !== undefined && data.length) {
             this.isVariationEditing = true;
             this.variations = [];
             data.forEach((element) => {
               this.variations.unshift({
                 uuid: element.uuid,
                 name: JSON.parse(element.name).en,
-                values: element.values
-                  .map((value) => {
-                    return value.product_attribute.name + ": " + value.value;
-                  })
-                  .join(","),
-                cost_price: element.price.cost_price,
-                selling_price: element.price.selling_price,
+                // values: element.values
+                //   .map((value) => {
+                //     return value.product_attribute.name + ": " + value.value;
+                //   })
+                //   .join(","),
+                cost_price: element.price?.cost_price ?? "",
+                selling_price: element.price?.selling_price ?? "",
               });
             });
           }
