@@ -318,13 +318,16 @@ export default {
         .then(({ data }) => {
           this.form.name = data.name ?? "";
           this.form.type = data.type ?? "";
-          // this.form.supplier_id = data.supplier.uuid ?? "";
+          this.form.serial_number = data.serial_number ?? "";
           this.form.brand_id = data.brand.uuid ?? "";
           this.form.barcode = data.barcode ?? "";
           this.form.short_description = data.short_description ?? "";
           this.form.product_description = data.product_description ?? "";
           this.form.is_favorite = data.is_favorite == "yes" ? true : false;
           this.form.categories = data.categories.map(function (item) {
+            return { label: item.name, value: item.uuid };
+          });
+          this.form.suppliers = data.suppliers.map(function (item) {
             return { label: item.name, value: item.uuid };
           });
           this.form.branches = data.branches.map(function (item) {

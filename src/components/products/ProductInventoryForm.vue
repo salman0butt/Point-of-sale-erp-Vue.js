@@ -24,7 +24,7 @@
                     </p>
                   </div>
                 </CCol>
-                <!-- <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Damage Qty"
                     type="number"
@@ -33,10 +33,10 @@
                     v-model="form.damage_qty"
                     @change="addDamage()"
                   />
-                </CCol> -->
-                <!-- <CCol v-if="form.damage_qty" sm="6" md="4" class="pt-2">
+                </CCol>
+                <CCol v-if="form.damage_qty" sm="6" md="4" class="pt-2">
                   <CInput label="Damage Reason" v-model="form.damage_reason" />
-                </CCol> -->
+                </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Add/Subtract Stock"
@@ -91,7 +91,7 @@
                     v-model="input.current_quantity"
                   />
                 </CCol>
-                <!-- <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Damage Qty"
                     type="number"
@@ -103,7 +103,7 @@
                 </CCol>
                 <CCol v-if="input.damage_qty" sm="6" md="4" class="pt-2">
                   <CInput label="Damage Reason" v-model="input.damage_reason" />
-                </CCol> -->
+                </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -133,10 +133,15 @@
               <br />
               <br />
               <CDataTable :items="stockHistory" :fields="fields">
-                <template #product_variation="{ item }">
-                  <td>
-                    {{ item.product_variation ? item.product_variation : "" }}
+                <template #variation_name="{ item }">
+                  <td v-if="item.variation_name">
+                    {{
+                      item.variation_name && JSON.parse(item.variation_name)
+                        ? JSON.parse(item.variation_name).en
+                        : ""
+                    }}
                   </td>
+                  <td v-else></td>
                 </template>
               </CDataTable>
             </div>
@@ -153,12 +158,8 @@ import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 
 const fields = [
   { key: "date", label: "DATE", _style: "min-width:40%" },
-  { key: "product_variation", label: "VARIATION", _style: "min-width:15%;" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "add_subtract_stock", label: "In/Out Qty", _style: "min-width:15%;" },
-  { key: "stock", label: "STOCK", _style: "min-width:15%;" },
-  { key: "recieving_price", label: "RECIEVING PRICE", _style: "min-width:15%;" },
-  { key: "remarks", label: "REMARKS", _style: "min-width:15%;" },
+  { key: "variation_name", label: "VARIATION", _style: "min-width:15%;" },
+  { key: "qty", label: "In/Out Qty", _style: "min-width:15%;" },
 ];
 
 export default {
@@ -208,9 +209,32 @@ export default {
     getProductInventory() {
       ProductInventoryService.get(this.productId)
         .then(({ data }) => {
-          if (data !== "" && data !== undefined && data.uuid) {
-            this.form.current_quantity = Number(data.current_quantity) ?? "";
-            this.form.original_stock = Number(data.current_quantity) ?? "";
+          if (data !== "" && data !== undefined && data.length) {
+            this.stockHistory = [];
+            data.forEach((item) => {
+              if (item.type === "product") {
+                this.form.current_quantity = Number(item.current_quantity) ?? "";
+                this.form.original_stock = Number(item.current_quantity) ?? "";
+              }
+              if (item.type === "variation" && item.history) {
+                let date = item.date;
+                let qty = item.qty;
+                this.stockHistory.push({
+                  variation_name: item.history.name,
+                  date: date,
+                  qty: qty,
+                });
+              }
+              if (item.type === "product" && item.history) {
+                let date = item.date;
+                let qty = item.qty;
+                this.stockHistory.push({
+                  variation_name: "",
+                  date: date,
+                  qty: qty,
+                });
+              }
+            });
             this.form.add_subtract_stock = "";
             this.form.damage_qty = "";
             this.form.damage_reason = "";
@@ -265,8 +289,8 @@ export default {
               this.variations_form.unshift({
                 variation_name: JSON.parse(element.name).en,
                 product_variation_id: element.uuid,
-                current_quantity: element.inventory[0].current_quantity,
-                original_stock: element.inventory[0].current_quantity,
+                current_quantity: element.inventory[0]?.current_quantity ?? 0,
+                original_stock: element.inventory[0]?.current_quantity ?? 0,
                 add_subtract_stock: 0,
                 damage_qty: "",
                 damage_reason: "",
@@ -285,7 +309,7 @@ export default {
 
         ProductInventoryService.create(formData)
           .then((res) => {
-            if (res.status == 201) {
+            if (res.status == 201 || res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -293,6 +317,7 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
+              this.getVariationsInventory();
               this.getProductInventory();
             }
           })
@@ -344,7 +369,7 @@ export default {
 
       ProductInventoryService.createVariations(formData)
         .then((res) => {
-          if (res.status == 201) {
+          if (res.status == 201 || res.status == 200) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
@@ -352,6 +377,7 @@ export default {
               timer: 3600,
             });
             this.getVariationsInventory();
+            this.getProductInventory();
           }
         })
         .catch((error) => {
