@@ -110,6 +110,7 @@ export default {
             this.form.attributes = [];
             data.forEach((element) => {
               this.form.attributes.unshift({
+                uuid: element.uuid,
                 name: element.name,
                 values: element.values.map((value) => {
                   return { text: value.value, tiClasses: ["ti-valid"] };
