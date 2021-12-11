@@ -131,8 +131,8 @@ export default {
             data.forEach((element) => {
               this.form.modifiers.unshift({
                 name: element.name,
-                cost_price: element.cost_price,
-                selling_price: element.selling_price,
+                cost_price: element.price.cost_price,
+                selling_price: element.price.selling_price,
                 status: element.status,
               });
             });

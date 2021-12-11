@@ -239,12 +239,10 @@ export default {
     calculateTotal() {
       let total = 0;
       this.form.items.map((item) => {
-        // console.log(item.qty);
         total += parseInt(item.qty) * parseInt(item.cost_price);
       });
 
       this.form.total_cost = parseInt(total);
-      console.log(total);
     },
     addOptions() {
       let option = this.options.products.find(
