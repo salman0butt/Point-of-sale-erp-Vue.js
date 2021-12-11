@@ -44,7 +44,7 @@
                 label="Products"
                 :options="options.products"
                 :value.sync="form.product_id"
-                @change="addProduct()"
+                @change="addOptions()"
               />
             </CCol>
           </CRow>
@@ -216,8 +216,18 @@ export default {
             data.data.map((product) => {
               this.options.products.push({
                 value: product.uuid,
+                type: "product",
                 label: product.name,
               });
+              if (product.variations && product.variations.length > 0) {
+                product.variations.map((variation) => {
+                  this.options.products.push({
+                    value: variation.uuid,
+                    type: "variation",
+                    label: product.name + " (" + JSON.parse(variation.name).en + ")",
+                  });
+                });
+              }
               this.products_list.push({ ...product });
             });
           }
@@ -236,25 +246,79 @@ export default {
       this.form.total_cost = parseInt(total);
       console.log(total);
     },
+    addOptions() {
+      let option = this.options.products.find(
+        (product) => product.value === this.form.product_id
+      );
+      if (option.type === "product") {
+        this.addProduct();
+      } else if (option.type === "variation") {
+        this.addProductVariation();
+      }
+      this.calculateTotal();
+    },
     addProduct() {
-      this.products_list.map((product) => {
-        if (product.uuid === this.form.product_id && this.form.items.length > 0) {
+      if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+        let product = this.products_list.find(
+          (product) => product.uuid === this.form.product_id
+        );
+        if (
+          product.uuid === this.form.product_id &&
+          this.form.items.length > 0 &&
+          this.form.items.some((item) => item.uuid === product.uuid)
+        ) {
           this.form.items.map((item, key) => {
             if (item.uuid === product.uuid) {
-              this.form.items[key].qty = this.form.items[key].qty + 1;
+              this.form.items[key].qty = parseInt(this.form.items[key].qty) + 1;
             }
           });
         } else {
           this.form.items.push({
             uuid: product.uuid,
+            type: "product",
             name: product.name,
             cost_price: product.price.cost_price,
             selling_price: product.price.selling_price,
             qty: 1,
           });
         }
-      });
-      this.form.product_id = "";
+        this.form.product_id = "";
+      }
+    },
+    addProductVariation() {
+      let data = [];
+      if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+        this.products_list.find((product) => {
+          return product.variations.find((variation) => {
+            if (variation.uuid === this.form.product_id) {
+              data.push({
+                uuid: variation.uuid,
+                type: "variation",
+                name: product.name + " (" + JSON.parse(variation.name).en + ")",
+                cost_price: variation.price.cost_price,
+                selling_price: variation.price.selling_price,
+                qty: 1,
+              });
+              return variation;
+            }
+          });
+        });
+
+        if (
+          data[0].uuid === this.form.product_id &&
+          this.form.items.length > 0 &&
+          this.form.items.some((item) => item.uuid === data[0].uuid)
+        ) {
+          this.form.items.map((item, key) => {
+            if (item.uuid === data[0].uuid) {
+              this.form.items[key].qty = parseInt(this.form.items[key].qty) + 1;
+            }
+          });
+        } else {
+          this.form.items.push(data[0]);
+        }
+        this.form.product_id = "";
+      }
     },
     saveReceiving() {
       this.$v.$touch();
@@ -341,15 +405,33 @@ export default {
             this.form.status = data.status;
             this.form.payment_status = data.payment_status;
 
-            data.items.map((item) => {
-              this.form.items.push({
-                uuid: item.product.uuid,
-                name: item.product.name,
-                cost_price: item.price.cost_price,
-                selling_price: item.price.selling_price,
-                qty: item.qty,
+            if (data.items && data.items.length > 0) {
+              data.items.map((item) => {
+                if (item && item.product_variation && item.product_variation.uuid) {
+                  this.form.items.push({
+                    uuid: item.product_variation.uuid,
+                    type: "variation",
+                    name:
+                      item.product.name +
+                      " (" +
+                      JSON.parse(item.product_variation.name).en +
+                      ")",
+                    cost_price: item.product_variation.price.cost_price,
+                    selling_price: item.product_variation.price.selling_price,
+                    qty: item.qty,
+                  });
+                } else {
+                  this.form.items.push({
+                    uuid: item.product.uuid,
+                    type: "product",
+                    name: item.product.name,
+                    cost_price: item.price.cost_price,
+                    selling_price: item.price.selling_price,
+                    qty: item.qty,
+                  });
+                }
               });
-            });
+            }
           }
         })
         .catch((error) => {
