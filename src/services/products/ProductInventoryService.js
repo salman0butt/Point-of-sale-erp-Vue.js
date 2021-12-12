@@ -12,11 +12,11 @@ class ProductInventoryService extends Helper {
     }
 
     create(data) {
-        return http.post("/product-stocks", data);
+        return http.post("/product-stocks", data, super.selectedBranch());
     }
 
     createVariations(data) {
-        return http.post("/product-variation-stocks", data);
+        return http.post("/product-variation-stocks", data, super.selectedBranch());
     }
 
     update(id, data) {

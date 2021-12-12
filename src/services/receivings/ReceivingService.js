@@ -23,15 +23,15 @@ class ReceivingService extends Helper {
     }
 
     getAllProducts() {
-        return http.get('/products', super.selectedBranch());
+        return http.get('/receiving-options', super.selectedBranch());
     }
 
     create(data) {
-        return http.post("/receivings", data);
+        return http.post("/receivings", data, super.selectedBranch());
     }
 
     update(id, data) {
-        return http.patch(`/receivings/${id}`, data);
+        return http.patch(`/receivings/${id}`, data, super.selectedBranch());
     }
 
     delete(id) {

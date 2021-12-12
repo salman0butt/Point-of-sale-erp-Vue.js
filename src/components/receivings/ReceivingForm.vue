@@ -213,7 +213,7 @@ export default {
       ReceivingService.getAllProducts()
         .then(({ data }) => {
           if (data !== undefined && data !== "") {
-            data.data.map((product) => {
+            data.map((product) => {
               this.options.products.push({
                 value: product.uuid,
                 type: "product",
