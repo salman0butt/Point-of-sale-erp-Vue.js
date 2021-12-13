@@ -32,9 +32,9 @@
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Payment Status"
-                :options="options.payment_status"
-                :value.sync="form.payment_status"
+                label="Receiving Status"
+                :options="options.receiving_status"
+                :value.sync="form.receiving_status"
               />
             </CCol>
           </CRow>
@@ -84,7 +84,7 @@
           </CRow>
           <hr v-if="form.items && form.items.length > 0" />
           <CRow>
-            <CCol sm="6" md="6" class="pt-2">
+            <CCol sm="12" md="12" class="pt-2">
               <CInput
                 label="Total Cost"
                 type="number"
@@ -97,14 +97,6 @@
                   Total Cost is required
                 </p>
               </div>
-            </CCol>
-
-            <CCol sm="6" md="6" class="pt-2">
-              <CSelect
-                label="Status"
-                :options="options.status"
-                :value.sync="form.status"
-              />
             </CCol>
 
             <CCol sm="12" md="12" class="pt-2">
@@ -153,23 +145,17 @@ export default {
       date: "",
       note: "",
       total_cost: "",
-      status: "active",
-      payment_status: "",
+      receiving_status: "",
       items: [],
       product_id: "",
     },
     products_list: [],
     options: {
-      status: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "InActive" },
-      ],
       suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
-      payment_status: [
-        { value: "", label: "Choose Payment Status", disabled: true, selected: "" },
-        { value: "paid", label: "Paid" },
-        { value: "unpaid", label: "Unpaid" },
+      receiving_status: [
+        { value: "", label: "Choose receiving Status", disabled: true, selected: "" },
+        { value: "pending", label: "Pending" },
+        { value: "completed", label: "Completed" },
       ],
       products: [{ value: "", label: "Choose Product", disabled: true, selected: "" }],
     },
@@ -400,8 +386,7 @@ export default {
             this.form.date = data.date;
             this.form.note = data.note;
             this.form.total_cost = data.total_cost;
-            this.form.status = data.status;
-            this.form.payment_status = data.payment_status;
+            this.form.receiving_status = data.receiving_status;
 
             if (data.items && data.items.length > 0) {
               data.items.map((item) => {
