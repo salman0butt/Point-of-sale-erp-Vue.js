@@ -40,6 +40,13 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
+              <CTextarea
+                label="Delevery Notes"
+                placeholder="Content..."
+                v-model="form.reference_id"
+              />
+            </CCol>
+            <CCol sm="12" md="12" class="pt-2">
               <CSelect
                 label="Products"
                 :options="options.products"
@@ -56,7 +63,7 @@
                   <CInput label="Product" class="col-md-3" :value.sync="input.name" />
                   <CInput
                     label="Qty"
-                    class="col-md-3"
+                    class="col-md-2"
                     type="number"
                     placeholder="0"
                     min="1"
@@ -78,6 +85,13 @@
                     placeholder="0.00"
                     :value.sync="input.selling_price"
                   />
+                  <CButton
+                    @click="removeProduct(k)"
+                    class="btn-sm"
+                    style="background: transeparent"
+                  >
+                    <CIcon :content="$options.cilTrash" style="color: red" />
+                  </CButton>
                 </CRow>
               </div>
             </CCol>
@@ -133,9 +147,11 @@
 <script>
 import ReceivingService from "@/services/receivings/ReceivingService";
 import { required } from "vuelidate/lib/validators";
+import { cilTrash } from "@coreui/icons-pro";
 
 export default {
   name: "ReceivingForm",
+  cilTrash,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -144,6 +160,7 @@ export default {
       supplier_id: "",
       date: "",
       note: "",
+      reference_id: "",
       total_cost: "",
       receiving_status: "",
       items: [],
@@ -221,6 +238,9 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    removeProduct(index) {
+      this.form.items.splice(index, 1);
     },
     calculateTotal() {
       let total = 0;
@@ -385,6 +405,7 @@ export default {
             this.form.supplier_id = data.supplier.uuid;
             this.form.date = data.date;
             this.form.note = data.note;
+            this.form.reference_id = data.reference_id;
             this.form.total_cost = data.total_cost;
             this.form.receiving_status = data.receiving_status;
 

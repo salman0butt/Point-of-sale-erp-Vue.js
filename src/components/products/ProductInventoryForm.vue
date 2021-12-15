@@ -212,20 +212,20 @@ export default {
           if (data !== "" && data !== undefined && data.length) {
             this.stockHistory = [];
             data.forEach((item) => {
-              if (item.type === "product") {
+              if (item.type === "product" && item.current_quantity > 0) {
                 this.form.current_quantity = Number(item.current_quantity) ?? "";
                 this.form.original_stock = Number(item.current_quantity) ?? "";
               }
-              if (item.type === "variation" && item.history) {
+              if (item.type === "variation" && item.inventable) {
                 let date = item.date;
                 let qty = item.qty;
                 this.stockHistory.push({
-                  variation_name: item.history.name,
+                  variation_name: item.inventable.name,
                   date: date,
                   qty: qty,
                 });
               }
-              if (item.type === "product" && item.history) {
+              if (item.type === "product" && item.inventable) {
                 let date = item.date;
                 let qty = item.qty;
                 this.stockHistory.push({
@@ -283,6 +283,7 @@ export default {
     getVariationsInventory() {
       ProductInventoryService.getVariations(this.productId)
         .then(({ data }) => {
+          console.log(data);
           if (data && data.length) {
             this.variations_form = [];
             data.forEach((element) => {
