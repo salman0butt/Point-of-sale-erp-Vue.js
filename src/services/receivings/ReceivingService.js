@@ -26,6 +26,12 @@ class ReceivingService extends Helper {
         return http.get('/receiving-options', super.selectedBranch());
     }
 
+    searchProduct(query) {
+        let url = "/products/search/" + query;
+
+        return http.get(url, super.selectedBranch());
+    }
+
     create(data) {
         return http.post("/receivings", data, super.selectedBranch());
     }

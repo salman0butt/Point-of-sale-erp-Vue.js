@@ -69,6 +69,7 @@
               </CRow>
             </form>
             <br />
+            <CCardHeader> Variations </CCardHeader>
             <br />
             <form
               v-if="variations_form && variations_form.length > 0"

@@ -46,13 +46,33 @@
                 v-model="form.reference_id"
               />
             </CCol>
-            <CCol sm="12" md="12" class="pt-2">
+            <!-- <CCol sm="12" md="12" class="pt-2">
               <CSelect
                 label="Products"
                 :options="options.products"
                 :value.sync="form.product_id"
                 @change="addOptions()"
               />
+            </CCol> -->
+            <CCol sm="12" md="12" class="pt-2">
+              <CInput
+                label="Products"
+                v-model="search"
+                @input="searchProduct()"
+                placeholder="Search..."
+              /><br />
+              <ul
+                v-if="options.products && options.products.length > 0"
+                class="search-content"
+              >
+                <li
+                  v-for="(item, key) in options.products"
+                  :key="key"
+                  @click="addOptions(item)"
+                >
+                  {{ item.label }}
+                </li>
+              </ul>
             </CCol>
           </CRow>
           <hr v-if="form.items && form.items.length > 0" />
@@ -166,6 +186,7 @@ export default {
       items: [],
       product_id: "",
     },
+    search: "",
     products_list: [],
     options: {
       suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
@@ -174,7 +195,7 @@ export default {
         { value: "pending", label: "Pending" },
         { value: "completed", label: "Completed" },
       ],
-      products: [{ value: "", label: "Choose Product", disabled: true, selected: "" }],
+      products: [],
     },
   }),
   validations() {
@@ -189,7 +210,6 @@ export default {
   created() {
     this.form.id = this.$route.params.id;
     this.getAllSuppliers();
-    this.getAllProducts();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getReceiving();
@@ -212,32 +232,39 @@ export default {
           console.log(error);
         });
     },
-    getAllProducts() {
-      ReceivingService.getAllProducts()
-        .then(({ data }) => {
-          if (data !== undefined && data !== "") {
-            data.map((product) => {
-              this.options.products.push({
-                value: product.uuid,
-                type: "product",
-                label: product.name,
-              });
-              if (product.variations && product.variations.length > 0) {
-                product.variations.map((variation) => {
-                  this.options.products.push({
-                    value: variation.uuid,
-                    type: "variation",
-                    label: product.name + " (" + JSON.parse(variation.name).en + ")",
-                  });
+    searchProduct() {
+      if (this.search !== "") {
+        ReceivingService.searchProduct(this.search)
+          .then(({ data }) => {
+            if (data !== undefined && data !== "") {
+              this.options.products = [];
+              data.map((product) => {
+                this.options.products.push({
+                  value: product.uuid,
+                  type: "product",
+                  label: product.name,
                 });
-              }
-              this.products_list.push({ ...product });
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+                if (product.variations && product.variations.length > 0) {
+                  product.variations.map((variation) => {
+                    this.options.products.push({
+                      value: variation.uuid,
+                      type: "variation",
+                      label: product.name + " (" + JSON.parse(variation.name).en + ")",
+                    });
+                  });
+                }
+                this.products_list.push({ ...product });
+              });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        this.search = "";
+        this.products_list = [];
+        this.options.products = [];
+      }
     },
     removeProduct(index) {
       this.form.items.splice(index, 1);
@@ -250,10 +277,9 @@ export default {
 
       this.form.total_cost = parseInt(total);
     },
-    addOptions() {
-      let option = this.options.products.find(
-        (product) => product.value === this.form.product_id
-      );
+    addOptions(item) {
+      this.form.product_id = item.value;
+      let option = item;
       if (option.type === "product") {
         this.addProduct();
       } else if (option.type === "variation") {
@@ -287,6 +313,8 @@ export default {
           });
         }
         this.form.product_id = "";
+        this.search = "";
+        this.options.products = [];
       }
     },
     addProductVariation() {
@@ -299,8 +327,8 @@ export default {
                 uuid: variation.uuid,
                 type: "variation",
                 name: product.name + " (" + JSON.parse(variation.name).en + ")",
-                cost_price: variation.price.cost_price,
-                selling_price: variation.price.selling_price,
+                cost_price: variation.price?.cost_price ?? 0,
+                selling_price: variation.price?.selling_price ?? 0,
                 qty: 1,
               });
               return variation;
@@ -322,6 +350,8 @@ export default {
           this.form.items.push(data[0]);
         }
         this.form.product_id = "";
+        this.search = "";
+        this.options.products = [];
       }
     },
     saveReceiving() {
@@ -420,8 +450,8 @@ export default {
                       " (" +
                       JSON.parse(item.product_variation.name).en +
                       ")",
-                    cost_price: item.product_variation.price.cost_price,
-                    selling_price: item.product_variation.price.selling_price,
+                    cost_price: item.price?.cost_price,
+                    selling_price: item.price?.selling_price,
                     qty: item.qty,
                   });
                 } else {
@@ -429,8 +459,8 @@ export default {
                     uuid: item.product.uuid,
                     type: "product",
                     name: item.product.name,
-                    cost_price: item.price.cost_price,
-                    selling_price: item.price.selling_price,
+                    cost_price: item.price?.cost_price,
+                    selling_price: item.price?.selling_price,
                     qty: item.qty,
                   });
                 }
@@ -453,3 +483,22 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.search-content {
+  position: absolute;
+  top: 4rem;
+  width: 99%;
+  background-color: #fff !important;
+  z-index: 999999999999999999999999999999;
+  padding: 10px 20px;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  cursor: pointer;
+  font-weight: 600;
+}
+.search-content li {
+  list-style-type: none;
+  padding: 5px 0;
+  border-bottom: 1px solid #80808045;
+}
+</style>
