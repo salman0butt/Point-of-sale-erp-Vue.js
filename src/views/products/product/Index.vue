@@ -7,6 +7,12 @@
             <router-link class="btn btn-success" to="/products/create"
               >Create Products</router-link
             >
+            <router-link
+              class="btn btn-success"
+              style="float: right"
+              to="/products/import"
+              >Import Products</router-link
+            >
             <CDataTable
               :items="Product"
               :fields="fields"
@@ -60,7 +66,7 @@
               </template> -->
               <template #brand="{ item }">
                 <td>
-                  {{ item.brand.name }}
+                  {{ item.brand && item.brand.name ? item.brand.name : "" }}
                 </td>
               </template>
               <template #actions="{ item }">

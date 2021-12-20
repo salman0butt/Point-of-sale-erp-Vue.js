@@ -38,8 +38,7 @@ if (token) {
 http.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
-  console.log(error.response);
-  if (error.response.status === 401) {
+  if (error.response && error.response.status === 401) {
     store.dispatch('auto_logout');
     router.push('/login');
   }
