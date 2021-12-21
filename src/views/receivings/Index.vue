@@ -4,71 +4,25 @@
       <CCol xs="12" lg="12">
         <CCard>
           <CCardBody>
-            <router-link class="btn btn-success" to="/products/create"
-              >Create Products</router-link
-            >
-            <router-link
-              class="btn btn-success"
-              style="float: right"
-              to="/products/import"
-              >Import Products</router-link
-            >
+            <div>
+              <router-link class="btn btn-success" to="/receivings/create"
+                >Create Receiving</router-link
+              >
+            </div>
             <CDataTable
-              :items="Product"
+              :items="Receiving"
               :fields="fields"
               table-filter
               items-per-page-select
               @pagination-change="changePagination"
               :items-per-page="perPage"
               sorter
-              pagination
               clickable-rows
               hover
               :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
-              <!-- <template #select="{ item }">
-                <td>
-                  <CInputCheckbox
-                    :checked="item._selected"
-                    @update:checked="() => check(item)"
-                    custom
-                  />
-                </td>
-              </template> -->
-              <template #branches="{ item }">
-                <td>
-                  {{
-                    item.branches
-                      .map(function (item) {
-                        return item.name;
-                      })
-                      .join(",")
-                  }}
-                </td>
-              </template>
-              <template #categories="{ item }">
-                <td>
-                  {{
-                    item.categories
-                      .map(function (item) {
-                        return item.name;
-                      })
-                      .join(",")
-                  }}
-                </td>
-              </template>
-              <!-- <template #supplier="{ item }">
-                <td>
-                  {{ item.supplier.name }}
-                </td>
-              </template> -->
-              <template #brand="{ item }">
-                <td>
-                  {{ item.brand && item.brand.name ? item.brand.name : "" }}
-                </td>
-              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -79,13 +33,17 @@
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                    >
-                      <CIcon :content="$options.cilPencil"
+                      >Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
+                </td>
+              </template>
+              <template #supplier="{ item }">
+                <td>
+                  {{ item.supplier.name }}
                 </td>
               </template>
             </CDataTable>
@@ -102,36 +60,25 @@
 </template>
 
 <script>
-import ProductService from "@/services/products/ProductService";
+import ReceivingService from "@/services/receivings/ReceivingService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  // {
-  //   key: "select",
-  //   label: "",
-  //   _style: "min-width:1%",
-  //   sorter: false,
-  //   filter: false,
-  // },
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  // { key: "supplier", label: "SUPPLER", _style: "min-width:15%;" },
-  { key: "brand", label: "BRAND", _style: "min-width:15%;" },
-  { key: "serial_number", label: "SERIAL NUMBER", _style: "min-width:15%;" },
-  { key: "categories", label: "CATEGORY", _style: "min-width:15%;" },
-  { key: "branches", label: "BRANCH", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
+  { key: "supplier", label: "SUPPLIER", _style: "min-width:40%" },
+  { key: "date", label: "DATE", _style: "min-width:15%;" },
+  { key: "total_cost", label: "TOTAL COST", _style: "min-width:15%;" },
+  { key: "receiving_status", label: "RECEIVING STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "IndexProduct",
+  name: "IndexReceiving",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      ProductData: [],
+      ReceivingData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -142,36 +89,38 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getProductData();
+    this.getReceivingData();
+    console.log();
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getProductData(this.activePage, this.perPage);
+      this.getReceivingData(this.activePage, this.perPage);
     },
   },
   computed: {
-    Product() {
-      return this.ProductData;
+    Receiving() {
+      return this.ReceivingData;
     },
   },
   methods: {
-    getProductData(page = "", per_page = "") {
-      ProductService.getAll(page, per_page)
+    getReceivingData(page = "", per_page = "") {
+      ReceivingService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.designationsData = [];
+            this.ReceivingData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.ProductData.push({ ...item, id });
+                this.ReceivingData.push({ ...item, id });
               });
             }
             if (data.meta) {
               this.setPagination(data.meta);
             }
+
             this.loading = false;
           }
         })
@@ -185,14 +134,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.ProductData[item.id]._selected);
-      this.$set(this.ProductData[item.id], "_selected", !val);
+      const val = Boolean(this.ReceivingData[item.id]._selected);
+      this.$set(this.ReceivingData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/products/edit/" + uuid });
+      this.$router.push({ path: "/receivings/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -207,16 +156,19 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            ProductService.delete(this.deleteRows)
+            ReceivingService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Product Deleted Successfully",
+                    text: "Receiving Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ProductData = this.ProductData.filter((item) => item.uuid != uuid);
+                  this.ReceivingData = this.ReceivingData.filter(
+                    (department) => department.uuid != uuid
+                  );
+                  this.deleteRows = [];
                 }
               })
               .catch((error) => {
@@ -227,7 +179,6 @@ export default {
                   timer: 3600,
                 });
               });
-            this.deleteRows = [];
           }
         });
     },
@@ -240,19 +191,14 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.designationsData = agent.currentItems;
+        this.ReceivingData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getProductData("", this.perPage);
+      this.getReceivingData("", this.perPage);
     },
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>

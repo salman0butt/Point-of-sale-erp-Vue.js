@@ -4,7 +4,7 @@
       <CRow>
         <CCol xs="12" lg="12">
           <CCard>
-            <CCardHeader> New Branch </CCardHeader>
+            <CCardHeader> Import Products </CCardHeader>
             <CCardBody>
               <CTabs add-tab-classes="mt-1" :active-tab="activeTab">
                 <CTab>
@@ -12,28 +12,24 @@
                     {{ tabs[0] }}
                   </template>
                   <form @submit.prevent="uploadFile">
-                    <CCard>
-                      <CCardBody>
-                        <CRow>
-                          <CCol sm="12">
-                            <input type="file" @change="pickFile" />
-                          </CCol>
-                        </CRow>
+                    <CRow class="mt-4">
+                      <CCol sm="12">
+                        <input type="file" @change="pickFile" />
+                      </CCol>
+                    </CRow>
 
-                        <CRow>
-                          <CCol sm="12" class="pt-4">
-                            <CLoadingButton
-                              type="submit"
-                              progress
-                              timeout="2000"
-                              :color="color"
-                            >
-                              Submit</CLoadingButton
-                            >
-                          </CCol>
-                        </CRow>
-                      </CCardBody>
-                    </CCard>
+                    <CRow>
+                      <CCol sm="12" class="pt-3">
+                        <CLoadingButton
+                          type="submit"
+                          progress
+                          timeout="2000"
+                          :color="color"
+                        >
+                          Submit</CLoadingButton
+                        >
+                      </CCol>
+                    </CRow>
                   </form>
                 </CTab>
                 <CTab disabled>
@@ -79,7 +75,7 @@
                     @click="importData"
                     block
                     color="success"
-                    style="float: right; width: 180px"
+                    style="float: right; width: 100%"
                   >
                     Validate & Import
                   </CButton>
@@ -91,18 +87,6 @@
                     hover
                     :loading="loading"
                   >
-                    <!-- <template #spreadsheet_column="{ item }">
-                      <td>
-                        <CCol sm="6" md="6" class="pt-2">
-                          <CSelect
-                            :value="item.spreadsheet_column"
-                            @change="onChange($event, item)"
-                            :options="options"
-                            required
-                          />
-                        </CCol>
-                      </td>
-                    </template> -->
                   </CDataTable>
                 </CTab>
               </CTabs>
@@ -127,11 +111,21 @@ const fields = [
   },
 ];
 const items = [
-  { database_fields: "employee_id", spreadsheet_column: "" },
-  { database_fields: "date", spreadsheet_column: "" },
-  { database_fields: "time", spreadsheet_column: "" },
-  { database_fields: "state", spreadsheet_column: "" },
+  { database_fields: "name", spreadsheet_column: "" },
+  { database_fields: "serial_number", spreadsheet_column: "" },
+  { database_fields: "type", spreadsheet_column: "" },
+  { database_fields: "barcode", spreadsheet_column: "" },
+  { database_fields: "short_description", spreadsheet_column: "" },
+  { database_fields: "product_description", spreadsheet_column: "" },
+  { database_fields: "is_ecommerce_product", spreadsheet_column: "" },
+  { database_fields: "is_favorite", spreadsheet_column: "" },
+  { database_fields: "status", spreadsheet_column: "" },
+  { database_fields: "cost_price", spreadsheet_column: "" },
+  { database_fields: "selling_price", spreadsheet_column: "" },
+  { database_fields: "stock", spreadsheet_column: "" },
+  { database_fields: "tags", spreadsheet_column: "" },
 ];
+
 const fields2 = [
   {
     key: "row",
@@ -151,7 +145,7 @@ const fields2 = [
 ];
 
 export default {
-  name: "ImportAttendance",
+  name: "ImportProduct",
   data() {
     return {
       tabs: ["Upload File", "Mapping", "Validate and Complete Import"],
@@ -184,10 +178,13 @@ export default {
   },
   methods: {
     uploadFile() {
+      if (this.form.file === "" || this.form.file === undefined) {
+        return;
+      }
       let formData = new FormData();
       formData.append("file", this.form.file);
       this.$http
-        .post("/attendances/import/headings", formData, {
+        .post("/products/import/headings", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((res) => {
@@ -196,6 +193,17 @@ export default {
             title: "Success",
             text: "File Uploaded Successfully",
             timer: 3600,
+          });
+          this.options = [];
+          this.spreadsheet_column = [];
+          this.database_fields = [];
+          this.errors = [];
+          this.error_table_visibility = false;
+          this.options.push({
+            label: "Choose SpreadSheet fields",
+            value: "",
+            selected: true,
+            disabled: true,
           });
           let spreadsheet = res.data[0][0];
           spreadsheet.forEach((element) => {
@@ -248,21 +256,25 @@ export default {
       formData.append("spreadsheet_column", this.spreadsheet_column);
       formData.append("database_fields", this.database_fields);
       this.$http
-        .post("/attendances/import", formData, {
+        .post("/products/import", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((res) => {
-          this.$swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "File Imported Successfully",
-            timer: 3600,
-          });
-          this.error_table_visibility = true;
-          this.errors = [];
-          res.data.map((item, id) => {
-            this.errors.push({ ...item, id });
-          });
+          if (res.status === 200 && res.data && res.data.length === 0) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Data Imported Successfully",
+              timer: 3600,
+            });
+            this.$router.push({ path: "/products" });
+          } else {
+            this.error_table_visibility = true;
+            this.errors = [];
+            res.data.map((item, id) => {
+              this.errors.push({ ...item, id });
+            });
+          }
         })
         .catch((err) => {
           console.log(err);

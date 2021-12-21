@@ -20,7 +20,7 @@
                         <vue-tags-input
                           v-model="input.value"
                           class="col-md-6"
-                          placeholder="Attributes"
+                          placeholder="Search Attributes"
                           :autocomplete-items="filteredItems(k)"
                           :add-only-from-autocomplete="true"
                           :tags="input.values"

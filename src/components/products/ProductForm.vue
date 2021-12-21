@@ -319,7 +319,7 @@ export default {
           this.form.name = data.name ?? "";
           this.form.type = data.type ?? "";
           this.form.serial_number = data.serial_number ?? "";
-          this.form.brand_id = data.brand.uuid ?? "";
+          this.form.brand_id = data.brand?.uuid ?? "";
           this.form.barcode = data.barcode ?? "";
           this.form.short_description = data.short_description ?? "";
           this.form.product_description = data.product_description ?? "";

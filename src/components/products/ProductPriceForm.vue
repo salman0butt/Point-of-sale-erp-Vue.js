@@ -59,56 +59,58 @@
               </CRow>
             </form>
             <br />
-            <CCardHeader> Variations </CCardHeader>
-            <form
-              @submit.prevent="
-                isVariationEditing
-                  ? updateProductVariationPrice()
-                  : saveProductVariationPrice()
-              "
-            >
-              <CRow>
-                <CCol sm="12" md="12" class="pt-2">
-                  <div class="form-group" v-for="(input, k) in variations" :key="k">
-                    <CRow>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <CInput label="Name" readonly :value.sync="input.name" />
-                      </CCol>
-                      <!-- <CCol sm="6" md="3" class="pt-2">
+            <div v-if="variations && variations.length > 0">
+              <CCardHeader> Variations </CCardHeader>
+              <form
+                @submit.prevent="
+                  isVariationEditing
+                    ? updateProductVariationPrice()
+                    : saveProductVariationPrice()
+                "
+              >
+                <CRow>
+                  <CCol sm="12" md="12" class="pt-2">
+                    <div class="form-group" v-for="(input, k) in variations" :key="k">
+                      <CRow>
+                        <CCol sm="6" md="3" class="pt-2">
+                          <CInput label="Name" readonly :value.sync="input.name" />
+                        </CCol>
+                        <!-- <CCol sm="6" md="3" class="pt-2">
                         <CInput label="Attributes" readonly :value.sync="input.values" />
                       </CCol> -->
-                      <CCol sm="6" md="3" class="pt-2">
-                        <CInput
-                          label="Cost Price"
-                          type="number"
-                          v-model="input.cost_price"
-                        />
-                      </CCol>
-                      <CCol sm="6" md="3" class="pt-2">
-                        <CInput
-                          label="Selling Price"
-                          type="number"
-                          v-model="input.selling_price"
-                        />
-                      </CCol>
-                    </CRow>
-                  </div>
-                </CCol>
-              </CRow>
+                        <CCol sm="6" md="3" class="pt-2">
+                          <CInput
+                            label="Cost Price"
+                            type="number"
+                            v-model="input.cost_price"
+                          />
+                        </CCol>
+                        <CCol sm="6" md="3" class="pt-2">
+                          <CInput
+                            label="Selling Price"
+                            type="number"
+                            v-model="input.selling_price"
+                          />
+                        </CCol>
+                      </CRow>
+                    </div>
+                  </CCol>
+                </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-              <CRow class="mt-4 d-block">
-                <CButton
-                  progress
-                  timeout="2000"
-                  block
-                  color="success"
-                  style="float: right; width: 150px; margin-right: 20px"
-                  type="submit"
-                  >Save</CButton
-                >
-              </CRow>
-            </form>
+                <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+                <CRow class="mt-4 d-block">
+                  <CButton
+                    progress
+                    timeout="2000"
+                    block
+                    color="success"
+                    style="float: right; width: 150px; margin-right: 20px"
+                    type="submit"
+                    >Save</CButton
+                  >
+                </CRow>
+              </form>
+            </div>
           </CCardBody>
         </CCard>
       </CCol>
@@ -134,17 +136,17 @@ export default {
       is_vat_included: false,
     },
     variations: [
-      {
-        id: "",
-        name: "",
-        type: "variation",
-        serial_number: "",
-        barcode: "",
-        values: [],
-        cost_price: "",
-        selling_price: "",
-        is_vat_included: false,
-      },
+      // {
+      //   id: "",
+      //   name: "",
+      //   type: "variation",
+      //   serial_number: "",
+      //   barcode: "",
+      //   values: [],
+      //   cost_price: "",
+      //   selling_price: "",
+      //   is_vat_included: false,
+      // },
     ],
     productId: "",
   }),
