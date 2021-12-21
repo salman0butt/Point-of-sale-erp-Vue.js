@@ -69,70 +69,73 @@
               </CRow>
             </form>
             <br />
-            <br />
-            <form
-              v-if="variations_form && variations_form.length > 0"
-              @submit.prevent="saveProductVariationInventory()"
-            >
-              <CRow v-for="(input, k) in variations_form" :key="k">
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Name" v-model="input.variation_name" disabled />
-                </CCol>
-                <!-- <CCol sm="6" md="2" class="pt-2">
+            <div v-if="variations_form && variations_form.length > 0">
+              <CCardHeader> Variations </CCardHeader>
+              <br />
+              <form
+                v-if="variations_form && variations_form.length > 0"
+                @submit.prevent="saveProductVariationInventory()"
+              >
+                <CRow v-for="(input, k) in variations_form" :key="k">
+                  <CCol sm="6" md="4" class="pt-2">
+                    <CInput label="Name" v-model="input.variation_name" disabled />
+                  </CCol>
+                  <!-- <CCol sm="6" md="2" class="pt-2">
                   <CInput label="Value" v-model="input.product_attribute" disabled />
                 </CCol> -->
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Current Stock"
-                    @change="currentVariationStock(k)"
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    v-model="input.current_quantity"
-                  />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Damage Qty"
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    v-model="input.damage_qty"
-                    @change="addVariationDamage(k)"
-                  />
-                </CCol>
-                <CCol v-if="input.damage_qty" sm="6" md="4" class="pt-2">
-                  <CInput label="Damage Reason" v-model="input.damage_reason" />
-                </CCol>
+                  <CCol sm="6" md="4" class="pt-2">
+                    <CInput
+                      label="Current Stock"
+                      @change="currentVariationStock(k)"
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      v-model="input.current_quantity"
+                    />
+                  </CCol>
+                  <CCol sm="6" md="4" class="pt-2">
+                    <CInput
+                      label="Damage Qty"
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      v-model="input.damage_qty"
+                      @change="addVariationDamage(k)"
+                    />
+                  </CCol>
+                  <CCol v-if="input.damage_qty" sm="6" md="4" class="pt-2">
+                    <CInput label="Damage Reason" v-model="input.damage_reason" />
+                  </CCol>
 
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Add/Subtract Stock"
-                    type="number"
-                    @change="addSubtractVariation(k)"
-                    placeholder="0"
-                    v-model="input.add_subtract_stock"
-                  />
-                </CCol>
-              </CRow>
+                  <CCol sm="6" md="4" class="pt-2">
+                    <CInput
+                      label="Add/Subtract Stock"
+                      type="number"
+                      @change="addSubtractVariation(k)"
+                      placeholder="0"
+                      v-model="input.add_subtract_stock"
+                    />
+                  </CCol>
+                </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-              <CRow class="mt-4 d-block">
-                <CButton
-                  progress
-                  timeout="2000"
-                  block
-                  color="success"
-                  style="float: right; width: 150px; margin-right: 20px"
-                  type="submit"
-                  >Save</CButton
-                >
-              </CRow>
-            </form>
+                <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+                <CRow class="mt-4 d-block">
+                  <CButton
+                    progress
+                    timeout="2000"
+                    block
+                    color="success"
+                    style="float: right; width: 150px; margin-right: 20px"
+                    type="submit"
+                    >Save</CButton
+                  >
+                </CRow>
+              </form>
+            </div>
             <div>
               <br />
               <br />
-              <CDataTable :items="stockHistory" :fields="fields">
+              <CDataTable :items="stockHistory" :fields="fields" :loading="loading">
                 <template #variation_name="{ item }">
                   <td v-if="item.variation_name">
                     {{
@@ -171,6 +174,7 @@ export default {
     // isEditing: false,
     // isVariationEditing: false,
     stockHistory: [],
+    loading: false,
     fields,
     form: {
       product_id: "",
@@ -207,25 +211,26 @@ export default {
   },
   methods: {
     getProductInventory() {
+      this.loading = true;
       ProductInventoryService.get(this.productId)
         .then(({ data }) => {
           if (data !== "" && data !== undefined && data.length) {
             this.stockHistory = [];
             data.forEach((item) => {
-              if (item.type === "product") {
+              if (item.type === "product" && item.current_quantity > 0) {
                 this.form.current_quantity = Number(item.current_quantity) ?? "";
                 this.form.original_stock = Number(item.current_quantity) ?? "";
               }
-              if (item.type === "variation" && item.history) {
+              if (item.type === "variation" && item.inventable) {
                 let date = item.date;
                 let qty = item.qty;
                 this.stockHistory.push({
-                  variation_name: item.history.name,
+                  variation_name: item.inventable.name,
                   date: date,
                   qty: qty,
                 });
               }
-              if (item.type === "product" && item.history) {
+              if (item.type === "product" && item.inventable) {
                 let date = item.date;
                 let qty = item.qty;
                 this.stockHistory.push({
@@ -239,6 +244,7 @@ export default {
             this.form.damage_qty = "";
             this.form.damage_reason = "";
           }
+          this.loading = false;
         })
         .catch((error) => {
           console.log(error);
@@ -283,6 +289,7 @@ export default {
     getVariationsInventory() {
       ProductInventoryService.getVariations(this.productId)
         .then(({ data }) => {
+          console.log(data);
           if (data && data.length) {
             this.variations_form = [];
             data.forEach((element) => {

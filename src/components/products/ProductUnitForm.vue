@@ -144,8 +144,8 @@ export default {
               this.form.units.unshift({
                 name: element.name,
                 qty: element.qty,
-                cost_price: element.cost_price,
-                selling_price: element.selling_price,
+                cost_price: element.price.cost_price,
+                selling_price: element.price.selling_price,
                 barcode: element.barcode,
                 status: element.status,
               });
