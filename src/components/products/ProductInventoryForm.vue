@@ -289,7 +289,6 @@ export default {
     getVariationsInventory() {
       ProductInventoryService.getVariations(this.productId)
         .then(({ data }) => {
-          console.log(data);
           if (data && data.length) {
             this.variations_form = [];
             data.forEach((element) => {

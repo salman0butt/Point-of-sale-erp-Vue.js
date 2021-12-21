@@ -130,6 +130,16 @@ export default {
             },
           ]);
         }
+        if (this.permissions.includes("read accounts")) {
+          this.sideBarItems_products.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Damages",
+              to: "/damages/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: "Catalogs",
