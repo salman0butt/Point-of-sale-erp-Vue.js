@@ -15,7 +15,7 @@
 import ReceivingForm from "@/components/receivings/ReceivingForm";
 
 export default {
-  name: "CreateProductCategory",
+  name: "CreateReceiving",
   components: {
     ReceivingForm,
   },
