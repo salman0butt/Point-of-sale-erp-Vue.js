@@ -15,7 +15,7 @@
 import ReceivingForm from "@/components/receivings/ReceivingForm";
 
 export default {
-  name: "EditProductCategory",
+  name: "EditReceiving",
   components: {
     ReceivingForm,
   },
