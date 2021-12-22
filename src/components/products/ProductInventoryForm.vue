@@ -217,7 +217,7 @@ export default {
           if (data !== "" && data !== undefined && data.length) {
             this.stockHistory = [];
             data.forEach((item) => {
-              if (item.type === "product" && item.current_quantity > 0) {
+              if (item.type === "product" && item.current_quantity !== 0) {
                 this.form.current_quantity = Number(item.current_quantity) ?? "";
                 this.form.original_stock = Number(item.current_quantity) ?? "";
               }
