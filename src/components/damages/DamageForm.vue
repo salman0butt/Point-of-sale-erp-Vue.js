@@ -32,7 +32,7 @@
                 <CRow>
                   <CInput label="Product" class="col-md-4" :value.sync="input.name" />
                   <CInput
-                    label="Qty"
+                    label="Damage Qty"
                     class="col-md-4"
                     type="number"
                     placeholder="0"
@@ -201,8 +201,6 @@ export default {
             uuid: product.uuid,
             type: "product",
             name: product.name,
-            cost_price: product.price.cost_price,
-            selling_price: product.price.selling_price,
             qty: 1,
           });
         }
@@ -221,8 +219,6 @@ export default {
                 uuid: variation.uuid,
                 type: "variation",
                 name: product.name + " (" + JSON.parse(variation.name).en + ")",
-                cost_price: variation.price?.cost_price ?? 0,
-                selling_price: variation.price?.selling_price ?? 0,
                 qty: 1,
               });
               return variation;
@@ -326,12 +322,8 @@ export default {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
-            this.form.supplier_id = data.supplier.uuid;
             this.form.date = data.date;
-            this.form.note = data.note;
-            this.form.reference_id = data.reference_id;
-            this.form.total_cost = data.total_cost;
-            this.form.Damage_status = data.Damage_status;
+            this.form.reason = data.reason;
 
             if (data.items && data.items.length > 0) {
               data.items.map((item) => {
@@ -344,8 +336,6 @@ export default {
                       " (" +
                       JSON.parse(item.product_variation.name).en +
                       ")",
-                    cost_price: item.price?.cost_price,
-                    selling_price: item.price?.selling_price,
                     qty: item.qty,
                   });
                 } else {
@@ -353,8 +343,6 @@ export default {
                     uuid: item.product.uuid,
                     type: "product",
                     name: item.product.name,
-                    cost_price: item.price?.cost_price,
-                    selling_price: item.price?.selling_price,
                     qty: item.qty,
                   });
                 }
@@ -365,7 +353,7 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          this.$router.push({ path: "/Damages/index" });
+          // this.$router.push({ path: "/damages/index" });
         });
     },
     resetForm() {

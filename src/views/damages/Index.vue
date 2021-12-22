@@ -64,10 +64,8 @@ import DamageService from "@/services/damages/DamageService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  { key: "supplier", label: "SUPPLIER", _style: "min-width:40%" },
-  { key: "date", label: "DATE", _style: "min-width:15%;" },
-  { key: "total_cost", label: "TOTAL COST", _style: "min-width:15%;" },
-  { key: "Damage_status", label: "Damage STATUS", _style: "min-width:15%;" },
+  // { key: "uuid", label: "UUID", _style: "min-width:40%" },
+  { key: "reason", label: "REASON", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
