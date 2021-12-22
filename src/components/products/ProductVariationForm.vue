@@ -139,7 +139,7 @@ export default {
             this.isEditing = true;
             this.form.variations = [];
             data.forEach((element) => {
-              this.form.variations.unshift({
+              this.form.variations.push({
                 uuid: element.uuid,
                 name: JSON.parse(element.name).en,
                 serial_number: element.serial_number,
@@ -205,6 +205,7 @@ export default {
               text: "Product Variation Created Successfully",
               timer: 3600,
             });
+            this.getProductVariation();
           }
         })
         .catch((error) => {
@@ -222,6 +223,7 @@ export default {
       ProductVariationService.update(this.productId, formData)
         .then((res) => {
           if ((res && res.status == 200) || res.status == 201) {
+            this.getProductVariation();
             this.$swal.fire({
               icon: "success",
               title: "Success",
