@@ -7,7 +7,7 @@
           <CCardBody>
             <form @submit.prevent="saveProductInventory()">
               <CRow>
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="6" md="6" class="pt-2">
                   <CInput
                     label="Current Stock"
                     @change="currentStock()"
@@ -15,16 +15,10 @@
                     min="0"
                     placeholder="0"
                     v-model="form.current_quantity"
-                    :class="{ error: $v.form.current_quantity.$error }"
-                    @input="$v.form.current_quantity.$touch()"
+                    disabled
                   />
-                  <div v-if="$v.form.current_quantity.$error">
-                    <p v-if="!$v.form.current_quantity.required" class="errorMsg">
-                      Current Stock is required
-                    </p>
-                  </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <!-- <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Damage Qty"
                     type="number"
@@ -36,8 +30,8 @@
                 </CCol>
                 <CCol v-if="form.damage_qty" sm="6" md="4" class="pt-2">
                   <CInput label="Damage Reason" v-model="form.damage_reason" />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                </CCol> -->
+                <CCol sm="6" md="6" class="pt-2">
                   <CInput
                     label="Add/Subtract Stock"
                     type="number"
@@ -91,9 +85,10 @@
                       min="0"
                       placeholder="0"
                       v-model="input.current_quantity"
+                      disabled
                     />
                   </CCol>
-                  <CCol sm="6" md="4" class="pt-2">
+                  <!-- <CCol sm="6" md="4" class="pt-2">
                     <CInput
                       label="Damage Qty"
                       type="number"
@@ -105,7 +100,7 @@
                   </CCol>
                   <CCol v-if="input.damage_qty" sm="6" md="4" class="pt-2">
                     <CInput label="Damage Reason" v-model="input.damage_reason" />
-                  </CCol>
+                  </CCol> -->
 
                   <CCol sm="6" md="4" class="pt-2">
                     <CInput
@@ -181,8 +176,8 @@ export default {
       current_quantity: "",
       original_stock: "",
       add_subtract_stock: "",
-      damage_qty: "",
-      damage_reason: "",
+      // damage_qty: "",
+      // damage_reason: "",
     },
     isVariation: false,
     variations_form: [],
@@ -192,7 +187,6 @@ export default {
     return {
       form: {
         product_id: { required },
-        current_quantity: { required },
         add_subtract_stock: { required },
       },
     };
@@ -241,8 +235,8 @@ export default {
               }
             });
             this.form.add_subtract_stock = "";
-            this.form.damage_qty = "";
-            this.form.damage_reason = "";
+            // this.form.damage_qty = "";
+            // this.form.damage_reason = "";
           }
           this.loading = false;
         })
@@ -259,14 +253,14 @@ export default {
         Number(this.variations_form[key].original_stock) +
         Number(this.variations_form[key].add_subtract_stock);
     },
-    addDamage() {
-      this.form.current_quantity =
-        Number(this.form.original_stock) - Number(this.form.damage_qty);
-      this.form.add_subtract_stock = "-" + Number(this.form.damage_qty);
-      if (this.form.damage_qty == "") {
-        this.form.add_subtract_stock = "";
-      }
-    },
+    // addDamage() {
+    //   this.form.current_quantity =
+    //     Number(this.form.original_stock) - Number(this.form.damage_qty);
+    //   this.form.add_subtract_stock = "-" + Number(this.form.damage_qty);
+    //   if (this.form.damage_qty == "") {
+    //     this.form.add_subtract_stock = "";
+    //   }
+    // },
     currentStock() {
       this.form.add_subtract_stock =
         Number(this.form.current_quantity) - Number(this.form.original_stock);
@@ -276,20 +270,21 @@ export default {
         Number(this.variations_form[key].current_quantity) -
         Number(this.variations_form[key].original_stock);
     },
-    addVariationDamage(key) {
-      this.variations_form[key].current_quantity =
-        Number(this.variations_form[key].original_stock) -
-        Number(this.variations_form[key].damage_qty);
-      this.variations_form[key].add_subtract_stock =
-        "-" + Number(this.variations_form[key].damage_qty);
-      if (this.variations_form[key].damage_qty == "") {
-        this.variations_form[key].add_subtract_stock = "";
-      }
-    },
+    // addVariationDamage(key) {
+    //   this.variations_form[key].current_quantity =
+    //     Number(this.variations_form[key].original_stock) -
+    //     Number(this.variations_form[key].damage_qty);
+    //   this.variations_form[key].add_subtract_stock =
+    //     "-" + Number(this.variations_form[key].damage_qty);
+    //   if (this.variations_form[key].damage_qty == "") {
+    //     this.variations_form[key].add_subtract_stock = "";
+    //   }
+    // },
     getVariationsInventory() {
       ProductInventoryService.getVariations(this.productId)
         .then(({ data }) => {
           if (data && data.length) {
+            console.log(data);
             this.variations_form = [];
             data.forEach((element) => {
               this.variations_form.unshift({
@@ -298,8 +293,8 @@ export default {
                 current_quantity: element.inventory[0]?.current_quantity ?? 0,
                 original_stock: element.inventory[0]?.current_quantity ?? 0,
                 add_subtract_stock: 0,
-                damage_qty: "",
-                damage_reason: "",
+                // damage_qty: "",
+                // damage_reason: "",
               });
             });
           }
