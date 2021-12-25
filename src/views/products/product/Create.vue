@@ -81,9 +81,11 @@ export default {
       { key: "ProductTab", name: "General" },
       { key: "", name: "Attributes" },
       { key: "", name: "Variations" },
+      { key: "", name: "Prices" },
       { key: "", name: "Inventory" },
       { key: "", name: "Images" },
       { key: "", name: "Modifiers" },
+      { key: "", name: "Units" },
     ],
   }),
   // computed: {

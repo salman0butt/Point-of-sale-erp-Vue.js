@@ -141,7 +141,7 @@ export default {
             this.isEditing = true;
             this.form.units = [];
             data.forEach((element) => {
-              this.form.units.unshift({
+              this.form.units.push({
                 name: element.name,
                 qty: element.qty,
                 cost_price: element.price.cost_price,
@@ -169,6 +169,7 @@ export default {
               text: "Product Unit Created Successfully",
               timer: 3600,
             });
+            this.getProductUnit();
           }
         })
         .catch((error) => {
@@ -192,6 +193,7 @@ export default {
               text: "Product Unit Updated Successfully",
               timer: 3600,
             });
+            this.getProductUnit();
           }
         })
         .catch((error) => {

@@ -109,7 +109,7 @@ export default {
             this.isEditing = true;
             this.form.attributes = [];
             data.forEach((element) => {
-              this.form.attributes.unshift({
+              this.form.attributes.push({
                 uuid: element.uuid,
                 name: element.name,
                 values: element.values.map((value) => {
@@ -130,6 +130,7 @@ export default {
       ProductAttributeService.create(formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
+            this.getProductAttribute();
             this.$swal.fire({
               icon: "success",
               title: "Success",
@@ -153,6 +154,7 @@ export default {
       ProductAttributeService.update(this.productId, formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
+            this.getProductAttribute();
             this.$swal.fire({
               icon: "success",
               title: "Success",

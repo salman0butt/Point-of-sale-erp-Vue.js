@@ -129,7 +129,7 @@ export default {
             this.isEditing = true;
             this.form.modifiers = [];
             data.forEach((element) => {
-              this.form.modifiers.unshift({
+              this.form.modifiers.push({
                 name: element.name,
                 cost_price: element.price.cost_price,
                 selling_price: element.price.selling_price,
@@ -155,6 +155,7 @@ export default {
               text: "Product Modifier Created Successfully",
               timer: 3600,
             });
+            this.getProductModifier();
           }
         })
         .catch((error) => {
@@ -178,6 +179,7 @@ export default {
               text: "Product Modifier Updated Successfully",
               timer: 3600,
             });
+            this.getProductModifier();
           }
         })
         .catch((error) => {
