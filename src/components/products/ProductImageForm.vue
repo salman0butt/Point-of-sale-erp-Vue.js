@@ -92,7 +92,6 @@ export default {
             data.map(function (item) {
               display_images.push(item);
             });
-            console.log(display_images);
           }
         })
         .catch((error) => {

@@ -162,6 +162,30 @@
         </form>
       </CCol>
     </CRow>
+    <div>
+      <CModal
+        title="Product Quantity Units"
+        :fade="true"
+        :centered="true"
+        :closeOnBackdrop="false"
+        color="success"
+        :show.sync="toggleModel"
+      >
+        <!-- <form>
+          <CSelect
+            label="Branches"
+            :options="options.branches"
+            :value.sync="form.branches"
+          />
+        </form> -->
+        <template #header>
+          <h6 class="modal-title">Select Quantity Units</h6>
+        </template>
+        <template #footer>
+          <CButton @click="saveQuantityUnits()" color="success">Save</CButton>
+        </template>
+      </CModal>
+    </div>
   </div>
 </template>
 <script>
@@ -175,6 +199,7 @@ export default {
   data: () => ({
     isEditing: false,
     saveAndExit: false,
+    toggleModel: false,
     form: {
       id: "",
       supplier_id: "",
@@ -239,11 +264,6 @@ export default {
             if (data !== undefined && data !== "") {
               this.options.products = [];
               data.map((product) => {
-                this.options.products.push({
-                  value: product.uuid,
-                  type: "product",
-                  label: product.name,
-                });
                 if (product.variations && product.variations.length > 0) {
                   product.variations.map((variation) => {
                     this.options.products.push({
@@ -251,6 +271,12 @@ export default {
                       type: "variation",
                       label: product.name + " (" + JSON.parse(variation.name).en + ")",
                     });
+                  });
+                } else {
+                  this.options.products.push({
+                    value: product.uuid,
+                    type: "product",
+                    label: product.name,
                   });
                 }
                 this.products_list.push({ ...product });
@@ -307,8 +333,8 @@ export default {
             uuid: product.uuid,
             type: "product",
             name: product.name,
-            cost_price: product.price.cost_price,
-            selling_price: product.price.selling_price,
+            cost_price: product.price?.cost_price,
+            selling_price: product.price?.selling_price,
             qty: 1,
           });
         }
@@ -326,7 +352,7 @@ export default {
               data.push({
                 uuid: variation.uuid,
                 type: "variation",
-                name: product.name + " (" + JSON.parse(variation.name).en + ")",
+                name: `${product.name} (Variation: ${JSON.parse(variation.name).e})`,
                 cost_price: variation.price?.cost_price ?? 0,
                 selling_price: variation.price?.selling_price ?? 0,
                 qty: 1,
@@ -490,7 +516,7 @@ export default {
   top: 4rem;
   width: 99%;
   background-color: #fff !important;
-  z-index: 999999999999999999999999999999;
+  z-index: 99;
   padding: 10px 20px;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   cursor: pointer;

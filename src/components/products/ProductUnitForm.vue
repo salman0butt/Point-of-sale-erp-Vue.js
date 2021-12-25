@@ -44,11 +44,12 @@
                         :value.sync="input.status"
                       />
                       <span class="ml-4">
-                        <i
+                        <!-- <i
                           @click="removeUnit(k)"
                           class="thumb"
                           v-show="k || (!k && form.units.length > 1)"
-                        >
+                        > -->
+                        <i @click="removeUnit(k)" class="thumb">
                           <CIcon :content="$options.cisMinusSquare" /> Remove</i
                         ><br />
                         <i
@@ -93,6 +94,7 @@ export default {
     isEditing: false,
     form: {
       product_id: "",
+      deleteRows: [],
       units: [
         {
           name: "",
@@ -132,7 +134,59 @@ export default {
       });
     },
     removeUnit(index) {
-      this.form.units.splice(index, 1);
+      if (
+        this.form.units &&
+        this.form.units.length > 0 &&
+        this.form.units[index].uuid &&
+        this.form.units[index].uuid !== ""
+      ) {
+        let uuid = this.form.units[index].uuid;
+        this.deleteRows = JSON.stringify([uuid]);
+        this.$swal
+          .fire({
+            title: "Do you want to delete this record",
+            text: "This will be record from Database",
+            showCancelButton: true,
+            confirmButtonColor: "#e55353",
+            confirmButtonText: "Yes, remove it it!",
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              ProductUnitService.delete(this.deleteRows)
+                .then((res) => {
+                  if (res.status == 200) {
+                    this.$swal.fire({
+                      icon: "success",
+                      title: "Success",
+                      text: "Unit Deleted Successfully",
+                      timer: 3600,
+                    });
+                    this.form.units.splice(index, 1);
+                    if (this.form.units.length == 0) {
+                      this.form.units.push({
+                        name: "",
+                        serial_number: "",
+                        barcode: "",
+                        values: [],
+                        value: "",
+                      });
+                    }
+                  }
+                })
+                .catch((error) => {
+                  this.$swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Something went Wrong",
+                    timer: 3600,
+                  });
+                });
+              this.deleteRows = [];
+            }
+          });
+      } else {
+        this.form.units.splice(index, 1);
+      }
     },
     getProductUnit() {
       ProductUnitService.get(this.productId)
@@ -141,14 +195,17 @@ export default {
             this.isEditing = true;
             this.form.units = [];
             data.forEach((element) => {
-              this.form.units.push({
-                name: element.name,
-                qty: element.qty,
-                cost_price: element.price.cost_price,
-                selling_price: element.price.selling_price,
-                barcode: element.barcode,
-                status: element.status,
-              });
+              if (element) {
+                this.form.units.push({
+                  uuid: element.uuid,
+                  name: element.name,
+                  qty: element.qty,
+                  cost_price: element.price?.cost_price,
+                  selling_price: element.price?.selling_price,
+                  barcode: element.barcode,
+                  status: element.status,
+                });
+              }
             });
           }
         })
