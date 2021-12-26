@@ -11,6 +11,7 @@
                   <CInput
                     label="Cost Price"
                     type="number"
+                    placeholder="0.00"
                     v-model="product.cost_price"
                     :class="{ error: $v.product.cost_price.$error }"
                     @input="$v.product.cost_price.$touch()"
@@ -25,6 +26,7 @@
                   <CInput
                     label="Selling Price"
                     type="number"
+                    placeholder="0.00"
                     v-model="product.selling_price"
                     :class="{ error: $v.product.selling_price.$error }"
                     @input="$v.product.selling_price.$touch()"
