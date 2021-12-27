@@ -11,6 +11,7 @@
                   <CInput
                     label="Cost Price"
                     type="number"
+                    placeholder="0.00"
                     v-model="product.cost_price"
                     :class="{ error: $v.product.cost_price.$error }"
                     @input="$v.product.cost_price.$touch()"
@@ -25,6 +26,7 @@
                   <CInput
                     label="Selling Price"
                     type="number"
+                    placeholder="0.00"
                     v-model="product.selling_price"
                     :class="{ error: $v.product.selling_price.$error }"
                     @input="$v.product.selling_price.$touch()"
@@ -90,6 +92,14 @@
                             label="Selling Price"
                             type="number"
                             v-model="input.selling_price"
+                          />
+                        </CCol>
+                        <CCol sm="3" md="3" class="pt-2 mt-4">
+                          <CInputCheckbox
+                            custom
+                            :checked="input.is_vat_included"
+                            label="Is Vat Include"
+                            @change="toggleVariationIsVat(k)"
                           />
                         </CCol>
                       </CRow>
@@ -171,6 +181,9 @@ export default {
     toggleIsVat() {
       this.product.is_vat_included = !this.product.is_vat_included;
     },
+    toggleVariationIsVat(key) {
+      this.variations[key].is_vat_included = !this.variations[key].is_vat_included;
+    },
     getProductPrice() {
       ProductPriceService.get(this.productId)
         .then(({ data }) => {
@@ -205,6 +218,7 @@ export default {
                 //   .join(","),
                 cost_price: element.price?.cost_price ?? "",
                 selling_price: element.price?.selling_price ?? "",
+                is_vat_included: element.price?.is_vat_included === 1 ? true : false,
               });
             });
           }

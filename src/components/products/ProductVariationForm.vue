@@ -38,11 +38,12 @@
                         :value.sync="input.barcode"
                       />
                       <span class="ml-4 mt-4">
-                        <i
+                        <!-- <i
                           @click="removeVariation(k)"
                           class="thumb"
                           v-show="k || (!k && form.variations.length > 1)"
-                        >
+                        > -->
+                        <i @click="removeVariation(k)" class="thumb">
                           <CIcon :content="$options.cisMinusSquare" /> Remove</i
                         ><br />
                         <i
@@ -88,6 +89,7 @@ export default {
   data: () => ({
     isEditing: false,
     autocompleteItems: [],
+    deleteRows: [],
     form: {
       product_id: "",
       variations: [
@@ -121,7 +123,59 @@ export default {
       });
     },
     removeVariation(index) {
-      this.form.variations.splice(index, 1);
+      if (
+        this.form.variations &&
+        this.form.variations.length > 0 &&
+        this.form.variations[index].uuid &&
+        this.form.variations[index].uuid !== ""
+      ) {
+        let uuid = this.form.variations[index].uuid;
+        this.deleteRows = JSON.stringify([uuid]);
+        this.$swal
+          .fire({
+            title: "Do you want to delete this record",
+            text: "This will be record from Database",
+            showCancelButton: true,
+            confirmButtonColor: "#e55353",
+            confirmButtonText: "Yes, remove it it!",
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              ProductVariationService.delete(this.deleteRows)
+                .then((res) => {
+                  if (res.status == 200) {
+                    this.$swal.fire({
+                      icon: "success",
+                      title: "Success",
+                      text: "Variation Deleted Successfully",
+                      timer: 3600,
+                    });
+                    this.form.variations.splice(index, 1);
+                    if (this.form.variations.length == 0) {
+                      this.form.variations.push({
+                        name: "",
+                        serial_number: "",
+                        barcode: "",
+                        values: [],
+                        value: "",
+                      });
+                    }
+                  }
+                })
+                .catch((error) => {
+                  this.$swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Something went Wrong",
+                    timer: 3600,
+                  });
+                });
+              this.deleteRows = [];
+            }
+          });
+      } else {
+        this.form.variations.splice(index, 1);
+      }
     },
     filteredItems(key) {
       if (this.autocompleteItems.length === 0) return;

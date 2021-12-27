@@ -372,7 +372,7 @@ export default {
   top: 4rem;
   width: 99%;
   background-color: #fff !important;
-  z-index: 999999999999999999999999999999;
+  z-index: 99;
   padding: 10px 20px;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   cursor: pointer;

@@ -36,11 +36,12 @@
                         :value.sync="input.status"
                       />
                       <span class="ml-4">
-                        <i
+                        <!-- <i
                           @click="removeModifier(k)"
                           class="thumb"
                           v-show="k || (!k && form.modifiers.length > 1)"
-                        >
+                        > -->
+                        <i @click="removeModifier(k)" class="thumb">
                           <CIcon :content="$options.cisMinusSquare" /> Remove</i
                         ><br />
                         <i
@@ -85,6 +86,7 @@ export default {
     isEditing: false,
     form: {
       product_id: "",
+      deleteRows: [],
       modifiers: [
         {
           name: "",
@@ -120,7 +122,59 @@ export default {
       });
     },
     removeModifier(index) {
-      this.form.modifiers.splice(index, 1);
+      if (
+        this.form.modifiers &&
+        this.form.modifiers.length > 0 &&
+        this.form.modifiers[index].uuid &&
+        this.form.modifiers[index].uuid !== ""
+      ) {
+        let uuid = this.form.modifiers[index].uuid;
+        this.deleteRows = JSON.stringify([uuid]);
+        this.$swal
+          .fire({
+            title: "Do you want to delete this record",
+            text: "This will be record from Database",
+            showCancelButton: true,
+            confirmButtonColor: "#e55353",
+            confirmButtonText: "Yes, remove it it!",
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              ProductModifierService.delete(this.deleteRows)
+                .then((res) => {
+                  if (res.status == 200) {
+                    this.$swal.fire({
+                      icon: "success",
+                      title: "Success",
+                      text: "Modifer Deleted Successfully",
+                      timer: 3600,
+                    });
+                    this.form.modifiers.splice(index, 1);
+                    if (this.form.modifiers.length == 0) {
+                      this.form.modifiers.push({
+                        name: "",
+                        serial_number: "",
+                        barcode: "",
+                        values: [],
+                        value: "",
+                      });
+                    }
+                  }
+                })
+                .catch((error) => {
+                  this.$swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Something went Wrong",
+                    timer: 3600,
+                  });
+                });
+              this.deleteRows = [];
+            }
+          });
+      } else {
+        this.form.modifiers.splice(index, 1);
+      }
     },
     getProductModifier() {
       ProductModifierService.get(this.productId)
@@ -129,12 +183,15 @@ export default {
             this.isEditing = true;
             this.form.modifiers = [];
             data.forEach((element) => {
-              this.form.modifiers.push({
-                name: element.name,
-                cost_price: element.price.cost_price,
-                selling_price: element.price.selling_price,
-                status: element.status,
-              });
+              if (element) {
+                this.form.modifiers.push({
+                  uuid: element.uuid,
+                  name: element.name,
+                  cost_price: element.price?.cost_price,
+                  selling_price: element.price?.selling_price,
+                  status: element.status,
+                });
+              }
             });
           }
         })
