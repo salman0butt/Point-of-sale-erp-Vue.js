@@ -67,7 +67,7 @@ const fields = [
   { key: "supplier", label: "SUPPLIER", _style: "min-width:40%" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "total_cost", label: "TOTAL COST", _style: "min-width:15%;" },
-  { key: "receiving_status", label: "RECEIVING STATUS", _style: "min-width:15%;" },
+  // { key: "receiving_status", label: "RECEIVING STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 

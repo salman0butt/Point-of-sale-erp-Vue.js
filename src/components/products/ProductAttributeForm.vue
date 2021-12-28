@@ -32,7 +32,11 @@
                           class="thumb"
                           v-show="k || (!k && form.attributes.length > 1)"
                         > -->
-                        <i @click="removeAttribute(k)" class="thumb">
+                        <i
+                          @click="removeAttribute(k)"
+                          class="thumb"
+                          v-show="k || (!k && form.attributes[0].uuid)"
+                        >
                           <CIcon :content="$options.cisMinusSquare" /> Remove</i
                         ><br />
                         <i
@@ -55,7 +59,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -67,7 +72,7 @@
 </template>
 <script>
 import ProductAttributeService from "@/services/products/ProductAttributeService";
-import { VueTagsInput, createTag } from "@johmun/vue-tags-input";
+import { VueTagsInput } from "@johmun/vue-tags-input";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 
 export default {
@@ -95,6 +100,11 @@ export default {
     if (this.productId !== "" && this.productId !== undefined) {
       this.getProductAttribute();
     }
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
   },
   methods: {
     addAttribute() {
@@ -180,6 +190,7 @@ export default {
     },
     saveProductAttribute() {
       let formData = this.form;
+      this.$store.commit("set_loader");
       ProductAttributeService.create(formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
@@ -206,10 +217,12 @@ export default {
               text: "Product Attribute Created Successfully",
               timer: 3600,
             });
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",
@@ -219,6 +232,7 @@ export default {
         });
     },
     updateProductAttribute() {
+      this.$store.commit("set_loader");
       let formData = this.form;
       ProductAttributeService.update(this.productId, formData)
         .then((res) => {
@@ -246,10 +260,12 @@ export default {
               text: "Product Attribute Updated Successfully",
               timer: 3600,
             });
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",
