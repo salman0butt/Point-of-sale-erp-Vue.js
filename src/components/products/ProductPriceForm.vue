@@ -11,6 +11,7 @@
                   <CInput
                     label="Cost Price"
                     type="number"
+                    placeholder="0.00"
                     v-model="product.cost_price"
                     :class="{ error: $v.product.cost_price.$error }"
                     @input="$v.product.cost_price.$touch()"
@@ -25,6 +26,7 @@
                   <CInput
                     label="Selling Price"
                     type="number"
+                    placeholder="0.00"
                     v-model="product.selling_price"
                     :class="{ error: $v.product.selling_price.$error }"
                     @input="$v.product.selling_price.$touch()"
@@ -54,7 +56,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -82,6 +85,7 @@
                           <CInput
                             label="Cost Price"
                             type="number"
+                            placeholder="0.00"
                             v-model="input.cost_price"
                           />
                         </CCol>
@@ -89,6 +93,7 @@
                           <CInput
                             label="Selling Price"
                             type="number"
+                            placeholder="0.00"
                             v-model="input.selling_price"
                           />
                         </CCol>
@@ -114,7 +119,8 @@
                     color="success"
                     style="float: right; width: 150px; margin-right: 20px"
                     type="submit"
-                    >Save</CButton
+                    :disabled="loading"
+                    >{{ loading ? "loading..." : "Save" }}</CButton
                   >
                 </CRow>
               </form>
@@ -175,6 +181,11 @@ export default {
       this.getProductVariation();
     }
   },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   methods: {
     toggleIsVat() {
       this.product.is_vat_included = !this.product.is_vat_included;
@@ -188,15 +199,15 @@ export default {
           if (data !== "" && data !== null && data !== undefined && data.uuid) {
             this.isEditing = true;
             this.product.id = data.uuid;
-            this.product.cost_price = data.cost_price;
-            this.product.selling_price = data.selling_price;
+            this.product.cost_price = data.cost_price ?? 0;
+            this.product.selling_price = data.selling_price ?? 0;
             this.product.is_vat_included = data.is_vat_included === 1 ? true : false;
           }
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          // this.$router.push({ path: "/products" });
+          this.$router.push({ path: "/products" });
         });
     },
     getProductVariation() {
@@ -209,13 +220,8 @@ export default {
               this.variations.unshift({
                 uuid: element.uuid,
                 name: JSON.parse(element.name).en,
-                // values: element.values
-                //   .map((value) => {
-                //     return value.product_attribute.name + ": " + value.value;
-                //   })
-                //   .join(","),
-                cost_price: element.price?.cost_price ?? "",
-                selling_price: element.price?.selling_price ?? "",
+                cost_price: element.price?.cost_price ?? 0,
+                selling_price: element.price?.selling_price ?? 0,
                 is_vat_included: element.price?.is_vat_included === 1 ? true : false,
               });
             });
@@ -224,27 +230,30 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isVariationEditing = false;
-          // this.$router.push({ path: "/products" });
+          this.$router.push({ path: "/products" });
         });
     },
     saveProductPrice() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let formData = this.product;
+        this.$store.commit("set_loader");
         ProductPriceService.create(formData)
           .then((res) => {
             if (res.status == 200 || res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Prices Created Successfully",
+                text: "Product Price Created Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -259,20 +268,23 @@ export default {
         type: "variation",
         variations: this.variations,
       };
+      this.$store.commit("set_loader");
       ProductPriceService.create(formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
-              text: "Prices Created Successfully",
+              text: "Variation Prices Created Successfully",
               timer: 3600,
             });
             this.$v.$reset();
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",
@@ -285,21 +297,24 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let formData = this.product;
+        this.$store.commit("set_loader");
         ProductPriceService.update(this.product.id, formData)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Prices Updated Successfully",
+                text: "Product Price Updated Successfully",
                 timer: 3600,
               });
 
               this.$v.$reset();
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -315,21 +330,24 @@ export default {
         variations: this.variations,
         product_id: this.productId,
       };
+      this.$store.commit("set_loader");
       ProductPriceService.update(this.productId, formData)
         .then((res) => {
           if (res.status == 200) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
-              text: "Prices Updated Successfully",
+              text: "Variation Prices Updated Successfully",
               timer: 3600,
             });
 
             this.$v.$reset();
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",

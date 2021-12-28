@@ -58,7 +58,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -122,7 +123,8 @@
                     color="success"
                     style="float: right; width: 150px; margin-right: 20px"
                     type="submit"
-                    >Save</CButton
+                    :disabled="loading"
+                    >{{ loading ? "loading..." : "Save" }}</CButton
                   >
                 </CRow>
               </form>
@@ -169,7 +171,6 @@ export default {
     // isEditing: false,
     // isVariationEditing: false,
     stockHistory: [],
-    loading: false,
     fields,
     form: {
       product_id: "",
@@ -191,6 +192,11 @@ export default {
       },
     };
   },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   created() {
     this.productId = this.$route.params.id;
     this.form.product_id = this.$route.params.id;
@@ -205,7 +211,7 @@ export default {
   },
   methods: {
     getProductInventory() {
-      this.loading = true;
+      this.$store.commit("set_loader");
       ProductInventoryService.get(this.productId)
         .then(({ data }) => {
           if (data !== "" && data !== undefined && data.length) {
@@ -238,9 +244,10 @@ export default {
             // this.form.damage_qty = "";
             // this.form.damage_reason = "";
           }
-          this.loading = false;
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
         });
     },
@@ -306,7 +313,7 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let formData = this.form;
-
+        this.$store.commit("set_loader");
         ProductInventoryService.create(formData)
           .then((res) => {
             if (res.status == 201 || res.status == 200) {
@@ -319,10 +326,12 @@ export default {
               this.$v.$reset();
               this.getVariationsInventory();
               this.getProductInventory();
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -366,7 +375,7 @@ export default {
         product_id: this.productId,
         variations: this.variations_form,
       };
-
+      this.$store.commit("set_loader");
       ProductInventoryService.createVariations(formData)
         .then((res) => {
           if (res.status == 201 || res.status == 200) {
@@ -378,10 +387,12 @@ export default {
             });
             this.getVariationsInventory();
             this.getProductInventory();
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",

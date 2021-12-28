@@ -41,7 +41,11 @@
                           class="thumb"
                           v-show="k || (!k && form.modifiers.length > 1)"
                         > -->
-                        <i @click="removeModifier(k)" class="thumb">
+                        <i
+                          @click="removeModifier(k)"
+                          class="thumb"
+                          v-show="k || (!k && form.modifiers[0].uuid)"
+                        >
                           <CIcon :content="$options.cisMinusSquare" /> Remove</i
                         ><br />
                         <i
@@ -64,7 +68,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -105,6 +110,11 @@ export default {
       ],
     },
   }),
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   created() {
     this.productId = this.$route.params.id;
     this.form.product_id = this.$route.params.id;
@@ -198,11 +208,12 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          // this.$router.push({ path: "/products" });
+          this.$router.push({ path: "/products" });
         });
     },
     saveProductModifier() {
       let formData = this.form;
+      this.$store.commit("set_loader");
       ProductModifierService.create(formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
@@ -213,10 +224,12 @@ export default {
               timer: 3600,
             });
             this.getProductModifier();
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",
@@ -227,6 +240,7 @@ export default {
     },
     updateProductModifier() {
       let formData = this.form;
+      this.$store.commit("set_loader");
       ProductModifierService.update(this.productId, formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
@@ -237,10 +251,12 @@ export default {
               timer: 3600,
             });
             this.getProductModifier();
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",
