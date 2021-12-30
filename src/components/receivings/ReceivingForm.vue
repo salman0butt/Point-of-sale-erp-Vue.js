@@ -368,7 +368,6 @@ export default {
       this.form.product_id = item.value;
       this.unit_form = [];
       let option = item;
-
       if (
         option.is_unit !== "" &&
         option.is_unit !== undefined &&
@@ -380,19 +379,21 @@ export default {
             if (option.type === "product") {
               this.addProduct(option.unit_qty);
             } else if (option.type === "variation") {
-              let parts = product.variations.length;
-              let num = option.unit_qty;
-              let half_qty = [...Array(parts)].map(
-                (_, i) => 0 | (num / parts + (i < num % parts))
-              );
-              product.variations.find((variation, index) => {
-                this.unit_form.push({
-                  uuid: variation.uuid,
-                  type: "variation",
-                  name: `${JSON.parse(variation.name)?.en}`,
-                  qty: half_qty[index] ?? 1,
+              if (product.uuid === this.form.product_id) {
+                let parts = product.variations.length;
+                let num = option.unit_qty;
+                let half_qty = [...Array(parts)].map(
+                  (_, i) => 0 | (num / parts + (i < num % parts))
+                );
+                product.variations.find((variation, index) => {
+                  this.unit_form.push({
+                    uuid: variation.uuid,
+                    type: "variation",
+                    name: `${JSON.parse(variation.name)?.en}`,
+                    qty: half_qty[index] ?? 1,
+                  });
                 });
-              });
+              }
             }
           });
           if (option.type === "variation") {
