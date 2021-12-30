@@ -189,27 +189,30 @@ export default {
     getProductModifier() {
       ProductModifierService.get(this.productId)
         .then(({ data }) => {
-          if (data && data.length) {
-            this.isEditing = true;
-            this.form.modifiers = [];
-            data.forEach((element) => {
-              if (element) {
-                this.form.modifiers.push({
-                  uuid: element.uuid,
-                  name: element.name,
-                  cost_price: element.price?.cost_price,
-                  selling_price: element.price?.selling_price,
-                  status: element.status,
-                });
-              }
-            });
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
           this.$router.push({ path: "/products" });
         });
+    },
+    displayData(data = null) {
+      if (data && data.length) {
+        this.isEditing = true;
+        this.form.modifiers = [];
+        data.forEach((element) => {
+          if (element) {
+            this.form.modifiers.push({
+              uuid: element.uuid,
+              name: element.name,
+              cost_price: element.price?.cost_price,
+              selling_price: element.price?.selling_price,
+              status: element.status,
+            });
+          }
+        });
+      }
     },
     saveProductModifier() {
       let formData = this.form;
@@ -223,7 +226,7 @@ export default {
               text: "Product Modifier Created Successfully",
               timer: 3600,
             });
-            this.getProductModifier();
+            this.displayData(res.data);
             this.$store.commit("close_loader");
           }
         })
@@ -250,7 +253,7 @@ export default {
               text: "Product Modifier Updated Successfully",
               timer: 3600,
             });
-            this.getProductModifier();
+            this.displayData(res.data);
             this.$store.commit("close_loader");
           }
         })

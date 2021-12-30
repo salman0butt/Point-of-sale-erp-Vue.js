@@ -92,7 +92,7 @@
                   />
                   <CInput
                     label="Cost Price"
-                    class="col-md-3"
+                    class="col-md-2"
                     type="number"
                     placeholder="0.00"
                     v-model="input.cost_price"
@@ -100,10 +100,16 @@
                   />
                   <CInput
                     label="Selling Price"
-                    class="col-md-3"
+                    class="col-md-2"
                     type="number"
                     placeholder="0.00"
                     :value.sync="input.selling_price"
+                  />
+                  <CInput
+                    class="col-md-2"
+                    label="Expiry Date"
+                    type="date"
+                    v-model="input.expiry_date"
                   />
                   <CButton
                     @click="removeProduct(k)"
@@ -440,6 +446,7 @@ export default {
                     qty:
                       this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
                       1,
+                    expiry_date: "",
                   });
                 }
               }
@@ -474,6 +481,7 @@ export default {
             cost_price: product.price?.cost_price ?? 0,
             selling_price: product.price?.selling_price ?? 0,
             qty: qty,
+            expiry_date: "",
           });
         }
         this.form.product_id = "";
@@ -494,8 +502,8 @@ export default {
                 cost_price: variation.price?.cost_price ?? 0,
                 selling_price: variation.price?.selling_price ?? 0,
                 qty: 1,
+                expiry_date: "",
               });
-              return variation;
             }
           });
         });
@@ -617,6 +625,7 @@ export default {
                     cost_price: item.price?.cost_price ?? 0,
                     selling_price: item.price?.selling_price ?? 0,
                     qty: item.qty,
+                    expiry_date: item.inventory.expiry_date,
                   });
                 } else {
                   this.form.items.push({
@@ -626,6 +635,7 @@ export default {
                     cost_price: item.price?.cost_price ?? 0,
                     selling_price: item.price?.selling_price ?? 0,
                     qty: item.qty,
+                    expiry_date: item.inventory.expiry_date,
                   });
                 }
               });

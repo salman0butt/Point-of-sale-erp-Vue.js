@@ -199,25 +199,7 @@ export default {
     getProductVariation() {
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
-          if (data && data.length) {
-            this.isEditing = true;
-            this.form.variations = [];
-            data.forEach((element) => {
-              this.form.variations.push({
-                uuid: element.uuid,
-                name: JSON.parse(element.name).en,
-                serial_number: element.serial_number,
-                barcode: element.barcode,
-                values: element.values.map((value) => {
-                  return {
-                    text: value.product_attribute.name + ": " + value.value,
-                    value: value.uuid,
-                  };
-                }),
-                value: "",
-              });
-            });
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
@@ -246,6 +228,27 @@ export default {
           console.log(error);
         });
     },
+    displayData(data = null) {
+      if (data && data.length) {
+        this.isEditing = true;
+        this.form.variations = [];
+        data.forEach((element) => {
+          this.form.variations.push({
+            uuid: element.uuid,
+            name: JSON.parse(element.name).en,
+            serial_number: element.serial_number,
+            barcode: element.barcode,
+            values: element.values?.map((value) => {
+              return {
+                text: value.product_attribute.name + ": " + value.value,
+                value: value.uuid,
+              };
+            }),
+            value: "",
+          });
+        });
+      }
+    },
     saveProductVariation() {
       let formData = this.form;
       this.$store.commit("set_loader");
@@ -258,7 +261,7 @@ export default {
               text: "Product Variation Created Successfully",
               timer: 3600,
             });
-            this.getProductVariation();
+            this.displayData(res.data);
             this.$store.commit("close_loader");
           }
         })
@@ -279,7 +282,7 @@ export default {
       ProductVariationService.update(this.productId, formData)
         .then((res) => {
           if ((res && res.status == 200) || res.status == 201) {
-            this.getProductVariation();
+            this.displayData(res.data);
             this.$swal.fire({
               icon: "success",
               title: "Success",
