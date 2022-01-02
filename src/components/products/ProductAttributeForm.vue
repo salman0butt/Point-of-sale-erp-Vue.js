@@ -168,19 +168,7 @@ export default {
     getProductAttribute() {
       ProductAttributeService.get(this.productId)
         .then(({ data }) => {
-          if (data && data.length) {
-            this.isEditing = true;
-            this.form.attributes = [];
-            data.forEach((element) => {
-              this.form.attributes.push({
-                uuid: element.uuid,
-                name: element.name,
-                values: element.values.map((value) => {
-                  return { text: value.value, tiClasses: ["ti-valid"], uuid: value.uuid };
-                }),
-              });
-            });
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
@@ -188,29 +176,28 @@ export default {
           this.$router.push({ path: "/products" });
         });
     },
+    displayData(data = null) {
+      if (data && data.length) {
+        this.isEditing = true;
+        this.form.attributes = [];
+        data.forEach((element) => {
+          this.form.attributes.push({
+            uuid: element.uuid,
+            name: element.name,
+            values: element.values.map((value) => {
+              return { text: value.value, tiClasses: ["ti-valid"], uuid: value.uuid };
+            }),
+          });
+        });
+      }
+    },
     saveProductAttribute() {
       let formData = this.form;
       this.$store.commit("set_loader");
       ProductAttributeService.create(formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
-            if (res.data && res.data.length) {
-              this.isEditing = true;
-              this.form.attributes = [];
-              res.data.forEach((element) => {
-                this.form.attributes.push({
-                  uuid: element.uuid,
-                  name: element.name,
-                  values: element.values.map((value) => {
-                    return {
-                      text: value.value,
-                      tiClasses: ["ti-valid"],
-                      uuid: value.uuid,
-                    };
-                  }),
-                });
-              });
-            }
+            this.displayData(res.data);
             this.$swal.fire({
               icon: "success",
               title: "Success",
@@ -237,23 +224,7 @@ export default {
       ProductAttributeService.update(this.productId, formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
-            if (res.data && res.data.length) {
-              this.isEditing = true;
-              this.form.attributes = [];
-              res.data.forEach((element) => {
-                this.form.attributes.push({
-                  uuid: element.uuid,
-                  name: element.name,
-                  values: element.values.map((value) => {
-                    return {
-                      text: value.value,
-                      tiClasses: ["ti-valid"],
-                      uuid: value.uuid,
-                    };
-                  }),
-                });
-              });
-            }
+            this.displayData(res.data);
             this.$swal.fire({
               icon: "success",
               title: "Success",

@@ -144,6 +144,14 @@
                 @change="toggleIsFavruite"
               />
             </CCol>
+            <CCol sm="3" md="3" class="pt-2">
+              <CInputCheckbox
+                custom
+                :checked="form.is_expiry"
+                label="Is Expiry"
+                @change="toggleIsExpiry"
+              />
+            </CCol>
           </CRow>
 
           <CRow class="mt-2">
@@ -209,6 +217,7 @@ export default {
       short_description: "",
       product_description: "",
       is_favorite: false,
+      is_expiry: false,
       categories: "",
       branches: "",
       images: "",
@@ -313,6 +322,9 @@ export default {
     toggleIsFavruite() {
       this.form.is_favorite = !this.form.is_favorite;
     },
+    toggleIsExpiry() {
+      this.form.is_expiry = !this.form.is_expiry;
+    },
     getProduct() {
       ProductService.get(this.productId)
         .then(({ data }) => {
@@ -324,6 +336,7 @@ export default {
           this.form.short_description = data.short_description ?? "";
           this.form.product_description = data.product_description ?? "";
           this.form.is_favorite = data.is_favorite == "yes" ? true : false;
+          this.form.is_expiry = data.is_expiry == "yes" ? true : false;
           this.form.categories = data.categories.map(function (item) {
             return { label: item.name, value: item.uuid };
           });

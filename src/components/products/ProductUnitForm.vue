@@ -201,29 +201,32 @@ export default {
     getProductUnit() {
       ProductUnitService.get(this.productId)
         .then(({ data }) => {
-          if (data && data.length) {
-            this.isEditing = true;
-            this.form.units = [];
-            data.forEach((element) => {
-              if (element) {
-                this.form.units.push({
-                  uuid: element.uuid,
-                  name: element.name,
-                  qty: element.qty,
-                  cost_price: element.price?.cost_price,
-                  selling_price: element.price?.selling_price,
-                  barcode: element.barcode,
-                  status: element.status,
-                });
-              }
-            });
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
           this.$router.push({ path: "/products" });
         });
+    },
+    displayData(data = null) {
+      if (data && data.length) {
+        this.isEditing = true;
+        this.form.units = [];
+        data.forEach((element) => {
+          if (element) {
+            this.form.units.push({
+              uuid: element.uuid,
+              name: element.name,
+              qty: element.qty,
+              cost_price: element.price?.cost_price,
+              selling_price: element.price?.selling_price,
+              barcode: element.barcode,
+              status: element.status,
+            });
+          }
+        });
+      }
     },
     saveProductUnit() {
       let formData = this.form;
@@ -237,7 +240,7 @@ export default {
               text: "Product Unit Created Successfully",
               timer: 3600,
             });
-            this.getProductUnit();
+            this.displayData(res.data);
             this.$store.commit("close_loader");
           }
         })
@@ -264,7 +267,7 @@ export default {
               text: "Product Unit Updated Successfully",
               timer: 3600,
             });
-            this.getProductUnit();
+            this.displayData(res.data);
             this.$store.commit("close_loader");
           }
         })
