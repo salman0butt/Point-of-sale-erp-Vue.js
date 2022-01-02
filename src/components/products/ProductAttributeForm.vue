@@ -14,18 +14,41 @@
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.attributes" :key="k">
                     <CRow>
-                      <CInput
-                        placeholder="Name"
-                        class="col-md-4"
-                        :value.sync="input.name"
-                      />
-                      <vue-tags-input
-                        v-model="input.tag"
-                        class="col-md-4"
-                        placeholder="Values"
-                        :tags="input.values"
-                        @tags-changed="(newTags) => (input.values = newTags)"
-                      />
+                      <div class="col-md-4">
+                        <CInput
+                          placeholder="Name"
+                          :value.sync="input.name"
+                          :class="{ error: $v.form.attributes.$each[k].name.$error }"
+                          @input="$v.form.attributes.$each[k].name.$touch()"
+                        />
+
+                        <div v-if="$v.form.attributes.$each[k].name.$error">
+                          <p
+                            v-if="!$v.form.attributes.$each[k].name.required"
+                            class="errorMsg"
+                          >
+                            Name is required
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <vue-tags-input
+                          v-model="input.tag"
+                          placeholder="Values"
+                          :tags="input.values"
+                          @tags-changed="(newTags) => (input.values = newTags)"
+                          :class="{ error: $v.form.attributes.$each[k].values.$error }"
+                          @input="$v.form.attributes.$each[k].values.$touch()"
+                        />
+                        <div v-if="$v.form.attributes.$each[k].values.$error">
+                          <p
+                            v-if="!$v.form.attributes.$each[k].values.required"
+                            class="errorMsg mt-3"
+                          >
+                            Values is required
+                          </p>
+                        </div>
+                      </div>
                       <span class="ml-4">
                         <!-- <i
                           @click="removeAttribute(k)"
@@ -50,7 +73,7 @@
                   </div>
                 </CCol>
               </CRow>
-
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -74,6 +97,7 @@
 import ProductAttributeService from "@/services/products/ProductAttributeService";
 import { VueTagsInput } from "@johmun/vue-tags-input";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "ProductAttributeForm",
@@ -100,6 +124,20 @@ export default {
     if (this.productId !== "" && this.productId !== undefined) {
       this.getProductAttribute();
     }
+  },
+  validations() {
+    return {
+      form: {
+        product_id: required,
+        attributes: {
+          required: true,
+          $each: {
+            name: { required },
+            values: { required },
+          },
+        },
+      },
+    };
   },
   computed: {
     loading() {
@@ -192,58 +230,64 @@ export default {
       }
     },
     saveProductAttribute() {
-      let formData = this.form;
-      this.$store.commit("set_loader");
-      ProductAttributeService.create(formData)
-        .then((res) => {
-          if (res.status == 200 || res.status == 201) {
-            this.displayData(res.data);
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let formData = this.form;
+        this.$store.commit("set_loader");
+        ProductAttributeService.create(formData)
+          .then((res) => {
+            if (res.status == 200 || res.status == 201) {
+              this.displayData(res.data);
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Attribute Created Successfully",
+                timer: 3600,
+              });
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Attribute Created Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something Went wrong.",
               timer: 3600,
             });
-            this.$store.commit("close_loader");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$store.commit("close_loader");
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went wrong.",
-            timer: 3600,
           });
-        });
+      }
     },
     updateProductAttribute() {
-      this.$store.commit("set_loader");
-      let formData = this.form;
-      ProductAttributeService.update(this.productId, formData)
-        .then((res) => {
-          if (res.status == 200 || res.status == 201) {
-            this.displayData(res.data);
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        this.$store.commit("set_loader");
+        let formData = this.form;
+        ProductAttributeService.update(this.productId, formData)
+          .then((res) => {
+            if (res.status == 200 || res.status == 201) {
+              this.displayData(res.data);
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Attribute Updated Successfully",
+                timer: 3600,
+              });
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Attribute Updated Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something went Wrong",
               timer: 3600,
             });
-            this.$store.commit("close_loader");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$store.commit("close_loader");
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something went Wrong",
-            timer: 3600,
           });
-        });
+      }
     },
   },
 };
