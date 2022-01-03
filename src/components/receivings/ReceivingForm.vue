@@ -92,7 +92,7 @@
                   />
                   <CInput
                     label="Cost Price"
-                    class="col-md-3"
+                    class="col-md-2"
                     type="number"
                     placeholder="0.00"
                     v-model="input.cost_price"
@@ -100,10 +100,16 @@
                   />
                   <CInput
                     label="Selling Price"
-                    class="col-md-3"
+                    class="col-md-2"
                     type="number"
                     placeholder="0.00"
                     :value.sync="input.selling_price"
+                  />
+                  <CInput
+                    class="col-md-2"
+                    label="Expiry Date"
+                    type="date"
+                    v-model="input.expiry_date"
                   />
                   <CButton
                     @click="removeProduct(k)"
@@ -346,6 +352,7 @@ export default {
     },
     removeProduct(index) {
       this.form.items.splice(index, 1);
+      this.calculateTotal();
     },
     calculateTotal() {
       let total = 0;
@@ -361,7 +368,6 @@ export default {
       this.form.product_id = item.value;
       this.unit_form = [];
       let option = item;
-
       if (
         option.is_unit !== "" &&
         option.is_unit !== undefined &&
@@ -373,14 +379,21 @@ export default {
             if (option.type === "product") {
               this.addProduct(option.unit_qty);
             } else if (option.type === "variation") {
-              product.variations.find((variation) => {
-                this.unit_form.push({
-                  uuid: variation.uuid,
-                  type: "variation",
-                  name: `${JSON.parse(variation.name)?.en}`,
-                  qty: option.unit_qty ?? 1,
+              if (product.uuid === this.form.product_id) {
+                let parts = product.variations.length;
+                let num = option.unit_qty;
+                let half_qty = [...Array(parts)].map(
+                  (_, i) => 0 | (num / parts + (i < num % parts))
+                );
+                product.variations.find((variation, index) => {
+                  this.unit_form.push({
+                    uuid: variation.uuid,
+                    type: "variation",
+                    name: `${JSON.parse(variation.name)?.en}`,
+                    qty: half_qty[index] ?? 1,
+                  });
                 });
-              });
+              }
             }
           });
           if (option.type === "variation") {
@@ -434,6 +447,7 @@ export default {
                     qty:
                       this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
                       1,
+                    expiry_date: "",
                   });
                 }
               }
@@ -468,6 +482,7 @@ export default {
             cost_price: product.price?.cost_price ?? 0,
             selling_price: product.price?.selling_price ?? 0,
             qty: qty,
+            expiry_date: "",
           });
         }
         this.form.product_id = "";
@@ -488,8 +503,8 @@ export default {
                 cost_price: variation.price?.cost_price ?? 0,
                 selling_price: variation.price?.selling_price ?? 0,
                 qty: 1,
+                expiry_date: "",
               });
-              return variation;
             }
           });
         });
@@ -611,6 +626,7 @@ export default {
                     cost_price: item.price?.cost_price ?? 0,
                     selling_price: item.price?.selling_price ?? 0,
                     qty: item.qty,
+                    expiry_date: item.inventory.expiry_date,
                   });
                 } else {
                   this.form.items.push({
@@ -620,6 +636,7 @@ export default {
                     cost_price: item.price?.cost_price ?? 0,
                     selling_price: item.price?.selling_price ?? 0,
                     qty: item.qty,
+                    expiry_date: item.inventory.expiry_date,
                   });
                 }
               });

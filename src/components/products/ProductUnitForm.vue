@@ -10,46 +10,108 @@
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.units" :key="k">
                     <CRow>
-                      <CInput label="Name" class="col-md-3" :value.sync="input.name" />
-                      <CInput
-                        label="Qty"
-                        min="1"
-                        type="number"
-                        class="col-md-3"
-                        :value.sync="input.qty"
-                      />
-                      <CInput
-                        label="Cost Price"
-                        placeholder="0.00"
-                        type="number"
-                        class="col-md-3"
-                        :value.sync="input.cost_price"
-                      />
-                      <CInput
-                        label="Selling Price"
-                        placeholder="0.00"
-                        type="number"
-                        class="col-md-3"
-                        :value.sync="input.selling_price"
-                      />
-                      <CInput
-                        label="Barcode"
-                        class="col-md-3"
-                        :value.sync="input.barcode"
-                      />
-                      <CSelect
-                        label="Status"
-                        class="col-md-3"
-                        :options="options.status"
-                        :value.sync="input.status"
-                      />
+                      <div class="col-md-3">
+                        <CInput
+                          label="Name"
+                          :value.sync="input.name"
+                          :class="{ error: $v.form.units.$each[k].name.$error }"
+                          @input="$v.form.units.$each[k].name.$touch()"
+                        />
+
+                        <div v-if="$v.form.units.$each[k].name.$error">
+                          <p
+                            v-if="!$v.form.units.$each[k].name.required"
+                            class="errorMsg"
+                          >
+                            Name is required
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <CInput
+                          label="Qty"
+                          min="1"
+                          type="number"
+                          :value.sync="input.qty"
+                          :class="{ error: $v.form.units.$each[k].qty.$error }"
+                          @input="$v.form.units.$each[k].qty.$touch()"
+                        />
+                        <div v-if="$v.form.units.$each[k].qty.$error">
+                          <p v-if="!$v.form.units.$each[k].qty.required" class="errorMsg">
+                            Qty is required
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <CInput
+                          label="Cost Price"
+                          placeholder="0.00"
+                          type="number"
+                          :value.sync="input.cost_price"
+                          :class="{ error: $v.form.units.$each[k].cost_price.$error }"
+                          @input="$v.form.units.$each[k].cost_price.$touch()"
+                        />
+                        <div v-if="$v.form.units.$each[k].cost_price.$error">
+                          <p
+                            v-if="!$v.form.units.$each[k].cost_price.required"
+                            class="errorMsg"
+                          >
+                            Cost Price is required
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <CInput
+                          label="Selling Price"
+                          placeholder="0.00"
+                          type="number"
+                          :value.sync="input.selling_price"
+                          :class="{ error: $v.form.units.$each[k].selling_price.$error }"
+                          @input="$v.form.units.$each[k].selling_price.$touch()"
+                        />
+                        <div v-if="$v.form.units.$each[k].selling_price.$error">
+                          <p
+                            v-if="!$v.form.units.$each[k].selling_price.required"
+                            class="errorMsg"
+                          >
+                            Selling Price is required
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <CInput label="Barcode" :value.sync="input.barcode" />
+                      </div>
+                      <div class="col-md-3">
+                        <CInput label="Serial Number" :value.sync="input.serial_number" />
+                      </div>
+                      <div class="col-md-3">
+                        <CSelect
+                          label="Status"
+                          :options="options.status"
+                          :value.sync="input.status"
+                          :class="{ error: $v.form.units.$each[k].status.$error }"
+                          @input="$v.form.units.$each[k].status.$touch()"
+                        />
+                        <div v-if="$v.form.units.$each[k].status.$error">
+                          <p
+                            v-if="!$v.form.units.$each[k].status.required"
+                            class="errorMsg"
+                          >
+                            Status is required
+                          </p>
+                        </div>
+                      </div>
                       <span class="ml-4">
                         <!-- <i
                           @click="removeUnit(k)"
                           class="thumb"
                           v-show="k || (!k && form.units.length > 1)"
                         > -->
-                        <i @click="removeUnit(k)" class="thumb">
+                        <i
+                          @click="removeUnit(k)"
+                          class="thumb"
+                          v-show="k || (!k && form.units[0].uuid)"
+                        >
                           <CIcon :content="$options.cisMinusSquare" /> Remove</i
                         ><br />
                         <i
@@ -63,7 +125,7 @@
                   </div>
                 </CCol>
               </CRow>
-
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -72,7 +134,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -85,6 +148,7 @@
 <script>
 import ProductUnitService from "@/services/products/ProductUnitService";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "ProductUnitForm",
@@ -102,6 +166,7 @@ export default {
           cost_price: "",
           selling_price: "",
           barcode: "",
+          serial_number: "",
           status: "",
         },
       ],
@@ -115,6 +180,28 @@ export default {
       ],
     },
   }),
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
+  validations() {
+    return {
+      form: {
+        product_id: required,
+        units: {
+          required: true,
+          $each: {
+            name: { required },
+            qty: { required },
+            cost_price: { required },
+            selling_price: { required },
+            status: { required },
+          },
+        },
+      },
+    };
+  },
   created() {
     this.productId = this.$route.params.id;
     this.form.product_id = this.$route.params.id;
@@ -130,7 +217,8 @@ export default {
         cost_price: "",
         selling_price: "",
         barcode: "",
-        status: "",
+        serial_number: "",
+        status: "active",
       });
     },
     removeUnit(index) {
@@ -165,10 +253,12 @@ export default {
                     if (this.form.units.length == 0) {
                       this.form.units.push({
                         name: "",
-                        serial_number: "",
+                        qty: "",
+                        cost_price: "",
+                        selling_price: "",
                         barcode: "",
-                        values: [],
-                        value: "",
+                        serial_number: "",
+                        status: "",
                       });
                     }
                   }
@@ -191,23 +281,7 @@ export default {
     getProductUnit() {
       ProductUnitService.get(this.productId)
         .then(({ data }) => {
-          if (data && data.length) {
-            this.isEditing = true;
-            this.form.units = [];
-            data.forEach((element) => {
-              if (element) {
-                this.form.units.push({
-                  uuid: element.uuid,
-                  name: element.name,
-                  qty: element.qty,
-                  cost_price: element.price?.cost_price,
-                  selling_price: element.price?.selling_price,
-                  barcode: element.barcode,
-                  status: element.status,
-                });
-              }
-            });
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
@@ -215,53 +289,85 @@ export default {
           this.$router.push({ path: "/products" });
         });
     },
+    displayData(data = null) {
+      if (data && data.length) {
+        this.isEditing = true;
+        this.form.units = [];
+        data.forEach((element) => {
+          if (element) {
+            this.form.units.push({
+              uuid: element.uuid,
+              name: element.name,
+              qty: element.qty,
+              cost_price: element.price?.cost_price,
+              selling_price: element.price?.selling_price,
+              barcode: element.barcode,
+              serial_number: element.serial_number,
+              status: element.status,
+            });
+          }
+        });
+      }
+    },
     saveProductUnit() {
-      let formData = this.form;
-      ProductUnitService.create(formData)
-        .then((res) => {
-          if (res.status == 200 || res.status == 201) {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let formData = this.form;
+        this.$store.commit("set_loader");
+        ProductUnitService.create(formData)
+          .then((res) => {
+            if (res.status == 200 || res.status == 201) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Unit Created Successfully",
+                timer: 3600,
+              });
+              this.displayData(res.data);
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Unit Created Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something Went wrong.",
               timer: 3600,
             });
-            this.getProductUnit();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went wrong.",
-            timer: 3600,
           });
-        });
+      }
     },
     updateProductUnit() {
-      let formData = this.form;
-      ProductUnitService.update(this.productId, formData)
-        .then((res) => {
-          if (res.status == 200 || res.status == 201) {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let formData = this.form;
+        this.$store.commit("set_loader");
+        ProductUnitService.update(this.productId, formData)
+          .then((res) => {
+            if (res.status == 200 || res.status == 201) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Unit Updated Successfully",
+                timer: 3600,
+              });
+              this.displayData(res.data);
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Unit Updated Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something went Wrong",
               timer: 3600,
             });
-            this.getProductUnit();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something went Wrong",
-            timer: 3600,
           });
-        });
+      }
     },
   },
 };

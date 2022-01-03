@@ -47,6 +47,17 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="2" md="2" class="pt-2 mt-4">
+                  <CInputCheckbox
+                    custom
+                    :checked="form.is_expiry"
+                    label="Is Expiry"
+                    @change="toggleIsExpiry"
+                  />
+                </CCol>
+                <CCol v-if="form.is_expiry" sm="3" md="3" class="pt-2">
+                  <CInput label="Expiry Date" type="date" v-model="form.expiry_date" />
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -58,7 +69,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -111,6 +123,17 @@
                       v-model="input.add_subtract_stock"
                     />
                   </CCol>
+                  <CCol sm="2" md="2" class="pt-2 mt-4">
+                    <CInputCheckbox
+                      custom
+                      :checked="input.is_expiry"
+                      label="Is Expiry"
+                      @change="toggleVariationIsExpiry(k)"
+                    />
+                  </CCol>
+                  <CCol v-if="input.is_expiry" sm="3" md="3" class="pt-2">
+                    <CInput label="Expiry Date" type="date" v-model="input.expiry_date" />
+                  </CCol>
                 </CRow>
 
                 <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -122,7 +145,8 @@
                     color="success"
                     style="float: right; width: 150px; margin-right: 20px"
                     type="submit"
-                    >Save</CButton
+                    :disabled="loading"
+                    >{{ loading ? "loading..." : "Save" }}</CButton
                   >
                 </CRow>
               </form>
@@ -158,6 +182,7 @@ const fields = [
   { key: "date", label: "DATE", _style: "min-width:40%" },
   { key: "variation_name", label: "VARIATION", _style: "min-width:15%;" },
   { key: "qty", label: "In/Out Qty", _style: "min-width:15%;" },
+  { key: "expiry_date", label: "EXPIRY DATE", _style: "min-width:15%" },
 ];
 
 export default {
@@ -169,9 +194,10 @@ export default {
     // isEditing: false,
     // isVariationEditing: false,
     stockHistory: [],
-    loading: false,
     fields,
     form: {
+      is_expiry: false,
+      expiry_date: "",
       product_id: "",
       current_quantity: "",
       original_stock: "",
@@ -191,6 +217,11 @@ export default {
       },
     };
   },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   created() {
     this.productId = this.$route.params.id;
     this.form.product_id = this.$route.params.id;
@@ -204,8 +235,14 @@ export default {
     }
   },
   methods: {
+    toggleIsExpiry() {
+      this.form.is_expiry = !this.form.is_expiry;
+    },
+    toggleVariationIsExpiry(key) {
+      this.variations_form[key].is_expiry = !this.variations_form[key].is_expiry;
+    },
     getProductInventory() {
-      this.loading = true;
+      this.$store.commit("set_loader");
       ProductInventoryService.get(this.productId)
         .then(({ data }) => {
           if (data !== "" && data !== undefined && data.length) {
@@ -222,6 +259,7 @@ export default {
                   variation_name: item.inventable.name,
                   date: date,
                   qty: qty,
+                  expiry_date: item.expiry_date ?? "",
                 });
               }
               if (item.type === "product" && item.inventable) {
@@ -231,6 +269,7 @@ export default {
                   variation_name: "",
                   date: date,
                   qty: qty,
+                  expiry_date: item.expiry_date ?? "",
                 });
               }
             });
@@ -238,9 +277,10 @@ export default {
             // this.form.damage_qty = "";
             // this.form.damage_reason = "";
           }
-          this.loading = false;
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
         });
     },
@@ -286,12 +326,14 @@ export default {
           if (data && data.length) {
             this.variations_form = [];
             data.forEach((element) => {
-              this.variations_form.unshift({
+              this.variations_form.push({
                 variation_name: JSON.parse(element.name).en,
                 product_variation_id: element.uuid,
                 current_quantity: element.inventory[0]?.current_quantity ?? 0,
                 original_stock: element.inventory[0]?.current_quantity ?? 0,
                 add_subtract_stock: 0,
+                is_expiry: false,
+                expiry_date: "",
                 // damage_qty: "",
                 // damage_reason: "",
               });
@@ -306,7 +348,7 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let formData = this.form;
-
+        this.$store.commit("set_loader");
         ProductInventoryService.create(formData)
           .then((res) => {
             if (res.status == 201 || res.status == 200) {
@@ -319,10 +361,14 @@ export default {
               this.$v.$reset();
               this.getVariationsInventory();
               this.getProductInventory();
+              this.form.expiry_date = "";
+              this.form.is_expiry = false;
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -366,7 +412,7 @@ export default {
         product_id: this.productId,
         variations: this.variations_form,
       };
-
+      this.$store.commit("set_loader");
       ProductInventoryService.createVariations(formData)
         .then((res) => {
           if (res.status == 201 || res.status == 200) {
@@ -378,10 +424,16 @@ export default {
             });
             this.getVariationsInventory();
             this.getProductInventory();
+            this.$store.commit("close_loader");
+            this.variations_form.map((element) => {
+              element.expiry_date = "";
+              element.is_expiry = false;
+            });
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",

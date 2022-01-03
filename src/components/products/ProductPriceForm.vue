@@ -47,7 +47,9 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.product.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -56,7 +58,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -84,15 +87,41 @@
                           <CInput
                             label="Cost Price"
                             type="number"
+                            placeholder="0.00"
                             v-model="input.cost_price"
+                            :class="{
+                              error: $v.variations.$each[k].cost_price.$error,
+                            }"
+                            @input="$v.variations.$each[k].cost_price.$touch()"
                           />
+                          <div v-if="$v.variations.$each[k].cost_price.$error">
+                            <p
+                              v-if="!$v.variations.$each[k].cost_price.required"
+                              class="errorMsg"
+                            >
+                              Cost Price is required
+                            </p>
+                          </div>
                         </CCol>
                         <CCol sm="6" md="3" class="pt-2">
                           <CInput
                             label="Selling Price"
                             type="number"
+                            placeholder="0.00"
                             v-model="input.selling_price"
+                            :class="{
+                              error: $v.variations.$each[k].selling_price.$error,
+                            }"
+                            @input="$v.variations.$each[k].selling_price.$touch()"
                           />
+                          <div v-if="$v.variations.$each[k].selling_price.$error">
+                            <p
+                              v-if="!$v.variations.$each[k].selling_price.required"
+                              class="errorMsg"
+                            >
+                              Selling Price is required
+                            </p>
+                          </div>
                         </CCol>
                         <CCol sm="3" md="3" class="pt-2 mt-4">
                           <CInputCheckbox
@@ -107,7 +136,9 @@
                   </CCol>
                 </CRow>
 
-                <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+                <p v-if="$v.variations.$anyError" class="errorMsg">
+                  Please Fill the required data
+                </p>
                 <CRow class="mt-4 d-block">
                   <CButton
                     progress
@@ -116,7 +147,8 @@
                     color="success"
                     style="float: right; width: 150px; margin-right: 20px"
                     type="submit"
-                    >Save</CButton
+                    :disabled="loading"
+                    >{{ loading ? "loading..." : "Save" }}</CButton
                   >
                 </CRow>
               </form>
@@ -167,6 +199,13 @@ export default {
         cost_price: { required },
         selling_price: { required },
       },
+      variations: {
+        required: true,
+        $each: {
+          cost_price: { required },
+          selling_price: { required },
+        },
+      },
     };
   },
   created() {
@@ -176,6 +215,11 @@ export default {
       this.getProductPrice();
       this.getProductVariation();
     }
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
   },
   methods: {
     toggleIsVat() {
@@ -190,15 +234,15 @@ export default {
           if (data !== "" && data !== null && data !== undefined && data.uuid) {
             this.isEditing = true;
             this.product.id = data.uuid;
-            this.product.cost_price = data.cost_price;
-            this.product.selling_price = data.selling_price;
+            this.product.cost_price = data.cost_price ?? 0;
+            this.product.selling_price = data.selling_price ?? 0;
             this.product.is_vat_included = data.is_vat_included === 1 ? true : false;
           }
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          // this.$router.push({ path: "/products" });
+          this.$router.push({ path: "/products" });
         });
     },
     getProductVariation() {
@@ -211,13 +255,8 @@ export default {
               this.variations.unshift({
                 uuid: element.uuid,
                 name: JSON.parse(element.name).en,
-                // values: element.values
-                //   .map((value) => {
-                //     return value.product_attribute.name + ": " + value.value;
-                //   })
-                //   .join(","),
-                cost_price: element.price?.cost_price ?? "",
-                selling_price: element.price?.selling_price ?? "",
+                cost_price: element.price?.cost_price ?? 0,
+                selling_price: element.price?.selling_price ?? 0,
                 is_vat_included: element.price?.is_vat_included === 1 ? true : false,
               });
             });
@@ -226,27 +265,30 @@ export default {
         .catch((error) => {
           console.log(error);
           this.isVariationEditing = false;
-          // this.$router.push({ path: "/products" });
+          this.$router.push({ path: "/products" });
         });
     },
     saveProductPrice() {
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
+      this.$v.product.$touch();
+      if (!this.$v.product.$invalid) {
         let formData = this.product;
+        this.$store.commit("set_loader");
         ProductPriceService.create(formData)
           .then((res) => {
             if (res.status == 200 || res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Prices Created Successfully",
+                text: "Product Price Created Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -257,51 +299,60 @@ export default {
       }
     },
     saveProductVariationPrice() {
-      let formData = {
-        type: "variation",
-        variations: this.variations,
-      };
-      ProductPriceService.create(formData)
-        .then((res) => {
-          if (res.status == 200 || res.status == 201) {
+      this.$v.variations.$touch();
+      if (!this.$v.variations.$invalid) {
+        let formData = {
+          type: "variation",
+          variations: this.variations,
+        };
+        this.$store.commit("set_loader");
+        ProductPriceService.create(formData)
+          .then((res) => {
+            if (res.status == 200 || res.status == 201) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Variation Prices Created Successfully",
+                timer: 3600,
+              });
+              this.$v.$reset();
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Prices Created Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something Went wrong.",
               timer: 3600,
             });
-            this.$v.$reset();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went wrong.",
-            timer: 3600,
           });
-        });
+      }
     },
     updateProductPrice() {
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
+      this.$v.product.$touch();
+      if (!this.$v.product.$invalid) {
         let formData = this.product;
+        this.$store.commit("set_loader");
         ProductPriceService.update(this.product.id, formData)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Prices Updated Successfully",
+                text: "Product Price Updated Successfully",
                 timer: 3600,
               });
 
               this.$v.$reset();
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -312,33 +363,39 @@ export default {
       }
     },
     updateProductVariationPrice() {
-      let formData = {
-        type: "variation",
-        variations: this.variations,
-        product_id: this.productId,
-      };
-      ProductPriceService.update(this.productId, formData)
-        .then((res) => {
-          if (res.status == 200) {
+      this.$v.variations.$touch();
+      if (!this.$v.variations.$invalid) {
+        let formData = {
+          type: "variation",
+          variations: this.variations,
+          product_id: this.productId,
+        };
+        this.$store.commit("set_loader");
+        ProductPriceService.update(this.productId, formData)
+          .then((res) => {
+            if (res.status == 200) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Variation Prices Updated Successfully",
+                timer: 3600,
+              });
+
+              this.$v.$reset();
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Prices Updated Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something went Wrong",
               timer: 3600,
             });
-
-            this.$v.$reset();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something went Wrong",
-            timer: 3600,
           });
-        });
+      }
     },
   },
 };

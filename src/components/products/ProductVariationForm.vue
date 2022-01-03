@@ -14,18 +14,42 @@
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.variations" :key="k">
                     <CRow>
-                      <CInput label="Name" class="col-md-3" :value.sync="input.name" />
-                      <div class="form-group">
+                      <div class="col-md-3">
+                        <CInput
+                          label="Name"
+                          :value.sync="input.name"
+                          :class="{ error: $v.form.variations.$each[k].name.$error }"
+                          @input="$v.form.variations.$each[k].name.$touch()"
+                        />
+                        <div v-if="$v.form.variations.$each[k].name.$error">
+                          <p
+                            v-if="!$v.form.variations.$each[k].name.required"
+                            class="errorMsg"
+                          >
+                            Name is required
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group col-md-6">
                         <label class="typo__label">Attributes</label>
                         <vue-tags-input
                           v-model="input.value"
-                          class="col-md-6"
                           placeholder="Search Attributes"
                           :autocomplete-items="filteredItems(k)"
                           :add-only-from-autocomplete="true"
                           :tags="input.values"
                           @tags-changed="(newTags) => (input.values = newTags)"
+                          :class="{ error: $v.form.variations.$each[k].values.$error }"
+                          @input="$v.form.variations.$each[k].values.$touch()"
                         />
+                        <div v-if="$v.form.variations.$each[k].values.$error">
+                          <p
+                            v-if="!$v.form.variations.$each[k].values.required"
+                            class="errorMsg mt-3"
+                          >
+                            Attributes is required
+                          </p>
+                        </div>
                       </div>
                       <CInput
                         label="Serial Number"
@@ -43,7 +67,11 @@
                           class="thumb"
                           v-show="k || (!k && form.variations.length > 1)"
                         > -->
-                        <i @click="removeVariation(k)" class="thumb">
+                        <i
+                          @click="removeVariation(k)"
+                          class="thumb"
+                          v-show="k || (!k && form.variations[0].uuid)"
+                        >
                           <CIcon :content="$options.cisMinusSquare" /> Remove</i
                         ><br />
                         <i
@@ -57,7 +85,7 @@
                   </div>
                 </CCol>
               </CRow>
-
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -66,7 +94,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -80,6 +109,7 @@
 import ProductVariationService from "@/services/products/ProductVariationService";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 import { VueTagsInput } from "@johmun/vue-tags-input";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "ProductVariationForm",
@@ -111,6 +141,25 @@ export default {
     if (this.productId !== "" && this.productId !== undefined) {
       this.getProductVariation();
     }
+  },
+  validations() {
+    return {
+      product_id: required,
+      form: {
+        variations: {
+          required: true,
+          $each: {
+            name: { required },
+            values: { required },
+          },
+        },
+      },
+    };
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
   },
   methods: {
     addVariation() {
@@ -189,31 +238,7 @@ export default {
     getProductVariation() {
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
-          if (data && data.length) {
-            this.isEditing = true;
-            this.form.variations = [];
-            data.forEach((element) => {
-              this.form.variations.push({
-                uuid: element.uuid,
-                name: JSON.parse(element.name).en,
-                serial_number: element.serial_number,
-                barcode: element.barcode,
-                values: element.values.map((value) => {
-                  return {
-                    text: value.product_attribute.name + ": " + value.value,
-                    value: value.uuid,
-                  };
-
-                  // return this.autocompleteItems.map((item) => {
-                  //   if (item.value === value.uuid) {
-                  //     return item;
-                  //   }
-                  // });
-                }),
-                value: "",
-              });
-            });
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
@@ -235,66 +260,93 @@ export default {
                   });
                 });
               }
-
-              // this.allOptions.push({
-              //   uuid: element.uuid,
-              //   name: element.name,
-              //   values: element.values,
-              // });
             });
           }
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    displayData(data = null) {
+      if (data && data.length) {
+        this.isEditing = true;
+        this.form.variations = [];
+        data.forEach((element) => {
+          this.form.variations.push({
+            uuid: element.uuid,
+            name: JSON.parse(element.name).en,
+            serial_number: element.serial_number,
+            barcode: element.barcode,
+            values: element.values?.map((value) => {
+              return {
+                text: value.product_attribute.name + ": " + value.value,
+                value: value.uuid,
+              };
+            }),
+            value: "",
+          });
+        });
+      }
     },
     saveProductVariation() {
-      let formData = this.form;
-      ProductVariationService.create(formData)
-        .then((res) => {
-          if ((res && res.status == 200) || res.status == 201) {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let formData = this.form;
+        this.$store.commit("set_loader");
+        ProductVariationService.create(formData)
+          .then((res) => {
+            if ((res && res.status == 200) || res.status == 201) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Variation Created Successfully",
+                timer: 3600,
+              });
+              this.displayData(res.data);
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Variation Created Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something Went wrong.",
               timer: 3600,
             });
-            this.getProductVariation();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went wrong.",
-            timer: 3600,
           });
-        });
+      }
     },
     updateProductVariation() {
-      let formData = this.form;
-      ProductVariationService.update(this.productId, formData)
-        .then((res) => {
-          if ((res && res.status == 200) || res.status == 201) {
-            this.getProductVariation();
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let formData = this.form;
+        this.$store.commit("set_loader");
+        ProductVariationService.update(this.productId, formData)
+          .then((res) => {
+            if ((res && res.status == 200) || res.status == 201) {
+              this.displayData(res.data);
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Variation Updated Successfully",
+                timer: 3600,
+              });
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Variation Updated Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something went Wrong",
               timer: 3600,
             });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something went Wrong",
-            timer: 3600,
           });
-        });
+      }
     },
   },
 };

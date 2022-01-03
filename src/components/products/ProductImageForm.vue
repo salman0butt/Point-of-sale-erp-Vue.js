@@ -48,7 +48,8 @@
                   color="success"
                   style="float: right; width: 150px; margin-right: 20px"
                   type="submit"
-                  >Save</CButton
+                  :disabled="loading"
+                  >{{ loading ? "loading..." : "Save" }}</CButton
                 >
               </CRow>
             </form>
@@ -82,6 +83,11 @@ export default {
       this.getProductImages();
     }
   },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   methods: {
     getProductImages() {
       ProductImageService.get(this.productId)
@@ -109,6 +115,7 @@ export default {
       const config = {
         headers: { "Content-Type": "multipart/form-data" },
       };
+      this.$store.commit("set_loader");
       ProductImageService.create(this.productId, formData, config)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
@@ -120,10 +127,12 @@ export default {
             });
             this.resetForm();
             this.getProductImages();
+            this.$store.commit("close_loader");
           }
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",
