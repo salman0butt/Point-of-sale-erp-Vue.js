@@ -14,18 +14,42 @@
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.variations" :key="k">
                     <CRow>
-                      <CInput label="Name" class="col-md-3" :value.sync="input.name" />
-                      <div class="form-group">
+                      <div class="col-md-3">
+                        <CInput
+                          label="Name"
+                          :value.sync="input.name"
+                          :class="{ error: $v.form.variations.$each[k].name.$error }"
+                          @input="$v.form.variations.$each[k].name.$touch()"
+                        />
+                        <div v-if="$v.form.variations.$each[k].name.$error">
+                          <p
+                            v-if="!$v.form.variations.$each[k].name.required"
+                            class="errorMsg"
+                          >
+                            Name is required
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group col-md-6">
                         <label class="typo__label">Attributes</label>
                         <vue-tags-input
                           v-model="input.value"
-                          class="col-md-6"
                           placeholder="Search Attributes"
                           :autocomplete-items="filteredItems(k)"
                           :add-only-from-autocomplete="true"
                           :tags="input.values"
                           @tags-changed="(newTags) => (input.values = newTags)"
+                          :class="{ error: $v.form.variations.$each[k].values.$error }"
+                          @input="$v.form.variations.$each[k].values.$touch()"
                         />
+                        <div v-if="$v.form.variations.$each[k].values.$error">
+                          <p
+                            v-if="!$v.form.variations.$each[k].values.required"
+                            class="errorMsg mt-3"
+                          >
+                            Attributes is required
+                          </p>
+                        </div>
                       </div>
                       <CInput
                         label="Serial Number"
@@ -61,7 +85,7 @@
                   </div>
                 </CCol>
               </CRow>
-
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -85,6 +109,7 @@
 import ProductVariationService from "@/services/products/ProductVariationService";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 import { VueTagsInput } from "@johmun/vue-tags-input";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "ProductVariationForm",
@@ -116,6 +141,20 @@ export default {
     if (this.productId !== "" && this.productId !== undefined) {
       this.getProductVariation();
     }
+  },
+  validations() {
+    return {
+      product_id: required,
+      form: {
+        variations: {
+          required: true,
+          $each: {
+            name: { required },
+            values: { required },
+          },
+        },
+      },
+    };
   },
   computed: {
     loading() {
@@ -250,58 +289,64 @@ export default {
       }
     },
     saveProductVariation() {
-      let formData = this.form;
-      this.$store.commit("set_loader");
-      ProductVariationService.create(formData)
-        .then((res) => {
-          if ((res && res.status == 200) || res.status == 201) {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let formData = this.form;
+        this.$store.commit("set_loader");
+        ProductVariationService.create(formData)
+          .then((res) => {
+            if ((res && res.status == 200) || res.status == 201) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Variation Created Successfully",
+                timer: 3600,
+              });
+              this.displayData(res.data);
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Variation Created Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something Went wrong.",
               timer: 3600,
             });
-            this.displayData(res.data);
-            this.$store.commit("close_loader");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$store.commit("close_loader");
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went wrong.",
-            timer: 3600,
           });
-        });
+      }
     },
     updateProductVariation() {
-      let formData = this.form;
-      this.$store.commit("set_loader");
-      ProductVariationService.update(this.productId, formData)
-        .then((res) => {
-          if ((res && res.status == 200) || res.status == 201) {
-            this.displayData(res.data);
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let formData = this.form;
+        this.$store.commit("set_loader");
+        ProductVariationService.update(this.productId, formData)
+          .then((res) => {
+            if ((res && res.status == 200) || res.status == 201) {
+              this.displayData(res.data);
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Product Variation Updated Successfully",
+                timer: 3600,
+              });
+              this.$store.commit("close_loader");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Product Variation Updated Successfully",
+              icon: "error",
+              title: "Error",
+              text: "Something went Wrong",
               timer: 3600,
             });
-            this.$store.commit("close_loader");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$store.commit("close_loader");
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something went Wrong",
-            timer: 3600,
           });
-        });
+      }
     },
   },
 };
