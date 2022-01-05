@@ -3,8 +3,8 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>Edit Brand </CCardHeader>
-          <CCardBody> <BrandForm /> </CCardBody>
+          <CCardHeader>Edit Offer </CCardHeader>
+          <CCardBody> <OfferForm /> </CCardBody>
         </CCard>
       </CCol>
     </CRow>
@@ -12,12 +12,12 @@
 </template>
 
 <script>
-import BrandForm from "@/components/brands/BrandForm";
+import OfferForm from "@/components/offers/OfferForm";
 
 export default {
-  name: "EditBrand",
+  name: "EditOffer",
   components: {
-    BrandForm,
+    OfferForm,
   },
 };
 </script>
