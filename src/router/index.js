@@ -35,6 +35,7 @@ import productCategoryRoutes from '@/router/products/productCategoryRoutes';
 import brandRoutes from '@/router/brands/brandRoutes';
 import receivingRoutes from '@/router/receivings/receivingRoutes';
 import damageRoutes from '@/router/damages/damageRoutes';
+import offerRoutes from '@/router/offers/offerRoutes';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -219,6 +220,7 @@ const router = new Router({
         brandRoutes,
         receivingRoutes,
         damageRoutes,
+        offerRoutes,
 
         {
           path: 'theme',

@@ -15,7 +15,7 @@
 import BrandForm from "@/components/brands/BrandForm";
 
 export default {
-  name: "CreateProductCategory",
+  name: "CreateBrand",
   components: {
     BrandForm,
   },
