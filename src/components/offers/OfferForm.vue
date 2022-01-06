@@ -45,11 +45,8 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
-              <CTextarea
-                label="Description"
-                placeholder="Content..."
-                v-model="form.description"
-              />
+              <label class="typo__label">Description</label>
+              <vue-editor v-model="form.description"></vue-editor>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
@@ -77,6 +74,18 @@
                 <p v-if="!$v.form.end_date.required" class="errorMsg">
                   End Date is required
                 </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Status"
+                :options="options.status"
+                :value.sync="form.status"
+                :class="{ error: $v.form.status.$error }"
+                @input="$v.form.status.$touch()"
+              />
+              <div v-if="$v.form.status.$error">
+                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
               </div>
             </CCol>
           </CRow>
@@ -193,19 +202,101 @@
           </CRow>
 
           <CRow>
+            <CCol sm="6" md="4" class="pt-2" id="categories">
+              <label class="typo__label">Categories</label>
+              <multiselect
+                v-model="form.categories"
+                :options="options.categories"
+                :multiple="true"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :preserve-search="true"
+                placeholder="Select Categories"
+                label="label"
+                track-by="label"
+                :preselect-first="true"
+              >
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }} options selected</span
+                  ></template
+                >
+              </multiselect>
+            </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Status"
-                :options="options.status"
-                :value.sync="form.status"
-                :class="{ error: $v.form.status.$error }"
-                @input="$v.form.status.$touch()"
+              <label class="typo__label">Branches</label>
+              <multiselect
+                v-model="form.branches"
+                :options="options.branches"
+                :multiple="true"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :preserve-search="true"
+                placeholder="Select Branches"
+                label="label"
+                track-by="label"
+                :preselect-first="true"
+              >
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }} options selected</span
+                  ></template
+                >
+              </multiselect>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <label class="typo__label">Products</label>
+              <multiselect
+                v-model="form.products"
+                :options="options.products"
+                :multiple="true"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :preserve-search="true"
+                placeholder="Select Products"
+                label="label"
+                track-by="label"
+                :preselect-first="true"
+              >
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }} options selected</span
+                  ></template
+                >
+              </multiselect>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <label class="typo__label">Brands</label>
+              <multiselect
+                v-model="form.brands"
+                :options="options.brands"
+                :multiple="true"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :preserve-search="true"
+                placeholder="Select Brands"
+                label="label"
+                track-by="label"
+                :preselect-first="true"
+              >
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }} options selected</span
+                  ></template
+                >
+              </multiselect>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <label class="typo__label">Tags</label>
+              <vue-tags-input
+                v-model="form.tag"
+                placeholder="Tags"
+                :tags="form.tags"
+                @tags-changed="(newTags) => (form.tags = newTags)"
               />
-              <div v-if="$v.form.status.$error">
-                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
-              </div>
             </CCol>
           </CRow>
+
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4">
             <CButton
@@ -236,9 +327,13 @@
 <script>
 import OfferService from "@/services/offers/OfferService";
 import { required } from "vuelidate/lib/validators";
+import Multiselect from "vue-multiselect";
+import { VueTagsInput } from "@johmun/vue-tags-input";
+import { VueEditor } from "vue2-editor";
 
 export default {
   name: "OfferForm",
+  components: { Multiselect, VueTagsInput, VueEditor },
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -256,6 +351,12 @@ export default {
       discount_amount: "",
       spend_amount: "",
       quantity_to_get: "",
+      branches: [],
+      brands: [],
+      products: [],
+      categories: [],
+      tags: [],
+      tag: "",
     },
     options: {
       status: [
@@ -275,6 +376,10 @@ export default {
         { value: "percentage", label: "Percentage" },
         { value: "fixed", label: "Fixed" },
       ],
+      branches: [],
+      brands: [],
+      products: [],
+      categories: [],
     },
   }),
   validations() {
@@ -352,6 +457,7 @@ export default {
   },
   created() {
     this.form.id = this.$route.params.id;
+    this.getAllOfferOptions();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getOffer();
@@ -361,7 +467,7 @@ export default {
     saveOffer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
+        let data = this.formData();
         OfferService.create(data)
           .then((res) => {
             if (res.status == 201) {
@@ -398,7 +504,7 @@ export default {
     updateOffer() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
+        let data = this.formData(true);
         OfferService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
@@ -431,6 +537,38 @@ export default {
           });
       }
     },
+    getAllOfferOptions() {
+      OfferService.getAllOfferOptions()
+        .then((res) => {
+          if (res.status == 200) {
+            if (res.data !== "" && res.data != undefined) {
+              if (res.data.branches) {
+                this.options.branches = res.data.branches?.map((item) => {
+                  return { value: item.uuid, label: item.name };
+                });
+              }
+              if (res.data.brands) {
+                this.options.brands = res.data.brands?.map((item) => {
+                  return { value: item.uuid, label: item.name };
+                });
+              }
+              if (res.data.products) {
+                this.options.products = res.data.products?.map((item) => {
+                  return { value: item.uuid, label: item.name };
+                });
+              }
+              if (res.data.categories) {
+                this.options.categories = res.data.categories?.map((item) => {
+                  return { value: item.uuid, label: item.name };
+                });
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     getOffer() {
       OfferService.get(this.form.id)
         .then(({ data }) => {
@@ -453,26 +591,123 @@ export default {
         this.form.end_date = data.end_date;
         this.form.allowed_per_sale = data.allowed_per_sale;
         this.form.status = data.status;
-        if (data.type == "offer_buy_x_get_discount") {
-          this.form.quantity_to_buy = data.detail.quantity_to_buy;
-          this.form.discount_type = data.detail.discount_type;
-          this.form.discount_amount = data.detail.discount_amount;
+        if (data.detail) {
+          if (data.type == "offer_buy_x_get_discount") {
+            this.form.quantity_to_buy = data.detail.quantity_to_buy;
+            this.form.discount_type = data.detail.discount_type;
+            this.form.discount_amount = data.detail.discount_amount;
+          }
+          if (data.type == "offer_spend_x_get_discount") {
+            this.form.spend_amount = data.detail.spend_amount;
+            this.form.quantity_to_get = data.detail.quantity_to_get;
+            this.form.discount_type = data.detail.discount_type;
+            this.form.discount_amount = data.detail.discount_amount;
+          }
+          if (data.type == "offer_x_get_y_free") {
+            this.form.quantity_to_buy = data.detail.quantity_to_buy;
+            this.form.quantity_to_get = data.detail.quantity_to_get;
+          }
+          if (data.type == "offer_discount") {
+            this.form.discount_type = data.detail.discount_type;
+            this.form.discount_amount = data.detail.discount_amount;
+          }
         }
-        if (data.type == "offer_spend_x_get_discount") {
-          this.form.spend_amount = data.detail.spend_amount;
-          this.form.quantity_to_get = data.detail.quantity_to_get;
-          this.form.discount_type = data.detail.discount_type;
-          this.form.discount_amount = data.detail.discount_amount;
+
+        if (data.branches) {
+          this.form.branches = data.branches?.map((item) => {
+            return { value: item.uuid, label: item.name };
+          });
         }
-        if (data.type == "offer_x_get_y_free") {
-          this.form.quantity_to_buy = data.detail.quantity_to_buy;
-          this.form.quantity_to_get = data.detail.quantity_to_get;
+        if (data.brands) {
+          this.form.brands = data.brands?.map((item) => {
+            return { value: item.uuid, label: item.name };
+          });
         }
-        if (data.type == "offer_discount") {
-          this.form.discount_type = data.detail.discount_type;
-          this.form.discount_amount = data.detail.discount_amount;
+        if (data.products) {
+          this.form.products = data.products?.map((item) => {
+            return { value: item.uuid, label: item.name };
+          });
+        }
+        if (data.categories) {
+          this.form.categories = data.categories?.map((item) => {
+            return { value: item.uuid, label: item.name };
+          });
+        }
+        this.form.tags = [];
+        if (data.tags && data.tags.length > 0) {
+          data.tags.forEach((element) => {
+            this.form.tags.push({ text: element.name, tiClasses: ["ti-valid"] });
+          });
         }
       }
+    },
+    formData(update = false) {
+      let data = new FormData();
+      for (const index in this.form) {
+        if (index === "branches") {
+          const branches = this.form.branches;
+          if (branches !== "" && branches.length > 0) {
+            const get_branchs = branches?.map(function (item) {
+              return item.value;
+            });
+
+            for (const brnch of get_branchs) {
+              console.log(brnch);
+              data.append("branches[]", brnch);
+            }
+          }
+        } else if (index === "brands") {
+          const brands = this.form.brands;
+          if (brands !== "" && brands.length > 0) {
+            const get_brands = brands?.map(function (item) {
+              return item.value;
+            });
+
+            for (const brand of get_brands) {
+              data.append("brands[]", brand);
+            }
+          }
+        } else if (index === "products") {
+          const products = this.form.products;
+          if (products !== "" && products.length > 0) {
+            const get_products = products?.map(function (item) {
+              return item.value;
+            });
+
+            for (const product of get_products) {
+              data.append("products[]", product);
+            }
+          }
+        } else if (index === "categories") {
+          const categories = this.form.categories;
+          if (categories !== "" && categories.length > 0) {
+            const get_categories = categories?.map(function (item) {
+              return item.value;
+            });
+
+            for (const category of get_categories) {
+              data.append("categories[]", category);
+            }
+          }
+        } else if (index === "tags") {
+          const tags = this.form.tags;
+          if (tags !== "" && tags.length > 0) {
+            const get_tags = tags?.map(function (item) {
+              return item.text;
+            });
+
+            for (const tag of get_tags) {
+              data.append("tags[]", tag);
+            }
+          }
+        } else {
+          data.append(index, this.form[index]);
+        }
+      }
+      if (update) {
+        data.append("_method", "patch");
+      }
+      return data;
     },
     resetForm() {
       for (let index in this.form) {
@@ -483,3 +718,4 @@ export default {
   },
 };
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
