@@ -18,12 +18,16 @@ class OfferService extends Helper {
         return http.get(`/offers/${id}`);
     }
 
+    getAllOfferOptions() {
+        return http.get("/offers-options");
+    }
+
     create(data) {
         return http.post("/offers", data, super.selectedBranch());
     }
 
     update(id, data) {
-        return http.patch(`/offers/${id}`, data);
+        return http.post(`/offers/${id}`, data);
     }
 
     delete(id) {
