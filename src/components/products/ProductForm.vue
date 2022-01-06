@@ -154,10 +154,10 @@
             </CCol>
           </CRow>
 
-          <CRow class="mt-2">
+          <CRow class="mt-4">
             <vue-tags-input
               v-model="form.tag"
-              class="col-md-4"
+              class="col-md-12"
               placeholder="Tags"
               :tags="form.tags"
               @tags-changed="(newTags) => (form.tags = newTags)"
