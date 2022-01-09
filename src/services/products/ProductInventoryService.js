@@ -4,11 +4,11 @@ import Helper from "@/helpers/Helper";
 class ProductInventoryService extends Helper {
 
     get(id) {
-        return http.get(`/product-stocks/${id}`);
+        return http.get(`/product-stocks/${id}`, super.selectedBranch());
     }
 
     getVariations(id) {
-        return http.get(`/product-variation-stocks/${id}`);
+        return http.get(`/product-variation-stocks/${id}`, super.selectedBranch());
     }
 
     create(data) {

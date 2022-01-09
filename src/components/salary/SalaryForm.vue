@@ -565,9 +565,15 @@ export default {
               if (data.already_genrated && data.already_genrated === true) {
                 this.$router.push({ path: "/salary/edit/" + data.uuid });
               }
-              this.salary.basic_salary = data.emp.salary.basic_salary
-                ? data.emp.salary.basic_salary
-                : 0;
+              if (!data.emp.salary) {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Please Add the Employee Salary first to genrate",
+                  timer: 3600,
+                });
+              }
+              this.salary.basic_salary = data.emp.salary?.basic_salary ?? 0;
               this.salary.net_salary = data.emp.salary.basic_salary;
               this.salary.total_working_days = data.total_working_days;
               this.salary.total_days = data.total_days;

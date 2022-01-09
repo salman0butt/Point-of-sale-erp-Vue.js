@@ -15,7 +15,7 @@ class ReceivingService extends Helper {
     }
 
     get(id) {
-        return http.get(`/receivings/${id}`);
+        return http.get(`/receivings/${id}`, super.selectedBranch());
     }
 
     getAllSuppliers() {

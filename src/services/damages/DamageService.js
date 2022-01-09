@@ -15,7 +15,7 @@ class DamageService extends Helper {
     }
 
     get(id) {
-        return http.get(`/product-damages/${id}`);
+        return http.get(`/product-damages/${id}`, super.selectedBranch());
     }
 
     getAllSuppliers() {
