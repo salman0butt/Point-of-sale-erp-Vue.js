@@ -15,7 +15,7 @@ class ProductVariationService extends Helper {
     }
 
     get(id) {
-        return http.get(`/product-variations/${id}`);
+        return http.get(`/product-variations/${id}`, super.selectedBranch());
     }
 
     getProductVariationOptions(product_id) {
@@ -23,7 +23,7 @@ class ProductVariationService extends Helper {
       if (product_id !== '' && product_id !== undefined && product_id !== null)
             url = super.updateQueryStringParameter(url, "product_id", product_id);
 
-        return http.get(url);
+        return http.get(url, super.selectedBranch());
     }
 
     create(data) {

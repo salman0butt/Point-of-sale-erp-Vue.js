@@ -15,7 +15,7 @@ class ProductService extends Helper {
     }
 
     get(id) {
-        return http.get(`/products/${id}`);
+        return http.get(`/products/${id}`, super.selectedBranch());
     }
 
     getProductOptions() {
