@@ -15,7 +15,7 @@ class OfferService extends Helper {
     }
 
     get(id) {
-        return http.get(`/offers/${id}`);
+        return http.get(`/offers/${id}`, super.selectedBranch());
     }
 
     getAllOfferOptions() {
