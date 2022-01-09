@@ -47,6 +47,8 @@ import General from "@/components/contacts/customers/General";
 import Address from "@/components/contacts/customers/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 
+import { required, minLength } from "vuelidate/lib/validators";
+
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {

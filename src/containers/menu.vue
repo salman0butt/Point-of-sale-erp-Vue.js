@@ -54,13 +54,13 @@ export default {
       if (this.permissions.includes("read contacts")) {
         // different modules of hr
         if (this.permissions.includes("read group")) {
-          this.sideBarItems_contacts.push({
-            _name: "CSidebarNavItem",
-            _attrs: { class: "hide-me" },
-            name: "Groups",
-            to: "/groups/index",
-            icon: "cil-lan",
-          });
+          // this.sideBarItems_contacts.push({
+          //   _name: "CSidebarNavItem",
+          //   _attrs: { class: "hide-me" },
+          //   name: "Groups",
+          //   to: "/groups/index",
+          //   icon: "cil-lan",
+          // });
         }
         if (this.permissions.includes("read customers")) {
           this.sideBarItems_contacts.push({

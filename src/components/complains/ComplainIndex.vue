@@ -80,7 +80,11 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
         <!-- </CCardBody>
         </CCard> -->
       </CCol>

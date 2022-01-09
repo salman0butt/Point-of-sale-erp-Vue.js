@@ -13,6 +13,7 @@
                     :options="options.type"
                     :value.sync="form.type"
                     :class="{ error: $v.form.type.$error }"
+                    v-on:change="CustomerType"
                     @input="$v.form.type.$touch()"
                   />
                   <div v-if="$v.form.type.$error">
@@ -68,290 +69,17 @@
                     </p>
                   </div>
                 </CCol>
-              </CRow>
-              <!-- <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Martial Status"
-                    :options="options.marital_status"
-                    :value.sync="form.marital_status"
-                    :class="{ error: $v.form.marital_status.$error }"
-                    @input="$v.form.marital_status.$touch()"
-                  />
-                  <div v-if="$v.form.marital_status.$error">
-                    <p v-if="!$v.form.marital_status.required" class="errorMsg">
-                      Martial Status is required
-                    </p>
-                  </div>
+                <CCol v-show="type_selected" sm="6" md="4" class="pt-2">
+                  <CInput label="Vat Number" v-model="form.vat_no" />
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Phone"
-                    type="number"
-                    :value.sync="form.phone_number"
-                    :class="{ error: $v.form.phone_number.$error }"
-                    @input="$v.form.phone_number.$touch()"
-                  />
-                  <div v-if="$v.form.phone_number.$error">
-                    <p v-if="!$v.form.phone_number.required" class="errorMsg">
-                      Phone is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Email"
-                    type="email"
-                    :value.sync="form.email"
-                    :class="{ error: $v.form.email.$error }"
-                    @input="$v.form.email.$touch()"
-                  />
-                  <div v-if="$v.form.email.$error">
-                    <p v-if="!$v.form.email.required" class="errorMsg">
-                      Email is required
-                    </p>
-                    <p v-if="!$v.form.email.email" class="errorMsg">
-                      Please Enter the valid email.
-                    </p>
-                  </div>
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="DOB"
-                    type="date"
-                    :value.sync="form.dob"
-                    :class="{ error: $v.form.dob.$error }"
-                    @input="$v.form.dob.$touch()"
-                  />
-                  <div v-if="$v.form.dob.$error">
-                    <p v-if="!$v.form.dob.required" class="errorMsg">
-                      DOB is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Nationality"
-                    :value.sync="form.nationality"
-                    :class="{ error: $v.form.nationality.$error }"
-                    @input="$v.form.nationality.$touch()"
-                  />
-                  <div v-if="$v.form.nationality.$error">
-                    <p v-if="!$v.form.nationality.required" class="errorMsg">
-                      Nationality is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Address"
-                    :value.sync="form.address"
-                    :class="{ error: $v.form.address.$error }"
-                    @input="$v.form.address.$touch()"
-                  />
-                  <div v-if="$v.form.address.$error">
-                    <p v-if="!$v.form.address.required" class="errorMsg">
-                      Address is required
-                    </p>
-                  </div>
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Manager"
-                    :options="options.managers"
-                    :value.sync="form.manager_id"
-                  />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="CPR No"
-                    type="text"
-                    :value.sync="form.cpr_no"
-                    :class="{ error: $v.form.cpr_no.$error }"
-                    @input="$v.form.cpr_no.$touch()"
-                  />
-                  <div v-if="$v.form.cpr_no.$error">
-                    <p v-if="!$v.form.cpr_no.required" class="errorMsg">
-                      CPR is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="CPR Expiry"
-                    type="date"
-                    :value.sync="form.cpr_no_expiry"
-                    :class="{ error: $v.form.cpr_no_expiry.$error }"
-                    @input="$v.form.cpr_no_expiry.$touch()"
-                  />
-                  <div v-if="$v.form.cpr_no_expiry.$error">
-                    <p v-if="!$v.form.cpr_no_expiry.required" class="errorMsg">
-                      CPR Expiry is required
-                    </p>
-                  </div>
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Branches"
-                    :options="options.branches"
-                    :value.sync="form.branch_id"
-                    :class="{ error: $v.form.branch_id.$error }"
-                    @input="$v.form.branch_id.$touch()"
-                  />
-                  <div v-if="$v.form.branch_id.$error">
-                    <p v-if="!$v.form.branch_id.required" class="errorMsg">
-                      Branch is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Departments"
-                    :options="options.departments"
-                    :value.sync="form.department_id"
-                    :class="{ error: $v.form.department_id.$error }"
-                    @input="$v.form.department_id.$touch()"
-                  />
-                  <div v-if="$v.form.department_id.$error">
-                    <p v-if="!$v.form.department_id.required" class="errorMsg">
-                      Department is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Passport No"
-                    type="text"
-                    :value.sync="form.passport_no"
-                    :class="{ error: $v.form.passport_no.$error }"
-                    @input="$v.form.passport_no.$touch()"
-                  />
-                  <div v-if="$v.form.passport_no.$error">
-                    <p v-if="!$v.form.passport_no.required" class="errorMsg">
-                      Passport No is required
-                    </p>
-                  </div>
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Passport Expiry"
-                    type="date"
-                    :value.sync="form.passport_expiry"
-                    :class="{ error: $v.form.passport_expiry.$error }"
-                    @input="$v.form.passport_expiry.$touch()"
-                  />
-                  <div v-if="$v.form.passport_expiry.$error">
-                    <p
-                      v-if="!$v.form.passport_expiry.required"
-                      class="errorMsg"
-                    >
-                      Passport Expiry is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Designation"
-                    :options="options.designations"
-                    :value.sync="form.designation_id"
-                    :class="{ error: $v.form.designation_id.$error }"
-                    @input="$v.form.designation_id.$touch()"
-                  />
-                  <div v-if="$v.form.designation_id.$error">
-                    <p v-if="!$v.form.designation_id.required" class="errorMsg">
-                      Designation is required
-                    </p>
-                  </div>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Status"
-                    :options="options.status"
-                    :value.sync="form.status"
-                  />
-                </CCol>
-              </CRow>
-
-              <CInputCheckbox
-                @change="toggleUserSection"
-                custom
-                :checked="form.create_user"
-                label="Create Username"
-              />
-              <div v-if="form.create_user">
-                <CRow>
-                  <CCol sm="6" md="4" class="pt-2">
-                    <CInput label="Username" :value.sync="form.user_name" />
-                  </CCol>
-                  <CCol sm="6" md="4" class="pt-2">
-                    <CInput label="User Email" :value.sync="form.user_email" />
-                  </CCol>
-                  <CCol sm="6" md="4" class="pt-2">
-                    <CInput
-                      label="Password"
-                      type="password"
-                      :value.sync="form.user_pass"
-                    />
-                  </CCol>
-                </CRow>
-                <CRow>
-                  <CCol sm="6" md="4" class="pt-2">
-                    <CSelect
-                      label="Role"
-                      :options="options.user_role"
-                      :value.sync="form.user_role"
-                    />
-                  </CCol>
-                  <CCol sm="6" md="4" class="pt-2">
-                    <CSelect
-                      label="Status"
-                      :options="options.user_status"
-                      :value.sync="form.user_status"
-                    />
-                  </CCol>
-                  <CCol sm="6" md="4" class="pt-2">
-                    <CSelect
-                      label="Select Language"
-                      :options="options.user_language"
-                      :value.sync="form.user_language"
-                    />
-                  </CCol>
-                </CRow>
-              </div>
-              <CRow>
-                <CCol sm="6" md="3" class="pt-2">
-                  <CCardBody>
-                    <div class="mb-2" style="padding: 5px; background: #f7e9e9">
-                      <CImg
-                        v-bind:src="form.previewImage"
-                        block
-                        class="mb-2"
-                        width="100%"
-                      />
-                    </div>
-                    <div>
-                      Choose Profile:
-                      <input
-                        type="file"
-                        @change="pickFile"
-                        accept="image/png, image/gif, image/jpeg"
-                      />
-                    </div>
-                  </CCardBody>
+                <CCol v-show="type_selected" sm="6" md="4" class="pt-2">
+                  <CInput label="License Number" v-model="form.license_no" />
                 </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">
                 Please Fill the required data
-              </p> -->
+              </p>
               <CRow class="mt-4">
                 <CButton
                   progress
@@ -401,6 +129,8 @@ export default {
       full_name: "",
       type: "",
       group: "",
+      vat_no: "",
+      license_no: "",
     },
 
     options: {
@@ -409,6 +139,7 @@ export default {
         { value: "", label: "Choose Group", disabled: true, selected: "" },
       ],
     },
+    type_selected: false,
   }),
   validations() {
     return {
@@ -425,6 +156,13 @@ export default {
     this.checkUpdateOrCreate();
   },
   methods: {
+    CustomerType() {
+      if (this.form.type != "individual") {
+        this.type_selected = true;
+      } else {
+        this.type_selected = false;
+      }
+    },
     getDependenices() {
       // Customer Types
       let type = "customer";
@@ -486,13 +224,22 @@ export default {
             }
           })
           .catch((error) => {
-            console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong",
-              timer: 3600,
-            });
+            if (error.response.status == 422) {
+              let errors = error.response.data.errors;
+              this.$swal.fire({
+                icon: "error",
+                title: "Serial No",
+                text: errors.serial_no,
+                timer: 3600,
+              });
+            } else {
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong",
+                timer: 3600,
+              });
+            }
           });
       }
     },
@@ -538,6 +285,11 @@ export default {
             this.form.full_name = res.data.full_name;
             this.form.serial_no = res.data.serial_no;
             this.form.type = res.data.type;
+            if (res.data.type == "company") {
+              this.type_selected = true;
+            }
+            this.form.vat_no = res.data.vat_no;
+            this.form.license_no = res.data.license_no;
             this.form.group = res.data.group.uuid;
           })
           .catch((error) => {

@@ -89,7 +89,12 @@ export default {
   data() {
     return {
       //All
-      tabs: ["General", "Timing", "Target", "Social media"],
+      tabs: [
+        "General",
+        //  "Timing",
+        //   "Target",
+        //    "Social media"
+      ],
       isEditing: false,
 
       // General
