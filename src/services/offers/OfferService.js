@@ -19,7 +19,7 @@ class OfferService extends Helper {
     }
 
     getAllOfferOptions() {
-        return http.get("/offers-options");
+        return http.get("/offers-options", super.selectedBranch());
     }
 
     create(data) {
