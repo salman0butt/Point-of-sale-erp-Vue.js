@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loader />
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
@@ -326,10 +327,11 @@
 import EmployeeService from "@/services/employees/EmployeeService";
 import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "EmployeeForm",
-  components: { Multiselect },
+  components: { Multiselect, Loader },
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -502,6 +504,7 @@ export default {
         });
     },
     getEmployee() {
+      this.$store.commit("set_loader");
       EmployeeService.get(this.empId)
         .then(({ data }) => {
           this.form.serial_no = data.serial_no ?? "";
@@ -516,9 +519,11 @@ export default {
           this.form.cpr_no_expiry = data.cpr_no_expiry ?? "";
           this.form.passport_no = data.passport_no ?? "";
           this.form.passport_expiry = data.passport_expiry ?? "";
-          this.form.branch_id = data.branches.map(function (item) {
-            return { label: item.name.en, value: item.uuid };
-          });
+          if (data.branches) {
+            this.form.branch_id = data.branches?.map(function (item) {
+              return { label: item.name.en, value: item.uuid };
+            });
+          }
           this.form.department_id = data.department_id ?? "";
           this.form.designation_id = data.designation_id ?? "";
           this.form.manager_id = data.manager_id ?? "";
@@ -534,8 +539,12 @@ export default {
           this.form.user_status = data.user.status?.toString() ?? "";
           this.form.user_language = data.user.user_language ?? "";
           this.form.branch_shift_id = data.branch_shift_id ?? "";
+
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
+          this.$router.push("/employee");
           console.log(error);
         });
     },
