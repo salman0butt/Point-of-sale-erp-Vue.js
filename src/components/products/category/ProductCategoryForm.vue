@@ -3,7 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form
-          @submit.prevent="isEditing ? updateProductCategory() : saveProductCategory()"
+          @submit.prevent="
+            isEditing ? updateProductCategory() : saveProductCategory()
+          "
         >
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
@@ -14,7 +16,9 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Name is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -33,7 +37,15 @@
               />
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <CRow>
+            <CCol sm="6" md="4" class="pt-2">
+              <color-panel v-model="form.color"></color-panel>
+            </CCol>
+          </CRow>
+
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -49,7 +61,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -73,6 +90,7 @@ export default {
       id: "",
       name: "",
       parent_id: "",
+      color: "",
       status: "active",
     },
     options: {
@@ -183,6 +201,7 @@ export default {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.name = data.name;
+            this.form.color = data.color;
             if (data.parent_id !== "" && data.parent_id !== null) {
               this.form.parent_id = data.parent_id;
             }
