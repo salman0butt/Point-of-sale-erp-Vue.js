@@ -14,6 +14,9 @@
       @row-clicked="rowClicked"
       ref="externalAgent"
     >
+      <template #full_name="{ item }">
+        <td>{{ item.employee.full_name }}</td>
+      </template>
       <template #status="{ item }">
         <td>{{ item.status === 1 ? "active" : "inactive" }}</td>
       </template>
@@ -43,7 +46,7 @@ import UserService from "@/services/users/UserService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "full_name", label: "NAME", _style: "min-width:40%" },
   { key: "username", label: "USERNAME", _style: "min-width:15%;" },
   { key: "email", label: "EMAIL", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },

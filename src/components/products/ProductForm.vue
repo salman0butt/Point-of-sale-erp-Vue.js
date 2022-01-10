@@ -12,10 +12,15 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  Name is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
+              <CInput label="Product Short Name" v-model="form.short_name" />
+            </CCol>
+            <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 label="Type"
                 :options="options.types"
@@ -26,7 +31,7 @@
               <div v-if="$v.form.type.$error">
                 <p v-if="!$v.form.type.required" class="errorMsg">Type is required</p>
               </div>
-            </CCol>
+            </CCol> -->
 
             <CCol sm="6" md="4" class="pt-2">
               <label class="typo__label">Suppliers</label>
@@ -42,8 +47,13 @@
                 track-by="label"
                 :preselect-first="true"
               >
-                <template slot="selection" slot-scope="{ values, search, isOpen }">
-                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                <template
+                  slot="selection"
+                  slot-scope="{ values, search, isOpen }"
+                >
+                  <span
+                    class="multiselect__single"
+                    v-if="values.value &amp;&amp; !isOpen"
                     >{{ values.length }} options selected</span
                   ></template
                 >
@@ -80,8 +90,13 @@
                 track-by="label"
                 :preselect-first="true"
               >
-                <template slot="selection" slot-scope="{ values, search, isOpen }">
-                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                <template
+                  slot="selection"
+                  slot-scope="{ values, search, isOpen }"
+                >
+                  <span
+                    class="multiselect__single"
+                    v-if="values.value &amp;&amp; !isOpen"
                     >{{ values.length }} options selected</span
                   ></template
                 >
@@ -101,8 +116,13 @@
                 track-by="label"
                 :preselect-first="true"
               >
-                <template slot="selection" slot-scope="{ values, search, isOpen }">
-                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                <template
+                  slot="selection"
+                  slot-scope="{ values, search, isOpen }"
+                >
+                  <span
+                    class="multiselect__single"
+                    v-if="values.value &amp;&amp; !isOpen"
                     >{{ values.length }} options selected</span
                   ></template
                 >
@@ -117,13 +137,13 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2 short_desc">
-              <label class="typo__label">Short Description</label>
+              <label class="typo__label"> Description</label>
               <vue-editor v-model="form.short_description"></vue-editor>
             </CCol>
-            <CCol sm="12" md="12" class="pt-2">
+            <!-- <CCol sm="12" md="12" class="pt-2">
               <label class="typo__label">Long Description</label>
               <vue-editor v-model="form.product_description"></vue-editor>
-            </CCol>
+            </CCol> -->
           </CRow>
 
           <CRow>
@@ -164,7 +184,9 @@
             />
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -180,7 +202,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -209,7 +236,7 @@ export default {
     saveAndExit: false,
     form: {
       name: "",
-      type: "",
+      short_name: "",
       suppliers: "",
       brand_id: "",
       barcode: "",
@@ -269,7 +296,6 @@ export default {
     return {
       form: {
         name: { required },
-        type: { required },
         brand_id: { required },
       },
     };
@@ -329,6 +355,7 @@ export default {
       ProductService.get(this.productId)
         .then(({ data }) => {
           this.form.name = data.name ?? "";
+          this.form.short_name = data.short_name ?? "";
           this.form.type = data.type ?? "";
           this.form.serial_number = data.serial_number ?? "";
           this.form.brand_id = data.brand?.uuid ?? "";
@@ -349,7 +376,10 @@ export default {
 
           if (data.tags && data.tags.length > 0) {
             data.tags.forEach((element) => {
-              this.form.tags.unshift({ text: element.name, tiClasses: ["ti-valid"] });
+              this.form.tags.unshift({
+                text: element.name,
+                tiClasses: ["ti-valid"],
+              });
             });
           }
           // this.form.images = data.images ?? "";

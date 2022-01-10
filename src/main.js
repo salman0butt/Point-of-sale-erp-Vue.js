@@ -13,6 +13,10 @@ import http from '../src/http-common';
 import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
 import Skeleton from 'vue-loading-skeleton';
+import { ColorPicker, ColorPanel } from 'one-colorpicker'
+
+Vue.use(ColorPanel)
+Vue.use(ColorPicker)
 // import { abilitiesPlugin } from '@casl/vue';
 // import defineAbilityFor from './defineAbility'
 
