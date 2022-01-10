@@ -474,6 +474,14 @@ export default {
       if (this.permissions.includes("read Settings")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
+          name: "Users",
+          to: "/users/index",
+          icon: "cil-settings",
+        });
+      }
+      if (this.permissions.includes("read Settings")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
           name: "Settings",
           to: "/settings",
           icon: "cil-settings",
