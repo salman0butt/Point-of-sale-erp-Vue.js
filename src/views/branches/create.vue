@@ -124,7 +124,7 @@
                       </CCol>
                     </CRow>
 
-                    <CLoadingButton
+                    <!-- <CLoadingButton
                       progress
                       timeout="2000"
                       block
@@ -133,11 +133,11 @@
                       type="submit"
                       @click="saveAndExit = false"
                       >Save & Continue</CLoadingButton
-                    >
+                    > -->
                     <CLoadingButton
                       timeout="2000"
                       block
-                      color="danger"
+                      color="success"
                       style="
                         float: right;
                         width: 140px;
@@ -230,7 +230,12 @@ export default {
       dates: "",
       saveAndExit: "",
 
-      tabs: ["General", "Timing", "Traget", "Social media"],
+      tabs: [
+        "General",
+        //  "Timing",
+        //   "Traget",
+        //    "Social media"
+      ],
       activeTab: 1,
       usersData: [],
       details: [],
@@ -279,11 +284,11 @@ export default {
               timer: 3600,
             });
 
-            if (this.saveAndExit) {
-              this.$router.push({ path: "/branches" });
-            } else {
-              this.$router.push({ path: "/branch/" + res.data.uuid });
-            }
+            this.$router.push({ path: "/branches" });
+            // if (this.saveAndExit) {
+            // } else {
+            //   this.$router.push({ path: "/branch/" + res.data.uuid });
+            // }
           })
           .catch((error) => {
             console.log(error);

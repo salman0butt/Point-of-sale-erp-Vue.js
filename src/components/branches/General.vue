@@ -109,16 +109,17 @@
           </CCol>
         </CRow>
 
-        <CButton
+        <!-- <CButton
           block
           color="success"
           style="float: right; width: 200px"
           type="submit"
           @click="saveAndExit = false"
           >Save & Continue
-        </CButton>
+        </CButton> -->
         <CButton
           progress
+          color="success"
           timeout="2000"
           block
           style="float: right; width: 140px; margin-right: 20px; margin-top: 0"
@@ -261,6 +262,7 @@ export default {
       this.$http
         .get("/branches/" + this.url_data)
         .then(({ data }) => {
+          console.log(data);
           this.form.name = data.name;
           this.form.address = data.address;
           this.form.area = data.area;
