@@ -1,5 +1,11 @@
 <template>
-  <loading :active.sync="loading" :can-cancel="false" :is-full-page="false"></loading>
+  <loading
+    :active.sync="loading"
+    :enforce-focus="true"
+    :z-index="99"
+    :can-cancel="false"
+    :is-full-page="false"
+  ></loading>
 </template>
 
 <script>

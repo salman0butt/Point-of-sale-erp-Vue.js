@@ -519,9 +519,11 @@ export default {
           this.form.cpr_no_expiry = data.cpr_no_expiry ?? "";
           this.form.passport_no = data.passport_no ?? "";
           this.form.passport_expiry = data.passport_expiry ?? "";
-          this.form.branch_id = data.branches.map(function (item) {
-            return { label: item.name.en, value: item.uuid };
-          });
+          if (data.branches) {
+            this.form.branch_id = data.branches?.map(function (item) {
+              return { label: item.name.en, value: item.uuid };
+            });
+          }
           this.form.department_id = data.department_id ?? "";
           this.form.designation_id = data.designation_id ?? "";
           this.form.manager_id = data.manager_id ?? "";
