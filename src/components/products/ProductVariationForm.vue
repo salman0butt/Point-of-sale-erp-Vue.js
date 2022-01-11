@@ -11,10 +11,11 @@
               "
             >
               <CRow>
+                <Loader />
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.variations" :key="k">
                     <CRow>
-                      <div class="col-md-3">
+                      <!-- <div class="col-md-3">
                         <CInput
                           label="Name"
                           :value.sync="input.name"
@@ -29,7 +30,7 @@
                             Name is required
                           </p>
                         </div>
-                      </div>
+                      </div> -->
                       <div class="form-group col-md-6">
                         <label class="typo__label">Attributes</label>
                         <vue-tags-input
@@ -38,7 +39,14 @@
                           :autocomplete-items="filteredItems(k)"
                           :add-only-from-autocomplete="true"
                           :tags="input.values"
-                          @tags-changed="(newTags) => (input.values = newTags)"
+                          @tags-changed="
+                            (newTags) => {
+                              input.values = newTags;
+                              form.variations[k].name = form.variations[k].values
+                                .map((v) => v.text)
+                                .join(', ');
+                            }
+                          "
                           :class="{ error: $v.form.variations.$each[k].values.$error }"
                           @input="$v.form.variations.$each[k].values.$touch()"
                         />
@@ -110,10 +118,11 @@ import ProductVariationService from "@/services/products/ProductVariationService
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 import { VueTagsInput } from "@johmun/vue-tags-input";
 import { required } from "vuelidate/lib/validators";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "ProductVariationForm",
-  components: { VueTagsInput },
+  components: { VueTagsInput, Loader },
   cibAddthis,
   cisMinusSquare,
   data: () => ({
@@ -236,13 +245,16 @@ export default {
       });
     },
     getProductVariation() {
+      this.$store.commit("set_loader");
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
           this.displayData(data);
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+          this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
     },

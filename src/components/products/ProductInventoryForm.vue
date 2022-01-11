@@ -7,6 +7,7 @@
           <CCardBody>
             <form @submit.prevent="saveProductInventory()">
               <CRow>
+                <Loader />
                 <CCol sm="6" md="6" class="pt-2">
                   <CInput
                     label="Current Stock"
@@ -44,6 +45,9 @@
                   <div v-if="$v.form.add_subtract_stock.$error">
                     <p v-if="!$v.form.add_subtract_stock.required" class="errorMsg">
                       Add/Subtract Stock is required
+                    </p>
+                    <p v-if="!$v.form.add_subtract_stock.minValue" class="errorMsg">
+                      Add/Subtract Stock greater then 0
                     </p>
                   </div>
                 </CCol>
@@ -175,8 +179,9 @@
 </template>
 <script>
 import ProductInventoryService from "@/services/products/ProductInventoryService";
-import { required } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader";
 
 const fields = [
   { key: "date", label: "DATE", _style: "min-width:40%" },
@@ -189,6 +194,7 @@ export default {
   name: "ProductInventoryForm",
   cibAddthis,
   cisMinusSquare,
+  components: { Loader },
   data: () => ({
     shouldShow: false,
     // isEditing: false,
@@ -213,7 +219,7 @@ export default {
     return {
       form: {
         product_id: { required },
-        add_subtract_stock: { required },
+        add_subtract_stock: { required, minValueValue: minValue(1) },
       },
     };
   },
@@ -282,6 +288,7 @@ export default {
         .catch((error) => {
           this.$store.commit("close_loader");
           console.log(error);
+          this.$router.push("/products");
         });
     },
     addSubtract() {
@@ -321,6 +328,7 @@ export default {
     //   }
     // },
     getVariationsInventory() {
+      this.$store.commit("set_loader");
       ProductInventoryService.getVariations(this.productId)
         .then(({ data }) => {
           if (data && data.length) {
@@ -339,9 +347,12 @@ export default {
               });
             });
           }
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
+          this.$router.push("/products");
         });
     },
     saveProductInventory() {

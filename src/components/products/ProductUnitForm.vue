@@ -7,6 +7,7 @@
           <CCardBody>
             <form @submit.prevent="isEditing ? updateProductUnit() : saveProductUnit()">
               <CRow>
+                <Loader />
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.units" :key="k">
                     <CRow>
@@ -149,9 +150,11 @@
 import ProductUnitService from "@/services/products/ProductUnitService";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "ProductUnitForm",
+  components: { Loader },
   cibAddthis,
   cisMinusSquare,
   data: () => ({
@@ -279,13 +282,16 @@ export default {
       }
     },
     getProductUnit() {
+      this.$store.commit("set_loader");
       ProductUnitService.get(this.productId)
         .then(({ data }) => {
           this.displayData(data);
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+          this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
     },

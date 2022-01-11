@@ -7,6 +7,7 @@
           <CCardBody>
             <form @submit.prevent="isEditing ? updateProductPrice() : saveProductPrice()">
               <CRow>
+                <Loader />
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Cost Price"
@@ -163,9 +164,11 @@
 import ProductPriceService from "@/services/products/ProductPriceService";
 import ProductVariationService from "@/services/products/ProductVariationService";
 import { required } from "vuelidate/lib/validators";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "ProductPriceForm",
+  components: { Loader },
   data: () => ({
     isEditing: false,
     isVariationEditing: false,
@@ -229,6 +232,7 @@ export default {
       this.variations[key].is_vat_included = !this.variations[key].is_vat_included;
     },
     getProductPrice() {
+      this.$store.commit("set_loader");
       ProductPriceService.get(this.productId)
         .then(({ data }) => {
           if (data !== "" && data !== null && data !== undefined && data.uuid) {
@@ -238,14 +242,17 @@ export default {
             this.product.selling_price = data.selling_price ?? 0;
             this.product.is_vat_included = data.is_vat_included === 1 ? true : false;
           }
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+          this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
     },
     getProductVariation() {
+      this.$store.commit("set_loader");
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
           if (data !== "" && data !== null && data !== undefined && data.length) {
@@ -261,10 +268,12 @@ export default {
               });
             });
           }
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
           this.isVariationEditing = false;
+          this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
     },
