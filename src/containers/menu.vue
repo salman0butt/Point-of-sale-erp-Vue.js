@@ -8,6 +8,7 @@ export default {
       sideBarItems_contacts: [],
       sideBarItems_accounting: [],
       sideBarItems_products: [],
+      sideBarItems_sales: [],
       permissions: localStorage.getItem("permissions"),
     };
   },
@@ -50,7 +51,6 @@ export default {
           icon: "cil-lan",
         });
       }
-
       if (this.permissions.includes("read contacts")) {
         // different modules of hr
         if (this.permissions.includes("read group")) {
@@ -165,6 +165,25 @@ export default {
           name: "Catalogs",
           icon: "cil-lan",
           items: this.sideBarItems_products,
+        });
+      }
+      if (this.permissions.includes("read sales")) {
+        if (this.permissions.includes("read quotations")) {
+          this.sideBarItems_sales.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Quotations",
+              to: "/sales/quotations",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+
+        this.sideBarItems.push({
+          _name: "CSidebarNavDropdown",
+          name: "Sales",
+          icon: "cil-lan",
+          items: this.sideBarItems_sales,
         });
       }
 
