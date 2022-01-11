@@ -33,6 +33,12 @@ class CustomerServices extends Helper {
     delete(id) {
         return http.delete(`/assets/${id}`);
     }
+
+    search(name) {
+        return http.get(`/customers/search/${name}`);
+
+    }
+
 }
 
 export default new CustomerServices();
