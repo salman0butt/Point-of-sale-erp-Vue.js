@@ -25,11 +25,19 @@
           </CCol>
         </CRow>
         <hr v-if="form.items && form.items.length > 0" />
-        <CRow v-if="searchType == 'receivings' && form.items && form.items.length > 0">
+        <CRow
+          v-if="
+            searchType == 'receivings' && form.items && form.items.length > 0
+          "
+        >
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput label="Product" class="col-md-3" :value.sync="input.name" />
+                <CInput
+                  label="Product"
+                  class="col-md-3"
+                  :value.sync="input.name"
+                />
                 <CInput
                   label="Qty"
                   class="col-md-2"
@@ -72,11 +80,17 @@
           </CCol>
         </CRow>
 
-        <CRow v-if="searchType === 'damage' && form.items && form.items.length > 0">
+        <CRow
+          v-if="searchType === 'damage' && form.items && form.items.length > 0"
+        >
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput label="Product" class="col-md-4" :value.sync="input.name" />
+                <CInput
+                  label="Product"
+                  class="col-md-4"
+                  :value.sync="input.name"
+                />
                 <CInput
                   label="Damage Qty"
                   class="col-md-4"
@@ -96,6 +110,64 @@
             </div>
           </CCol>
         </CRow>
+
+        <CRow
+          v-if="
+            searchType == 'quotation' && form.items && form.items.length > 0
+          "
+        >
+          <CCol sm="12" md="12" class="pt-2">
+            <div class="form-group" v-for="(input, k) in form.items" :key="k">
+              <CRow>
+                <CInput
+                  label="Product"
+                  class="col-md-3"
+                  :value.sync="input.name"
+                  disabled
+                />
+                <CInput
+                  label="Qty"
+                  class="col-md-2"
+                  type="number"
+                  placeholder="0"
+                  min="1"
+                  v-model="input.qty"
+                  @input="calculateTotal()"
+                />
+
+                <CInput
+                  label="Unit Price"
+                  class="col-md-2"
+                  type="number"
+                  placeholder="0.00"
+                  :value.sync="input.selling_price"
+                  disabled
+                />
+                <CInput
+                  label="Discount %"
+                  class="col-md-2"
+                  type="number"
+                  placeholder="0.00"
+                />
+                <CInput
+                  label="Total"
+                  class="col-md-2"
+                  type="number"
+                  placeholder="0.00"
+                />
+
+                <CButton
+                  @click="removeProduct(k)"
+                  class="btn-sm"
+                  style="background: transeparent"
+                >
+                  <CIcon :content="$options.cilTrash" style="color: red" />
+                </CButton>
+              </CRow>
+            </div>
+          </CCol>
+        </CRow>
+
         <hr v-if="form.items && form.items.length > 0" />
       </CCol>
     </CRow>
@@ -160,9 +232,16 @@ export default {
     search: "",
     products_list: [],
     options: {
-      suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
+      suppliers: [
+        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
+      ],
       receiving_status: [
-        { value: "", label: "Choose receiving Status", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose receiving Status",
+          disabled: true,
+          selected: "",
+        },
         { value: "pending", label: "Pending" },
         { value: "completed", label: "Completed" },
       ],
@@ -198,7 +277,10 @@ export default {
               this.options.products = [];
               data.map((product) => {
                 if (product) {
-                  if (product.quantity_units && product.quantity_units.length > 0) {
+                  if (
+                    product.quantity_units &&
+                    product.quantity_units.length > 0
+                  ) {
                     product.quantity_units.map((unit) => {
                       if (product.variations && product.variations.length > 0) {
                         this.options.products.push({
@@ -341,8 +423,9 @@ export default {
                   if (item.uuid === variation.uuid) {
                     this.form.items[key].qty =
                       parseInt(this.form.items[key].qty) +
-                        this.unit_form.find((item) => item.uuid === variation.uuid)
-                          ?.qty ?? 1;
+                        this.unit_form.find(
+                          (item) => item.uuid === variation.uuid
+                        )?.qty ?? 1;
                   }
                 });
               } else {
@@ -354,8 +437,9 @@ export default {
                       JSON.parse(variation.name)?.en
                     })`,
                     qty:
-                      this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
-                      1,
+                      this.unit_form.find(
+                        (item) => item.uuid === variation.uuid
+                      )?.qty ?? 1,
                   });
                 } else if (this.searchType === "receivings") {
                   this.form.items.push({
@@ -367,8 +451,24 @@ export default {
                     cost_price: variation.price?.cost_price ?? 0,
                     selling_price: variation.price?.selling_price ?? 0,
                     qty:
-                      this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
-                      1,
+                      this.unit_form.find(
+                        (item) => item.uuid === variation.uuid
+                      )?.qty ?? 1,
+                    expiry_date: "",
+                  });
+                } else if (this.searchType === "quotation") {
+                  this.form.items.push({
+                    uuid: variation.uuid,
+                    type: "variation",
+                    name: `${product.name} (Variation: ${
+                      JSON.parse(variation.name)?.en
+                    })`,
+                    cost_price: variation.price?.cost_price ?? 0,
+                    selling_price: variation.price?.selling_price ?? 0,
+                    qty:
+                      this.unit_form.find(
+                        (item) => item.uuid === variation.uuid
+                      )?.qty ?? 1,
                     expiry_date: "",
                   });
                 }
@@ -394,7 +494,8 @@ export default {
         ) {
           this.form.items.map((item, key) => {
             if (item.uuid === product.uuid) {
-              this.form.items[key].qty = parseInt(this.form.items[key].qty) + qty;
+              this.form.items[key].qty =
+                parseInt(this.form.items[key].qty) + qty;
             }
           });
         } else {
@@ -406,6 +507,16 @@ export default {
               qty: qty,
             });
           } else if (this.searchType === "receivings") {
+            this.form.items.push({
+              uuid: product.uuid,
+              type: "product",
+              name: product.name,
+              cost_price: product.price?.cost_price ?? 0,
+              selling_price: product.price?.selling_price ?? 0,
+              qty: qty,
+              expiry_date: "",
+            });
+          } else if (this.searchType === "quotation") {
             this.form.items.push({
               uuid: product.uuid,
               type: "product",
@@ -431,14 +542,29 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: product.name + " (" + JSON.parse(variation.name).en + ")",
+                  name:
+                    product.name + " (" + JSON.parse(variation.name).en + ")",
                   qty: 1,
                 });
               } else if (this.searchType === "receivings") {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
+                  name: `${product.name} (Variation: ${
+                    JSON.parse(variation.name)?.en
+                  })`,
+                  cost_price: variation.price?.cost_price ?? 0,
+                  selling_price: variation.price?.selling_price ?? 0,
+                  qty: 1,
+                  expiry_date: "",
+                });
+              } else if (this.searchType === "quotation") {
+                data.push({
+                  uuid: variation.uuid,
+                  type: "variation",
+                  name: `${product.name} (Variation: ${
+                    JSON.parse(variation.name)?.en
+                  })`,
                   cost_price: variation.price?.cost_price ?? 0,
                   selling_price: variation.price?.selling_price ?? 0,
                   qty: 1,

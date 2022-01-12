@@ -16,6 +16,11 @@
                 <CInput label="Due Date" type="date" />
               </CCol>
             </CRow>
+            <CRow>
+              <CCol sm="12" md="12" class="pt-2">
+                <SearchProduct searchType="quotation" />
+              </CCol>
+            </CRow>
           </CCardBody>
         </CCard>
       </CCol>
@@ -25,11 +30,13 @@
 
 <script>
 import CustomerSearchField from "@/components/general/CustomerSearchField";
+import SearchProduct from "@/components/layouts/SearchProduct";
 
 export default {
   name: "CreateBrand",
   components: {
     CustomerSearchField,
+    SearchProduct,
   },
 };
 </script>
