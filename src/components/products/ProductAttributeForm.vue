@@ -11,6 +11,7 @@
               "
             >
               <CRow>
+                <Loader />
                 <CCol sm="12" md="12" class="pt-2">
                   <div class="form-group" v-for="(input, k) in form.attributes" :key="k">
                     <CRow>
@@ -98,10 +99,11 @@ import ProductAttributeService from "@/services/products/ProductAttributeService
 import { VueTagsInput } from "@johmun/vue-tags-input";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "ProductAttributeForm",
-  components: { VueTagsInput },
+  components: { VueTagsInput, Loader },
   cibAddthis,
   cisMinusSquare,
   data: () => ({
@@ -204,13 +206,16 @@ export default {
       }
     },
     getProductAttribute() {
+      this.$store.commit("set_loader");
       ProductAttributeService.get(this.productId)
         .then(({ data }) => {
           this.displayData(data);
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+          this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
     },

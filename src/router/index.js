@@ -37,6 +37,8 @@ import receivingRoutes from '@/router/receivings/receivingRoutes';
 import damageRoutes from '@/router/damages/damageRoutes';
 import offerRoutes from '@/router/offers/offerRoutes';
 import userRoutes from '@/router/users/userRoutes';
+import modifierRoutes from '@/router/modifiers/modifierRoutes';
+import salesRoutes from '@/router/sales/salesRoutes';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -192,6 +194,7 @@ const router = new Router({
         designationRoutes,
         attendanceRoutes,
         settingRoutes,
+        salesRoutes,
         assetRoutes,
         awardRoutes,
         gradeRoutes,
@@ -222,6 +225,7 @@ const router = new Router({
         damageRoutes,
         offerRoutes,
         userRoutes,
+        modifierRoutes,
 
         // {
         //   path: 'theme',

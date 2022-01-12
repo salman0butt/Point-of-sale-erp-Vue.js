@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateDamage() : saveDamage()">
-          <CRow>
+          <!-- <CRow>
             <CCol sm="12" md="12" class="pt-2">
               <CInput
                 label="Products"
@@ -24,8 +24,9 @@
                 </li>
               </ul>
             </CCol>
-          </CRow>
-          <hr v-if="form.items && form.items.length > 0" />
+          </CRow> -->
+          <SearchProduct searchType="damage" :itemsData="form.items" />
+          <!-- <hr v-if="form.items && form.items.length > 0" />
           <CRow v-if="form.items && form.items.length > 0">
             <CCol sm="12" md="12" class="pt-2">
               <div class="form-group" v-for="(input, k) in form.items" :key="k">
@@ -50,7 +51,7 @@
               </div>
             </CCol>
           </CRow>
-          <hr v-if="form.items && form.items.length > 0" />
+          <hr v-if="form.items && form.items.length > 0" /> -->
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
               <CTextarea label="Reason" placeholder="Content..." v-model="form.reason" />
@@ -68,6 +69,7 @@
               </div>
             </CCol>
           </CRow>
+
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4">
             <CButton
@@ -93,7 +95,7 @@
         </form>
       </CCol>
     </CRow>
-    <div>
+    <!-- <div>
       <CModal
         title="Product Quantity Units"
         :fade="true"
@@ -127,22 +129,26 @@
           <CButton @click="saveQuantityUnits()" color="success">Save</CButton>
         </template>
       </CModal>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
 import DamageService from "@/services/damages/DamageService";
 import { required } from "vuelidate/lib/validators";
 import { cilTrash } from "@coreui/icons-pro";
+import SearchProduct from "@/components/layouts/SearchProduct";
 
 export default {
   name: "DamageForm",
+  components: {
+    SearchProduct,
+  },
   cilTrash,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
-    toggleModel: false,
-    unit_form: [],
+    // toggleModel: false,
+    // unit_form: [],
     form: {
       id: "",
       date: "",
@@ -150,11 +156,11 @@ export default {
       items: [],
       product_id: "",
     },
-    search: "",
-    products_list: [],
-    options: {
-      products: [],
-    },
+    // search: "",
+    // products_list: [],
+    // options: {
+    //   products: [],
+    // },
   }),
   validations() {
     return {
@@ -171,237 +177,248 @@ export default {
       this.getDamage();
     }
   },
+  computed: {
+    damageItems() {
+      return this.$store.getters.getSearchProductItems;
+    },
+  },
+  watch: {
+    damageItems(val) {
+      this.form.items = val;
+    },
+  },
+  beforeDestroy() {
+    this.$store.commit("set_search_product_items", []);
+  },
   methods: {
-    searchProduct() {
-      if (this.search !== "") {
-        this.products_list = [];
-        this.options.products = [];
-        this.unit_form = [];
-        DamageService.searchProduct(this.search)
-          .then(({ data }) => {
-            if (data !== undefined && data !== "") {
-              this.options.products = [];
-              data.map((product) => {
-                if (product) {
-                  if (product.quantity_units && product.quantity_units.length > 0) {
-                    product.quantity_units.map((unit) => {
-                      if (product.variations && product.variations.length > 0) {
-                        this.options.products.push({
-                          value: product.uuid,
-                          type: "variation",
-                          label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                          is_unit: true,
-                          unit_id: unit.uuid,
-                          unit_qty: unit.qty ?? 1,
-                        });
-                      } else {
-                        this.options.products.push({
-                          value: product.uuid,
-                          type: "product",
-                          label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                          is_unit: true,
-                          unit_id: unit.uuid,
-                          unit_qty: unit.qty ?? 1,
-                        });
-                      }
-                    });
-                  }
-                  if (product.variations && product.variations.length > 0) {
-                    product.variations.map((variation) => {
-                      this.options.products.push({
-                        value: variation.uuid,
-                        type: "variation",
-                        label: `${product.name} (Variation: ${
-                          JSON.parse(variation.name)?.en
-                        } | Stock:  ${
-                          variation.inventory && variation.inventory.length
-                            ? variation.inventory[0]?.current_quantity
-                            : 0
-                        })`,
-                      });
-                    });
-                  } else {
-                    this.options.products.push({
-                      value: product.uuid,
-                      type: "product",
-                      label: `${product.name} (Stock:  ${
-                        product.inventory && product.inventory.length
-                          ? product.inventory[0]?.current_quantity
-                          : 0
-                      })`,
-                    });
-                  }
+    // searchProduct() {
+    //   if (this.search !== "") {
+    //     this.products_list = [];
+    //     this.options.products = [];
+    //     this.unit_form = [];
+    //     DamageService.searchProduct(this.search)
+    //       .then(({ data }) => {
+    //         if (data !== undefined && data !== "") {
+    //           this.options.products = [];
+    //           data.map((product) => {
+    //             if (product) {
+    //               if (product.quantity_units && product.quantity_units.length > 0) {
+    //                 product.quantity_units.map((unit) => {
+    //                   if (product.variations && product.variations.length > 0) {
+    //                     this.options.products.push({
+    //                       value: product.uuid,
+    //                       type: "variation",
+    //                       label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
+    //                       is_unit: true,
+    //                       unit_id: unit.uuid,
+    //                       unit_qty: unit.qty ?? 1,
+    //                     });
+    //                   } else {
+    //                     this.options.products.push({
+    //                       value: product.uuid,
+    //                       type: "product",
+    //                       label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
+    //                       is_unit: true,
+    //                       unit_id: unit.uuid,
+    //                       unit_qty: unit.qty ?? 1,
+    //                     });
+    //                   }
+    //                 });
+    //               }
+    //               if (product.variations && product.variations.length > 0) {
+    //                 product.variations.map((variation) => {
+    //                   this.options.products.push({
+    //                     value: variation.uuid,
+    //                     type: "variation",
+    //                     label: `${product.name} (Variation: ${
+    //                       JSON.parse(variation.name)?.en
+    //                     } | Stock:  ${
+    //                       variation.inventory && variation.inventory.length
+    //                         ? variation.inventory[0]?.current_quantity
+    //                         : 0
+    //                     })`,
+    //                   });
+    //                 });
+    //               } else {
+    //                 this.options.products.push({
+    //                   value: product.uuid,
+    //                   type: "product",
+    //                   label: `${product.name} (Stock:  ${
+    //                     product.inventory && product.inventory.length
+    //                       ? product.inventory[0]?.current_quantity
+    //                       : 0
+    //                   })`,
+    //                 });
+    //               }
 
-                  this.products_list.push({ ...product });
-                }
-              });
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } else {
-        this.search = "";
-        this.products_list = [];
-        this.options.products = [];
-      }
-    },
-    removeProduct(index) {
-      this.form.items.splice(index, 1);
-    },
-    addOptions(item) {
-      this.form.product_id = item.value;
-      this.unit_form = [];
-      let option = item;
+    //               this.products_list.push({ ...product });
+    //             }
+    //           });
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.log(error);
+    //       });
+    //   } else {
+    //     this.search = "";
+    //     this.products_list = [];
+    //     this.options.products = [];
+    //   }
+    // },
+    // removeProduct(index) {
+    //   this.form.items.splice(index, 1);
+    // },
+    // addOptions(item) {
+    //   this.form.product_id = item.value;
+    //   this.unit_form = [];
+    //   let option = item;
 
-      if (
-        option.is_unit !== "" &&
-        option.is_unit !== undefined &&
-        option.unit_id !== "" &&
-        option.unit_id !== undefined
-      ) {
-        if (this.products_list && this.products_list.length > 0) {
-          this.products_list.find((product) => {
-            if (option.type === "product") {
-              this.addProduct(option.unit_qty);
-            } else if (option.type === "variation") {
-              if (product.uuid === this.form.product_id) {
-                let parts = product.variations.length;
-                let num = option.unit_qty;
-                let half_qty = [...Array(parts)].map(
-                  (_, i) => 0 | (num / parts + (i < num % parts))
-                );
-                product.variations.find((variation, index) => {
-                  this.unit_form.push({
-                    uuid: variation.uuid,
-                    type: "variation",
-                    name: `${JSON.parse(variation.name)?.en}`,
-                    qty: half_qty[index] ?? 1,
-                  });
-                });
-              }
-            }
-          });
-          if (option.type === "variation") {
-            this.toggleModel = true;
-          }
-        }
-      } else {
-        if (option.type === "product") {
-          this.addProduct();
-        } else if (option.type === "variation") {
-          this.addProductVariation();
-        }
-      }
-    },
-    saveQuantityUnits() {
-      this.toggleModel = false;
-      this.addUnitVariation();
-    },
-    addUnitVariation() {
-      if (this.unit_form && this.unit_form.length > 0) {
-        if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-          this.products_list.map((product) => {
-            product.variations.map((variation) => {
-              if (this.unit_form.some((item) => item.uuid === variation.uuid)) {
-                if (
-                  this.form.items.length > 0 &&
-                  this.form.items.some((item) => item.uuid === variation.uuid)
-                ) {
-                  this.form.items.map((item, key) => {
-                    if (item.uuid === variation.uuid) {
-                      this.form.items[key].qty =
-                        parseInt(this.form.items[key].qty) +
-                          this.unit_form.find((item) => item.uuid === variation.uuid)
-                            ?.qty ?? 1;
-                    }
-                  });
-                } else {
-                  this.form.items.push({
-                    uuid: variation.uuid,
-                    type: "variation",
-                    name: `${product.name} (Variation: ${
-                      JSON.parse(variation.name)?.en
-                    })`,
-                    cost_price: variation.price?.cost_price ?? 0,
-                    selling_price: variation.price?.selling_price ?? 0,
-                    qty:
-                      this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
-                      1,
-                  });
-                }
-              }
-            });
-          });
-          this.form.product_id = "";
-          this.search = "";
-          this.options.products = [];
-        }
-      }
-    },
-    addProduct(qty = 1) {
-      if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-        let product = this.products_list.find(
-          (product) => product.uuid === this.form.product_id
-        );
-        if (
-          product.uuid === this.form.product_id &&
-          this.form.items.length > 0 &&
-          this.form.items.some((item) => item.uuid === product.uuid)
-        ) {
-          this.form.items.map((item, key) => {
-            if (item.uuid === product.uuid) {
-              this.form.items[key].qty = parseInt(this.form.items[key].qty) + qty;
-            }
-          });
-        } else {
-          this.form.items.push({
-            uuid: product.uuid,
-            type: "product",
-            name: product.name,
-            qty: qty,
-          });
-        }
-        this.form.product_id = "";
-        this.search = "";
-        this.options.products = [];
-      }
-    },
-    addProductVariation() {
-      let data = [];
-      if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-        this.products_list.find((product) => {
-          return product.variations.find((variation) => {
-            if (variation.uuid === this.form.product_id) {
-              data.push({
-                uuid: variation.uuid,
-                type: "variation",
-                name: product.name + " (" + JSON.parse(variation.name).en + ")",
-                qty: 1,
-              });
-              return variation;
-            }
-          });
-        });
+    //   if (
+    //     option.is_unit !== "" &&
+    //     option.is_unit !== undefined &&
+    //     option.unit_id !== "" &&
+    //     option.unit_id !== undefined
+    //   ) {
+    //     if (this.products_list && this.products_list.length > 0) {
+    //       this.products_list.find((product) => {
+    //         if (option.type === "product") {
+    //           this.addProduct(option.unit_qty);
+    //         } else if (option.type === "variation") {
+    //           if (product.uuid === this.form.product_id) {
+    //             let parts = product.variations.length;
+    //             let num = option.unit_qty;
+    //             let half_qty = [...Array(parts)].map(
+    //               (_, i) => 0 | (num / parts + (i < num % parts))
+    //             );
+    //             product.variations.find((variation, index) => {
+    //               this.unit_form.push({
+    //                 uuid: variation.uuid,
+    //                 type: "variation",
+    //                 name: `${JSON.parse(variation.name)?.en}`,
+    //                 qty: half_qty[index] ?? 1,
+    //               });
+    //             });
+    //           }
+    //         }
+    //       });
+    //       if (option.type === "variation") {
+    //         this.toggleModel = true;
+    //       }
+    //     }
+    //   } else {
+    //     if (option.type === "product") {
+    //       this.addProduct();
+    //     } else if (option.type === "variation") {
+    //       this.addProductVariation();
+    //     }
+    //   }
+    // },
+    // saveQuantityUnits() {
+    //   this.toggleModel = false;
+    //   this.addUnitVariation();
+    // },
+    // addUnitVariation() {
+    //   if (this.unit_form && this.unit_form.length > 0) {
+    //     if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+    //       this.products_list.map((product) => {
+    //         product.variations.map((variation) => {
+    //           if (this.unit_form.some((item) => item.uuid === variation.uuid)) {
+    //             if (
+    //               this.form.items.length > 0 &&
+    //               this.form.items.some((item) => item.uuid === variation.uuid)
+    //             ) {
+    //               this.form.items.map((item, key) => {
+    //                 if (item.uuid === variation.uuid) {
+    //                   this.form.items[key].qty =
+    //                     parseInt(this.form.items[key].qty) +
+    //                       this.unit_form.find((item) => item.uuid === variation.uuid)
+    //                         ?.qty ?? 1;
+    //                 }
+    //               });
+    //             } else {
+    //               this.form.items.push({
+    //                 uuid: variation.uuid,
+    //                 type: "variation",
+    //                 name: `${product.name} (Variation: ${
+    //                   JSON.parse(variation.name)?.en
+    //                 })`,
+    //                 qty:
+    //                   this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
+    //                   1,
+    //               });
+    //             }
+    //           }
+    //         });
+    //       });
+    //       this.form.product_id = "";
+    //       this.search = "";
+    //       this.options.products = [];
+    //     }
+    //   }
+    // },
+    // addProduct(qty = 1) {
+    //   if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+    //     let product = this.products_list.find(
+    //       (product) => product.uuid === this.form.product_id
+    //     );
+    //     if (
+    //       product.uuid === this.form.product_id &&
+    //       this.form.items.length > 0 &&
+    //       this.form.items.some((item) => item.uuid === product.uuid)
+    //     ) {
+    //       this.form.items.map((item, key) => {
+    //         if (item.uuid === product.uuid) {
+    //           this.form.items[key].qty = parseInt(this.form.items[key].qty) + qty;
+    //         }
+    //       });
+    //     } else {
+    //       this.form.items.push({
+    //         uuid: product.uuid,
+    //         type: "product",
+    //         name: product.name,
+    //         qty: qty,
+    //       });
+    //     }
+    //     this.form.product_id = "";
+    //     this.search = "";
+    //     this.options.products = [];
+    //   }
+    // },
+    // addProductVariation() {
+    //   let data = [];
+    //   if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+    //     this.products_list.find((product) => {
+    //       return product.variations.find((variation) => {
+    //         if (variation.uuid === this.form.product_id) {
+    //           data.push({
+    //             uuid: variation.uuid,
+    //             type: "variation",
+    //             name: product.name + " (" + JSON.parse(variation.name).en + ")",
+    //             qty: 1,
+    //           });
+    //           return variation;
+    //         }
+    //       });
+    //     });
 
-        if (
-          data[0].uuid === this.form.product_id &&
-          this.form.items.length > 0 &&
-          this.form.items.some((item) => item.uuid === data[0].uuid)
-        ) {
-          this.form.items.map((item, key) => {
-            if (item.uuid === data[0].uuid) {
-              this.form.items[key].qty = parseInt(this.form.items[key].qty) + 1;
-            }
-          });
-        } else {
-          this.form.items.push(data[0]);
-        }
-        this.form.product_id = "";
-        this.search = "";
-        this.options.products = [];
-      }
-    },
+    //     if (
+    //       data[0].uuid === this.form.product_id &&
+    //       this.form.items.length > 0 &&
+    //       this.form.items.some((item) => item.uuid === data[0].uuid)
+    //     ) {
+    //       this.form.items.map((item, key) => {
+    //         if (item.uuid === data[0].uuid) {
+    //           this.form.items[key].qty = parseInt(this.form.items[key].qty) + 1;
+    //         }
+    //       });
+    //     } else {
+    //       this.form.items.push(data[0]);
+    //     }
+    //     this.form.product_id = "";
+    //     this.search = "";
+    //     this.options.products = [];
+    //   }
+    // },
     saveDamage() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -482,11 +499,11 @@ export default {
             this.form.id = data.uuid;
             this.form.date = data.date;
             this.form.reason = data.reason;
-
+            let itemsData = [];
             if (data.items && data.items.length > 0) {
               data.items.map((item) => {
                 if (item && item.product_variation && item.product_variation.uuid) {
-                  this.form.items.push({
+                  itemsData.push({
                     uuid: item.product_variation.uuid,
                     type: "variation",
                     name:
@@ -497,7 +514,7 @@ export default {
                     qty: item.qty,
                   });
                 } else {
-                  this.form.items.push({
+                  itemsData.push({
                     uuid: item.product.uuid,
                     type: "product",
                     name: item.product.name,
@@ -505,6 +522,7 @@ export default {
                   });
                 }
               });
+              this.$store.commit("set_search_product_items", itemsData);
             }
           }
         })

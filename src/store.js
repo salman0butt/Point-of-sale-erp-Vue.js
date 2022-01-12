@@ -24,6 +24,8 @@ const state = {
   emp_img: "",
   profile_img: localStorage.getItem("profile_pic") ?? "/img/avatars/placeholder.png",
   employee_id: localStorage.getItem('employee_id') || '',
+  total_receivings_cost: 0,
+  searchProductItems:[]
 }
 
 const mutations = {
@@ -93,6 +95,12 @@ const mutations = {
   },
   set_emp_img(state, img) {
     state.emp_img = img;
+  },
+  set_total_receivings_cost(state, cost) {
+    state.total_receivings_cost = cost;
+  },
+  set_search_product_items(state, items) {
+    state.searchProductItems = items;
   }
 }
 
@@ -177,6 +185,8 @@ const getters = {
   loading: state => state.loading,
   getEmployeeImg: state => state.emp_img,
   getProfileImg: state => state.profile_img,
+  getTotalReceivingsCost: state => state.total_receivings_cost,
+  getSearchProductItems: state => state.searchProductItems
 }
 
 export default new Vuex.Store({

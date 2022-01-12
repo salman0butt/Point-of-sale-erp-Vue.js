@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loader />
     <CRow>
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateProduct() : saveProduct()">
@@ -12,9 +13,7 @@
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">
-                  Name is required
-                </p>
+                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -47,13 +46,8 @@
                 track-by="label"
                 :preselect-first="true"
               >
-                <template
-                  slot="selection"
-                  slot-scope="{ values, search, isOpen }"
-                >
-                  <span
-                    class="multiselect__single"
-                    v-if="values.value &amp;&amp; !isOpen"
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
                     >{{ values.length }} options selected</span
                   ></template
                 >
@@ -90,13 +84,8 @@
                 track-by="label"
                 :preselect-first="true"
               >
-                <template
-                  slot="selection"
-                  slot-scope="{ values, search, isOpen }"
-                >
-                  <span
-                    class="multiselect__single"
-                    v-if="values.value &amp;&amp; !isOpen"
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
                     >{{ values.length }} options selected</span
                   ></template
                 >
@@ -116,13 +105,8 @@
                 track-by="label"
                 :preselect-first="true"
               >
-                <template
-                  slot="selection"
-                  slot-scope="{ values, search, isOpen }"
-                >
-                  <span
-                    class="multiselect__single"
-                    v-if="values.value &amp;&amp; !isOpen"
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
                     >{{ values.length }} options selected</span
                   ></template
                 >
@@ -133,6 +117,30 @@
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput label="Serial Number" :value.sync="form.serial_number" />
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Alert Qty"
+                type="number"
+                placeholder="0"
+                :value.sync="form.alert_qty"
+              />
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Weight Unit"
+                :options="options.weight_units"
+                :value.sync="form.weight_unit"
+              />
+            </CCol>
+            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Status"
+                :options="options.status"
+                :value.sync="form.status"
+              />
             </CCol>
           </CRow>
           <CRow>
@@ -146,15 +154,6 @@
             </CCol> -->
           </CRow>
 
-          <CRow>
-            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Status"
-                :options="options.status"
-                :value.sync="form.status"
-              />
-            </CCol>
-          </CRow>
           <CRow>
             <CCol sm="3" md="3" class="pt-2">
               <CInputCheckbox
@@ -184,9 +183,7 @@
             />
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -202,12 +199,7 @@
               timeout="2000"
               block
               color="danger"
-              style="
-                float: right;
-                width: 140px;
-                margin-left: 20px;
-                margin-top: 0;
-              "
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -225,10 +217,11 @@ import Multiselect from "vue-multiselect";
 import { VueEditor } from "vue2-editor";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 import { VueTagsInput } from "@johmun/vue-tags-input";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "ProductForm",
-  components: { Multiselect, VueEditor, VueTagsInput },
+  components: { Multiselect, VueEditor, VueTagsInput, Loader },
   cibAddthis,
   cisMinusSquare,
   data: () => ({
@@ -251,6 +244,8 @@ export default {
       status: "",
       tags: [],
       tag: "",
+      alert_qty: "",
+      weight_unit: "",
     },
     productId: null,
     options: {
@@ -261,6 +256,26 @@ export default {
           label: "Choose Brand",
           disabled: true,
           selected: "",
+        },
+      ],
+      weight_units: [
+        {
+          value: "",
+          label: "Choose Weight Unit",
+          disabled: true,
+          selected: "",
+        },
+        {
+          value: "g",
+          label: "Gram",
+        },
+        {
+          value: "kg",
+          label: "Kilogram",
+        },
+        {
+          value: "ouance",
+          label: "Ouance",
         },
       ],
       categories: [],
@@ -352,41 +367,49 @@ export default {
       this.form.is_expiry = !this.form.is_expiry;
     },
     getProduct() {
+      this.$store.commit("set_loader");
       ProductService.get(this.productId)
         .then(({ data }) => {
-          this.form.name = data.name ?? "";
-          this.form.short_name = data.short_name ?? "";
-          this.form.type = data.type ?? "";
-          this.form.serial_number = data.serial_number ?? "";
-          this.form.brand_id = data.brand?.uuid ?? "";
-          this.form.barcode = data.barcode ?? "";
-          this.form.short_description = data.short_description ?? "";
-          this.form.product_description = data.product_description ?? "";
-          this.form.is_favorite = data.is_favorite == "yes" ? true : false;
-          this.form.is_expiry = data.is_expiry == "yes" ? true : false;
-          this.form.categories = data.categories.map(function (item) {
-            return { label: item.name, value: item.uuid };
-          });
-          this.form.suppliers = data.suppliers.map(function (item) {
-            return { label: item.name, value: item.uuid };
-          });
-          this.form.branches = data.branches.map(function (item) {
-            return { label: item.name, value: item.uuid };
-          });
-
-          if (data.tags && data.tags.length > 0) {
-            data.tags.forEach((element) => {
-              this.form.tags.unshift({
-                text: element.name,
-                tiClasses: ["ti-valid"],
-              });
+          if (data !== "" && data !== undefined) {
+            this.form.name = data.name ?? "";
+            this.form.short_name = data.short_name ?? "";
+            this.form.type = data.type ?? "";
+            this.form.serial_number = data.serial_number ?? "";
+            this.form.brand_id = data.brand?.uuid ?? "";
+            this.form.barcode = data.barcode ?? "";
+            this.form.alert_qty = data.alert_qty ?? "";
+            this.form.weight_unit = data.weight_unit ?? "";
+            this.form.short_description = data.short_description ?? "";
+            this.form.product_description = data.product_description ?? "";
+            this.form.is_favorite = data.is_favorite == "yes" ? true : false;
+            this.form.is_expiry = data.is_expiry == "yes" ? true : false;
+            this.form.categories = data.categories.map(function (item) {
+              return { label: item.name, value: item.uuid };
             });
+            this.form.suppliers = data.suppliers.map(function (item) {
+              return { label: item.name, value: item.uuid };
+            });
+            this.form.branches = data.branches.map(function (item) {
+              return { label: item.name, value: item.uuid };
+            });
+
+            if (data.tags && data.tags.length > 0) {
+              data.tags.forEach((element) => {
+                this.form.tags.unshift({
+                  text: element.name,
+                  tiClasses: ["ti-valid"],
+                });
+              });
+            }
+            // this.form.images = data.images ?? "";
+            this.form.status = data.status ?? "";
+            this.$store.commit("close_loader");
           }
-          // this.form.images = data.images ?? "";
-          this.form.status = data.status ?? "";
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
+          this.$router.push("/products");
         });
     },
     saveProduct() {
@@ -433,7 +456,6 @@ export default {
           headers: { "Content-Type": "multipart/form-data" },
         };
         let formData = this.formData(true);
-        console.log(this.form);
         ProductService.update(this.productId, formData, config)
           .then((res) => {
             if (res.status == 200) {
@@ -447,9 +469,10 @@ export default {
               this.$v.$reset();
               if (this.saveAndExit) {
                 this.$router.push({ path: "/products/index" });
-              } else {
-                this.$router.push({ path: "/products/edit/" + res.data.uuid });
               }
+              // else {
+              //   this.$router.push({ path: "/products/edit/" + res.data.uuid });
+              // }
             }
           })
           .catch((error) => {
