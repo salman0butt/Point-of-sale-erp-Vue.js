@@ -7,7 +7,7 @@ class ProductModifierService {
     }
 
     update(id, data) {
-        return http.patch(`/product-modifiers/${id}`, data);
+        return http.post(`/modifiers-attach/${id}`, data);
     }
 }
 

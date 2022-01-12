@@ -5,6 +5,7 @@
         <CCard>
           <CCardHeader> Modifiers </CCardHeader>
           <CCardBody>
+            <Loader />
             <form
               v-if="form.modifiers && form.modifiers.length > 0"
               @submit.prevent="updateProductModifier()"
@@ -38,6 +39,9 @@
                 >
               </CRow>
             </form>
+            <div v-else>
+              <p class="text-center">No modifiers found</p>
+            </div>
           </CCardBody>
         </CCard>
       </CCol>
@@ -47,9 +51,13 @@
 <script>
 import ProductModifierService from "@/services/products/ProductModifierService";
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "ProductModifierForm",
+  components: {
+    Loader,
+  },
   cibAddthis,
   cisMinusSquare,
   data: () => ({
@@ -71,14 +79,17 @@ export default {
   },
   methods: {
     getProductModifier() {
+      this.$store.commit("set_loader");
       ProductModifierService.getAll()
         .then(({ data }) => {
           this.displayData(data.data);
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          // this.$router.push({ path: "/products" });
+          this.$store.commit("close_loader");
+          this.$router.push({ path: "/products" });
         });
     },
     toggleModifier(index) {
@@ -100,7 +111,7 @@ export default {
     updateProductModifier() {
       let formData = this.form;
       this.$store.commit("set_loader");
-      ProductModifierService.update(this.productId, formData)
+      ProductModifierService.update(this.form.product_id, formData)
         .then((res) => {
           if (res.status == 200 || res.status == 201) {
             this.$swal.fire({
