@@ -53,9 +53,9 @@
           </CRow>
           <hr v-if="form.items && form.items.length > 0" /> -->
           <CRow>
-            <CCol sm="12" md="12" class="pt-2">
+            <!-- <CCol sm="12" md="12" class="pt-2">
               <CTextarea label="Reason" placeholder="Content..." v-model="form.reason" />
-            </CCol>
+            </CCol> -->
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Date"
@@ -152,7 +152,7 @@ export default {
     form: {
       id: "",
       date: "",
-      reason: "",
+      // reason: "",
       items: [],
       product_id: "",
     },
@@ -166,7 +166,13 @@ export default {
     return {
       form: {
         date: { required },
-        reason: { required },
+        items: {
+          required: true,
+          $each: {
+            qty: { required },
+            reason: { required },
+          },
+        },
       },
     };
   },
@@ -498,7 +504,7 @@ export default {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.date = data.date;
-            this.form.reason = data.reason;
+            // this.form.reason = data.reason;
             let itemsData = [];
             if (data.items && data.items.length > 0) {
               data.items.map((item) => {
@@ -512,6 +518,7 @@ export default {
                       JSON.parse(item.product_variation.name).en +
                       ")",
                     qty: item.qty,
+                    reason: item.reason,
                   });
                 } else {
                   itemsData.push({
@@ -519,6 +526,7 @@ export default {
                     type: "product",
                     name: item.product.name,
                     qty: item.qty,
+                    reason: item.reason,
                   });
                 }
               });
