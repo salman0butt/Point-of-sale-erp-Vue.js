@@ -96,6 +96,55 @@
             </div>
           </CCol>
         </CRow>
+
+        <CRow v-if="searchType == 'quotation' && form.items && form.items.length > 0">
+          <CCol sm="12" md="12" class="pt-2">
+            <div class="form-group" v-for="(input, k) in form.items" :key="k">
+              <CRow>
+                <CInput
+                  label="Product"
+                  class="col-md-3"
+                  :value.sync="input.name"
+                  disabled
+                />
+                <CInput
+                  label="Qty"
+                  class="col-md-2"
+                  type="number"
+                  placeholder="0"
+                  min="1"
+                  v-model="input.qty"
+                  @input="calculateTotal()"
+                />
+
+                <CInput
+                  label="Unit Price"
+                  class="col-md-2"
+                  type="number"
+                  placeholder="0.00"
+                  :value.sync="input.selling_price"
+                  disabled
+                />
+                <CInput
+                  label="Discount %"
+                  class="col-md-2"
+                  type="number"
+                  placeholder="0.00"
+                />
+                <CInput label="Total" class="col-md-2" type="number" placeholder="0.00" />
+
+                <CButton
+                  @click="removeProduct(k)"
+                  class="btn-sm"
+                  style="background: transeparent"
+                >
+                  <CIcon :content="$options.cilTrash" style="color: red" />
+                </CButton>
+              </CRow>
+            </div>
+          </CCol>
+        </CRow>
+
         <hr v-if="form.items && form.items.length > 0" />
       </CCol>
     </CRow>
@@ -157,12 +206,18 @@ export default {
       product_id: "",
       total_cost: 0,
     },
+    pro_unit: false,
     search: "",
     products_list: [],
     options: {
       suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
       receiving_status: [
-        { value: "", label: "Choose receiving Status", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose receiving Status",
+          disabled: true,
+          selected: "",
+        },
         { value: "pending", label: "Pending" },
         { value: "completed", label: "Completed" },
       ],
@@ -208,6 +263,8 @@ export default {
                           is_unit: true,
                           unit_id: unit.uuid,
                           unit_qty: unit.qty ?? 1,
+                          unit_cost_price: unit.price?.cost_price,
+                          unit_selling_price: unit.price?.selling_price,
                         });
                       } else {
                         this.options.products.push({
@@ -217,6 +274,8 @@ export default {
                           is_unit: true,
                           unit_id: unit.uuid,
                           unit_qty: unit.qty ?? 1,
+                          unit_cost_price: unit.price?.cost_price,
+                          unit_selling_price: unit.price?.selling_price,
                         });
                       }
                     });
@@ -274,7 +333,8 @@ export default {
         if (this.products_list && this.products_list.length > 0) {
           this.products_list.find((product) => {
             if (option.type === "product") {
-              this.addProduct(option.unit_qty);
+              this.pro_unit = true;
+              this.addProduct(option);
             } else if (option.type === "variation") {
               if (product.uuid === this.form.product_id) {
                 let parts = product.variations.length;
@@ -288,6 +348,8 @@ export default {
                     type: "variation",
                     name: `${JSON.parse(variation.name)?.en}`,
                     qty: half_qty[index] ?? 1,
+                    cost_price: option.unit_cost_price,
+                    selling_price: option.unit_selling_price,
                   });
                 });
               }
@@ -339,13 +401,18 @@ export default {
               ) {
                 this.form.items.map((item, key) => {
                   if (item.uuid === variation.uuid) {
+                    let unit = this.unit_form.find(
+                      (item) => item.uuid === variation.uuid
+                    );
                     this.form.items[key].qty =
-                      parseInt(this.form.items[key].qty) +
-                        this.unit_form.find((item) => item.uuid === variation.uuid)
-                          ?.qty ?? 1;
+                      parseInt(this.form.items[key].qty) + unit?.qty ?? 1;
+                    unit?.qty ?? 1;
+                    this.form.items[key].cost_price = unit?.cost_price ?? 0;
+                    this.form.items[key].selling_price = unit?.selling_price ?? 0;
                   }
                 });
               } else {
+                let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
                 if (this.searchType === "damage") {
                   this.form.items.push({
                     uuid: variation.uuid,
@@ -353,19 +420,31 @@ export default {
                     name: `${product.name} (Variation: ${
                       JSON.parse(variation.name)?.en
                     })`,
-                    qty:
-                      this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
-                      1,
+                    qty: unit?.qty ?? 1,
                   });
                 } else if (this.searchType === "receivings") {
+                  let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
                   this.form.items.push({
                     uuid: variation.uuid,
                     type: "variation",
                     name: `${product.name} (Variation: ${
                       JSON.parse(variation.name)?.en
                     })`,
-                    cost_price: variation.price?.cost_price ?? 0,
-                    selling_price: variation.price?.selling_price ?? 0,
+                    cost_price: unit?.cost_price ?? 0,
+                    selling_price: unit?.selling_price ?? 0,
+
+                    qty: unit?.qty ?? 1,
+                    expiry_date: "",
+                  });
+                } else if (this.searchType === "quotation") {
+                  this.form.items.push({
+                    uuid: variation.uuid,
+                    type: "variation",
+                    name: `${product.name} (Variation: ${
+                      JSON.parse(variation.name)?.en
+                    })`,
+                    cost_price: unit?.cost_price ?? 0,
+                    selling_price: unit?.selling_price ?? 0,
                     qty:
                       this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
                       1,
@@ -380,11 +459,17 @@ export default {
         this.$store.commit("set_search_product_items", this.form.items);
       }
     },
-    addProduct(qty = 1) {
+    addProduct(option = {}) {
       if (this.form.product_id !== "" && this.form.product_id !== undefined) {
         let product = this.products_list.find(
           (product) => product.uuid === this.form.product_id
         );
+
+        if (Object.keys(option).length === 0 && option.constructor === Object) {
+          Object.assign(option, { unit_qty: 1 });
+          Object.assign(option, { unit_cost_price: product.price.cost_price });
+          Object.assign(option, { unit_selling_price: product.price.selling_price });
+        }
 
         if (
           product.uuid === this.form.product_id &&
@@ -392,27 +477,49 @@ export default {
           this.form.items.length > 0 &&
           this.form.items.some((item) => item.uuid === product.uuid)
         ) {
-          this.form.items.map((item, key) => {
-            if (item.uuid === product.uuid) {
-              this.form.items[key].qty = parseInt(this.form.items[key].qty) + qty;
-            }
-          });
+          if (this.pro_unit) {
+            this.form.items.map((item, key) => {
+              if (item.uuid === product.uuid) {
+                this.form.items[key].qty =
+                  parseInt(this.form.items[key].qty) + option.unit_qty;
+                this.form.items[key].cost_price = option.unit_cost_price;
+                this.form.items[key].selling_price = option.unit_selling_price;
+              }
+            });
+          } else {
+            this.form.items.map((item, key) => {
+              if (item.uuid === product.uuid) {
+                this.form.items[key].qty =
+                  parseInt(this.form.items[key].qty) + option.unit_qty;
+              }
+            });
+          }
         } else {
           if (this.searchType === "damage") {
             this.form.items.push({
               uuid: product.uuid,
               type: "product",
               name: product.name,
-              qty: qty,
+              qty: option.unit_qty,
             });
           } else if (this.searchType === "receivings") {
             this.form.items.push({
               uuid: product.uuid,
               type: "product",
               name: product.name,
-              cost_price: product.price?.cost_price ?? 0,
-              selling_price: product.price?.selling_price ?? 0,
-              qty: qty,
+              cost_price: option.unit_cost_price ?? 0,
+              selling_price: option.unit_selling_price ?? 0,
+              qty: option.unit_qty,
+              expiry_date: "",
+            });
+          } else if (this.searchType === "quotation") {
+            this.form.items.push({
+              uuid: product.uuid,
+              type: "product",
+              name: product.name,
+              cost_price: option.unit_cost_price ?? 0,
+              selling_price: option.unit_selling_price ?? 0,
+              qty: option.unit_qty,
               expiry_date: "",
             });
           }
@@ -435,6 +542,16 @@ export default {
                   qty: 1,
                 });
               } else if (this.searchType === "receivings") {
+                data.push({
+                  uuid: variation.uuid,
+                  type: "variation",
+                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
+                  cost_price: variation.price?.cost_price ?? 0,
+                  selling_price: variation.price?.selling_price ?? 0,
+                  qty: 1,
+                  expiry_date: "",
+                });
+              } else if (this.searchType === "quotation") {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
