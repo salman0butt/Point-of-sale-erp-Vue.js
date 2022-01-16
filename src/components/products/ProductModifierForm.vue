@@ -73,21 +73,45 @@ export default {
   },
   created() {
     this.form.product_id = this.$route.params.id;
-    if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-      this.getProductModifier();
-    }
+    this.modifiers();
+    // if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+    // this.getProductModifier();
+    // }
   },
   methods: {
-    getProductModifier() {
+    modifiers() {
       this.$store.commit("set_loader");
       ProductModifierService.getAll()
         .then(({ data }) => {
+          this.getProductModifier();
           this.displayData(data.data);
           this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
-          this.isEditing = false;
+          this.$store.commit("close_loader");
+          this.$router.push({ path: "/products" });
+        });
+    },
+    // TODO:  add modifiers url to postman
+    getProductModifier() {
+      ProductModifierService.getProductModifier(this.form.product_id)
+        .then(({ data }) => {
+          if (data && data.length) {
+            if (this.form.modifiers && this.form.modifiers.length) {
+              this.form.modifiers.forEach((modifier, index) => {
+                data.forEach((modifierData) => {
+                  console.log(modifierData.uuid === modifier.uuid);
+                  if (modifierData.uuid === modifier.uuid) {
+                    this.form.modifiers[index].checked = true;
+                  }
+                });
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
           this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
@@ -120,7 +144,7 @@ export default {
               text: "Product Modifier Updated Successfully",
               timer: 3600,
             });
-            this.displayData(res.data);
+
             this.$store.commit("close_loader");
           }
         })

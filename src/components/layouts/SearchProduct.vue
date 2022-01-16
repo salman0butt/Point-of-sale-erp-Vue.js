@@ -79,12 +79,13 @@
                 <CInput label="Product" class="col-md-4" :value.sync="input.name" />
                 <CInput
                   label="Damage Qty"
-                  class="col-md-4"
+                  class="col-md-3"
                   type="number"
                   placeholder="0"
                   min="1"
                   v-model="input.qty"
                 />
+                <CInput label="Reason" class="col-md-4" :value.sync="input.reason" />
                 <CButton
                   @click="removeProduct(k)"
                   class="btn-sm"
@@ -320,7 +321,9 @@ export default {
     },
     removeProduct(index) {
       this.form.items.splice(index, 1);
-      this.calculateTotal();
+      if (this.searchType === "receivings") {
+        this.calculateTotal();
+      }
     },
     addOptions(item) {
       this.form.product_id = item.value;
@@ -371,7 +374,8 @@ export default {
     saveQuantityUnits() {
       this.toggleModel = false;
       this.addUnitVariation();
-      if (this.searchType === "receiving") {
+      console.log(this.searchType);
+      if (this.searchType === "receivings") {
         this.calculateTotal();
       }
     },
@@ -421,6 +425,7 @@ export default {
                       JSON.parse(variation.name)?.en
                     })`,
                     qty: unit?.qty ?? 1,
+                    reason: "",
                   });
                 } else if (this.searchType === "receivings") {
                   let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
@@ -467,8 +472,10 @@ export default {
 
         if (Object.keys(option).length === 0 && option.constructor === Object) {
           Object.assign(option, { unit_qty: 1 });
-          Object.assign(option, { unit_cost_price: product.price.cost_price });
-          Object.assign(option, { unit_selling_price: product.price.selling_price });
+          if (product.price) {
+            Object.assign(option, { unit_cost_price: product.price.cost_price });
+            Object.assign(option, { unit_selling_price: product.price.selling_price });
+          }
         }
 
         if (
@@ -501,6 +508,7 @@ export default {
               type: "product",
               name: product.name,
               qty: option.unit_qty,
+              reason: "",
             });
           } else if (this.searchType === "receivings") {
             this.form.items.push({
@@ -540,6 +548,7 @@ export default {
                   type: "variation",
                   name: product.name + " (" + JSON.parse(variation.name).en + ")",
                   qty: 1,
+                  reason: "",
                 });
               } else if (this.searchType === "receivings") {
                 data.push({

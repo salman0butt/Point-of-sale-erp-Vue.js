@@ -280,7 +280,7 @@ export default {
       this.form.total_cost = val;
     },
     receivingItems(val) {
-      console.log(val);
+      // console.log(val);
       this.form.items = val;
     },
   },
