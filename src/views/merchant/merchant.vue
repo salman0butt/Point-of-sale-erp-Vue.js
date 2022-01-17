@@ -75,7 +75,7 @@
                   </CCol>
                   <CCol xs="12" lg="5">
                     <CCardBody>
-                      <div class="mb-2" style="padding: 5px; background: #f7e9e9">
+                      <div class="mb-2" style="padding: 5px; background: #fff">
                         <CImg
                           v-bind:src="general_items.previewImage"
                           block
@@ -95,7 +95,7 @@
                   </CCol>
                 </CRow>
               </CTab>
-              <CTab disabled>
+              <CTab>
                 <template slot="title">
                   {{ tabs[1] }}
                 </template>
@@ -187,7 +187,7 @@
                   </CCol>
                 </CRow>
               </CTab>
-              <CTab disabled>
+              <CTab>
                 <template slot="title">
                   {{ tabs[2] }}
                 </template>
@@ -274,7 +274,6 @@
 <script>
 // import { cibHtmlacademy } from "@coreui/icons";
 import { mapActions } from "vuex";
-
 export default {
   name: "Tabs",
   data() {
@@ -288,7 +287,7 @@ export default {
         email: "",
         mobile: "",
         country: "",
-        previewImage: "https://picsum.photos/1024/480/?image=54",
+        previewImage: "/img/images/no-logo.png",
         logo: "",
       },
       imageData: "",
@@ -300,37 +299,37 @@ export default {
       PluginLst: [
         {
           name: "plugin1",
-          imgUrl: "https://picsum.photos/1024/480/?image=54",
+          imgUrl: "https://plchldr.co/i/72x172",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Active",
         },
         {
           name: "plugin2",
-          imgUrl: "https://picsum.photos/1024/480/?image=54",
+          imgUrl: "https://plchldr.co/i/72x172",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Deactive",
         },
         {
           name: "plugin3",
-          imgUrl: "https://picsum.photos/1024/480/?image=54",
+          imgUrl: "https://plchldr.co/i/72x172",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Deactive",
         },
         {
           name: "plugin4",
-          imgUrl: "https://picsum.photos/1024/480/?image=54",
+          imgUrl: "https://plchldr.co/i/72x172",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Active",
         },
         {
           name: "plugin5",
-          imgUrl: "https://picsum.photos/1024/480/?image=54",
+          imgUrl: "https://plchldr.co/i/72x172",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Deactive",
         },
         {
           name: "plugin6",
-          imgUrl: "https://picsum.photos/1024/480/?image=54",
+          imgUrl: "https://plchldr.co/i/72x172",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Active",
         },
@@ -363,7 +362,7 @@ export default {
         this.general_items.email = data.business_email;
         this.general_items.mobile = data.business_mobile_no;
         this.general_items.country = data.country;
-        if (data.logo != "") {
+        if (data.logo != "" && data.logo != null) {
           this.general_items.previewImage = data.logo;
         }
         this.general_items.logo = "";

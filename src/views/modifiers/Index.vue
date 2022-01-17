@@ -3,12 +3,17 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Modifiers</CCardHeader>
           <CCardBody>
             <div>
-              <router-link class="btn btn-success" to="/modifiers/create"
+              <router-link
+                class="btn btn-success"
+                to="/modifiers/create"
+                style="float: right"
                 >Create Modifier</router-link
               >
             </div>
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="Modifier"
               :fields="fields"

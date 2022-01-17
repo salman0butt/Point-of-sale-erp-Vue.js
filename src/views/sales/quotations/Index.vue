@@ -3,12 +3,18 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Quotations </CCardHeader>
           <CCardBody>
             <div>
-              <router-link class="btn btn-success" to="/sales/quotations/create"
+              <router-link
+                class="btn btn-success"
+                to="/sales/quotations/create"
+                style="float: right"
                 >Create Quotation</router-link
               >
             </div>
+            <div style="clear: both; margin-bottom: 20px"></div>
+
             <CDataTable
               :items="Brand"
               :fields="fields"
@@ -35,11 +41,7 @@
                       color="warning"
                       >Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -161,9 +163,7 @@ export default {
                     text: "Brand Deleted Successfully",
                     timer: 3600,
                   });
-                  this.BrandData = this.BrandData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.BrandData = this.BrandData.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })

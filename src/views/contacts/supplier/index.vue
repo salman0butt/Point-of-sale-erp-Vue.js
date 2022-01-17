@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <CRow>
@@ -53,6 +52,7 @@
             </CCard>
           </CCol>
         </CRow> -->
+        <CCardHeader> Suppliers </CCardHeader>
         <CCard>
           <CCardBody>
             <router-link
@@ -61,9 +61,13 @@
               style="float: right"
               >Create Supplier</router-link
             >
-            <router-link class="btn btn-success" to="/groups/create"
+            <router-link
+              class="btn btn-success"
+              to="/groups/create"
+              style="float: right; margin-right: 10px"
               >Create Groups</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="items"
               :fields="fields"
@@ -91,10 +95,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
@@ -255,9 +256,7 @@ export default {
                     text: "Employee Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
                   this.getTotalCardData();
                 }
               })

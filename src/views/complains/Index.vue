@@ -3,10 +3,15 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Complains </CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/complains/create"
-              >Create Complains</router-link
+            <router-link
+              class="btn btn-success"
+              to="/complains/create"
+              style="float: right"
+              >Create Complain</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <ComplainIndex />
           </CCardBody>
         </CCard>

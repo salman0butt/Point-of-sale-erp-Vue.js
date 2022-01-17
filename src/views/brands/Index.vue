@@ -3,12 +3,17 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Brands </CCardHeader>
           <CCardBody>
             <div>
-              <router-link class="btn btn-success" to="/brands/create"
+              <router-link
+                class="btn btn-success"
+                to="/brands/create"
+                style="float: right"
                 >Create Brand</router-link
               >
             </div>
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="Brand"
               :fields="fields"
@@ -59,9 +64,9 @@ import BrandService from "@/services/brands/BrandService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
-  { key: "actions", label: "ACTION", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "width:50%" },
+  { key: "status", label: "STATUS", _style: "width:30%;" },
+  { key: "actions", label: "ACTION", _style: "width:25%;" },
 ];
 
 export default {

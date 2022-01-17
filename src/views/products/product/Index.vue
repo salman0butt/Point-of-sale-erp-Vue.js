@@ -3,16 +3,21 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Products </CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/products/create"
-              >Create Products</router-link
+            <router-link
+              class="btn btn-success"
+              to="/products/create"
+              style="float: right"
+              >Create Product</router-link
             >
             <router-link
               class="btn btn-success"
-              style="float: right"
+              style="float: right; margin-right: 10px"
               to="/products/import"
               >Import Products</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="Product"
               :fields="fields"
@@ -82,11 +87,7 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -220,9 +221,7 @@ export default {
                     text: "Product Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ProductData = this.ProductData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.ProductData = this.ProductData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {

@@ -7,7 +7,7 @@
           <CCardBody>
             <form @submit.prevent="updateData">
               <CRow>
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="6" md="6" class="pt-2">
                   <CInput
                     label="Name"
                     v-model="form.name"
@@ -23,7 +23,7 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="6" md="6" class="pt-2">
                   <CSelect
                     label="Type"
                     :options="options.type"
