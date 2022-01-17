@@ -82,7 +82,11 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -216,7 +220,9 @@ export default {
                     text: "Product Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ProductData = this.ProductData.filter((item) => item.uuid != uuid);
+                  this.ProductData = this.ProductData.filter(
+                    (item) => item.uuid != uuid
+                  );
                 }
               })
               .catch((error) => {
