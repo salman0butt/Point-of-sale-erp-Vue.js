@@ -46,84 +46,8 @@
                 v-model="form.reference_id"
               />
             </CCol>
-            <!-- <CCol sm="12" md="12" class="pt-2">
-              <CSelect
-                label="Products"
-                :options="options.products"
-                :value.sync="form.product_id"
-                @change="addOptions()"
-              />
-            </CCol> -->
-            <!-- <CCol sm="12" md="12" class="pt-2">
-              <CInput
-                label="Products"
-                v-model="search"
-                @input="searchProduct()"
-                placeholder="Search..."
-              /><br />
-              <ul
-                v-if="options.products && options.products.length > 0"
-                class="search-content"
-              >
-                <li
-                  v-for="(item, key) in options.products"
-                  :key="key"
-                  @click="addOptions(item)"
-                >
-                  {{ item.label }}
-                </li>
-              </ul>
-            </CCol> -->
           </CRow>
           <SearchProduct searchType="receivings" :itemsData="form.items" />
-          <!-- <hr v-if="form.items && form.items.length > 0" />
-          <CRow v-if="form.items && form.items.length > 0">
-            <CCol sm="12" md="12" class="pt-2">
-              <div class="form-group" v-for="(input, k) in form.items" :key="k">
-                <CRow>
-                  <CInput label="Product" class="col-md-3" :value.sync="input.name" />
-                  <CInput
-                    label="Qty"
-                    class="col-md-2"
-                    type="number"
-                    placeholder="0"
-                    min="1"
-                    v-model="input.qty"
-                    @input="calculateTotal()"
-                  />
-                  <CInput
-                    label="Cost Price"
-                    class="col-md-2"
-                    type="number"
-                    placeholder="0.00"
-                    v-model="input.cost_price"
-                    @input="calculateTotal()"
-                  />
-                  <CInput
-                    label="Selling Price"
-                    class="col-md-2"
-                    type="number"
-                    placeholder="0.00"
-                    :value.sync="input.selling_price"
-                  />
-                  <CInput
-                    class="col-md-2"
-                    label="Expiry Date"
-                    type="date"
-                    v-model="input.expiry_date"
-                  />
-                  <CButton
-                    @click="removeProduct(k)"
-                    class="btn-sm"
-                    style="background: transeparent"
-                  >
-                    <CIcon :content="$options.cilTrash" style="color: red" />
-                  </CButton>
-                </CRow>
-              </div>
-            </CCol>
-          </CRow>
-          <hr v-if="form.items && form.items.length > 0" /> -->
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
               <CInput
@@ -142,6 +66,39 @@
 
             <CCol sm="12" md="12" class="pt-2">
               <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="12" md="12" class="pt-2">
+              <app-upload ref="fileUpload" @file:changed="handleFile" />
+
+              <div class="attachment-display">
+                <ul class="mt-5 d-flex">
+                  <li
+                    v-for="(img, index) in display_images"
+                    v-bind:key="index"
+                    class="display-attachment-row"
+                  >
+                    <div>
+                      <span>
+                        <img
+                          v-bind:src="img.path"
+                          class="name-attachment"
+                          style="max-width: 80px"
+                        />
+                      </span>
+                    </div>
+                    <span
+                      >{{ img.name }}
+                      <a
+                        @click.prevent="deleteAttachment(img.uuid)"
+                        class="delete-attachment"
+                      >
+                        <CIcon :content="$options.cilTrash" /> </a
+                    ></span>
+                  </li>
+                </ul>
+              </div>
             </CCol>
           </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -169,42 +126,6 @@
         </form>
       </CCol>
     </CRow>
-    <!-- <div>
-      <CModal
-        title="Product Quantity Units"
-        :fade="true"
-        :centered="true"
-        :closeOnBackdrop="true"
-        color="success"
-        :show.sync="toggleModel"
-      >
-        <form v-if="unit_form && unit_form.length > 0">
-          <CRow v-for="(input, k) in unit_form" :key="k">
-            <CInput
-              label="Variations"
-              class="col-md-6"
-              :value.sync="input.name"
-              disabled
-            />
-            <CInput
-              label="Qty"
-              class="col-md-6"
-              type="number"
-              placeholder="0"
-              min="1"
-              v-model="input.qty"
-              @input="calculateTotal()"
-            />
-          </CRow>
-        </form>
-        <template #header>
-          <h6 class="modal-title">Select Quantity Units</h6>
-        </template>
-        <template #footer>
-          <CButton @click="saveQuantityUnits()" color="success">Save</CButton>
-        </template>
-      </CModal>
-    </div> -->
   </div>
 </template>
 <script>
@@ -212,18 +133,18 @@ import ReceivingService from "@/services/receivings/ReceivingService";
 import { required } from "vuelidate/lib/validators";
 import { cilTrash } from "@coreui/icons-pro";
 import SearchProduct from "@/components/layouts/SearchProduct";
+import AppUpload from "@/components/uploads/Upload.vue";
 
 export default {
   name: "ReceivingForm",
   components: {
     SearchProduct,
+    AppUpload,
   },
   cilTrash,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
-    // toggleModel: false,
-    // unit_form: [],
     form: {
       id: "",
       supplier_id: "",
@@ -234,9 +155,9 @@ export default {
       receiving_status: "",
       items: [],
       product_id: "",
+      images: [],
     },
-    // search: "",
-    // products_list: [],
+    display_images: [],
     options: {
       suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
       receiving_status: [
@@ -244,7 +165,6 @@ export default {
         { value: "pending", label: "Pending" },
         { value: "completed", label: "Completed" },
       ],
-      // products: [],
     },
   }),
   validations() {
@@ -280,7 +200,6 @@ export default {
       this.form.total_cost = val;
     },
     receivingItems(val) {
-      // console.log(val);
       this.form.items = val;
     },
   },
@@ -301,262 +220,15 @@ export default {
           console.log(error);
         });
     },
-    // searchProduct() {
-    //   if (this.search !== "") {
-    //     this.products_list = [];
-    //     this.options.products = [];
-    //     this.unit_form = [];
-    //     ReceivingService.searchProduct(this.search)
-    //       .then(({ data }) => {
-    //         if (data !== undefined && data !== "") {
-    //           this.options.products = [];
-    //           data.map((product) => {
-    //             if (product) {
-    //               if (product.quantity_units && product.quantity_units.length > 0) {
-    //                 product.quantity_units.map((unit) => {
-    //                   if (product.variations && product.variations.length > 0) {
-    //                     this.options.products.push({
-    //                       value: product.uuid,
-    //                       type: "variation",
-    //                       label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-    //                       is_unit: true,
-    //                       unit_id: unit.uuid,
-    //                       unit_qty: unit.qty ?? 1,
-    //                     });
-    //                   } else {
-    //                     this.options.products.push({
-    //                       value: product.uuid,
-    //                       type: "product",
-    //                       label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-    //                       is_unit: true,
-    //                       unit_id: unit.uuid,
-    //                       unit_qty: unit.qty ?? 1,
-    //                     });
-    //                   }
-    //                 });
-    //               }
-    //               if (product.variations && product.variations.length > 0) {
-    //                 product.variations.map((variation) => {
-    //                   this.options.products.push({
-    //                     value: variation.uuid,
-    //                     type: "variation",
-    //                     label: `${product.name} (Variation: ${
-    //                       JSON.parse(variation.name)?.en
-    //                     } | Stock:  ${
-    //                       variation.inventory && variation.inventory.length
-    //                         ? variation.inventory[0]?.current_quantity
-    //                         : 0
-    //                     })`,
-    //                   });
-    //                 });
-    //               } else {
-    //                 this.options.products.push({
-    //                   value: product.uuid,
-    //                   type: "product",
-    //                   label: `${product.name} (Stock:  ${
-    //                     product.inventory && product.inventory.length
-    //                       ? product.inventory[0]?.current_quantity
-    //                       : 0
-    //                   })`,
-    //                 });
-    //               }
-
-    //               this.products_list.push({ ...product });
-    //             }
-    //           });
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //       });
-    //   } else {
-    //     this.search = "";
-    //     this.products_list = [];
-    //     this.options.products = [];
-    //   }
-    // },
-    // removeProduct(index) {
-    //   this.form.items.splice(index, 1);
-    //   this.calculateTotal();
-    // },
-    // calculateTotal() {
-    //   let total = 0;
-    //   this.form.items.map((item) => {
-    //     if (item.cost_price && item.qty) {
-    //       total += parseInt(item.qty) * parseInt(item.cost_price);
-    //     }
-    //   });
-
-    //   this.form.total_cost = parseInt(total);
-    // },
-    // addOptions(item) {
-    //   this.form.product_id = item.value;
-    //   this.unit_form = [];
-    //   let option = item;
-    //   if (
-    //     option.is_unit !== "" &&
-    //     option.is_unit !== undefined &&
-    //     option.unit_id !== "" &&
-    //     option.unit_id !== undefined
-    //   ) {
-    //     if (this.products_list && this.products_list.length > 0) {
-    //       this.products_list.find((product) => {
-    //         if (option.type === "product") {
-    //           this.addProduct(option.unit_qty);
-    //         } else if (option.type === "variation") {
-    //           if (product.uuid === this.form.product_id) {
-    //             let parts = product.variations.length;
-    //             let num = option.unit_qty;
-    //             let half_qty = [...Array(parts)].map(
-    //               (_, i) => 0 | (num / parts + (i < num % parts))
-    //             );
-    //             product.variations.find((variation, index) => {
-    //               this.unit_form.push({
-    //                 uuid: variation.uuid,
-    //                 type: "variation",
-    //                 name: `${JSON.parse(variation.name)?.en}`,
-    //                 qty: half_qty[index] ?? 1,
-    //               });
-    //             });
-    //           }
-    //         }
-    //       });
-    //       if (option.type === "variation") {
-    //         this.toggleModel = true;
-    //       }
-    //     }
-    //   } else {
-    //     if (option.type === "product") {
-    //       this.addProduct();
-    //     } else if (option.type === "variation") {
-    //       this.addProductVariation();
-    //     }
-    //   }
-    //   this.calculateTotal();
-    // },
-    // saveQuantityUnits() {
-    //   this.toggleModel = false;
-    //   // this.form.product_id = "";
-    //   // this.search = "";
-    //   // this.options.products = [];
-    //   this.addUnitVariation();
-    //   this.calculateTotal();
-    // },
-    // addUnitVariation() {
-    //   if (this.unit_form && this.unit_form.length > 0) {
-    //     if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-    //       this.products_list.map((product) => {
-    //         product.variations.map((variation) => {
-    //           if (this.unit_form.some((item) => item.uuid === variation.uuid)) {
-    //             if (
-    //               this.form.items.length > 0 &&
-    //               this.form.items.some((item) => item.uuid === variation.uuid)
-    //             ) {
-    //               this.form.items.map((item, key) => {
-    //                 if (item.uuid === variation.uuid) {
-    //                   this.form.items[key].qty =
-    //                     parseInt(this.form.items[key].qty) +
-    //                       this.unit_form.find((item) => item.uuid === variation.uuid)
-    //                         ?.qty ?? 1;
-    //                 }
-    //               });
-    //             } else {
-    //               this.form.items.push({
-    //                 uuid: variation.uuid,
-    //                 type: "variation",
-    //                 name: `${product.name} (Variation: ${
-    //                   JSON.parse(variation.name)?.en
-    //                 })`,
-    //                 cost_price: variation.price?.cost_price ?? 0,
-    //                 selling_price: variation.price?.selling_price ?? 0,
-    //                 qty:
-    //                   this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
-    //                   1,
-    //                 expiry_date: "",
-    //               });
-    //             }
-    //           }
-    //         });
-    //       });
-    //       this.form.product_id = "";
-    //       this.search = "";
-    //       this.options.products = [];
-    //     }
-    //   }
-    // },
-    // addProduct(qty = 1) {
-    //   if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-    //     let product = this.products_list.find(
-    //       (product) => product.uuid === this.form.product_id
-    //     );
-    //     if (
-    //       product.uuid === this.form.product_id &&
-    //       this.form.items.length > 0 &&
-    //       this.form.items.some((item) => item.uuid === product.uuid)
-    //     ) {
-    //       this.form.items.map((item, key) => {
-    //         if (item.uuid === product.uuid) {
-    //           this.form.items[key].qty = parseInt(this.form.items[key].qty) + qty;
-    //         }
-    //       });
-    //     } else {
-    //       this.form.items.push({
-    //         uuid: product.uuid,
-    //         type: "product",
-    //         name: product.name,
-    //         cost_price: product.price?.cost_price ?? 0,
-    //         selling_price: product.price?.selling_price ?? 0,
-    //         qty: qty,
-    //         expiry_date: "",
-    //       });
-    //     }
-    //     this.form.product_id = "";
-    //     this.search = "";
-    //     this.options.products = [];
-    //   }
-    // },
-    // addProductVariation() {
-    //   let data = [];
-    //   if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-    //     this.products_list.find((product) => {
-    //       return product.variations.find((variation) => {
-    //         if (variation.uuid === this.form.product_id) {
-    //           data.push({
-    //             uuid: variation.uuid,
-    //             type: "variation",
-    //             name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
-    //             cost_price: variation.price?.cost_price ?? 0,
-    //             selling_price: variation.price?.selling_price ?? 0,
-    //             qty: 1,
-    //             expiry_date: "",
-    //           });
-    //         }
-    //       });
-    //     });
-
-    //     if (
-    //       data[0].uuid === this.form.product_id &&
-    //       this.form.items.length > 0 &&
-    //       this.form.items.some((item) => item.uuid === data[0].uuid)
-    //     ) {
-    //       this.form.items.map((item, key) => {
-    //         if (item.uuid === data[0].uuid) {
-    //           this.form.items[key].qty = parseInt(this.form.items[key].qty) + 1;
-    //         }
-    //       });
-    //     } else {
-    //       this.form.items.push(data[0]);
-    //     }
-    //     this.form.product_id = "";
-    //     this.search = "";
-    //     this.options.products = [];
-    //   }
-    // },
     saveReceiving() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        ReceivingService.create(data)
+        this.$store.commit("set_loader");
+        let formData = this.formData();
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        ReceivingService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -567,6 +239,8 @@ export default {
               });
               this.$v.$reset();
               this.resetForm();
+              this.displayData(res.data);
+              this.$store.commit("close_loader");
 
               if (this.saveAndExit) {
                 this.$router.push({ path: "/receivings/index" });
@@ -579,6 +253,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -591,8 +266,12 @@ export default {
     updateReceiving() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        ReceivingService.update(this.form.id, data)
+        this.$store.commit("set_loader");
+        let formData = this.formData(true);
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        ReceivingService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -602,7 +281,9 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-
+              this.resetForm();
+              this.displayData(res.data);
+              this.$store.commit("close_loader");
               if (this.saveAndExit) {
                 this.$router.push({ path: "/receivings/index" });
               }
@@ -615,6 +296,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -624,50 +306,31 @@ export default {
           });
       }
     },
+    formData(update = false) {
+      let formData = new FormData();
+      formData.append("supplier_id", this.form.supplier_id);
+      formData.append("date", this.form.date);
+      formData.append("note", this.form.note);
+      formData.append("reference_id", this.form.reference_id);
+      formData.append("total_cost", this.form.total_cost);
+      formData.append("receiving_status", this.form.receiving_status);
+      formData.append("items", JSON.stringify(this.form.items));
+
+      if (this.form.images && this.form.images.length > 0) {
+        this.form.images.map((image) => {
+          formData.append("images[]", image);
+        });
+      }
+
+      if (update) {
+        formData.append("_method", "PATCH");
+      }
+      return formData;
+    },
     getReceiving() {
       ReceivingService.get(this.form.id)
         .then(({ data }) => {
-          if (data != null && data != "") {
-            this.isEditing = true;
-            this.form.id = data.uuid;
-            this.form.supplier_id = data.supplier.uuid;
-            this.form.date = data.date;
-            this.form.note = data.note;
-            this.form.reference_id = data.reference_id;
-            this.form.total_cost = data.total_cost;
-            this.form.receiving_status = data.receiving_status;
-
-            if (data.items && data.items.length > 0) {
-              data.items.map((item) => {
-                if (item && item.product_variation && item.product_variation.uuid) {
-                  this.form.items.push({
-                    uuid: item.product_variation.uuid,
-                    type: "variation",
-                    name:
-                      item.product.name +
-                      " (" +
-                      JSON.parse(item.product_variation.name).en +
-                      ")",
-                    cost_price: item.price?.cost_price ?? 0,
-                    selling_price: item.price?.selling_price ?? 0,
-                    qty: item.qty,
-                    expiry_date: item.inventory.expiry_date,
-                  });
-                } else {
-                  this.form.items.push({
-                    uuid: item.product.uuid,
-                    type: "product",
-                    name: item.product.name,
-                    cost_price: item.price?.cost_price ?? 0,
-                    selling_price: item.price?.selling_price ?? 0,
-                    qty: item.qty,
-                    expiry_date: item.inventory.expiry_date,
-                  });
-                }
-              });
-              // this.$store.commit("set_search_product_items", itemsData);
-            }
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
@@ -675,11 +338,107 @@ export default {
           this.$router.push({ path: "/receivings/index" });
         });
     },
+    displayData(data = null) {
+      if (data != null && data != "") {
+        this.isEditing = true;
+        this.form.id = data.uuid;
+        this.form.supplier_id = data.supplier.uuid;
+        this.form.date = data.date;
+        this.form.note = data.note;
+        this.form.reference_id = data.reference_id;
+        this.form.total_cost = data.total_cost;
+        this.form.receiving_status = data.receiving_status;
+
+        this.display_images = [];
+        if (data.images && data.images.length > 0) {
+          let display_images = this.display_images;
+          data.images.map(function (item) {
+            display_images.push(item);
+          });
+        }
+
+        if (data.items && data.items.length > 0) {
+          data.items.map((item) => {
+            if (item && item.product_variation && item.product_variation.uuid) {
+              this.form.items.push({
+                uuid: item.product_variation.uuid,
+                type: "variation",
+                name:
+                  item.product.name +
+                  " (" +
+                  JSON.parse(item.product_variation.name).en +
+                  ")",
+                cost_price: item.price?.cost_price ?? 0,
+                selling_price: item.price?.selling_price ?? 0,
+                qty: item.qty,
+                expiry_date: item.inventory?.expiry_date ?? "",
+              });
+            } else {
+              this.form.items.push({
+                uuid: item.product.uuid,
+                type: "product",
+                name: item.product.name,
+                cost_price: item.price?.cost_price ?? 0,
+                selling_price: item.price?.selling_price ?? 0,
+                qty: item.qty,
+                expiry_date: item.inventory?.expiry_date ?? "",
+              });
+            }
+          });
+          // this.$store.commit("set_search_product_items", itemsData);
+        }
+      }
+    },
+    handleFile(files) {
+      this.form.images = Object.values(files);
+    },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this Attachment",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.display_images = this.display_images.filter(
+                    (item) => item.uuid != uuid
+                  );
+                }
+              })
+              .catch((err) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+                console.log(err);
+              });
+          }
+        });
+    },
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";
       }
       this.isEditing = false;
+      this.form.items = [];
+      this.form.images = [];
+      this.display_images = [];
+      this.$refs.fileUpload.reset();
     },
   },
 };

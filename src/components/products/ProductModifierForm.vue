@@ -94,6 +94,7 @@ export default {
         });
     },
     // TODO:  add modifiers url to postman
+    // TODO: refactore Users resource in postman
     getProductModifier() {
       ProductModifierService.getProductModifier(this.form.product_id)
         .then(({ data }) => {
@@ -101,7 +102,6 @@ export default {
             if (this.form.modifiers && this.form.modifiers.length) {
               this.form.modifiers.forEach((modifier, index) => {
                 data.forEach((modifierData) => {
-                  console.log(modifierData.uuid === modifier.uuid);
                   if (modifierData.uuid === modifier.uuid) {
                     this.form.modifiers[index].checked = true;
                   }

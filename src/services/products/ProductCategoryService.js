@@ -22,12 +22,13 @@ class ProductCategoryService extends Helper {
         return http.get('/product-categories-options', super.selectedBranch());
     }
 
-    create(data) {
-        return http.post("/product-categories", data, super.selectedBranch());
+    create(data, config) {
+        config = Object.assign(config, super.selectedBranch());
+        return http.post("/product-categories", data, config);
     }
 
-    update(id, data) {
-        return http.patch(`/product-categories/${id}`, data);
+    update(id, data, config) {
+        return http.post(`/product-categories/${id}`, data, config);
     }
 
     delete(id) {
