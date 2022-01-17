@@ -32,12 +32,14 @@ class ReceivingService extends Helper {
         return http.get(url, super.selectedBranch());
     }
 
-    create(data) {
-        return http.post("/receivings", data, super.selectedBranch());
+    create(data, config) {
+      config = Object.assign({}, config, super.selectedBranch());
+        return http.post("/receivings", data, config);
     }
 
-    update(id, data) {
-        return http.patch(`/receivings/${id}`, data, super.selectedBranch());
+    update(id, data, config) {
+      config = Object.assign({}, config, super.selectedBranch());
+        return http.post(`/receivings/${id}`, data, config);
     }
 
     delete(id) {

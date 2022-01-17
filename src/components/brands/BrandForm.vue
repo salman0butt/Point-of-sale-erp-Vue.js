@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loader />
     <CRow>
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateBrand() : saveBrand()">
@@ -22,6 +23,40 @@
                 :options="options.status"
                 :value.sync="form.status"
               />
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="12" md="12" class="pt-2">
+              <app-upload
+                ref="fileUpload"
+                :max="1"
+                fileType="image/jpg,image/jpeg,image/png"
+                @file:changed="handleFile"
+              />
+
+              <div v-if="display_images && isEditing" class="attachment-display">
+                <ul class="mt-5 d-flex">
+                  <li class="display-attachment-row">
+                    <div>
+                      <span>
+                        <img
+                          v-bind:src="display_images.path"
+                          class="name-attachment"
+                          style="max-width: 80px"
+                        />
+                      </span>
+                    </div>
+                    <span
+                      >{{ display_images.name }}
+                      <a
+                        @click.prevent="deleteAttachment(display_images.uuid)"
+                        class="delete-attachment"
+                      >
+                        <CIcon :content="$options.cilTrash" /> </a
+                    ></span>
+                  </li>
+                </ul>
+              </div>
             </CCol>
           </CRow>
           <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -54,9 +89,17 @@
 <script>
 import BrandService from "@/services/brands/BrandService";
 import { required } from "vuelidate/lib/validators";
+import AppUpload from "@/components/uploads/Upload.vue";
+import { cilTrash } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "BrandForm",
+  components: {
+    AppUpload,
+    Loader,
+  },
+  cilTrash,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -64,8 +107,10 @@ export default {
       id: "",
       name: "",
       parent_id: "",
+      image: "",
       status: "active",
     },
+    display_images: null,
     options: {
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
@@ -93,10 +138,21 @@ export default {
     saveBrand() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        BrandService.create(data)
+        this.$store.commit("set_loader");
+        let formData = new FormData();
+        formData.append("name", this.form.name);
+        formData.append("status", this.form.status);
+        formData.append("image", this.form.image);
+        formData.append("parent_id", this.form.parent_id);
+
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        // let data = this.form;
+        BrandService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
+              this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -105,7 +161,7 @@ export default {
               });
               this.$v.$reset();
               this.resetForm();
-
+              this.$store.commit("close_loader");
               if (this.saveAndExit) {
                 this.$router.push({ path: "/brands/index" });
               } else {
@@ -117,6 +173,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -129,10 +186,21 @@ export default {
     updateBrand() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = this.form;
-        BrandService.update(this.form.id, data)
+        this.$store.commit("set_loader");
+        let formData = new FormData();
+        formData.append("name", this.form.name);
+        formData.append("status", this.form.status);
+        formData.append("image", this.form.image);
+        formData.append("parent_id", this.form.parent_id);
+        formData.append("_method", "PATCH");
+
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        BrandService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
+              this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -140,7 +208,7 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-
+              this.$store.commit("close_loader");
               if (this.saveAndExit) {
                 this.$router.push({ path: "/brands/index" });
               }
@@ -153,6 +221,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -163,23 +232,74 @@ export default {
       }
     },
     getBrand() {
+      this.$store.commit("set_loader");
       BrandService.get(this.form.id)
         .then(({ data }) => {
-          console.log(data);
-          if (data != null && data != "") {
-            this.isEditing = true;
-            this.form.id = data.uuid;
-            this.form.name = data.name;
-            if (data.parent_id !== "" && data.parent_id !== null) {
-              this.form.parent_id = data.parent_id;
-            }
-            this.form.status = data.status;
-          }
+          this.displayData(data);
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
           this.isEditing = false;
           this.$router.push({ path: "/brands/index" });
+        });
+    },
+    displayData(data = null) {
+      if (data != null && data != "") {
+        this.resetForm();
+        this.isEditing = true;
+        this.form.id = data.uuid;
+        this.form.name = data.name;
+        if (data.parent_id !== "" && data.parent_id !== null) {
+          this.form.parent_id = data.parent_id ?? "";
+        }
+        this.form.status = data.status;
+        this.display_images = data.image ?? "";
+        this.form.image = "";
+      }
+    },
+    handleFile(files) {
+      this.form.image = files[0];
+    },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this Attachment",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$store.commit("set_loader");
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.display_images = null;
+                  this.$store.commit("close_loader");
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+                this.$store.commit("close_loader");
+                console.log(err);
+              });
+          }
         });
     },
     resetForm() {
@@ -187,6 +307,7 @@ export default {
         this.form[index] = "";
       }
       this.isEditing = false;
+      this.$refs.fileUpload.reset();
     },
   },
 };

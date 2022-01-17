@@ -11,6 +11,10 @@ export default {
   },
   props: {
     max: Number,
+    fileType: {
+      type: String,
+      default: "application/pdf,image/*",
+    },
     uploadMsg: String,
     maxError: String,
     fileError: String,
@@ -129,7 +133,7 @@ export default {
       <input
         type="file"
         style="z-index: 1"
-        accept="application/pdf,image/*"
+        :accept="fileType"
         ref="uploadInput"
         @change="previewImgs"
         multiple

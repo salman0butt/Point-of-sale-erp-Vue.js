@@ -18,12 +18,13 @@ class BrandService extends Helper {
         return http.get(`/brands/${id}`);
     }
 
-    create(data) {
-        return http.post("/brands", data, super.selectedBranch());
+    create(data, config) {
+      config = Object.assign(config,super.selectedBranch());
+        return http.post("/brands", data, config);
     }
 
-    update(id, data) {
-        return http.patch(`/brands/${id}`, data);
+    update(id, data, config) {
+        return http.post(`/brands/${id}`, data, config);
     }
 
     delete(id) {
