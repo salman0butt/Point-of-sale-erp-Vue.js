@@ -3,12 +3,15 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Accounts </CCardHeader>
           <CCardBody>
             <router-link
               class="btn btn-success"
               to="/accounting/accounts/create"
+              style="float: right"
               >Create Account</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="items"
               :fields="fields"
@@ -40,10 +43,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
@@ -185,9 +185,7 @@ export default {
                     text: "Employee Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
                   this.getTotalCardData();
                 }
               })

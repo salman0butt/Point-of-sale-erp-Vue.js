@@ -48,10 +48,15 @@
           </CCol>
         </CRow>
         <CCard>
+          <CCardHeader> Employees</CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/employees/create"
+            <router-link
+              class="btn btn-success"
+              to="/employees/create"
+              style="float: right"
               >Create Employee</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="users"
               :fields="fields"

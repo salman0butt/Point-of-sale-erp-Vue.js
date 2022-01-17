@@ -10,10 +10,12 @@
               <router-link
                 class="btn btn-success"
                 to="/branch/create"
-                style="text-align: right"
+                style="text-align: center; float: right"
                 >Create Branch</router-link
               >
             </div>
+            <br />
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="branches"
               :fields="fields"
@@ -39,9 +41,7 @@
                     <!-- <CButton @click="viewRow(item.uuid)" color="success"
                         >View</CButton
                       > -->
-                    <CButton @click="editRow(item.uuid)" color="warning"
-                      >Edit</CButton
-                    >
+                    <CButton @click="editRow(item.uuid)" color="warning">Edit</CButton>
                     <!-- <CButton @click="deleteRow(item.uuid)" color="danger"
                       >Delete</CButton
                     > -->

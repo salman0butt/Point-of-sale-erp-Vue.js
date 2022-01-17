@@ -3,12 +3,17 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Departments </CCardHeader>
           <CCardBody>
             <div v-if="canCreateBranch">
-              <router-link class="btn btn-success" to="/departments/create"
+              <router-link
+                class="btn btn-success"
+                to="/departments/create"
+                style="float: right"
                 >Create Department</router-link
               >
             </div>
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="departments"
               :fields="fields"
@@ -29,6 +34,11 @@
                 </td>
 
                 <td v-else>-</td>
+              </template>
+              <template #status="{ item }">
+                <td>
+                  {{ item.status ? item.status.name : "" }}
+                </td>
               </template>
               <template #actions="{ item }">
                 <td>
@@ -96,7 +106,6 @@ export default {
   created() {
     this.loading = true;
     this.getDepartmentData();
-    console.log();
   },
   watch: {
     reloadParams() {

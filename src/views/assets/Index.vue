@@ -3,10 +3,12 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Asset </CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/assets/create"
+            <router-link class="btn btn-success" to="/assets/create" style="float: right"
               >Create Asset</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="departments"
               :fields="fields"

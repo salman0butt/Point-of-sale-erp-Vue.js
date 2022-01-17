@@ -3,12 +3,17 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Receivings </CCardHeader>
           <CCardBody>
             <div>
-              <router-link class="btn btn-success" to="/receivings/create"
+              <router-link
+                class="btn btn-success"
+                to="/receivings/create"
+                style="float: right"
                 >Create Receiving</router-link
               >
             </div>
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="Receiving"
               :fields="fields"

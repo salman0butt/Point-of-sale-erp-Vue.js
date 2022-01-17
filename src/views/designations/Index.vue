@@ -3,10 +3,15 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Designations </CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/designations/create"
-              >Create Designations</router-link
+            <router-link
+              class="btn btn-success"
+              to="/designations/create"
+              style="float: right"
+              >Create Designation</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="designations"
               :fields="fields"

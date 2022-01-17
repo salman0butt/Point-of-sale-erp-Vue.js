@@ -36,7 +36,7 @@
           <CIcon class="headerFont" v-else name="cil-moon" />
         </button>
       </CHeaderNavItem>
-      <TheHeaderDropdownNotif />
+      <!-- <TheHeaderDropdownNotif /> -->
       <TheHeaderDropdownAccnt />
       <CHeaderNavItem class="px-3"> </CHeaderNavItem>
     </CHeaderNav>
@@ -49,7 +49,7 @@
 
 <script>
 import TheHeaderDropdownAccnt from "./TheHeaderDropdownAccnt";
-import TheHeaderDropdownNotif from "./TheHeaderDropdownNotif";
+// import TheHeaderDropdownNotif from "./TheHeaderDropdownNotif";
 // import TheHeaderDropdownTasks from "./TheHeaderDropdownTasks";
 // import TheHeaderDropdownMssgs from "./TheHeaderDropdownMssgs";
 import TheSelectBranchForm from "@/containers/TheSelectBranchForm";
@@ -58,7 +58,7 @@ export default {
   name: "TheHeader",
   components: {
     TheHeaderDropdownAccnt,
-    TheHeaderDropdownNotif,
+    // TheHeaderDropdownNotif,
     TheSelectBranchForm,
     // TheHeaderDropdownTasks,
     // TheHeaderDropdownMssgs,

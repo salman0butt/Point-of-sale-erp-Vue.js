@@ -3,12 +3,15 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Payment Methods </CCardHeader>
           <CCardBody>
             <router-link
               class="btn btn-success"
               to="/accounting/paymentMethods/create"
+              style="float: right"
               >Create Payment Method</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="items"
               :fields="fields"
@@ -36,10 +39,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton

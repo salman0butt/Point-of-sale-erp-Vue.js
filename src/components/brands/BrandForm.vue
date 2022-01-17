@@ -5,7 +5,7 @@
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateBrand() : saveBrand()">
           <CRow>
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol :sm="isEditing ? '6' : '12'" :md="isEditing ? '6' : '12'" class="pt-2">
               <CInput
                 label="Name"
                 v-model="form.name"
@@ -17,7 +17,12 @@
               </div>
             </CCol>
 
-            <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
+            <CCol
+              v-if="isEditing"
+              :sm="isEditing ? '6' : '12'"
+              :md="isEditing ? '6' : '12'"
+              class="pt-2"
+            >
               <CSelect
                 label="Status"
                 :options="options.status"
@@ -27,8 +32,10 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
+              <label for="brand_logo">Brand Logo</label>
               <app-upload
                 ref="fileUpload"
+                class="col-md-12"
                 :max="1"
                 fileType="image/jpg,image/jpeg,image/png"
                 @file:changed="handleFile"

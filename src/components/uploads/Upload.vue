@@ -13,7 +13,7 @@ export default {
     max: Number,
     fileType: {
       type: String,
-      default: "application/pdf,image/*",
+      default: "application/*,image/*",
     },
     uploadMsg: String,
     maxError: String,

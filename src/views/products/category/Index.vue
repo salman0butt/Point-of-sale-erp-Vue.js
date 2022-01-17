@@ -3,12 +3,17 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Categories </CCardHeader>
           <CCardBody>
             <div>
-              <router-link class="btn btn-success" to="/product/category/create"
+              <router-link
+                class="btn btn-success"
+                to="/product/category/create"
+                style="float: right"
                 >Create Product Category</router-link
               >
             </div>
+            <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
               :items="productCategory"
               :fields="fields"
@@ -66,9 +71,9 @@ import ProductCategoryService from "@/services/products/ProductCategoryService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "parent", label: "PARENT", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "width:40%" },
+  { key: "parent", label: "PARENT", _style: "width:25%;" },
+  { key: "status", label: "STATUS", _style: "width:20%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 

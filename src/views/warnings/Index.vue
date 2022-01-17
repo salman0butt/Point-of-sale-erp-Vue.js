@@ -3,10 +3,15 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <CCardHeader> Warnings </CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/warnings/create"
-              >Create Warnings</router-link
+            <router-link
+              class="btn btn-success"
+              to="/warnings/create"
+              style="float: right"
+              >Create Warning</router-link
             >
+            <div style="clear: both; margin-bottom: 20px"></div>
             <WarningIndex />
           </CCardBody>
         </CCard>
