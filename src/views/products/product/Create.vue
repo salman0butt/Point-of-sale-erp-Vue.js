@@ -43,11 +43,6 @@
                 </template>
                 <ProductForm />
               </CTab>
-              <CTab disabled>
-                <template slot="title">
-                  {{ pills.detail }}
-                </template>
-              </CTab>
             </CTabs>
           </CCardBody>
         </CCard>
@@ -72,53 +67,38 @@ export default {
     saveAndExit: false,
     pills: {
       general: "General",
-      detail: "Detail",
     },
-    // employee_name: "e.g name",
-    // employee_designation: "Designation",
+    permissions: localStorage.getItem("permissions"),
     activeTab: "ProductTab",
     tabs: [
       { key: "ProductTab", name: "General" },
-      { key: "", name: "Attributes" },
-      { key: "", name: "Variations" },
       { key: "", name: "Prices" },
-      { key: "", name: "Inventory" },
       { key: "", name: "Images" },
-      { key: "", name: "Modifiers" },
-      { key: "", name: "Units" },
     ],
   }),
-  // computed: {
-  //   emp_name() {
-  //     return this.$store.getters.get_employee_name;
-  //   },
-  // },
-  // beforeDestroy() {
-  //   this.$store.commit("set_employee_name", "");
-  // },
-  // created() {
-  //   this.$store.commit("set_employee_name", this.employee_name);
-  // },
+
+  created() {
+    this.permissionsMethods();
+  },
+  methods: {
+    permissionsMethods() {
+      if (this.permissions.includes("module1 permissions")) {
+        this.tabs = [];
+        this.tabs.push({ key: "ProductTab", name: "General" });
+        this.tabs.push({ key: "", name: "Attributes" });
+        this.tabs.push({ key: "", name: "Variations" });
+        this.tabs.push({ key: "", name: "Prices" });
+        this.tabs.push({ key: "", name: "Inventory" });
+        this.tabs.push({ key: "", name: "Images" });
+        this.tabs.push({ key: "", name: "Modifiers" });
+        this.tabs.push({ key: "", name: "Units" });
+      }
+    },
+  },
 };
 </script>
 
 <style>
-/* .side-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-img.c-avatar-img {
-  max-width: 80px !important;
-}
-span.emp-name {
-  font-size: 20px;
-  color: black;
-  /* margin-left: 10px;
-}*/
-/*.emp-designation {
-  color: gray;
-} */
 a.nav-link {
   color: black;
 }
@@ -132,12 +112,7 @@ a.nav-link.active,
   background-color: #52b947 !important;
   color: #fff !important;
 }
-/* .online {
-  color: #52b947 !important;
-  position: absolute;
-  left: 32%;
-  top: 12%;
-} */
+
 #v-pills-tab {
   display: block;
 }

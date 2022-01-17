@@ -77,6 +77,7 @@ export default {
       this.search = item.label;
       this.options.customers = [];
       this.customer = item.value;
+      this.$emit("customerSelected");
     },
   },
 };

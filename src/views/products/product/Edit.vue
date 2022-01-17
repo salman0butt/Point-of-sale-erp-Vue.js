@@ -10,27 +10,6 @@
               role="tablist"
               aria-orientation="vertical"
             >
-              <!-- <div class="side-avatar">
-                <img
-                  v-if="employeeImg"
-                  :src="employeeImg"
-                  class="c-avatar-img"
-                  alt="Profile"
-                />
-                <CIcon :content="$options.cisCircle" class="online" />
-                <div>
-                  <template v-if="emp_name">
-                    <span class="emp-name">{{ emp_name }} </span></template
-                  >
-                  <PuSkeleton v-else width="100px" />
-                  <br />
-                  <template v-if="employee_designation">
-                    <span class="emp-designation">{{ employee_designation }}</span>
-                  </template>
-                  <PuSkeleton v-else />
-                </div>
-              </div> -->
-              <!-- <br /> -->
               <a
                 class="nav-link bborder"
                 v-for="(tab, index) in tabs"
@@ -43,7 +22,9 @@
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
-                <CBadge v-if="tab.disabled" color="danger"> coming soon</CBadge></a
+                <CBadge v-if="tab.disabled" color="danger">
+                  coming soon</CBadge
+                ></a
               >
             </div>
           </CCardBody>
@@ -84,77 +65,42 @@ export default {
   },
   data() {
     return {
-      // employee_name: "e.g name",
-      // employee_designation: "Designation",
       activeTab: "ProductTab",
       tabs: [
         { key: "ProductTab", name: "General" },
-        { key: "ProductAttributeForm", name: "Attributes" },
-        { key: "ProductVariationForm", name: "Variations" },
         { key: "ProductPriceForm", name: "Prices" },
         { key: "ProductInventoryForm", name: "Inventory" },
         { key: "ProductImageForm", name: "Images" },
-        { key: "ProductModifierForm", name: "Modifiers" },
-        { key: "ProductUnitForm", name: "Units" },
       ],
+      permissions: localStorage.getItem("permissions"),
     };
   },
-  // created() {
-  // this.$store.commit("set_employee_name", this.employee_name);
-  // this.getEmployeeDetail();
-  // },
-  // computed: {
-  //   emp_name() {
-  //     return this.$store.getters.get_employee_name;
-  //   },
-  //   employeeImg() {
-  //     return this.$store.getters.getEmployeeImg ?? "/img/avatars/placeholder.png";
-  //   },
-  // },
-  // beforeDestroy() {
-  //   this.$store.commit("set_employee_name", "");
-  //   this.$store.commit("set_emp_img", "");
-  // },
+  created() {
+    this.permissionsMethods();
+  },
+
   methods: {
     changeActiveTab(value) {
       this.activeTab = value;
     },
-    // getEmployeeDetail() {
-    //   let id = this.$route.params.id;
-    //   EmployeeService.get(id)
-    //     .then(({ data }) => {
-    //       if (data !== "" && data !== undefined) {
-    //         // this.$store.commit("set_employee_name", data.full_name);
-    //         this.employee_name = data.full_name;
-    //         this.employee_designation = data.designation;
-    //         this.$store.commit("set_emp_img", data.personal_photo);
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // },
+    permissionsMethods() {
+      if (this.permissions.includes("module1 permissions")) {
+        this.tabs = [];
+        this.tabs.push({ key: "ProductTab", name: "General" });
+        this.tabs.push({ key: "ProductAttributeForm", name: "Attributes" });
+        this.tabs.push({ key: "ProductVariationForm", name: "Variations" });
+        this.tabs.push({ key: "ProductPriceForm", name: "Prices" });
+        this.tabs.push({ key: "ProductInventoryForm", name: "Inventory" });
+        this.tabs.push({ key: "ProductImageForm", name: "Images" });
+        this.tabs.push({ key: "ProductModifierForm", name: "Modifiers" });
+        this.tabs.push({ key: "ProductUnitForm", name: "Units" });
+      }
+    },
   },
 };
 </script>
 
 <style>
-/* .side-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-img.c-avatar-img {
-  max-width: 80px !important;
-} */
-/* span.emp-name {
-  font-size: 20px;
-  color: black;
-  /* margin-left: 10px;
-} */
-/* .emp-designation {
-  color: gray;
-} */
 a.nav-link {
   color: black;
 }
@@ -168,12 +114,7 @@ a.nav-link.active,
   background-color: #52b947 !important;
   color: #fff !important;
 }
-/* .online {
-  color: #52b947 !important;
-  position: absolute;
-  left: 32%;
-  top: 10%;
-} */
+
 #v-pills-tab {
   display: block;
 }
