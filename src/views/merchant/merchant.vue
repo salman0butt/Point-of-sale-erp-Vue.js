@@ -289,7 +289,7 @@ export default {
         mobile: "",
         country: "",
         previewImage: "https://picsum.photos/1024/480/?image=54",
-        logo: null,
+        logo: "",
       },
       imageData: "",
       tabs: ["General", "Billing", "Plugins"],
@@ -366,6 +366,7 @@ export default {
         if (data.logo != "") {
           this.general_items.previewImage = data.logo;
         }
+        this.general_items.logo = "";
       })
       .catch((err) => {
         console.log(err);
