@@ -42,7 +42,7 @@
                 <CIcon :content="$options.cilUser" />&nbsp; Customer</a
               >
 
-              <a
+              <!-- <a
                 class="nav-link bborder"
                 v-bind:class="{ active: activeTab === '' }"
                 href="#"
@@ -62,7 +62,7 @@
                 href="#"
                 @click.prevent="changeActiveTab('')"
                 ><CIcon :content="$options.cilUser" />&nbsp; Other</a
-              >
+              > -->
             </div>
           </CCardBody>
         </CCard>

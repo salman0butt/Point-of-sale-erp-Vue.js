@@ -516,14 +516,14 @@ export default {
           icon: "cil-settings",
         });
       }
-      if (this.permissions.includes("read role-and-permissions")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: "Roles & Permissions",
-          to: { name: "Index Roles" },
-          icon: "cil-lan",
-        });
-      }
+      // if (this.permissions.includes("read role-and-permissions")) {
+      //   this.sideBarItems.push({
+      //     _name: "CSidebarNavItem",
+      //     name: "Roles & Permissions",
+      //     to: { name: "Index Roles" },
+      //     icon: "cil-lan",
+      //   });
+      // }
     },
   },
 };
