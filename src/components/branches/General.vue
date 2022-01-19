@@ -10,9 +10,7 @@
               :class="{ error: $v.form.name.$error }"
             />
             <div v-if="$v.form.name.$error">
-              <p v-if="!$v.form.name.required" class="errorMsg">
-                Fullname is required
-              </p>
+              <p v-if="!$v.form.name.required" class="errorMsg">Fullname is required</p>
               <p v-if="!$v.form.name.minLength" class="errorMsg">
                 Fullname should be at least 4 character
               </p>
@@ -22,9 +20,7 @@
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="Adress" v-model="form.address" />
             <div v-if="$v.form.address.$error">
-              <p v-if="!$v.form.address.required" class="errorMsg">
-                Address is required
-              </p>
+              <p v-if="!$v.form.address.required" class="errorMsg">Address is required</p>
               <p v-if="!$v.form.address.minLength" class="errorMsg">
                 Address should be at least 4 character
               </p>
@@ -33,9 +29,7 @@
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="Area" v-model="form.area" />
             <div v-if="$v.form.area.$error">
-              <p v-if="!$v.form.area.required" class="errorMsg">
-                Area is required
-              </p>
+              <p v-if="!$v.form.area.required" class="errorMsg">Area is required</p>
               <p v-if="!$v.form.area.minLength" class="errorMsg">
                 Area should be at least 4 character
               </p>
@@ -46,9 +40,7 @@
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="Telephone" v-model="form.tel" type="number" />
             <div v-if="$v.form.tel.$error">
-              <p v-if="!$v.form.tel.required" class="errorMsg">
-                Telephone is required
-              </p>
+              <p v-if="!$v.form.tel.required" class="errorMsg">Telephone is required</p>
               <p v-if="!$v.form.tel.numeric" class="errorMsg">
                 Telephone must be numeric
               </p>
@@ -97,15 +89,9 @@
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="CR Number" v-model="form.cr" />
           </CCol>
+
           <CCol sm="6" md="4" class="pt-2">
-            <CInput label="Tax ID" v-model="form.tax_id" />
-          </CCol>
-          <CCol sm="6" md="4" class="pt-2">
-            <CSelect
-              label="Status"
-              :options="status"
-              :value.sync="form.status"
-            />
+            <CSelect label="Status" :options="status" :value.sync="form.status" />
           </CCol>
         </CRow>
 
@@ -182,7 +168,6 @@ export default {
         opening_date: "",
         closing_date: "",
         cr: "",
-        tax_id: "",
         status: "",
       },
       status: [
@@ -270,7 +255,6 @@ export default {
           this.form.mob = data.mob;
           this.form.location = data.location;
           this.form.cr = data.cr;
-          this.form.tax_id = data.tax_id;
           // this.form.opening_date = data.opening_date;
           // this.form.closing_date = data.closing_date;
           this.form.status = data.status;
@@ -320,3 +304,4 @@ export default {
   color: red;
 }
 </style>
+
