@@ -11,6 +11,7 @@
                   {{ tabs[0] }}
                 </template>
                 <CRow>
+                  <Loader/>
                   <CCol xs="12" lg="7">
                     <CCardHeader> <strong>Merchant</strong> Information </CCardHeader>
                     <CCardBody>
@@ -19,7 +20,6 @@
                           label="Bussiness Name : "
                           horizontal
                           autocomplete="name"
-                          disabled
                           v-model="general_items.business_name"
                         />
                         <CInput
@@ -55,46 +55,14 @@
                           disabled
                           v-model="general_items.country"
                         />
+                      <CInput label="Tax ID" horizontal v-model="general_items.tax_id" />
+
                         <!-- <div class="form-group"> -->
                         <!-- <label for="signature">Stamp</label> -->
                         <!-- <input class="form-control" id="Stamp" type="file" @change="pickFile" style="padding:3px;width: 75%;float:right;" /> -->
 
                         <!-- </div> -->
                          <CRow>
-                <CCol sm="12" md="12" class="pt-2">
-                  <label for="signature">Stamp</label>
-                  <app-upload ref="fileUpload" @file:changed="handleFile"
-                  fileType="image/jpg,image/jpeg,image/png"
-                  />
-
-                  <div v-if="displays_stamps && displays_stamps.length" class="attachment-display">
-                    <ul class="mt-5 d-flex">
-                      <li
-                        v-for="(img, index) in displays_stamps"
-                        v-bind:key="index"
-                        class="display-attachment-row"
-                      >
-                        <div>
-                          <span>
-                            <img
-                              v-bind:src="img.path"
-                              class="name-attachment"
-                              style="max-width: 80px"
-                            />
-                          </span>
-                        </div>
-                        <span
-                          >{{ img.name }}
-                          <a
-                            @click.prevent="deleteAttachment(img.uuid)"
-                            class="delete-attachment"
-                          >
-                            <CIcon :content="$options.cilTrash" /> </a
-                        ></span>
-                      </li>
-                    </ul>
-                  </div>
-                </CCol>
               </CRow>
               <br/>
                <div>
@@ -121,18 +89,23 @@
                         <CImg
                           v-bind:src="general_items.previewImage"
                           block
-                          class="mb-2"
+                          class="mb-2 imger"
                           width="100%"
                         />
                       </div>
-                      <!-- <CInputFile
-                        label="Change Logo"
-                        horizontal
-                        custom
-                        class="logoupload"
-                        @click.prevent="selectImage"
-                      /> -->
                       <input class="form-control" type="file" @change="pickFile" style="padding:3px;" />
+                    <hr/>
+                      <div class="mb-2" style="padding: 5px; background: #fff">
+
+                        <CImg
+                          v-bind:src="general_items.previewStampImage"
+                          block
+                          class="mb-2 imger"
+                          width="100%"
+                        />
+                      </div>
+                        <label for="signature">Electronic Stamp:</label>
+                      <input class="form-control" type="file" @change="pickStampFile" style="padding:3px;" />
                     </CCardBody>
                   </CCol>
                 </CRow>
@@ -299,13 +272,13 @@
 <script>
 // import { cibHtmlacademy } from "@coreui/icons";
 import { mapActions } from "vuex";
-import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "Tabs",
     components: {
-    AppUpload,
+    Loader
   },
   cilTrash,
   data() {
@@ -319,11 +292,12 @@ export default {
         email: "",
         mobile: "",
         country: "",
+        tax_id: "",
         previewImage: "/img/images/no-logo.png",
+        previewStampImage: "/img/images/no-stamp.png",
         logo: "",
-        stamps: [],
+        stamp: "",
       },
-      displays_stamps: [],
       imageData: "",
       tabs: ["General", "Billing", "Plugins"],
       InvoiceLst: [
@@ -416,17 +390,15 @@ export default {
           this.general_items.email = data.business_email;
           this.general_items.mobile = data.business_mobile_no;
           this.general_items.country = data.country;
+          this.general_items.tax_id = data.tax_id;
           if (data.logo) {
             this.general_items.previewImage = data.logo.path;
           }
           this.general_items.logo = "";
+          this.general_items.stamp = "";
 
-          if (data.stamps) {
-            this.displays_stamps = [];
-            let displays_stamps = this.displays_stamps;
-            data.stamps.map(function (item) {
-              displays_stamps.push(item);
-            });
+          if (data.stamp) {
+            this.general_items.previewStampImage = data.stamp.path;
           }
         }
     },
@@ -451,15 +423,15 @@ export default {
     updateDetail() {
       let business_id = localStorage.getItem("business_id");
       let formData = new FormData();
+      formData.append("business_name", this.general_items.business_name);
       formData.append("business_email", this.general_items.email);
+      formData.append("tax_id", this.general_items.tax_id);
       formData.append("business_mobile_no", this.general_items.mobile);
       if (this.general_items.logo != "") {
         formData.append("logo", this.general_items.logo);
       }
-      if(this.general_items.stamps && this.general_items.stamps.length) {
-        this.general_items.stamps.map(function (item) {
-          formData.append("stamps[]", item);
-        });
+      if(this.general_items.stamp) {
+          formData.append("stamp", this.general_items.stamp);
       }
       formData.append("_method", "PATCH");
 
@@ -471,19 +443,18 @@ export default {
       this.$http
         .post("/business/" + business_id, formData, config)
         .then((response) => {
-          if (response.status == 200) {
-            this.resetForm();
-            this.displayData(response.data);
+          if (response.status === 200) {
             this.$swal.fire({
               icon: "success",
               title: "Success",
               text: "Detail Updated Successfully",
               timer: 3600,
             });
+              this.displayData(response.data);
           }
         })
         .catch((error) => {
-          if (error.response.status == 422) {
+          if (error.response && error.response.status == 422) {
             let errors = error.response.data.errors;
             for (const err in errors) {
               this.set_errors(errors[err][0]);
@@ -502,51 +473,16 @@ export default {
         reader.readAsDataURL(file[0]);
       }
     },
-        handleFile(files) {
-      this.general_items.stamps = Object.values(files);
-    },
-    deleteAttachment(uuid) {
-      this.$swal
-        .fire({
-          title: "Do you want to delete this Attachment",
-          text: "This will be Deleted from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            this.$store
-              .dispatch("deleteAttachment", uuid)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Attachment Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.displays_stamps = this.displays_stamps.filter(
-                    (item) => item.uuid != uuid
-                  );
-                }
-              })
-              .catch((err) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-                console.log(err);
-              });
-          }
-        });
-    },
-     resetForm() {
-      this.general_items.stamps = [];
-      this.display_stamps = [];
-      this.$refs.fileUpload.reset();
+    pickStampFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.general_items.stamp = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.general_items.previewStampImage = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+      }
     },
   },
 };
@@ -566,5 +502,11 @@ export default {
 .p-0.col-sm-6.col-md-4 {
     max-width: 31% !important;
     margin:10px !important;
+}
+.imger {
+      max-height: 150px;
+    width: auto;
+    display: block !important;
+    margin: 0 auto;
 }
 </style>

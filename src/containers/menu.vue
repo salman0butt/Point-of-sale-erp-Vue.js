@@ -403,12 +403,12 @@ export default {
           });
         }
 
-        this.sideBarItems.push({
-          _name: "CSidebarNavDropdown",
-          name: "HR",
-          icon: "cil-lan",
-          _children: this.sideBarItems_hr,
-        });
+        // this.sideBarItems.push({
+        //   _name: "CSidebarNavDropdown",
+        //   name: "HR",
+        //   icon: "cil-lan",
+        //   _children: this.sideBarItems_hr,
+        // });
       }
       if (this.permissions.includes("read accounting")) {
         // different modules of Accouning
@@ -416,7 +416,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Accounts",
+              name: "Chart of Accounts",
               to: "/accounting/accounts/index",
               icon: "cil-lan",
             },
@@ -473,26 +473,26 @@ export default {
             },
           ]);
         }
-        if (this.permissions.includes("read payment-methods")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Biller",
-              to: "/accounting/biller/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
-        if (this.permissions.includes("read payment-methods")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Payment Biller",
-              to: "/accounting/paymentBiller/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
+        // if (this.permissions.includes("read payment-methods")) {
+        //   this.sideBarItems_accounting.push([
+        //     {
+        //       _name: "CSidebarNavItem",
+        //       name: "Biller",
+        //       to: "/accounting/biller/index",
+        //       icon: "cil-lan",
+        //     },
+        //   ]);
+        // }
+        // if (this.permissions.includes("read payment-methods")) {
+        //   this.sideBarItems_accounting.push([
+        //     {
+        //       _name: "CSidebarNavItem",
+        //       name: "Payment Biller",
+        //       to: "/accounting/paymentBiller/index",
+        //       icon: "cil-lan",
+        //     },
+        //   ]);
+        // }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: "Accounting",

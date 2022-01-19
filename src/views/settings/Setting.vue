@@ -20,6 +20,14 @@
               >
               <a
                 class="nav-link bborder"
+                @click.prevent="changeActiveTab('DashboardSettingForm')"
+                href="#"
+                v-bind:class="{ active: activeTab === 'DashboardSettingForm' }"
+              >
+                <CIcon :content="$options.cilUser" />&nbsp; Dashboard</a
+              >
+              <a
+                class="nav-link bborder"
                 v-bind:class="{ active: activeTab === 'HrSettingForm' }"
                 href="#"
                 @click.prevent="changeActiveTab('HrSettingForm')"
@@ -68,9 +76,9 @@
         </CCard>
       </CCol>
       <CCol xs="12" lg="9">
-        <keep-alive>
-          <component v-bind:is="activeTab"></component>
-        </keep-alive>
+        <!-- <keep-alive> -->
+        <component v-bind:is="activeTab"></component>
+        <!-- </keep-alive> -->
       </CCol>
     </CRow>
   </div>
@@ -79,6 +87,7 @@
 import HrSettingForm from "@/components/settings/HrSettingForm";
 import AccountingSettingForm from "@/components/settings/AccountingSettingForm";
 import CustomerSettingForm from "@/components/settings/CustomerSettingForm";
+import DashboardSettingForm from "@/components/settings/DashboardSettingForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -89,6 +98,7 @@ export default {
     HrSettingForm,
     AccountingSettingForm,
     CustomerSettingForm,
+    DashboardSettingForm,
   },
   data() {
     return {
