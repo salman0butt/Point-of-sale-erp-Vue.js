@@ -8,7 +8,11 @@
             <form @submit.prevent="saveProductImages()">
               <CRow>
                 <CCol sm="12" md="12" class="pt-2">
-                  <app-upload ref="fileUpload" @file:changed="handleFile" />
+                  <app-upload
+                    ref="fileUpload"
+                    @file:changed="handleFile"
+                    fileType="image/jpg,image/jpeg,image/png"
+                  />
 
                   <div class="attachment-display">
                     <ul class="mt-5 d-flex">

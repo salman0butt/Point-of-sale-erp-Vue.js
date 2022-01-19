@@ -11,6 +11,7 @@
                   {{ tabs[0] }}
                 </template>
                 <CRow>
+                  <Loader/>
                   <CCol xs="12" lg="7">
                     <CCardHeader> <strong>Merchant</strong> Information </CCardHeader>
                     <CCardBody>
@@ -301,11 +302,13 @@
 import { mapActions } from "vuex";
 import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "Tabs",
     components: {
     AppUpload,
+    Loader
   },
   cilTrash,
   data() {
