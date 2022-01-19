@@ -68,47 +68,47 @@
                   <CSelect
                     label="Select Box1"
                     :options="options.box1"
-                    :value.sync="form.card1.box1"
+                    :value.sync="form.card2.box1"
                   />
 
                   <CSelect
                     label="Select Box2"
                     :options="options.box1"
-                    :value.sync="form.card1.box2"
+                    :value.sync="form.card2.box2"
                   />
 
                   <CSelect
                     label="Select Box3"
                     :options="options.box1"
-                    :value.sync="form.card1.box3"
+                    :value.sync="form.card2.box3"
                   />
 
                   <CSelect
                     label="Select Box4"
                     :options="options.box1"
-                    :value.sync="form.card1.box4"
+                    :value.sync="form.card2.box4"
                   />
                 </CCol>
                 <CCol sm="12" md="6" class="pt-2">
                   <CSelect
                     label="Periodic"
                     :options="options.periodic"
-                    :value.sync="form.card1.periodic1"
+                    :value.sync="form.card2.periodic1"
                   />
                   <CSelect
                     label="Periodic"
                     :options="options.periodic"
-                    :value.sync="form.card1.periodic2"
+                    :value.sync="form.card2.periodic2"
                   />
                   <CSelect
                     label="Periodic"
                     :options="options.periodic"
-                    :value.sync="form.card1.periodic3"
+                    :value.sync="form.card2.periodic3"
                   />
                   <CSelect
                     label="Periodic"
                     :options="options.periodic"
-                    :value.sync="form.card1.periodic4"
+                    :value.sync="form.card2.periodic4"
                   />
                 </CCol>
               </CRow>
@@ -143,6 +143,16 @@ export default {
     settingData: [],
     form: {
       card1: {
+        box1: "",
+        box2: "",
+        box3: "",
+        box4: "",
+        periodic1: "",
+        periodic2: "",
+        periodic3: "",
+        periodic4: "",
+      },
+      card2: {
         box1: "",
         box2: "",
         box3: "",
