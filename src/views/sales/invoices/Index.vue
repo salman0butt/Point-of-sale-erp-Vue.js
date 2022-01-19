@@ -3,13 +3,13 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Quotations </CCardHeader>
+          <CCardHeader> Invoices </CCardHeader>
           <CCardBody>
             <router-link
               class="btn btn-success"
-              to="/sales/quotations/create"
+              to="/sales/invoices/create"
               style="float: right"
-              >Create Quotation</router-link
+              >Create Invoice</router-link
             >
 
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -39,12 +39,6 @@
               </template>
               <template #actions="{ item }">
                 <td>
-                  <CButton
-                    @click="approveQuotation(item.uuid)"
-                    class="btn-sm mr-3"
-                    color="success"
-                    >Approve</CButton
-                  >
                   <CButtonGroup>
                     <CButton
                       @click="viewRow(item.uuid)"
@@ -83,7 +77,7 @@
 </template>
 
 <script>
-import QuotationService from "@/services/sale/QuotationService";
+import InvoiceService from "@/services/sale/InvoiceService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -91,7 +85,6 @@ const fields = [
   { key: "customer", label: "Customer", _style: "min-width:40%" },
   { key: "dated", label: "Dated", _style: "min-width:40%" },
   { key: "due_date", label: "Due Date", _style: "min-width:15%;" },
-  { key: "status", label: "Status", _style: "min-width:15%;" },
   { key: "grand_total", label: "Grand Total", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
@@ -106,7 +99,14 @@ export default {
       serverData: [],
       fields,
       loading: false,
-
+      // cards: {
+      //   employees_count: 0,
+      //   female_count: 0,
+      //   male_count: 0,
+      //   departments_count: 0,
+      //   manager_count: 0,
+      // },
+      // deleteRows: [],
       activePage: 1,
       pages: 0,
       perPage: 10,
@@ -128,7 +128,7 @@ export default {
   },
   methods: {
     getServerData() {
-      QuotationService.getAll(this.activePage, this.perPage)
+      InvoiceService.getAll(this.activePage, this.perPage)
         .then(({ data }) => {
           this.loading = true;
           if (data !== "" && data !== undefined) {
@@ -172,10 +172,10 @@ export default {
       this.$set(this.usersData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      this.$router.push({ path: "/sales/quotations/show/" + uuid });
+      alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/sales/quotations/edit/" + uuid });
+      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -190,7 +190,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            QuotationService.delete(this.deleteRows)
+            InvoiceService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
@@ -202,41 +202,6 @@ export default {
                   this.serverData = this.serverData.filter(
                     (item) => item.uuid != uuid
                   );
-                }
-              })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-              });
-            this.deleteRows = [];
-          }
-        });
-    },
-
-    approveQuotation(uuid) {
-      this.$swal
-        .fire({
-          title: "Do you want to Approve this Quotation?",
-          text: "This will be generate invoice",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, Approved it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            QuotationService.updateStatus(uuid)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Quotation Updated Successfully",
-                    timer: 3600,
-                  });
                 }
               })
               .catch((error) => {

@@ -26,6 +26,9 @@ import CustomerServices from "@/services/contacts/customers/CustomerServices";
 
 export default {
   name: "CustomerSearchField",
+  props: {
+    previousValueCustomer: [Object, String, Array, Function],
+  },
   data: () => ({
     search: "",
     customer: "",
@@ -33,12 +36,19 @@ export default {
       customers: [],
     },
   }),
+
   validations() {
     return {
       form: {
         name: { required },
       },
     };
+  },
+  watch: {
+    previousValueCustomer(newValue, oldValue) {
+      this.search = newValue.full_name + " (Sr No: " + newValue.serial_no + ")";
+      this.customer = newValue.uuid;
+    },
   },
   created() {},
   methods: {
@@ -77,7 +87,7 @@ export default {
       this.search = item.label;
       this.options.customers = [];
       this.customer = item.value;
-      this.$emit("customerSelected");
+      this.$emit("customerSelected", this.customer);
     },
   },
 };

@@ -76,8 +76,12 @@
                     </p>
                   </div>
                 </CCol>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <AccountDropdown @getAccountDropdown="getAccountDropdown" />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CTextarea label="Desription" v-model="form.description" />
                 </CCol>
               </CRow>
 
@@ -125,6 +129,7 @@ export default {
       opening_amount: "0.000",
       currency: "BHD",
       parent: "",
+      description: "",
     },
     options: {
       type: [
