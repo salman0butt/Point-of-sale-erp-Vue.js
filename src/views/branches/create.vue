@@ -54,11 +54,7 @@
                     </CRow>
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput
-                          label="Telephone"
-                          v-model="form.tel"
-                          type="number"
-                        />
+                        <CInput label="Telephone" v-model="form.tel" type="number" />
                         <div v-if="$v.form.tel.$error">
                           <p v-if="!$v.form.tel.required" class="errorMsg">
                             Telephone is required
@@ -72,11 +68,7 @@
                         </div>
                       </CCol>
                       <CCol sm="6" md="4" class="pt-2">
-                        <CInput
-                          label="Mobile"
-                          v-model="form.mob"
-                          type="number"
-                        />
+                        <CInput label="Mobile" v-model="form.mob" type="number" />
                         <div v-if="$v.form.mob.$error">
                           <p v-if="!$v.form.mob.required" class="errorMsg">
                             Mobile Number is required
@@ -118,9 +110,6 @@
                     <CRow>
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="CR Number" v-model="form.cr" />
-                      </CCol>
-                      <CCol sm="6" md="4" class="pt-2">
-                        <CInput label="Tax ID" v-model="form.tax_id" />
                       </CCol>
                     </CRow>
 
@@ -188,10 +177,7 @@
                       <CTextarea label="Note" placeholder="Content..." />
                     </CCol>
                   </CRow>
-                  <CButton
-                    block
-                    color="success"
-                    style="float: right; width: 100px"
+                  <CButton block color="success" style="float: right; width: 100px"
                     >Save</CButton
                   >
                 </CCardBody>
@@ -225,7 +211,6 @@ export default {
         mob: "",
         location: "",
         cr: "",
-        tax_id: "",
       },
       dates: "",
       saveAndExit: "",
