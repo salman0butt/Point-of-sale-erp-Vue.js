@@ -13,6 +13,7 @@
                     v-model="form.customer"
                     :class="{ error: $v.form.customer.$error }"
                     @input="$v.form.customer.$touch()"
+                    :previousValueCustomer="previousValueCustomer"
                   />
                   <div v-if="$v.form.customer.$error">
                     <p v-if="!$v.form.customer.required" class="errorMsg">
@@ -36,7 +37,7 @@
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
-                    label="Dated"
+                    label="Due Date"
                     type="date"
                     v-model="form.due_date"
                     :class="{ error: $v.form.due_date.$error }"
@@ -54,6 +55,7 @@
                     v-model="form.sales_persons"
                     :class="{ error: $v.form.sales_persons.$error }"
                     @input="$v.form.sales_persons.$touch()"
+                    :previousSalesPersons="previousSalesPersons"
                   />
                   <div v-if="$v.form.sales_persons.$error">
                     <p v-if="!$v.form.sales_persons.required" class="errorMsg">
@@ -134,6 +136,7 @@ import SelectSalePerson from "@/components/general/SelectSalePerson";
 import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import QuotationService from "@/services/sale/QuotationService";
+import { cilTrash } from "@coreui/icons-pro";
 
 export default {
   name: "CreateBrand",
@@ -143,15 +146,23 @@ export default {
     SelectSalePerson,
     AppUpload,
   },
+  cilTrash,
+
   data: () => ({
     form: {
+      id: "",
       customer: "",
       dated: "",
       due_date: "",
       sales_persons: "",
       note: "",
       items: [],
+      images: [],
     },
+    sales_persons: [],
+    display_images: [],
+    previousValueCustomer: Object,
+    previousSalesPersons: Array,
   }),
   validations() {
     return {
@@ -163,8 +174,13 @@ export default {
       },
     };
   },
-
-  created() {},
+  created() {
+    this.form.id = this.$route.params.id;
+    if (this.form.id !== "" && this.form.id !== undefined) {
+      this.isEditing = true;
+      this.getEditData();
+    }
+  },
   computed: {
     receivingItems() {
       return this.$store.getters.getSearchProductItems;
@@ -196,7 +212,14 @@ export default {
         formData.append("due_date", this.form.due_date);
         formData.append("customer", this.form.customer);
         formData.append("sales_persons", this.form.sales_persons);
+        formData.append("note", this.form.note);
         formData.append("items", JSON.stringify(this.form.items));
+        if (this.form.images && this.form.images.length > 0) {
+          this.form.images.map((image) => {
+            formData.append("images[]", image);
+          });
+        }
+
         QuotationService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
@@ -229,6 +252,77 @@ export default {
     },
     salesPersonSelected(person) {
       this.form.sales_persons = person;
+    },
+    handleFile(files) {
+      this.form.images = Object.values(files);
+    },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this Attachment",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.display_images = this.display_images.filter(
+                    (item) => item.uuid != uuid
+                  );
+                }
+              })
+              .catch((err) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+                console.log(err);
+              });
+          }
+        });
+    },
+    getEditData() {
+      QuotationService.get(this.form.id)
+        .then((res) => {
+          if (res.status == 200) {
+            this.form.customer = res.data.customer;
+            this.form.dated = res.data.dated;
+            this.form.due_date = res.data.due_date;
+            this.form.note = res.data.note;
+            this.display_images = [];
+            if (res.data.attachments && res.data.attachments.length > 0) {
+              let display_images = this.display_images;
+              res.data.attachments.map(function (item) {
+                display_images.push(item);
+              });
+            }
+            this.previousValueCustomer = res.data.customer;
+            this.previousSalesPersons = res.data.salespersons;
+          }
+        })
+        .catch((error) => {
+          // console.log(error);
+          // this.$store.commit("close_loader");
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
+          });
+        });
     },
   },
 };

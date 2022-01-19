@@ -39,6 +39,7 @@ import offerRoutes from '@/router/offers/offerRoutes';
 import userRoutes from '@/router/users/userRoutes';
 import modifierRoutes from '@/router/modifiers/modifierRoutes';
 import salesRoutes from '@/router/sales/salesRoutes';
+import invoiceRoutes from '@/router/sales/invoiceRoutes';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -195,6 +196,7 @@ const router = new Router({
         attendanceRoutes,
         settingRoutes,
         salesRoutes,
+        invoiceRoutes,
         assetRoutes,
         awardRoutes,
         gradeRoutes,

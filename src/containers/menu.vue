@@ -178,6 +178,16 @@ export default {
             },
           ]);
         }
+        if (this.permissions.includes("read quotations")) {
+          this.sideBarItems_sales.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Invoices",
+              to: "/sales/invoices",
+              icon: "cil-lan",
+            },
+          ]);
+        }
 
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",

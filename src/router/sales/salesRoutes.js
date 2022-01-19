@@ -4,8 +4,9 @@ import auth from '@/middleware/auth'
 
 //Quotations
 const IndexQuotations = () => import('@/views/sales/quotations/Index')
-const CreateQuotations = () => import('@/views/sales/quotations/Create')
-const EditQuotations = () => import('@/views/sales/quotations/Edit')
+const CreateQuotations = () => import('@/views/sales/quotations/CreateOrUpdate')
+const EditQuotations = () => import('@/views/sales/quotations/CreateOrUpdate')
+const ShowQuotations = () => import('@/views/sales/quotations/show')
 
 
 
@@ -32,8 +33,14 @@ const salesRoutes = {
             path: 'edit/:id',
             name: 'EditQuotations',
             component: EditQuotations
+        },
+        {
+            path: 'show/:id',
+            name: 'ShowQuotations',
+            component: ShowQuotations
         }
-    ]
+    ],
+
 };
 
 export default salesRoutes;

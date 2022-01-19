@@ -31,9 +31,20 @@ export default {
   components: {
     Multiselect,
   },
+  props: {
+    previousSalesPersons: [Object, String, Array, Function],
+  },
+  watch: {
+    previousSalesPersons(newValue, oldValue) {
+      let users = this.form.user;
+      newValue.map(function (item) {
+        users.push({ label: item.name, value: item.uuid });
+      });
+    },
+  },
   data: () => ({
     form: {
-      user: "",
+      user: [],
     },
     options: {
       users: [],
@@ -57,6 +68,7 @@ export default {
     },
     salesPersonSelected() {
       let salesPersonSelected = this.form.user;
+
       let salesPersonSelectedArray = [];
       salesPersonSelected.map(function (item) {
         salesPersonSelectedArray.push(item.value);
