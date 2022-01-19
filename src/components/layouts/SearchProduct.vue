@@ -25,11 +25,19 @@
           </CCol>
         </CRow>
         <hr v-if="form.items && form.items.length > 0" />
-        <CRow v-if="searchType == 'receivings' && form.items && form.items.length > 0">
+        <CRow
+          v-if="
+            searchType == 'receivings' && form.items && form.items.length > 0
+          "
+        >
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput label="Product" class="col-md-3" :value.sync="input.name" />
+                <CInput
+                  label="Product"
+                  class="col-md-3"
+                  :value.sync="input.name"
+                />
                 <CInput
                   label="Qty"
                   class="col-md-2"
@@ -72,11 +80,17 @@
           </CCol>
         </CRow>
 
-        <CRow v-if="searchType === 'damage' && form.items && form.items.length > 0">
+        <CRow
+          v-if="searchType === 'damage' && form.items && form.items.length > 0"
+        >
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput label="Product" class="col-md-4" :value.sync="input.name" />
+                <CInput
+                  label="Product"
+                  class="col-md-4"
+                  :value.sync="input.name"
+                />
                 <CInput
                   label="Damage Qty"
                   class="col-md-3"
@@ -85,7 +99,11 @@
                   min="1"
                   v-model="input.qty"
                 />
-                <CInput label="Reason" class="col-md-4" :value.sync="input.reason" />
+                <CInput
+                  label="Reason"
+                  class="col-md-4"
+                  :value.sync="input.reason"
+                />
                 <CButton
                   @click="removeProduct(k)"
                   class="btn-sm"
@@ -98,7 +116,11 @@
           </CCol>
         </CRow>
 
-        <CRow v-if="searchType == 'quotation' && form.items && form.items.length > 0">
+        <CRow
+          v-if="
+            searchType == 'quotation' && form.items && form.items.length > 0
+          "
+        >
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
@@ -132,7 +154,12 @@
                   type="number"
                   placeholder="0.00"
                 />
-                <CInput label="Total" class="col-md-2" type="number" placeholder="0.00" />
+                <CInput
+                  label="Total"
+                  class="col-md-2"
+                  type="number"
+                  :value.sync="input.selling_price"
+                />
 
                 <CButton
                   @click="removeProduct(k)"
@@ -211,7 +238,9 @@ export default {
     search: "",
     products_list: [],
     options: {
-      suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
+      suppliers: [
+        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
+      ],
       receiving_status: [
         {
           value: "",
@@ -254,7 +283,10 @@ export default {
               this.options.products = [];
               data.map((product) => {
                 if (product) {
-                  if (product.quantity_units && product.quantity_units.length > 0) {
+                  if (
+                    product.quantity_units &&
+                    product.quantity_units.length > 0
+                  ) {
                     product.quantity_units.map((unit) => {
                       if (product.variations && product.variations.length > 0) {
                         this.options.products.push({
@@ -412,11 +444,14 @@ export default {
                       parseInt(this.form.items[key].qty) + unit?.qty ?? 1;
                     unit?.qty ?? 1;
                     this.form.items[key].cost_price = unit?.cost_price ?? 0;
-                    this.form.items[key].selling_price = unit?.selling_price ?? 0;
+                    this.form.items[key].selling_price =
+                      unit?.selling_price ?? 0;
                   }
                 });
               } else {
-                let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
+                let unit = this.unit_form.find(
+                  (item) => item.uuid === variation.uuid
+                );
                 if (this.searchType === "damage") {
                   this.form.items.push({
                     uuid: variation.uuid,
@@ -428,7 +463,9 @@ export default {
                     reason: "",
                   });
                 } else if (this.searchType === "receivings") {
-                  let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
+                  let unit = this.unit_form.find(
+                    (item) => item.uuid === variation.uuid
+                  );
                   this.form.items.push({
                     uuid: variation.uuid,
                     type: "variation",
@@ -451,8 +488,9 @@ export default {
                     cost_price: unit?.cost_price ?? 0,
                     selling_price: unit?.selling_price ?? 0,
                     qty:
-                      this.unit_form.find((item) => item.uuid === variation.uuid)?.qty ??
-                      1,
+                      this.unit_form.find(
+                        (item) => item.uuid === variation.uuid
+                      )?.qty ?? 1,
                     expiry_date: "",
                   });
                 }
@@ -473,8 +511,12 @@ export default {
         if (Object.keys(option).length === 0 && option.constructor === Object) {
           Object.assign(option, { unit_qty: 1 });
           if (product.price) {
-            Object.assign(option, { unit_cost_price: product.price.cost_price });
-            Object.assign(option, { unit_selling_price: product.price.selling_price });
+            Object.assign(option, {
+              unit_cost_price: product.price.cost_price,
+            });
+            Object.assign(option, {
+              unit_selling_price: product.price.selling_price,
+            });
           }
         }
 
@@ -546,7 +588,8 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: product.name + " (" + JSON.parse(variation.name).en + ")",
+                  name:
+                    product.name + " (" + JSON.parse(variation.name).en + ")",
                   qty: 1,
                   reason: "",
                 });
@@ -554,7 +597,9 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
+                  name: `${product.name} (Variation: ${
+                    JSON.parse(variation.name)?.en
+                  })`,
                   cost_price: variation.price?.cost_price ?? 0,
                   selling_price: variation.price?.selling_price ?? 0,
                   qty: 1,
@@ -564,7 +609,9 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
+                  name: `${product.name} (Variation: ${
+                    JSON.parse(variation.name)?.en
+                  })`,
                   cost_price: variation.price?.cost_price ?? 0,
                   selling_price: variation.price?.selling_price ?? 0,
                   qty: 1,

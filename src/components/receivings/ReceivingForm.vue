@@ -27,7 +27,9 @@
                 @input="$v.form.date.$touch()"
               />
               <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
+                <p v-if="!$v.form.date.required" class="errorMsg">
+                  Date is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -65,7 +67,11 @@
             </CCol>
 
             <CCol sm="12" md="12" class="pt-2">
-              <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
+              <CTextarea
+                label="Note"
+                placeholder="Content..."
+                v-model="form.note"
+              />
             </CCol>
           </CRow>
           <CRow>
@@ -101,7 +107,9 @@
               </div>
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -117,7 +125,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -159,9 +172,16 @@ export default {
     },
     display_images: [],
     options: {
-      suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
+      suppliers: [
+        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
+      ],
       receiving_status: [
-        { value: "", label: "Choose receiving Status", disabled: true, selected: "" },
+        {
+          value: "",
+          label: "Choose receiving Status",
+          disabled: true,
+          selected: "",
+        },
         { value: "pending", label: "Pending" },
         { value: "completed", label: "Completed" },
       ],

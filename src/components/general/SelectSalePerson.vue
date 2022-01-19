@@ -12,6 +12,7 @@
       label="label"
       track-by="label"
       :preselect-first="true"
+      @input="salesPersonSelected()"
     >
       <template slot="selection" slot-scope="{ values, search, isOpen }">
         <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
@@ -19,12 +20,6 @@
         ></template
       >
     </multiselect>
-
-    <!-- <div v-if="$v.form.user.$error">
-                  <p v-if="!$v.form.user.required" class="errorMsg">
-                    Branch is required
-                  </p>
-                </div> -->
   </div>
 </template>
 
@@ -59,6 +54,14 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    salesPersonSelected() {
+      let salesPersonSelected = this.form.user;
+      let salesPersonSelectedArray = [];
+      salesPersonSelected.map(function (item) {
+        salesPersonSelectedArray.push(item.value);
+      });
+      this.$emit("salesPersonSelected", salesPersonSelectedArray);
     },
   },
 };
