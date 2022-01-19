@@ -88,10 +88,15 @@ export default {
       let readers = [];
       if (!this.files.length) return;
       for (let i = 0; i < this.files.length; i++) {
-        if (this.files[i].type === "application/pdf") {
+        let allowedFiles = [".doc", ".docx", ".pdf", ".xls", ".xlsx", ".ppt", ".pptx"];
+        let regex = new RegExp(
+          "([a-zA-Z0-9\s_\\.\-:])+(" + allowedFiles.join("|") + ")$"
+        );
+
+        if (regex.test(this.files[i].name)) {
           readers.push({
             name: this.files[i].name,
-            src: require("/public/img/images/pdf-logo.png"),
+            src: require("/public/img/images/docs.png"),
           });
         } else {
           readers.push({
@@ -138,7 +143,7 @@ export default {
         @change="previewImgs"
         multiple
       />
-      <svg
+      <!-- <svg
         width="100px"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -269,7 +274,8 @@ export default {
         <g></g>
         <g></g>
         <g></g>
-      </svg>
+      </svg> -->
+      <img src="/img/images/attachment.png" alt="attachment" />
 
       <p class="mainMessage">
         {{ uploadMsg ? uploadMsg : "Click to upload or drop your attachments here" }}

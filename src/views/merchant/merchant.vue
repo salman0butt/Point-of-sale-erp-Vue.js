@@ -11,6 +11,7 @@
                   {{ tabs[0] }}
                 </template>
                 <CRow>
+                  <Loader/>
                   <CCol xs="12" lg="7">
                     <CCardHeader> <strong>Merchant</strong> Information </CCardHeader>
                     <CCardBody>
@@ -55,6 +56,48 @@
                           disabled
                           v-model="general_items.country"
                         />
+                        <!-- <div class="form-group"> -->
+                        <!-- <label for="signature">Stamp</label> -->
+                        <!-- <input class="form-control" id="Stamp" type="file" @change="pickFile" style="padding:3px;width: 75%;float:right;" /> -->
+
+                        <!-- </div> -->
+                         <CRow>
+                <CCol sm="12" md="12" class="pt-2">
+                  <label for="signature">Stamp</label>
+                  <app-upload ref="fileUpload" @file:changed="handleFile"
+                  fileType="image/jpg,image/jpeg,image/png"
+                  />
+
+                  <div v-if="displays_stamps && displays_stamps.length" class="attachment-display">
+                    <ul class="mt-5 d-flex">
+                      <li
+                        v-for="(img, index) in displays_stamps"
+                        v-bind:key="index"
+                        class="display-attachment-row"
+                      >
+                        <div>
+                          <span>
+                            <img
+                              v-bind:src="img.path"
+                              class="name-attachment"
+                              style="max-width: 80px"
+                            />
+                          </span>
+                        </div>
+                        <span
+                          >{{ img.name }}
+                          <a
+                            @click.prevent="deleteAttachment(img.uuid)"
+                            class="delete-attachment"
+                          >
+                            <CIcon :content="$options.cilTrash" /> </a
+                        ></span>
+                      </li>
+                    </ul>
+                  </div>
+                </CCol>
+              </CRow>
+              <br/>
                <div>
                  <p v-if="this.$store.state.errors.length">
                   <b>Please correct the following error(s):</b>
@@ -90,7 +133,7 @@
                         class="logoupload"
                         @click.prevent="selectImage"
                       /> -->
-                      <input type="file" @change="pickFile" />
+                      <input class="form-control" type="file" @change="pickFile" style="padding:3px;" />
                     </CCardBody>
                   </CCol>
                 </CRow>
@@ -196,23 +239,7 @@
                 </CCardHeader>
                 <CCardBody>
                   <CRow>
-                    <CCol sm="6" md="8" class="pt-2">
-                      <CTabs add-tab-classes="mt-1">
-                        <CTab active>
-                          <template slot="title"> Featured </template>
-                          <CCardBody> </CCardBody>
-                        </CTab>
-                        <CTab>
-                          <template slot="title"> Popular </template>
-                          <CCardBody> </CCardBody>
-                        </CTab>
-                        <CTab>
-                          <template slot="title"> Active </template>
-                          <CCardBody> </CCardBody>
-                        </CTab>
-                      </CTabs>
-                    </CCol>
-                    <CCol sm="6" md="4" style="padding-top: 12px">
+                    <CCol sm="12" md="12" style="padding-top: 12px">
                       <CInput
                         placeholder="plugin"
                         v-on:keyup="PluginSeach"
@@ -228,21 +255,20 @@
                   </CRow>
                 </CCardBody>
                 <CRow>
-                  <CCol v-for="item in pluginlist" :key="item.name" sm="6" md="4">
+                  <CCol v-for="item in pluginlist" :key="item.name" sm="6" md="4" class="p-0">
                     <CCard accent-color="primary">
                       <CCardHeader>{{ item.name }}</CCardHeader>
                       <CCardBody>
                         <CRow>
-                          <CCol sm="12" md="4">
+                          <CCol sm="12" md="5" class="p-0">
                             <CImg
                               :src="item.imgUrl"
                               block
                               class="mb-2"
                               width="100%"
-                              height="100%"
                             />
                           </CCol>
-                          <CCol sm="12" md="8">
+                          <CCol sm="12" md="7" class="p-0">
                             <CCardBody>{{ item.content }}</CCardBody>
                             <CButton
                               block
@@ -274,8 +300,17 @@
 <script>
 // import { cibHtmlacademy } from "@coreui/icons";
 import { mapActions } from "vuex";
+import AppUpload from "@/components/uploads/Upload.vue";
+import { cilTrash } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader.vue";
+
 export default {
   name: "Tabs",
+    components: {
+    AppUpload,
+    Loader
+  },
+  cilTrash,
   data() {
     return {
       pluginlist: [],
@@ -289,7 +324,9 @@ export default {
         country: "",
         previewImage: "/img/images/no-logo.png",
         logo: "",
+        stamps: [],
       },
+      displays_stamps: [],
       imageData: "",
       tabs: ["General", "Billing", "Plugins"],
       InvoiceLst: [
@@ -299,37 +336,37 @@ export default {
       PluginLst: [
         {
           name: "plugin1",
-          imgUrl: "https://plchldr.co/i/72x172",
+          imgUrl:  "/img/images/photo-not-available.png",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Active",
         },
         {
           name: "plugin2",
-          imgUrl: "https://plchldr.co/i/72x172",
+          imgUrl:  "/img/images/photo-not-available.png",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Deactive",
         },
         {
           name: "plugin3",
-          imgUrl: "https://plchldr.co/i/72x172",
+          imgUrl:  "/img/images/photo-not-available.png",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Deactive",
         },
         {
           name: "plugin4",
-          imgUrl: "https://plchldr.co/i/72x172",
+          imgUrl:  "/img/images/photo-not-available.png",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Active",
         },
         {
           name: "plugin5",
-          imgUrl: "https://plchldr.co/i/72x172",
+          imgUrl:  "/img/images/photo-not-available.png",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Deactive",
         },
         {
           name: "plugin6",
-          imgUrl: "https://plchldr.co/i/72x172",
+          imgUrl:  "/img/images/photo-not-available.png",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Active",
         },
@@ -347,32 +384,55 @@ export default {
 
     this.$store.commit("remove_errors");
   },
+   computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
   created() {
     this.pluginlist = this.PluginLst;
-    let business_id = localStorage.getItem("business_id");
-
-    this.$http
-      .get("/business/" + business_id)
-      .then(({ data }) => {
-        this.general_items.business_name = JSON.parse(data.business_name).en;
-        this.general_items.business_activity = JSON.parse(
-          data.business_activity
-        ).en;
-        this.general_items.name = JSON.parse(data.owner_name).en;
-        this.general_items.email = data.business_email;
-        this.general_items.mobile = data.business_mobile_no;
-        this.general_items.country = data.country;
-        if (data.logo != "" && data.logo != null) {
-          this.general_items.previewImage = data.logo;
-        }
-        this.general_items.logo = "";
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      this.getBusinessInfo();
   },
   methods: {
     ...mapActions(["set_errors"]),
+    getBusinessInfo() {
+      this.$store.commit("set_loader");
+      let business_id = localStorage.getItem("business_id");
+      this.$http
+      .get("/business/" + business_id)
+      .then(({ data }) => {
+        this.displayData(data);
+        this.$store.commit("close_loader");
+      })
+      .catch((err) => {
+        this.$store.commit("close_loader");
+        console.log(err);
+      });
+    },
+    displayData(data = null){
+      if (data && data !== '') {
+          this.general_items.business_name = JSON.parse(data.business_name).en;
+          this.general_items.business_activity = JSON.parse(
+            data.business_activity
+          ).en;
+          this.general_items.name = JSON.parse(data.owner_name).en;
+          this.general_items.email = data.business_email;
+          this.general_items.mobile = data.business_mobile_no;
+          this.general_items.country = data.country;
+          if (data.logo) {
+            this.general_items.previewImage = data.logo.path;
+          }
+          this.general_items.logo = "";
+
+          if (data.stamps) {
+            this.displays_stamps = [];
+            let displays_stamps = this.displays_stamps;
+            data.stamps.map(function (item) {
+              displays_stamps.push(item);
+            });
+          }
+        }
+    },
     PluginSeach() {
       var data = [];
       var initial = this.PluginLst;
@@ -399,6 +459,11 @@ export default {
       if (this.general_items.logo != "") {
         formData.append("logo", this.general_items.logo);
       }
+      if(this.general_items.stamps && this.general_items.stamps.length) {
+        this.general_items.stamps.map(function (item) {
+          formData.append("stamps[]", item);
+        });
+      }
       formData.append("_method", "PATCH");
 
       const config = {
@@ -410,6 +475,8 @@ export default {
         .post("/business/" + business_id, formData, config)
         .then((response) => {
           if (response.status == 200) {
+            this.resetForm();
+            this.displayData(response.data);
             this.$swal.fire({
               icon: "success",
               title: "Success",
@@ -438,6 +505,52 @@ export default {
         reader.readAsDataURL(file[0]);
       }
     },
+        handleFile(files) {
+      this.general_items.stamps = Object.values(files);
+    },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this Attachment",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.displays_stamps = this.displays_stamps.filter(
+                    (item) => item.uuid != uuid
+                  );
+                }
+              })
+              .catch((err) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+                console.log(err);
+              });
+          }
+        });
+    },
+     resetForm() {
+      this.general_items.stamps = [];
+      this.display_stamps = [];
+      this.$refs.fileUpload.reset();
+    },
   },
 };
 </script>
@@ -452,5 +565,9 @@ export default {
 }
 .error {
   color: red;
+}
+.p-0.col-sm-6.col-md-4 {
+    max-width: 31% !important;
+    margin:10px !important;
 }
 </style>

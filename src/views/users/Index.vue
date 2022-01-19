@@ -5,7 +5,16 @@
         <CCard>
           <CCardHeader> Users </CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/users/create" style="float: right"
+            <router-link
+              class="btn btn-success"
+              to="/rolesandpermissions/roles/index"
+              style="float: right"
+              >Roles & Permissions</router-link
+            >
+            <router-link
+              class="btn btn-success"
+              to="/users/create"
+              style="float: right; margin-right: 10px"
               >Create Users</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
