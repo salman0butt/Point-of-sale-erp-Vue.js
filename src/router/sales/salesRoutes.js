@@ -6,7 +6,7 @@ import auth from '@/middleware/auth'
 const IndexQuotations = () => import('@/views/sales/quotations/Index')
 const CreateQuotations = () => import('@/views/sales/quotations/CreateOrUpdate')
 const EditQuotations = () => import('@/views/sales/quotations/CreateOrUpdate')
-const ShowQuotations = () => import('@/views/sales/quotations/show')
+const ShowQuotations = () => import('@/views/sales/quotations/Show')
 
 
 
