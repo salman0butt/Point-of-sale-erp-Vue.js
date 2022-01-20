@@ -5,17 +5,22 @@
         <CCard>
           <CCardHeader> Prices </CCardHeader>
           <CCardBody>
-            <form @submit.prevent="isEditing ? updateProductPrice() : saveProductPrice()">
+            <form
+              @submit.prevent="
+                isEditing ? updateProductPrice() : saveProductPrice()
+              "
+            >
               <CRow>
                 <Loader />
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="2" md="2" class="pt-2">
                   <CInput
                     label="Cost Price"
                     type="number"
+                    step="any"
                     placeholder="0.00"
                     v-model="product.cost_price"
                     :class="{ error: $v.product.cost_price.$error }"
-                    @input="$v.product.cost_price.$touch()"
+                    @input="[$v.product.cost_price.$touch(), calculateTotal()]"
                   />
                   <div v-if="$v.product.cost_price.$error">
                     <p v-if="!$v.product.cost_price.required" class="errorMsg">
@@ -23,27 +28,68 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="2" md="2" class="pt-2">
                   <CInput
                     label="Selling Price"
                     type="number"
+                    step="any"
                     placeholder="0.00"
                     v-model="product.selling_price"
                     :class="{ error: $v.product.selling_price.$error }"
-                    @input="$v.product.selling_price.$touch()"
+                    @input="
+                      [$v.product.selling_price.$touch(), calculateTotal()]
+                    "
                   />
                   <div v-if="$v.product.selling_price.$error">
-                    <p v-if="!$v.product.selling_price.required" class="errorMsg">
+                    <p
+                      v-if="!$v.product.selling_price.required"
+                      class="errorMsg"
+                    >
                       Selling Price is required
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="3" md="3" class="pt-2 mt-4">
+                <CCol sm="3" md="3" class="pt-2">
+                  <CSelect
+                    label="Tax Type"
+                    :options="tax_type"
+                    :value.sync="product.tax"
+                    :class="{ error: $v.product.tax.$error }"
+                    @change="[calculateTotal()]"
+                    @input="$v.product.tax.$touch()"
+                  />
+                  <div v-if="$v.product.tax.$error">
+                    <p v-if="!$v.product.tax.required" class="errorMsg">
+                      Tax is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="2" md="2" class="pt-2 mt-4">
                   <CInputCheckbox
                     custom
                     :checked="product.is_vat_included"
-                    label="Is Vat Include"
-                    @change="toggleIsVat()"
+                    label="Inclusive"
+                    @change="[toggleIsVat(), calculateTotal()]"
+                  />
+                </CCol>
+                <CCol v-if="product.is_vat_included" sm="2" md="2" class="pt-2">
+                  <CInput
+                    label="Original Selling"
+                    type="number"
+                    step="any"
+                    placeholder="0.00"
+                    v-model="product.org_selling"
+                    disabled
+                  />
+                </CCol>
+                <CCol sm="3" md="3" class="pt-2">
+                  <CInput
+                    label="Total Price"
+                    type="number"
+                    step="any"
+                    placeholder="0.00"
+                    v-model="product.total_price_product"
+                    disabled
                   />
                 </CCol>
               </CRow>
@@ -76,10 +122,18 @@
               >
                 <CRow>
                   <CCol sm="12" md="12" class="pt-2">
-                    <div class="form-group" v-for="(input, k) in variations" :key="k">
+                    <div
+                      class="form-group"
+                      v-for="(input, k) in variations"
+                      :key="k"
+                    >
                       <CRow>
                         <CCol sm="6" md="3" class="pt-2">
-                          <CInput label="Name" readonly :value.sync="input.name" />
+                          <CInput
+                            label="Name"
+                            readonly
+                            :value.sync="input.name"
+                          />
                         </CCol>
                         <!-- <CCol sm="6" md="3" class="pt-2">
                         <CInput label="Attributes" readonly :value.sync="input.values" />
@@ -111,13 +165,20 @@
                             placeholder="0.00"
                             v-model="input.selling_price"
                             :class="{
-                              error: $v.variations.$each[k].selling_price.$error,
+                              error:
+                                $v.variations.$each[k].selling_price.$error,
                             }"
-                            @input="$v.variations.$each[k].selling_price.$touch()"
+                            @input="
+                              $v.variations.$each[k].selling_price.$touch()
+                            "
                           />
-                          <div v-if="$v.variations.$each[k].selling_price.$error">
+                          <div
+                            v-if="$v.variations.$each[k].selling_price.$error"
+                          >
                             <p
-                              v-if="!$v.variations.$each[k].selling_price.required"
+                              v-if="
+                                !$v.variations.$each[k].selling_price.required
+                              "
                               class="errorMsg"
                             >
                               Selling Price is required
@@ -162,6 +223,7 @@
 </template>
 <script>
 import ProductPriceService from "@/services/products/ProductPriceService";
+import TaxService from "@/services/TaxService";
 import ProductVariationService from "@/services/products/ProductVariationService";
 import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader";
@@ -178,8 +240,12 @@ export default {
       type: "product",
       cost_price: "",
       selling_price: "",
+      tax: "",
       is_vat_included: false,
+      total_price_product: "0.000",
+      org_selling: "",
     },
+    product_tax_percentage: "",
     variations: [
       // {
       //   id: "",
@@ -194,6 +260,10 @@ export default {
       // },
     ],
     productId: "",
+
+    tax_type: [
+      { label: "Select Tax", value: "", selected: "", disabled: true },
+    ],
   }),
   validations() {
     return {
@@ -201,6 +271,7 @@ export default {
         product_id: { required },
         cost_price: { required },
         selling_price: { required },
+        tax: { required },
       },
       variations: {
         required: true,
@@ -212,6 +283,7 @@ export default {
     };
   },
   created() {
+    this.getAllTaxes();
     this.productId = this.$route.params.id;
     this.product.product_id = this.$route.params.id;
     if (this.productId) {
@@ -229,19 +301,14 @@ export default {
       this.product.is_vat_included = !this.product.is_vat_included;
     },
     toggleVariationIsVat(key) {
-      this.variations[key].is_vat_included = !this.variations[key].is_vat_included;
+      this.variations[key].is_vat_included =
+        !this.variations[key].is_vat_included;
     },
     getProductPrice() {
       this.$store.commit("set_loader");
       ProductPriceService.get(this.productId)
         .then(({ data }) => {
-          if (data !== "" && data !== null && data !== undefined && data.uuid) {
-            this.isEditing = true;
-            this.product.id = data.uuid;
-            this.product.cost_price = data.cost_price ?? 0;
-            this.product.selling_price = data.selling_price ?? 0;
-            this.product.is_vat_included = data.is_vat_included === 1 ? true : false;
-          }
+          this.displayProductPrice(data);
           this.$store.commit("close_loader");
         })
         .catch((error) => {
@@ -251,11 +318,26 @@ export default {
           this.$router.push({ path: "/products" });
         });
     },
+    displayProductPrice(data = null) {
+      if (data !== "" && data !== null && data !== undefined && data.uuid) {
+        this.isEditing = true;
+        this.product.id = data.uuid;
+        this.product.cost_price = data.cost_price ?? 0;
+        this.product.selling_price = data.selling_price ?? 0;
+        this.product.is_vat_included =
+          data.is_vat_included === 1 ? true : false;
+      }
+    },
     getProductVariation() {
       this.$store.commit("set_loader");
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
-          if (data !== "" && data !== null && data !== undefined && data.length) {
+          if (
+            data !== "" &&
+            data !== null &&
+            data !== undefined &&
+            data.length
+          ) {
             this.isVariationEditing = true;
             this.variations = [];
             data.forEach((element) => {
@@ -264,7 +346,8 @@ export default {
                 name: JSON.parse(element.name).en,
                 cost_price: element.price?.cost_price ?? 0,
                 selling_price: element.price?.selling_price ?? 0,
-                is_vat_included: element.price?.is_vat_included === 1 ? true : false,
+                is_vat_included:
+                  element.price?.is_vat_included === 1 ? true : false,
               });
             });
           }
@@ -285,6 +368,7 @@ export default {
         ProductPriceService.create(formData)
           .then((res) => {
             if (res.status == 200 || res.status == 201) {
+              this.displayProductPrice(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -318,6 +402,7 @@ export default {
         ProductPriceService.create(formData)
           .then((res) => {
             if (res.status == 200 || res.status == 201) {
+              this.displayProductPrice(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -345,7 +430,7 @@ export default {
       if (!this.$v.product.$invalid) {
         let formData = this.product;
         this.$store.commit("set_loader");
-        ProductPriceService.update(this.product.id, formData)
+        ProductPriceService.update(this.productId, formData)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -404,6 +489,39 @@ export default {
               timer: 3600,
             });
           });
+      }
+    },
+    getAllTaxes() {
+      TaxService.getAll()
+        .then((res) => {
+          if (res.status == 200) {
+            res.data.map((item) => {
+              this.tax_type.push({
+                label: item.name,
+                value: { uuid: item.uuid, percentage: item.percentage },
+              });
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    calculateTotal() {
+      let cost_price = this.product.cost_price;
+      let selling_price = this.product.selling_price;
+      let percentage = this.product.tax.percentage;
+      let is_vat_included = this.product.is_vat_included;
+      if (is_vat_included) {
+        let org_selling = selling_price / (1 + parseFloat(percentage) / 100);
+        this.product.org_selling = org_selling;
+        let total_price_with_tax = parseFloat(selling_price);
+        this.product.total_price_product = total_price_with_tax;
+      } else {
+        let total_price_with_tax =
+          parseFloat(selling_price * (parseFloat(percentage) / 100)) +
+          parseFloat(selling_price);
+        this.product.total_price_product = total_price_with_tax;
       }
     },
   },
