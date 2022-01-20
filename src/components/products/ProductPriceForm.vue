@@ -12,7 +12,7 @@
             >
               <CRow>
                 <Loader />
-                <CCol sm="3" md="3" class="pt-2">
+                <CCol sm="2" md="2" class="pt-2">
                   <CInput
                     label="Cost Price"
                     type="number"
@@ -20,7 +20,7 @@
                     placeholder="0.00"
                     v-model="product.cost_price"
                     :class="{ error: $v.product.cost_price.$error }"
-                    @input="$v.product.cost_price.$touch()"
+                    @input="[$v.product.cost_price.$touch(), calculateTotal()]"
                   />
                   <div v-if="$v.product.cost_price.$error">
                     <p v-if="!$v.product.cost_price.required" class="errorMsg">
@@ -28,7 +28,7 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="3" md="3" class="pt-2">
+                <CCol sm="2" md="2" class="pt-2">
                   <CInput
                     label="Selling Price"
                     type="number"
@@ -36,7 +36,9 @@
                     placeholder="0.00"
                     v-model="product.selling_price"
                     :class="{ error: $v.product.selling_price.$error }"
-                    @input="$v.product.selling_price.$touch()"
+                    @input="
+                      [$v.product.selling_price.$touch(), calculateTotal()]
+                    "
                   />
                   <div v-if="$v.product.selling_price.$error">
                     <p
@@ -48,21 +50,46 @@
                   </div>
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
+                  <CSelect
+                    label="Tax Type"
+                    :options="tax_type"
+                    :value.sync="product.tax"
+                    :class="{ error: $v.product.tax.$error }"
+                    @change="[calculateTotal()]"
+                    @input="$v.product.tax.$touch()"
+                  />
+                  <div v-if="$v.product.tax.$error">
+                    <p v-if="!$v.product.tax.required" class="errorMsg">
+                      Tax is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="2" md="2" class="pt-2 mt-4">
+                  <CInputCheckbox
+                    custom
+                    :checked="product.is_vat_included"
+                    label="Inclusive"
+                    @change="[toggleIsVat(), calculateTotal()]"
+                  />
+                </CCol>
+                <CCol v-if="product.is_vat_included" sm="2" md="2" class="pt-2">
+                  <CInput
+                    label="Original Selling"
+                    type="number"
+                    step="any"
+                    placeholder="0.00"
+                    v-model="product.org_selling"
+                    disabled
+                  />
+                </CCol>
+                <CCol sm="3" md="3" class="pt-2">
                   <CInput
                     label="Total Price"
                     type="number"
                     step="any"
                     placeholder="0.00"
-                    v-model="total_price_product"
-                  />
-                </CCol>
-
-                <CCol sm="3" md="3" class="pt-2 mt-4">
-                  <CInputCheckbox
-                    custom
-                    :checked="product.is_vat_included"
-                    label="Is Vat Include"
-                    @change="toggleIsVat()"
+                    v-model="product.total_price_product"
+                    disabled
                   />
                 </CCol>
               </CRow>
@@ -213,8 +240,12 @@ export default {
       type: "product",
       cost_price: "",
       selling_price: "",
+      tax: "",
       is_vat_included: false,
+      total_price_product: "0.000",
+      org_selling: "",
     },
+    product_tax_percentage: "",
     variations: [
       // {
       //   id: "",
@@ -229,7 +260,10 @@ export default {
       // },
     ],
     productId: "",
-    total_price_product: "0.000",
+
+    tax_type: [
+      { label: "Select Tax", value: "", selected: "", disabled: true },
+    ],
   }),
   validations() {
     return {
@@ -237,6 +271,7 @@ export default {
         product_id: { required },
         cost_price: { required },
         selling_price: { required },
+        tax: { required },
       },
       variations: {
         required: true,
@@ -460,12 +495,34 @@ export default {
       TaxService.getAll()
         .then((res) => {
           if (res.status == 200) {
-            console.log(res);
+            res.data.map((item) => {
+              this.tax_type.push({
+                label: item.name,
+                value: { uuid: item.uuid, percentage: item.percentage },
+              });
+            });
           }
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    calculateTotal() {
+      let cost_price = this.product.cost_price;
+      let selling_price = this.product.selling_price;
+      let percentage = this.product.tax.percentage;
+      let is_vat_included = this.product.is_vat_included;
+      if (is_vat_included) {
+        let org_selling = selling_price / (1 + parseFloat(percentage) / 100);
+        this.product.org_selling = org_selling;
+        let total_price_with_tax = parseFloat(selling_price);
+        this.product.total_price_product = total_price_with_tax;
+      } else {
+        let total_price_with_tax =
+          parseFloat(selling_price * (parseFloat(percentage) / 100)) +
+          parseFloat(selling_price);
+        this.product.total_price_product = total_price_with_tax;
+      }
     },
   },
 };
