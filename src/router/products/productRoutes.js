@@ -5,6 +5,7 @@ const IndexProduct = () => import('@/views/products/product/Index')
 const CreateProduct = () => import('@/views/products/product/Create')
 const EditProduct = () => import('@/views/products/product/Edit')
 const ImportProduct = () => import('@/views/products/product/ImportProduct')
+const ShowProduct = () => import('@/views/products/product/Show')
 
 const productRoutes = {
   path: 'products',
@@ -36,6 +37,11 @@ const productRoutes = {
       path: 'import',
       name: 'ImportProduct',
       component: ImportProduct
+    },
+    {
+      path: 'show/:id',
+      name: 'Show Product',
+      component: ShowProduct
     }
   ]
 };
