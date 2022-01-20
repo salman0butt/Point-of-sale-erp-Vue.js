@@ -235,13 +235,7 @@ export default {
       this.$store.commit("set_loader");
       ProductPriceService.get(this.productId)
         .then(({ data }) => {
-          if (data !== "" && data !== null && data !== undefined && data.uuid) {
-            this.isEditing = true;
-            this.product.id = data.uuid;
-            this.product.cost_price = data.cost_price ?? 0;
-            this.product.selling_price = data.selling_price ?? 0;
-            this.product.is_vat_included = data.is_vat_included === 1 ? true : false;
-          }
+          this.displayProductPrice(data);
           this.$store.commit("close_loader");
         })
         .catch((error) => {
@@ -250,6 +244,15 @@ export default {
           this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
+    },
+    displayProductPrice(data = null) {
+      if (data !== "" && data !== null && data !== undefined && data.uuid) {
+        this.isEditing = true;
+        this.product.id = data.uuid;
+        this.product.cost_price = data.cost_price ?? 0;
+        this.product.selling_price = data.selling_price ?? 0;
+        this.product.is_vat_included = data.is_vat_included === 1 ? true : false;
+      }
     },
     getProductVariation() {
       this.$store.commit("set_loader");
@@ -285,6 +288,7 @@ export default {
         ProductPriceService.create(formData)
           .then((res) => {
             if (res.status == 200 || res.status == 201) {
+              this.displayProductPrice(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -318,6 +322,7 @@ export default {
         ProductPriceService.create(formData)
           .then((res) => {
             if (res.status == 200 || res.status == 201) {
+              this.displayProductPrice(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -345,7 +350,7 @@ export default {
       if (!this.$v.product.$invalid) {
         let formData = this.product;
         this.$store.commit("set_loader");
-        ProductPriceService.update(this.product.id, formData)
+        ProductPriceService.update(this.productId, formData)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
