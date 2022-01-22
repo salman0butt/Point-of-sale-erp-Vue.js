@@ -73,6 +73,7 @@
                   </div>
                 </CCol>
               </CRow>
+
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -87,6 +88,7 @@
             </form>
           </CCol>
         </CRow>
+        <TaxForm />
       </CCardBody>
     </CCard>
   </div>
@@ -96,10 +98,11 @@ import AccoutingSettingService from "@/services/settings/AccoutingSettingService
 import { required } from "vuelidate/lib/validators";
 import { VueTagsInput } from "@johmun/vue-tags-input";
 import Loader from "@/components/layouts/Loader";
+import TaxForm from "@/components/taxes/TaxForm";
 
 export default {
   name: "HrSettingForm",
-  components: { VueTagsInput, Loader },
+  components: { VueTagsInput, Loader, TaxForm },
   data: () => ({
     settingData: [],
     form: {
@@ -135,7 +138,6 @@ export default {
       this.$store.commit("set_loader");
       AccoutingSettingService.getAll(type)
         .then(({ data }) => {
-          console.log(data);
           if (data != null && data != "") {
             let arr = this.form;
             data.forEach(function (item) {
@@ -175,8 +177,8 @@ export default {
         }
       }
 
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
+      this.$v.form.$touch();
+      if (!this.$v.form.$invalid) {
         this.$store.commit("set_loader");
         let data = this.settingData;
         AccoutingSettingService.update(data)
@@ -208,9 +210,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>
