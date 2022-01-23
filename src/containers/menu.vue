@@ -163,7 +163,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: "Offers",
-              to: "/offers/index",
+              to: "/catalogs/offers/index",
               icon: "cil-lan",
             },
           ]);
