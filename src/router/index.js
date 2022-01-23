@@ -34,7 +34,7 @@ import productRoutes from '@/router/products/productRoutes';
 import productCategoryRoutes from '@/router/catalogs/category/productCategoryRoutes';
 import brandRoutes from '@/router/catalogs/brands/brandRoutes';
 import receivingRoutes from '@/router/receivings/receivingRoutes';
-import damageRoutes from '@/router/damages/damageRoutes';
+import damageRoutes from '@/router/catalogs/damages/damageRoutes';
 import offerRoutes from '@/router/catalogs/offers/offerRoutes';
 import userRoutes from '@/router/users/userRoutes';
 import modifierRoutes from '@/router/modifiers/modifierRoutes';
