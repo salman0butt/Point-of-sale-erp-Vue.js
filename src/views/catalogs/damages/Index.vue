@@ -8,7 +8,7 @@
             <div>
               <router-link
                 class="btn btn-success"
-                to="/Damages/create"
+                to="/catalogs/damages/create"
                 style="float: right"
                 >Create Damage</router-link
               >
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import DamageService from "@/services/damages/DamageService";
+import DamageService from "@/services/catalogs/damages/DamageService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -144,7 +144,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/Damages/edit/" + uuid });
+      this.$router.push({ path: "/catalogs/damages/edit/" + uuid });
     },
 
     deleteRow(uuid) {
