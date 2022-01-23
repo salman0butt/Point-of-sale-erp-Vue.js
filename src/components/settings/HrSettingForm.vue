@@ -1,6 +1,7 @@
 <template>
   <div>
     <CCard>
+      <CCardHeader> HR </CCardHeader>
       <CCardBody>
         <CRow>
           <Loader />

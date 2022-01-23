@@ -1,6 +1,7 @@
 <template>
   <div>
     <CCard>
+      <CCardHeader> Customer </CCardHeader>
       <CCardBody>
         <CRow>
           <Loader />
@@ -152,9 +153,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>

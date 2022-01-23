@@ -189,10 +189,9 @@ export default {
                     text: "Address Deleted Successfully",
                     timer: 3600,
                   });
-                  this.employeeAddressesData =
-                    this.employeeAddressesData.filter(
-                      (department) => department.uuid != uuid
-                    );
+                  this.employeeAddressesData = this.employeeAddressesData.filter(
+                    (department) => department.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })
@@ -227,8 +226,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>

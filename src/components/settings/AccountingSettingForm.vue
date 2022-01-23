@@ -1,6 +1,7 @@
 <template>
   <div>
     <CCard>
+      <CCardHeader> Accounting </CCardHeader>
       <CCardBody>
         <CRow>
           <Loader />

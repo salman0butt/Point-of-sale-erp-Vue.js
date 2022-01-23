@@ -9,68 +9,18 @@
               id="v-pills-tab"
               role="tablist"
               aria-orientation="vertical"
+              v-if="tabs && tabs.length > 0"
             >
               <a
+                v-for="(tab, index) in tabs"
+                v-bind:key="index"
                 class="nav-link bborder"
-                @click.prevent="changeActiveTab('EmployeeTab')"
+                @click.prevent="changeActiveTab(tab.key)"
                 href="#"
-                v-bind:class="{ active: activeTab === 'EmployeeTab' }"
+                v-bind:class="{ active: activeTab === tab.key }"
               >
-                <CIcon :content="$options.cilUser" />&nbsp; General</a
+                <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}</a
               >
-              <a
-                class="nav-link bborder"
-                @click.prevent="changeActiveTab('DashboardSettingForm')"
-                href="#"
-                v-bind:class="{ active: activeTab === 'DashboardSettingForm' }"
-              >
-                <CIcon :content="$options.cilUser" />&nbsp; Dashboard</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'HrSettingForm' }"
-                href="#"
-                @click.prevent="changeActiveTab('HrSettingForm')"
-                ><CIcon :content="$options.cilUser" />&nbsp; HR</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'AccountingSettingForm' }"
-                href="#"
-                @click.prevent="changeActiveTab('AccountingSettingForm')"
-              >
-                <CIcon :content="$options.cilUser" />&nbsp; Accounting</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === 'CustomerSettingForm' }"
-                href="#"
-                @click.prevent="changeActiveTab('CustomerSettingForm')"
-              >
-                <CIcon :content="$options.cilUser" />&nbsp; Customer</a
-              >
-
-              <!-- <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === '' }"
-                href="#"
-                @click.prevent="changeActiveTab('')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Other</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === '' }"
-                href="#"
-                @click.prevent="changeActiveTab('')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Other</a
-              >
-              <a
-                class="nav-link bborder"
-                v-bind:class="{ active: activeTab === '' }"
-                href="#"
-                @click.prevent="changeActiveTab('')"
-                ><CIcon :content="$options.cilUser" />&nbsp; Other</a
-              > -->
             </div>
           </CCardBody>
         </CCard>
@@ -88,6 +38,7 @@ import HrSettingForm from "@/components/settings/HrSettingForm";
 import AccountingSettingForm from "@/components/settings/AccountingSettingForm";
 import CustomerSettingForm from "@/components/settings/CustomerSettingForm";
 import DashboardSettingForm from "@/components/settings/DashboardSettingForm";
+import DeliverySettingForm from "@/components/settings/DeliverySettingForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -99,10 +50,19 @@ export default {
     AccountingSettingForm,
     CustomerSettingForm,
     DashboardSettingForm,
+    DeliverySettingForm,
   },
   data() {
     return {
       activeTab: "HrSettingForm",
+      tabs: [
+        { key: "", name: "General" },
+        { key: "DashboardSettingForm", name: "Dashboard" },
+        { key: "HrSettingForm", name: "HR" },
+        { key: "AccountingSettingForm", name: "Accounting" },
+        { key: "CustomerSettingForm", name: "Customer" },
+        { key: "DeliverySettingForm", name: "Delivery" },
+      ],
     };
   },
   created() {},

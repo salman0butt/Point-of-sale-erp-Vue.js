@@ -1,67 +1,54 @@
 <template>
   <CRow>
-    <CCol xs="12" lg="12">
-      <CRow>
-        <CCol sm="12" md="12" class="pt-2">
-          <CDataTable
-            :items="taxes"
-            :fields="taxFields"
-            table-filter
-            items-per-page-select
-            @pagination-change="changePagination"
-            :items-per-page="perPage"
-            sorter
-            clickable-rows
-            hover
-            :loading="loading"
-            ref="externalAgent"
-          >
-            <template #actions="{ item }">
-              <td>
-                <CButtonGroup>
-                  <CButton
-                    @click="editRow(item.uuid)"
-                    class="btn-sm text-white"
-                    color="warning"
-                    >Edit <CIcon :content="$options.cilPencil"
-                  /></CButton>
-                  <CButton @click="defaultRow(item.uuid)" class="btn-sm" color="success"
-                    >Default</CButton
-                  >
-                  <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
-                    <CIcon :content="$options.cilTrash" />
-                  </CButton>
-                </CButtonGroup>
-              </td>
-            </template>
-          </CDataTable>
-          <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
-        </CCol>
-      </CRow>
-      <CRow>
-        <CCol sm="4" md="4" class="pt-2">
-          <CInputCheckbox custom :checked="true" label="Prices Include Tax:" />
-        </CCol>
-        <CCol sm="4" md="4" class="pt-2">
-          <CInputCheckbox custom :checked="true" label="Charge Tax On Receivings:" />
-        </CCol>
-        <CCol sm="4" md="4" class="pt-2">
-          <CInputCheckbox
-            custom
-            :checked="true"
-            label="Use Tax Values At ALL Branches:"
-          />
-        </CCol>
-      </CRow>
+    <CCol sm="12" md="12" class="pt-2">
+      <CDataTable
+        :items="deliveries"
+        :fields="taxFields"
+        table-filter
+        items-per-page-select
+        @pagination-change="changePagination"
+        :items-per-page="perPage"
+        sorter
+        clickable-rows
+        hover
+        :loading="loading"
+        ref="externalAgent"
+      >
+        <template #actions="{ item }">
+          <td>
+            <CButtonGroup>
+              <CButton
+                @click="editRow(item.uuid)"
+                class="btn-sm text-white"
+                color="warning"
+                >Edit <CIcon :content="$options.cilPencil"
+              /></CButton>
+              <CButton @click="defaultRow(item.uuid)" class="btn-sm" color="success"
+                >Default</CButton
+              >
+              <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                <CIcon :content="$options.cilTrash" />
+              </CButton>
+            </CButtonGroup>
+          </td>
+        </template>
+      </CDataTable>
+      <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
     </CCol>
   </CRow>
 </template>
 <script>
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-import TaxService from "@/services/taxes/TaxService";
+import DeliveryService from "@/services/delivery/DeliveryService";
 const taxFields = [
-  { key: "name", label: "Name", _style: "min-width:40%" },
-  { key: "percentage", label: "RATE %", _style: "min-width:15%;" },
+  { key: "name", label: "PROVIDER NAME", _style: "min-width:40%" },
+  {
+    key: "delivery_time_in_day",
+    label: "DELIVERY TIME IN DAYS",
+    _style: "min-width:15%;",
+  },
+  { key: "rate_on_us", label: "RATE ON US", _style: "min-width:15%;" },
+  { key: "rate_on_customer", label: "RATE ON CUSTOMER", _style: "min-width:15%;" },
   { key: "actions", label: "ACTION", _style: "width:25%;" },
 ];
 
@@ -75,17 +62,17 @@ export default {
   },
   data: () => ({
     taxFields,
-    taxes: [],
+    deliveries: [],
     activePage: 1,
     pages: 0,
     perPage: 10,
   }),
   created() {
-    this.getTaxes();
+    this.getDeliveries();
   },
   computed: {
     taxItems() {
-      return this.taxes;
+      return this.deliveries;
     },
     loading() {
       return this.$store.getters.loading;
@@ -96,27 +83,27 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getTaxes(this.activePage, this.perPage);
+      this.getDeliveries(this.activePage, this.perPage);
     },
     updatedObj(obj) {
       if (obj.type === "store") {
-        this.taxes.unshift(obj.payload);
+        this.deliveries.unshift(obj.payload);
       } else if (obj.type === "update") {
-        this.taxes.forEach((tax, index) => {
+        this.deliveries.forEach((tax, index) => {
           if (tax.uuid === obj.payload.uuid) {
-            this.taxes[index] = obj.payload;
+            this.deliveries[index] = obj.payload;
           }
         });
       }
     },
   },
   methods: {
-    getTaxes(page = "", per_page = "") {
+    getDeliveries(page = "", per_page = "") {
       this.$store.commit("set_loader");
-      TaxService.getAll(page, per_page)
+      DeliveryService.getAll(page, per_page)
         .then(({ data }) => {
           if (data && data.data) {
-            this.taxes = data.data;
+            this.deliveries = data.data;
             if (data.meta) {
               this.setPagination(data.meta);
             }
@@ -132,10 +119,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      // this.isEditingTax = true;
-      // this.$store.commit("set_loader");
-      // this.getTax(uuid);
-      this.$emit("edit-tax", uuid);
+      this.$emit("edit-delivery", uuid);
     },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
@@ -149,16 +133,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            TaxService.delete(this.deleteRows)
+            DeliveryService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Tax Deleted Successfully",
+                    text: "Delivery Deleted Successfully",
                     timer: 3600,
                   });
-                  this.taxes = this.taxes.filter((item) => item.uuid != uuid);
+                  this.deliveries = this.deliveries.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })
@@ -182,13 +166,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.taxes = agent.currentItems;
+        this.deliveries = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getTaxes("", this.perPage);
+      this.getDeliveries("", this.perPage);
     },
   },
 };
