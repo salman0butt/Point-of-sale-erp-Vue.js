@@ -64,23 +64,28 @@
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <SearchProduct
-                    searchType="quotation"
-                    :itemsData="form.items"
-                  />
+                  <SearchProduct searchType="quotation" :itemsData="form.items" />
+                </CCol>
+                <CCol sm="4" md="4" class="pt-2">
+                  <CInput label="Sub Total" readonly :value="subTotal" />
+                </CCol>
+                <CCol sm="4" md="4" class="pt-2">
+                  <CInput label="Total Discount" readonly :value="totalDiscount" />
+                </CCol>
+                <CCol sm="4" md="4" class="pt-2">
+                  <CInput label="Total" readonly :value="allTotal" />
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
-                  <CTextarea
-                    label="Note"
-                    placeholder="Content..."
-                    v-model="form.note"
-                  />
+                  <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <app-upload ref="fileUpload" @file:changed="handleFile" />
 
-                  <div class="attachment-display">
+                  <div
+                    v-if="display_images && display_images.length"
+                    class="attachment-display"
+                  >
                     <ul class="mt-5 d-flex">
                       <li
                         v-for="(img, index) in display_images"
@@ -184,6 +189,15 @@ export default {
   computed: {
     receivingItems() {
       return this.$store.getters.getSearchProductItems;
+    },
+    totalDiscount() {
+      return this.$store.getters.getQuotationDiscount;
+    },
+    subTotal() {
+      return this.$store.getters.getQuotationSubTotal;
+    },
+    allTotal() {
+      return this.$store.getters.getQuotationTotal;
     },
   },
   beforeDestroy() {
@@ -327,4 +341,3 @@ export default {
   },
 };
 </script>
-

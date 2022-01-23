@@ -26,6 +26,7 @@ export default {
   },
   methods: {
     pushingSideBarItems() {
+      //dashboard
       if (this.permissions.includes("read dashboard")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
@@ -34,23 +35,38 @@ export default {
           icon: "cil-speedometer",
         });
       }
-      if (this.permissions.includes("read merchant")) {
+
+      // sales
+      if (this.permissions.includes("read sales")) {
+        if (this.permissions.includes("read quotations")) {
+          this.sideBarItems_sales.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Quotations",
+              to: "/sales/quotations",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.permissions.includes("read quotations")) {
+          this.sideBarItems_sales.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Invoices",
+              to: "/sales/invoices",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+
         this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: "Merchant",
-          to: "/merchant",
-          icon: "cil-institution",
-        });
-      }
-      if (this.permissions.includes("read branches")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          _attrs: { class: "hide-me" },
-          name: "Branches",
-          to: "/branches",
+          _name: "CSidebarNavDropdown",
+          name: "Sales",
           icon: "cil-lan",
+          items: this.sideBarItems_sales,
         });
       }
+      // contacts
       if (this.permissions.includes("read contacts")) {
         // different modules of hr
         if (this.permissions.includes("read group")) {
@@ -87,6 +103,8 @@ export default {
           _children: this.sideBarItems_contacts,
         });
       }
+
+      // catalogs
       if (this.permissions.includes("read accounting")) {
         // different modules of Products
         if (this.permissions.includes("read accounts")) {
@@ -94,7 +112,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: "Brand",
-              to: "/brands/index",
+              to: "/catalogs/brands/index",
               icon: "cil-lan",
             },
           ]);
@@ -105,7 +123,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: "Category",
-              to: "/product/category/index",
+              to: "/catalogs/category/index",
               icon: "cil-lan",
             },
           ]);
@@ -150,16 +168,16 @@ export default {
             },
           ]);
         }
-        if (this.permissions.includes("read accounts")) {
-          this.sideBarItems_products.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Modifiers",
-              to: "/modifiers/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
+        // if (this.permissions.includes("read accounts")) {
+        //   this.sideBarItems_products.push([
+        //     {
+        //       _name: "CSidebarNavItem",
+        //       name: "Modifiers",
+        //       to: "/modifiers/index",
+        //       icon: "cil-lan",
+        //     },
+        //   ]);
+        // }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: "Catalogs",
@@ -167,33 +185,126 @@ export default {
           items: this.sideBarItems_products,
         });
       }
-      if (this.permissions.includes("read sales")) {
-        if (this.permissions.includes("read quotations")) {
-          this.sideBarItems_sales.push([
+
+      //Accounting
+      if (this.permissions.includes("read accounting")) {
+        // different modules of Accouning
+        if (this.permissions.includes("read accounts")) {
+          this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Quotations",
-              to: "/sales/quotations",
+              name: "Chart of Accounts",
+              to: "/accounting/accounts/index",
               icon: "cil-lan",
             },
           ]);
         }
-        if (this.permissions.includes("read quotations")) {
-          this.sideBarItems_sales.push([
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Invoices",
-              to: "/sales/invoices",
+              name: "Payment Methods",
+              to: "/accounting/paymentMethods/index",
               icon: "cil-lan",
             },
           ]);
         }
 
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Category",
+              to: "/accounting/category/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Income",
+              to: "/accounting/income/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Expense",
+              to: "/accounting/expense/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.permissions.includes("read payment-methods")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Transfer",
+              to: "/accounting/transfer/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        // if (this.permissions.includes("read payment-methods")) {
+        //   this.sideBarItems_accounting.push([
+        //     {
+        //       _name: "CSidebarNavItem",
+        //       name: "Biller",
+        //       to: "/accounting/biller/index",
+        //       icon: "cil-lan",
+        //     },
+        //   ]);
+        // }
+        // if (this.permissions.includes("read payment-methods")) {
+        //   this.sideBarItems_accounting.push([
+        //     {
+        //       _name: "CSidebarNavItem",
+        //       name: "Payment Biller",
+        //       to: "/accounting/paymentBiller/index",
+        //       icon: "cil-lan",
+        //     },
+        //   ]);
+        // }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
-          name: "Sales",
+          name: "Accounting",
           icon: "cil-lan",
-          items: this.sideBarItems_sales,
+          items: this.sideBarItems_accounting,
+        });
+      }
+
+      // branches
+      if (this.permissions.includes("read branches")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          _attrs: { class: "hide-me" },
+          name: "Branches",
+          to: "/branches",
+          icon: "cil-lan",
+        });
+      }
+
+      // users
+      if (this.permissions.includes("read Settings")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          name: "Users",
+          to: "/users/index",
+          icon: "cil-settings",
+        });
+      }
+      // merchant
+      if (this.permissions.includes("read merchant")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          name: "Merchant",
+          to: "/merchant",
+          icon: "cil-institution",
         });
       }
 
@@ -420,104 +531,7 @@ export default {
         //   _children: this.sideBarItems_hr,
         // });
       }
-      if (this.permissions.includes("read accounting")) {
-        // different modules of Accouning
-        if (this.permissions.includes("read accounts")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Chart of Accounts",
-              to: "/accounting/accounts/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
-        if (this.permissions.includes("read payment-methods")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Payment Methods",
-              to: "/accounting/paymentMethods/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
 
-        if (this.permissions.includes("read payment-methods")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Category",
-              to: "/accounting/category/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
-        if (this.permissions.includes("read payment-methods")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Income",
-              to: "/accounting/income/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
-        if (this.permissions.includes("read payment-methods")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Expense",
-              to: "/accounting/expense/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
-        if (this.permissions.includes("read payment-methods")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "Transfer",
-              to: "/accounting/transfer/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
-        // if (this.permissions.includes("read payment-methods")) {
-        //   this.sideBarItems_accounting.push([
-        //     {
-        //       _name: "CSidebarNavItem",
-        //       name: "Biller",
-        //       to: "/accounting/biller/index",
-        //       icon: "cil-lan",
-        //     },
-        //   ]);
-        // }
-        // if (this.permissions.includes("read payment-methods")) {
-        //   this.sideBarItems_accounting.push([
-        //     {
-        //       _name: "CSidebarNavItem",
-        //       name: "Payment Biller",
-        //       to: "/accounting/paymentBiller/index",
-        //       icon: "cil-lan",
-        //     },
-        //   ]);
-        // }
-        this.sideBarItems.push({
-          _name: "CSidebarNavDropdown",
-          name: "Accounting",
-          icon: "cil-lan",
-          items: this.sideBarItems_accounting,
-        });
-      }
-      if (this.permissions.includes("read Settings")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: "Users",
-          to: "/users/index",
-          icon: "cil-settings",
-        });
-      }
       if (this.permissions.includes("read Settings")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
