@@ -506,8 +506,8 @@ export default {
       TaxService.getAll()
         .then((res) => {
           if (res.status == 200) {
-            let taxes = res.data;
-            taxes.forEach((item) => {
+            let test = res.data.data;
+            test.forEach((item) => {
               this.tax_type.push({
                 label: item.name,
                 value: { uuid: item.uuid, percentage: item.percentage },
