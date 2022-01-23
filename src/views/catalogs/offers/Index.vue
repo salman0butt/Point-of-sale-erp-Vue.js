@@ -8,7 +8,7 @@
             <div>
               <router-link
                 class="btn btn-success"
-                to="/offers/create"
+                to="/catalogs/offers/create"
                 style="float: right"
                 >Create Offer</router-link
               >
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import OfferService from "@/services/offers/OfferService";
+import OfferService from "@/services/catalogs/offers/OfferService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -148,7 +148,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/offers/edit/" + uuid });
+      this.$router.push({ path: "/catalogs/offers/edit/" + uuid });
     },
 
     deleteRow(uuid) {
