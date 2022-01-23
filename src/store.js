@@ -25,7 +25,12 @@ const state = {
   profile_img: localStorage.getItem("profile_pic") ?? "/img/avatars/placeholder.png",
   employee_id: localStorage.getItem('employee_id') || '',
   total_receivings_cost: 0,
-  searchProductItems:[]
+  searchProductItems:[],
+  quotations: {
+    total:0,
+    subTotal:0,
+    discount:0,
+  }
 }
 
 const mutations = {
@@ -101,9 +106,17 @@ const mutations = {
   },
   set_search_product_items(state, items) {
     state.searchProductItems = items;
+  },
+  set_quotation_total(state, total) {
+    state.quotations.total = total;
+  },
+  set_quotation_sub_total(state, sub_total) {
+    state.quotations.subTotal = sub_total;
+  },
+  set_quotation_total_discount(state, discount) {
+    state.quotations.discount = discount;
   }
 }
-
 const actions = {
   login({ commit }, user) {
     return new Promise((resolve, reject) => {
@@ -186,7 +199,10 @@ const getters = {
   getEmployeeImg: state => state.emp_img,
   getProfileImg: state => state.profile_img,
   getTotalReceivingsCost: state => state.total_receivings_cost,
-  getSearchProductItems: state => state.searchProductItems
+  getSearchProductItems: state => state.searchProductItems,
+  getQuotationTotal: state => state.quotations.total,
+  getQuotationSubTotal: state => state.quotations.subTotal,
+  getQuotationDiscount: state => state.quotations.discount
 }
 
 export default new Vuex.Store({

@@ -93,8 +93,6 @@ export default {
           this.$router.push({ path: "/products" });
         });
     },
-    // TODO:  add modifiers url to postman
-    // TODO: refactore Users resource in postman
     getProductModifier() {
       ProductModifierService.getProductModifier(this.form.product_id)
         .then(({ data }) => {

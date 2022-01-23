@@ -25,19 +25,11 @@
           </CCol>
         </CRow>
         <hr v-if="form.items && form.items.length > 0" />
-        <CRow
-          v-if="
-            searchType == 'receivings' && form.items && form.items.length > 0
-          "
-        >
+        <CRow v-if="searchType == 'receivings' && form.items && form.items.length > 0">
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput
-                  label="Product"
-                  class="col-md-3"
-                  :value.sync="input.name"
-                />
+                <CInput label="Product" class="col-md-3" :value.sync="input.name" />
                 <CInput
                   label="Qty"
                   class="col-md-2"
@@ -80,17 +72,11 @@
           </CCol>
         </CRow>
 
-        <CRow
-          v-if="searchType === 'damage' && form.items && form.items.length > 0"
-        >
+        <CRow v-if="searchType === 'damage' && form.items && form.items.length > 0">
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput
-                  label="Product"
-                  class="col-md-4"
-                  :value.sync="input.name"
-                />
+                <CInput label="Product" class="col-md-4" :value.sync="input.name" />
                 <CInput
                   label="Damage Qty"
                   class="col-md-3"
@@ -99,11 +85,7 @@
                   min="1"
                   v-model="input.qty"
                 />
-                <CInput
-                  label="Reason"
-                  class="col-md-4"
-                  :value.sync="input.reason"
-                />
+                <CInput label="Reason" class="col-md-4" :value.sync="input.reason" />
                 <CButton
                   @click="removeProduct(k)"
                   class="btn-sm"
@@ -116,11 +98,7 @@
           </CCol>
         </CRow>
 
-        <CRow
-          v-if="
-            searchType == 'quotation' && form.items && form.items.length > 0
-          "
-        >
+        <CRow v-if="searchType == 'quotation' && form.items && form.items.length > 0">
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
@@ -137,7 +115,7 @@
                   placeholder="0"
                   min="1"
                   v-model="input.qty"
-                  @input="calculateTotal()"
+                  @input="calculateQutationTotal()"
                 />
 
                 <CInput
@@ -145,20 +123,22 @@
                   class="col-md-2"
                   type="number"
                   placeholder="0.00"
-                  :value.sync="input.selling_price"
+                  :value.sync="input.unit_price"
                   disabled
                 />
                 <CInput
                   label="Discount %"
                   class="col-md-2"
-                  type="number"
-                  placeholder="0.00"
+                  type="text"
+                  placeholder="0.00 OR %"
+                  :value.sync="input.discount"
+                  @change="calculateQutationTotal()"
                 />
                 <CInput
                   label="Total"
                   class="col-md-2"
                   type="number"
-                  :value.sync="input.selling_price"
+                  :value.sync="input.total"
                 />
 
                 <CButton
@@ -238,9 +218,7 @@ export default {
     search: "",
     products_list: [],
     options: {
-      suppliers: [
-        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
-      ],
+      suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
       receiving_status: [
         {
           value: "",
@@ -283,10 +261,7 @@ export default {
               this.options.products = [];
               data.map((product) => {
                 if (product) {
-                  if (
-                    product.quantity_units &&
-                    product.quantity_units.length > 0
-                  ) {
+                  if (product.quantity_units && product.quantity_units.length > 0) {
                     product.quantity_units.map((unit) => {
                       if (product.variations && product.variations.length > 0) {
                         this.options.products.push({
@@ -401,14 +376,22 @@ export default {
           this.addProductVariation();
         }
       }
-      this.calculateTotal();
+      if (this.searchType === "receivings") {
+        this.calculateTotal();
+      }
+      if (this.searchType === "quotation") {
+        this.calculateQutationTotal();
+      }
     },
     saveQuantityUnits() {
       this.toggleModel = false;
       this.addUnitVariation();
-      console.log(this.searchType);
+
       if (this.searchType === "receivings") {
         this.calculateTotal();
+      }
+      if (this.searchType === "quotation") {
+        this.calculateQutationTotal();
       }
     },
     calculateTotal() {
@@ -444,14 +427,11 @@ export default {
                       parseInt(this.form.items[key].qty) + unit?.qty ?? 1;
                     unit?.qty ?? 1;
                     this.form.items[key].cost_price = unit?.cost_price ?? 0;
-                    this.form.items[key].selling_price =
-                      unit?.selling_price ?? 0;
+                    this.form.items[key].selling_price = unit?.selling_price ?? 0;
                   }
                 });
               } else {
-                let unit = this.unit_form.find(
-                  (item) => item.uuid === variation.uuid
-                );
+                let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
                 if (this.searchType === "damage") {
                   this.form.items.push({
                     uuid: variation.uuid,
@@ -463,9 +443,7 @@ export default {
                     reason: "",
                   });
                 } else if (this.searchType === "receivings") {
-                  let unit = this.unit_form.find(
-                    (item) => item.uuid === variation.uuid
-                  );
+                  let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
                   this.form.items.push({
                     uuid: variation.uuid,
                     type: "variation",
@@ -485,13 +463,10 @@ export default {
                     name: `${product.name} (Variation: ${
                       JSON.parse(variation.name)?.en
                     })`,
-                    cost_price: unit?.cost_price ?? 0,
-                    selling_price: unit?.selling_price ?? 0,
-                    qty:
-                      this.unit_form.find(
-                        (item) => item.uuid === variation.uuid
-                      )?.qty ?? 1,
-                    expiry_date: "",
+                    unit_price: unit?.selling_price ?? 0,
+                    qty: 1,
+                    discount: "",
+                    total: 0,
                   });
                 }
               }
@@ -567,10 +542,10 @@ export default {
               uuid: product.uuid,
               type: "product",
               name: product.name,
-              cost_price: option.unit_cost_price ?? 0,
-              selling_price: option.unit_selling_price ?? 0,
-              qty: option.unit_qty,
-              expiry_date: "",
+              unit_price: option.unit_selling_price ?? 0,
+              qty: 1,
+              discount: "",
+              total: 0,
             });
           }
         }
@@ -588,8 +563,7 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name:
-                    product.name + " (" + JSON.parse(variation.name).en + ")",
+                  name: product.name + " (" + JSON.parse(variation.name).en + ")",
                   qty: 1,
                   reason: "",
                 });
@@ -597,9 +571,7 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: `${product.name} (Variation: ${
-                    JSON.parse(variation.name)?.en
-                  })`,
+                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
                   cost_price: variation.price?.cost_price ?? 0,
                   selling_price: variation.price?.selling_price ?? 0,
                   qty: 1,
@@ -609,13 +581,11 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: `${product.name} (Variation: ${
-                    JSON.parse(variation.name)?.en
-                  })`,
-                  cost_price: variation.price?.cost_price ?? 0,
-                  selling_price: variation.price?.selling_price ?? 0,
+                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
+                  unit_price: variation.price?.selling_price ?? 0,
                   qty: 1,
-                  expiry_date: "",
+                  discount: "",
+                  total: 0,
                 });
               }
             }
@@ -639,6 +609,58 @@ export default {
         this.$store.commit("set_search_product_items", this.form.items);
       }
     },
+    async calculateQutationTotal() {
+      let data = this.form.items;
+      await new Promise(function (resolve, reject) {
+        let total = 0;
+        data.map((item) => {
+          if (item.qty && item.unit_price) {
+            if (item.discount && item.discount !== "") {
+              let isPercentage = /%/gi;
+              if (isPercentage.test(item.discount)) {
+                let dicount = Number(item.discount.split("%")[0]);
+                total =
+                  parseInt(item.unit_price) * parseInt(item.qty) -
+                  (parseInt(dicount) / 100) * parseInt(item.unit_price);
+              } else {
+                total =
+                  parseInt(item.unit_price) * parseInt(item.qty) -
+                  parseInt(item.discount);
+              }
+            } else {
+              total = parseInt(item.qty) * parseInt(item.unit_price);
+            }
+            item.total = total;
+          }
+        });
+        resolve();
+      });
+      let store = this.$store;
+      await new Promise(function (resolve, reject) {
+        // calculate totals
+        let [subTotal, totalDiscount, totalSum] = [0, 0, 0];
+        data.map((item) => {
+          if (item.total) {
+            subTotal += parseInt(item.total);
+          }
+          if (item.discount) {
+            let isPercentage = /%/gi;
+            if (isPercentage.test(item.discount)) {
+              totalDiscount +=
+                (parseInt(item.discount.split("%")[0]) / 100) * parseInt(item.unit_price);
+            } else {
+              totalDiscount += parseInt(item.discount);
+            }
+          }
+          totalSum += item.total;
+        });
+        store.commit("set_quotation_sub_total", subTotal);
+        store.commit("set_quotation_total_discount", totalDiscount ?? 0);
+        store.commit("set_quotation_total", totalSum);
+        resolve();
+      });
+    },
+
     resetSearch() {
       this.form.product_id = "";
       this.search = "";

@@ -3,19 +3,19 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Brands </CCardHeader>
+          <CCardHeader> Categories </CCardHeader>
           <CCardBody>
             <div>
               <router-link
                 class="btn btn-success"
-                to="/brands/create"
+                to="/catalogs/category/create"
                 style="float: right"
-                >Create Brand</router-link
+                >Create Category</router-link
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
-              :items="Brand"
+              :items="productCategory"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -28,6 +28,13 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
+              <template #parent="{ item }">
+                <td v-if="item.parent && item.parent.name">
+                  {{ item.parent.name }}
+                </td>
+
+                <td v-else>-</td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -60,23 +67,24 @@
 </template>
 
 <script>
-import BrandService from "@/services/brands/BrandService";
+import ProductCategoryService from "@/services//catalogs/category/ProductCategoryService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  { key: "name", label: "NAME", _style: "width:50%" },
-  { key: "status", label: "STATUS", _style: "width:30%;" },
-  { key: "actions", label: "ACTION", _style: "width:25%;" },
+  { key: "name", label: "NAME", _style: "width:40%" },
+  { key: "parent", label: "PARENT", _style: "width:25%;" },
+  { key: "status", label: "STATUS", _style: "width:20%;" },
+  { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];
 
 export default {
-  name: "IndexBrand",
+  name: "IndexProductCategory",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      BrandData: [],
+      productCategoryData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -87,31 +95,32 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getBrandData();
+    this.getProductCategoryData();
+    console.log();
   },
   watch: {
     reloadParams() {
       this.onTableChange();
     },
     activePage() {
-      this.getBrandData(this.activePage, this.perPage);
+      this.getProductCategoryData(this.activePage, this.perPage);
     },
   },
   computed: {
-    Brand() {
-      return this.BrandData;
+    productCategory() {
+      return this.productCategoryData;
     },
   },
   methods: {
-    getBrandData(page = "", per_page = "") {
-      BrandService.getAll(page, per_page)
+    getProductCategoryData(page = "", per_page = "") {
+      ProductCategoryService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.BrandData = [];
+            this.productCategoryData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.BrandData.push({ ...item, id });
+                this.productCategoryData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -131,14 +140,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.BrandData[item.id]._selected);
-      this.$set(this.BrandData[item.id], "_selected", !val);
+      const val = Boolean(this.productCategoryData[item.id]._selected);
+      this.$set(this.productCategoryData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/brands/edit/" + uuid });
+      this.$router.push({ path: "/catalogs/category/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -153,16 +162,18 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            BrandService.delete(this.deleteRows)
+            ProductCategoryService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Brand Deleted Successfully",
+                    text: "Product Category Deleted Successfully",
                     timer: 3600,
                   });
-                  this.BrandData = this.BrandData.filter((item) => item.uuid != uuid);
+                  this.productCategoryData = this.productCategoryData.filter(
+                    (department) => department.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })
@@ -186,13 +197,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.BrandData = agent.currentItems;
+        this.productCategoryData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getBrandData("", this.perPage);
+      this.getProductCategoryData("", this.perPage);
     },
   },
 };
