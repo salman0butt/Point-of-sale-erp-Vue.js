@@ -93,7 +93,7 @@
                     type="number"
                     step="any"
                     placeholder="0.00"
-                    v-model="product.total_price_product"
+                    v-model="product.selling_price_with_tax"
                     disabled
                   />
                 </CCol>
@@ -254,7 +254,7 @@ export default {
       selling_price_without_tax: "",
       tax: "",
       inclusive_tax: false,
-      total_price_product: "0.000",
+      selling_price_with_tax: "0.000",
       org_selling: "",
     },
     product_tax_percentage: "",
@@ -337,8 +337,6 @@ export default {
         this.product.selling_price_without_tax =
           data.selling_price_without_tax ?? 0;
         this.product.inclusive_tax = data.inclusive_tax === 1 ? true : false;
-        // this.product.tax
-        console.log("data is here : " + data.tax.uuid);
       }
     },
     getProductVariation() {
@@ -368,7 +366,6 @@ export default {
           this.$store.commit("close_loader");
         })
         .catch((error) => {
-          console.log(error);
           this.isVariationEditing = false;
           this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
@@ -509,7 +506,8 @@ export default {
       TaxService.getAll()
         .then((res) => {
           if (res.status == 200) {
-            res.data.forEach((item) => {
+            let taxes = res.data;
+            taxes.forEach((item) => {
               this.tax_type.push({
                 label: item.name,
                 value: { uuid: item.uuid, percentage: item.percentage },
@@ -522,7 +520,6 @@ export default {
         });
     },
     calculateTotal() {
-      let cost_price = this.product.cost_price;
       let selling_price_without_tax = this.product.selling_price_without_tax;
       let percentage = this.product.tax.percentage;
       let inclusive_tax = this.product.inclusive_tax;
@@ -531,13 +528,13 @@ export default {
           selling_price_without_tax / (1 + parseFloat(percentage) / 100);
         this.product.org_selling = org_selling;
         let total_price_with_tax = parseFloat(selling_price_without_tax);
-        this.product.total_price_product = total_price_with_tax;
+        this.product.selling_price_with_tax = total_price_with_tax;
       } else {
         let total_price_with_tax =
           parseFloat(
             selling_price_without_tax * (parseFloat(percentage) / 100)
           ) + parseFloat(selling_price_without_tax);
-        this.product.total_price_product = total_price_with_tax;
+        this.product.selling_price_with_tax = total_price_with_tax;
       }
     },
   },
