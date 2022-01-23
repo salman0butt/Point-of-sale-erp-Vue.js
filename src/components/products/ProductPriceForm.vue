@@ -509,7 +509,7 @@ export default {
       TaxService.getAll()
         .then((res) => {
           if (res.status == 200) {
-            res.data.map((item) => {
+            res.data.forEach((item) => {
               this.tax_type.push({
                 label: item.name,
                 value: { uuid: item.uuid, percentage: item.percentage },
