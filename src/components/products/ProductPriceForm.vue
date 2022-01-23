@@ -34,15 +34,20 @@
                     type="number"
                     step="any"
                     placeholder="0.00"
-                    v-model="product.selling_price"
-                    :class="{ error: $v.product.selling_price.$error }"
+                    v-model="product.selling_price_without_tax"
+                    :class="{
+                      error: $v.product.selling_price_without_tax.$error,
+                    }"
                     @input="
-                      [$v.product.selling_price.$touch(), calculateTotal()]
+                      [
+                        $v.product.selling_price_without_tax.$touch(),
+                        calculateTotal(),
+                      ]
                     "
                   />
-                  <div v-if="$v.product.selling_price.$error">
+                  <div v-if="$v.product.selling_price_without_tax.$error">
                     <p
-                      v-if="!$v.product.selling_price.required"
+                      v-if="!$v.product.selling_price_without_tax.required"
                       class="errorMsg"
                     >
                       Selling Price is required
@@ -67,12 +72,12 @@
                 <CCol sm="2" md="2" class="pt-2 mt-4">
                   <CInputCheckbox
                     custom
-                    :checked="product.is_vat_included"
+                    :checked="product.inclusive_tax"
                     label="Inclusive"
                     @change="[toggleIsVat(), calculateTotal()]"
                   />
                 </CCol>
-                <CCol v-if="product.is_vat_included" sm="2" md="2" class="pt-2">
+                <CCol v-if="product.inclusive_tax" sm="2" md="2" class="pt-2">
                   <CInput
                     label="Original Selling"
                     type="number"
@@ -163,21 +168,28 @@
                             label="Selling Price"
                             type="number"
                             placeholder="0.00"
-                            v-model="input.selling_price"
+                            v-model="input.selling_price_without_tax"
                             :class="{
                               error:
-                                $v.variations.$each[k].selling_price.$error,
+                                $v.variations.$each[k].selling_price_without_tax
+                                  .$error,
                             }"
                             @input="
-                              $v.variations.$each[k].selling_price.$touch()
+                              $v.variations.$each[
+                                k
+                              ].selling_price_without_tax.$touch()
                             "
                           />
                           <div
-                            v-if="$v.variations.$each[k].selling_price.$error"
+                            v-if="
+                              $v.variations.$each[k].selling_price_without_tax
+                                .$error
+                            "
                           >
                             <p
                               v-if="
-                                !$v.variations.$each[k].selling_price.required
+                                !$v.variations.$each[k]
+                                  .selling_price_without_tax.required
                               "
                               class="errorMsg"
                             >
@@ -188,7 +200,7 @@
                         <CCol sm="3" md="3" class="pt-2 mt-4">
                           <CInputCheckbox
                             custom
-                            :checked="input.is_vat_included"
+                            :checked="input.inclusive_tax"
                             label="Is Vat Include"
                             @change="toggleVariationIsVat(k)"
                           />
@@ -239,9 +251,9 @@ export default {
       product_id: "",
       type: "product",
       cost_price: "",
-      selling_price: "",
+      selling_price_without_tax: "",
       tax: "",
-      is_vat_included: false,
+      inclusive_tax: false,
       total_price_product: "0.000",
       org_selling: "",
     },
@@ -255,8 +267,8 @@ export default {
       //   barcode: "",
       //   values: [],
       //   cost_price: "",
-      //   selling_price: "",
-      //   is_vat_included: false,
+      //   selling_price_without_tax: "",
+      //   inclusive_tax: false,
       // },
     ],
     productId: "",
@@ -270,14 +282,14 @@ export default {
       product: {
         product_id: { required },
         cost_price: { required },
-        selling_price: { required },
+        selling_price_without_tax: { required },
         tax: { required },
       },
       variations: {
         required: true,
         $each: {
           cost_price: { required },
-          selling_price: { required },
+          selling_price_without_tax: { required },
         },
       },
     };
@@ -298,11 +310,10 @@ export default {
   },
   methods: {
     toggleIsVat() {
-      this.product.is_vat_included = !this.product.is_vat_included;
+      this.product.inclusive_tax = !this.product.inclusive_tax;
     },
     toggleVariationIsVat(key) {
-      this.variations[key].is_vat_included =
-        !this.variations[key].is_vat_included;
+      this.variations[key].inclusive_tax = !this.variations[key].inclusive_tax;
     },
     getProductPrice() {
       this.$store.commit("set_loader");
@@ -323,9 +334,11 @@ export default {
         this.isEditing = true;
         this.product.id = data.uuid;
         this.product.cost_price = data.cost_price ?? 0;
-        this.product.selling_price = data.selling_price ?? 0;
-        this.product.is_vat_included =
-          data.is_vat_included === 1 ? true : false;
+        this.product.selling_price_without_tax =
+          data.selling_price_without_tax ?? 0;
+        this.product.inclusive_tax = data.inclusive_tax === 1 ? true : false;
+        // this.product.tax
+        console.log("data is here : " + data.tax.uuid);
       }
     },
     getProductVariation() {
@@ -345,9 +358,10 @@ export default {
                 uuid: element.uuid,
                 name: JSON.parse(element.name).en,
                 cost_price: element.price?.cost_price ?? 0,
-                selling_price: element.price?.selling_price ?? 0,
-                is_vat_included:
-                  element.price?.is_vat_included === 1 ? true : false,
+                selling_price_without_tax:
+                  element.price?.selling_price_without_tax ?? 0,
+                inclusive_tax:
+                  element.price?.inclusive_tax === 1 ? true : false,
               });
             });
           }
@@ -509,18 +523,20 @@ export default {
     },
     calculateTotal() {
       let cost_price = this.product.cost_price;
-      let selling_price = this.product.selling_price;
+      let selling_price_without_tax = this.product.selling_price_without_tax;
       let percentage = this.product.tax.percentage;
-      let is_vat_included = this.product.is_vat_included;
-      if (is_vat_included) {
-        let org_selling = selling_price / (1 + parseFloat(percentage) / 100);
+      let inclusive_tax = this.product.inclusive_tax;
+      if (inclusive_tax) {
+        let org_selling =
+          selling_price_without_tax / (1 + parseFloat(percentage) / 100);
         this.product.org_selling = org_selling;
-        let total_price_with_tax = parseFloat(selling_price);
+        let total_price_with_tax = parseFloat(selling_price_without_tax);
         this.product.total_price_product = total_price_with_tax;
       } else {
         let total_price_with_tax =
-          parseFloat(selling_price * (parseFloat(percentage) / 100)) +
-          parseFloat(selling_price);
+          parseFloat(
+            selling_price_without_tax * (parseFloat(percentage) / 100)
+          ) + parseFloat(selling_price_without_tax);
         this.product.total_price_product = total_price_with_tax;
       }
     },
