@@ -112,7 +112,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: "Brand",
-              to: "/brands/index",
+              to: "/catalogs/brands/index",
               icon: "cil-lan",
             },
           ]);
@@ -123,7 +123,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: "Category",
-              to: "/product/category/index",
+              to: "/catalogs/category/index",
               icon: "cil-lan",
             },
           ]);

@@ -31,8 +31,8 @@ import customersRoutes from '@/router/contacts/customers/customersRoutes';
 import supplierRoutes from '@/router/contacts/supplier/supplierRoutes';
 import groupRoutes from '@/router/contacts/groups/groupRoutes';
 import productRoutes from '@/router/products/productRoutes';
-import productCategoryRoutes from '@/router/products/productCategoryRoutes';
-import brandRoutes from '@/router/brands/brandRoutes';
+import productCategoryRoutes from '@/router/catalogs/category/productCategoryRoutes';
+import brandRoutes from '@/router/catalogs/brands/brandRoutes';
 import receivingRoutes from '@/router/receivings/receivingRoutes';
 import damageRoutes from '@/router/damages/damageRoutes';
 import offerRoutes from '@/router/offers/offerRoutes';
@@ -105,7 +105,7 @@ const EditBranch = () => import('@/views/branches/edit')
 
 // Views - Icons
 // const CoreUIIcons = () => import('@/views/icons/CoreUIIcons')
-// const Brands = () => import('@/views/icons/Brands')
+// const Brands = () => import('@/views/icons/brands')
 // const Flags = () => import('@/views/icons/Flags')
 
 // Views - Notifications

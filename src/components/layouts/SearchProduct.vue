@@ -609,46 +609,56 @@ export default {
         this.$store.commit("set_search_product_items", this.form.items);
       }
     },
-    calculateQutationTotal() {
-      let total = 0;
-      this.form.items.map((item) => {
-        if (item.qty && item.unit_price) {
-          if (item.discount && item.discount !== "") {
+    async calculateQutationTotal() {
+      let data = this.form.items;
+      await new Promise(function (resolve, reject) {
+        let total = 0;
+        data.map((item) => {
+          if (item.qty && item.unit_price) {
+            if (item.discount && item.discount !== "") {
+              let isPercentage = /%/gi;
+              if (isPercentage.test(item.discount)) {
+                let dicount = Number(item.discount.split("%")[0]);
+                total =
+                  parseInt(item.unit_price) * parseInt(item.qty) -
+                  (parseInt(dicount) / 100) * parseInt(item.unit_price);
+              } else {
+                total =
+                  parseInt(item.unit_price) * parseInt(item.qty) -
+                  parseInt(item.discount);
+              }
+            } else {
+              total = parseInt(item.qty) * parseInt(item.unit_price);
+            }
+            item.total = total;
+          }
+        });
+        resolve();
+      });
+      let store = this.$store;
+      await new Promise(function (resolve, reject) {
+        // calculate totals
+        let [subTotal, totalDiscount, totalSum] = [0, 0, 0];
+        data.map((item) => {
+          if (item.total) {
+            subTotal += parseInt(item.total);
+          }
+          if (item.discount) {
             let isPercentage = /%/gi;
             if (isPercentage.test(item.discount)) {
-              let dicount = Number(item.discount.split("%")[0]);
-              total =
-                parseInt(item.unit_price) * parseInt(item.qty) -
-                (parseInt(dicount) / 100) * parseInt(item.unit_price);
+              totalDiscount +=
+                (parseInt(item.discount.split("%")[0]) / 100) * parseInt(item.unit_price);
             } else {
-              total =
-                parseInt(item.unit_price) * parseInt(item.qty) - parseInt(item.discount);
+              totalDiscount += parseInt(item.discount);
             }
-          } else {
-            total = parseInt(item.qty) * parseInt(item.unit_price);
           }
-          item.total = total;
-        }
+          totalSum += item.total;
+        });
+        store.commit("set_quotation_sub_total", subTotal);
+        store.commit("set_quotation_total_discount", totalDiscount ?? 0);
+        store.commit("set_quotation_total", totalSum);
+        resolve();
       });
-
-      // calculate totals
-      let [subTotal, totalDiscount, totalSum] = [0, 0, 0];
-      this.form.items.map((item) => {
-        if (item.total) {
-          subTotal += parseInt(item.total);
-        }
-        let isPercentage = /%/gi;
-        if (isPercentage.test(item.discount)) {
-          totalDiscount +=
-            (parseInt(item.discount.split("%")[0]) / 100) * parseInt(item.unit_price);
-        } else {
-          totalDiscount += parseInt(item.discount);
-        }
-        totalSum += item.total;
-      });
-      this.$store.commit("set_quotation_sub_total", subTotal);
-      this.$store.commit("set_quotation_total_discount", totalDiscount ?? 0);
-      this.$store.commit("set_quotation_total", totalSum);
     },
 
     resetSearch() {
