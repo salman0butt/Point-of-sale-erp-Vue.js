@@ -72,7 +72,7 @@
             style="text-decoration: none; color: black"
           >
             <img
-              src="/img/images/flag_ar.jpg"
+              src="/img/images/flag_ar.png"
               style="max-width: 20px"
               alt="Bahrain flag"
               class="h-8 w-8"

@@ -15,7 +15,6 @@
     </CSidebarBrand>
 
     <CRenderFunction class="headerFont" flat :contentToRender="sidebarItems" />
-
     <CSidebarMinimizer
       class="c-d-md-down-none"
       @click.native="$store.commit('toggle', 'sidebarMinimize')"
@@ -34,14 +33,6 @@ export default {
     },
     minimize() {
       return this.$store.state.sidebarMinimize;
-    },
-    lang() {
-      return this.$store.getters.getLanguage;
-    },
-  },
-  watch: {
-    lang(value) {
-      this.$forceUpdate();
     },
   },
 };
