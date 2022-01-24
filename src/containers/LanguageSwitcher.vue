@@ -51,7 +51,7 @@
             style="text-decoration: none; color: black"
           >
             <img
-              src="/img/images/flag_us.png"
+              src="/img/images/flag_en.png"
               style="max-width: 20px"
               alt="english flag"
               class="h-8 w-8"
