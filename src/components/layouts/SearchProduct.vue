@@ -145,20 +145,23 @@
                   class="col-md-2"
                   type="number"
                   placeholder="0.00"
+                  step="any"
                   :value.sync="input.unit_price"
                   disabled
                 />
+
                 <CInput
-                  label="Tax"
-                  class="col-md-1"
+                  label="Unit Tax"
+                  class="col-md-2 col-lg-2"
                   type="number"
-                  placeholder="0.00"
+                  placeholder="0.00."
                   :value.sync="input.tax_price"
                   disabled
                 />
                 <CInput
-                  label="Discount %"
-                  class="col-md-2"
+                  label="Disc %"
+                  class="col-md-1 col-lg-1"
+                  step="any"
                   type="text"
                   placeholder="0.00 OR %"
                   :value.sync="input.discount"
@@ -167,6 +170,7 @@
                 <CInput
                   label="Total"
                   class="col-md-2"
+                  step="any"
                   type="number"
                   :value.sync="input.total"
                 />
@@ -366,6 +370,9 @@ export default {
       if (this.searchType === "receivings") {
         this.calculateTotal();
       }
+      if (this.searchType === "quotation") {
+        this.calculateQutationTotal();
+      }
     },
     addOptions(item) {
       this.form.product_id = item.value;
@@ -433,11 +440,11 @@ export default {
       let total = 0;
       this.form.items.map((item) => {
         if (item.cost_price && item.qty) {
-          total += parseInt(item.qty) * parseInt(item.cost_price);
+          total += parseFloat(item.qty) * parseFloat(item.cost_price);
         }
       });
-      // this.form.total_cost = parseInt(total);
-      this.$store.commit("set_total_receivings_cost", parseInt(total));
+      // this.form.total_cost = parseFloat(total);
+      this.$store.commit("set_total_receivings_cost", parseFloat(total));
     },
     addUnitVariation() {
       if (
@@ -459,7 +466,7 @@ export default {
                       (item) => item.uuid === variation.uuid
                     );
                     this.form.items[key].qty =
-                      parseInt(this.form.items[key].qty) + unit?.qty ?? 1;
+                      parseFloat(this.form.items[key].qty) + unit?.qty ?? 1;
                     unit?.qty ?? 1;
                     this.form.items[key].cost_price = unit?.cost_price ?? 0;
                     this.form.items[key].selling_price =
@@ -546,13 +553,11 @@ export default {
           this.form.items.length > 0 &&
           this.form.items.some((item) => item.uuid === product.uuid)
         ) {
-          alert("if condition");
-
           if (this.pro_unit) {
             this.form.items.map((item, key) => {
               if (item.uuid === product.uuid) {
                 this.form.items[key].qty =
-                  parseInt(this.form.items[key].qty) + option.unit_qty;
+                  parseFloat(this.form.items[key].qty) + option.unit_qty;
                 this.form.items[key].cost_price = option.unit_cost_price;
                 this.form.items[key].selling_price = option.unit_selling_price;
               }
@@ -561,12 +566,11 @@ export default {
             this.form.items.map((item, key) => {
               if (item.uuid === product.uuid) {
                 this.form.items[key].qty =
-                  parseInt(this.form.items[key].qty) + option.unit_qty;
+                  parseFloat(this.form.items[key].qty) + option.unit_qty;
               }
             });
           }
         } else {
-          // alert("else condition");
           if (this.searchType === "damage") {
             this.form.items.push({
               uuid: product.uuid,
@@ -586,15 +590,14 @@ export default {
               expiry_date: "",
             });
           } else if (this.searchType === "quotation") {
-            // alert("quoat condition");
             this.form.items.push({
               uuid: product.uuid,
               type: "product",
               name: product.name,
-              unit_price: option.unit_selling_price ?? 0,
-              tax_price: option.tax_price ?? 0,
+              unit_price: option.unit_selling_price.toFixed(3) ?? 0,
+              tax_price: option.tax_price.toFixed(3) ?? 0,
               qty: 1,
-              discount: "",
+              discount: 0,
               total: 0,
             });
           }
@@ -654,7 +657,8 @@ export default {
         ) {
           this.form.items.map((item, key) => {
             if (item.uuid === data[0].uuid) {
-              this.form.items[key].qty = parseInt(this.form.items[key].qty) + 1;
+              this.form.items[key].qty =
+                parseFloat(this.form.items[key].qty) + 1;
             }
           });
         } else {
@@ -675,22 +679,21 @@ export default {
               if (isPercentage.test(item.discount)) {
                 let dicount = Number(item.discount.split("%")[0]);
                 total =
-                  (parseFloat(item.unit_price) + parseFloat(item.tax_price)) *
-                    parseInt(item.qty) -
-                  (parseFloat(dicount) / 100) *
-                    (parseFloat(item.unit_price) + parseFloat(item.tax_price));
+                  parseFloat(item.qty) *
+                  (parseFloat(item.unit_price) + parseFloat(item.tax_price));
+                total = total - (total * dicount) / 100;
               } else {
                 total =
                   (parseFloat(item.unit_price) + parseFloat(item.tax_price)) *
-                    parseInt(item.qty) -
+                    parseFloat(item.qty) -
                   parseFloat(item.discount);
               }
             } else {
               total =
-                parseInt(item.qty) *
+                parseFloat(item.qty) *
                 (parseFloat(item.unit_price) + parseFloat(item.tax_price));
             }
-            item.total = total;
+            item.total = total.toFixed(3);
           }
         });
         resolve();
@@ -698,26 +701,39 @@ export default {
       let store = this.$store;
       await new Promise(function (resolve, reject) {
         // calculate totals
-        let [subTotal, totalDiscount, totalSum] = [0, 0, 0];
+        let [subTotal, totalDiscount, totalSum, taxTotal] = [0, 0, 0, 0];
         data.map((item) => {
-          if (item.total) {
-            subTotal += parseInt(item.total);
+          // console.log(item);
+          if (item.unit_price) {
+            subTotal += parseFloat(item.unit_price) * parseFloat(item.qty);
+          }
+          if (item.tax_price) {
+            taxTotal += parseFloat(item.tax_price) * parseFloat(item.qty);
           }
           if (item.discount) {
             let isPercentage = /%/gi;
             if (isPercentage.test(item.discount)) {
               totalDiscount +=
-                (parseInt(item.discount.split("%")[0]) / 100) *
-                parseInt(item.unit_price);
+                (parseFloat(item.discount.split("%")[0]) / 100) *
+                ((parseFloat(item.unit_price) + parseFloat(item.tax_price)) *
+                  parseFloat(item.qty));
             } else {
-              totalDiscount += parseInt(item.discount);
+              totalDiscount += parseFloat(item.discount);
             }
           }
-          totalSum += item.total;
+          totalSum =
+            parseFloat(subTotal) +
+            parseFloat(taxTotal) -
+            parseFloat(totalDiscount);
         });
-        store.commit("set_quotation_sub_total", subTotal);
-        store.commit("set_quotation_total_discount", totalDiscount ?? 0);
-        store.commit("set_quotation_total", totalSum);
+
+        store.commit("set_quotation_sub_total", subTotal.toFixed(3));
+        store.commit("set_quotation_tax_total", taxTotal.toFixed(3));
+        store.commit(
+          "set_quotation_total_discount",
+          totalDiscount.toFixed(3) ?? 0
+        );
+        store.commit("set_quotation_total", totalSum.toFixed(3));
         resolve();
       });
     },
