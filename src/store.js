@@ -25,12 +25,14 @@ const state = {
   profile_img: localStorage.getItem("profile_pic") ?? "/img/avatars/placeholder.png",
   employee_id: localStorage.getItem('employee_id') || '',
   total_receivings_cost: 0,
-  searchProductItems:[],
+  searchProductItems: [],
   quotations: {
-    total:0,
-    subTotal:0,
-    discount:0,
+    total: 0,
+    subTotal: 0,
+    taxTotal: 0,
+    discount: 0,
   },
+
   language: localStorage.getItem('language') || 'en',
 }
 
@@ -114,6 +116,9 @@ const mutations = {
   set_quotation_sub_total(state, sub_total) {
     state.quotations.subTotal = sub_total;
   },
+  set_quotation_tax_total(state, tax_total) {
+    state.quotations.taxTotal = tax_total;
+  },
   set_quotation_total_discount(state, discount) {
     state.quotations.discount = discount;
   },
@@ -132,12 +137,12 @@ const actions = {
         localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
         localStorage.setItem('list_branches', JSON.stringify(res.data.branches));
         localStorage.setItem('business_id', res.data.business_id);
-        if(res.data.branches && res.data.branches.length == 1){
+        if (res.data.branches && res.data.branches.length == 1) {
           localStorage.setItem('selected_branches', JSON.stringify([res.data.branches[0].uuid]));
         }
         http.defaults.headers.common['Authorization'] = "Bearer " + token;
         const profile_pic = res.data.employee.profile_pic;
-        if(profile_pic && profile_pic != "" && profile_pic != null){
+        if (profile_pic && profile_pic != "" && profile_pic != null) {
           commit('set_profile_img', res.data.employee.personal_photo);
         }
         commit('set_permissions', res.data.permissions);
@@ -179,16 +184,16 @@ const actions = {
       resolve();
     });
   },
-  deleteAttachment({commit}, uuid){
+  deleteAttachment({ commit }, uuid) {
     return new Promise((resolve, reject) => {
-        http.delete('/attachments/'+uuid).then(res => {
-          resolve(res);
-        }).catch(err => {
-          reject(err);
-        });
+      http.delete('/attachments/' + uuid).then(res => {
+        resolve(res);
+      }).catch(err => {
+        reject(err);
+      });
     })
   },
-  setLanguage({commit}, language){
+  setLanguage({ commit }, language) {
     commit('set_language', language);
     localStorage.setItem("language", language);
   }
@@ -210,6 +215,7 @@ const getters = {
   getSearchProductItems: state => state.searchProductItems,
   getQuotationTotal: state => state.quotations.total,
   getQuotationSubTotal: state => state.quotations.subTotal,
+  getQuotationTaxTotal: state => state.quotations.taxTotal,
   getQuotationDiscount: state => state.quotations.discount,
   getLanguage: state => state.language,
 
