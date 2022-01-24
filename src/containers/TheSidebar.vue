@@ -13,14 +13,14 @@
       />
       <img src="/icon.png" v-if="minimize" />
     </CSidebarBrand>
-
-    <CRenderFunction
-      v-if="renderIt"
-      class="headerFont"
-      flat
-      :contentToRender="sidebarItems"
-    >
-    </CRenderFunction>
+    <transition name="fade">
+      <CRenderFunction
+        v-if="renderIt"
+        class="headerFont"
+        flat
+        :contentToRender="sidebarItems"
+      />
+    </transition>
 
     <CSidebarMinimizer
       class="c-d-md-down-none"
@@ -65,4 +65,11 @@ export default {
 
 <style lang="scss">
 @import "../assets/scss/style";
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 </style>

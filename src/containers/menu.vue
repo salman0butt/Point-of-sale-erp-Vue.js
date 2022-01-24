@@ -24,11 +24,6 @@ export default {
     language() {
       this.sidebarItems.splice(0);
       this.sideBarItems = [];
-      this.sideBarItems_hr = [];
-      this.sideBarItems_contacts = [];
-      this.sideBarItems_accounting = [];
-      this.sideBarItems_products = [];
-      this.sideBarItems_sales = [];
       this.pushingSideBarItems();
       this.sidebarItems.push({
         _name: "CSidebarNav",
