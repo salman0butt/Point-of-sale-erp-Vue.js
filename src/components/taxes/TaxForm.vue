@@ -1,10 +1,9 @@
 <template>
   <CRow>
     <CCol xs="12" lg="12">
-      <CCardHeader> Taxes </CCardHeader>
       <form @submit.prevent="isEditingTax ? updateTax() : createTax()">
         <CRow>
-          <CCol sm="4" md="4" class="pt-2">
+          <CCol sm="4" md="5" class="pt-2">
             <div class="form-group">
               <label for="tax_name">Name</label>
               <input
@@ -20,7 +19,7 @@
               <p v-if="!$v.tax_form.name.required" class="errorMsg">Name is required</p>
             </div>
           </CCol>
-          <CCol sm="4" md="4" class="pt-2">
+          <CCol sm="4" md="5" class="pt-2">
             <div class="form-group">
               <label for="tax_percentage"> Rate %</label>
               <input
@@ -47,7 +46,7 @@
               color="success"
               style="float: left; margin-top: 27px"
               type="submit"
-              >{{ this.isEditingTax ? "Save" : "+" }}</CButton
+              >{{ this.isEditingTax ? "Save" : "+ Add" }}</CButton
             >
           </CCol>
         </CRow>

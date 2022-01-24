@@ -6,6 +6,7 @@
         <CRow>
           <CCol sm="5">
             <h4 id="traffic" class="card-title mb-0">Traffic</h4>
+            <h4 id="traffic" class="card-title mb-0">{{ $t("menu.dashboard") }}</h4>
             <div class="small text-muted">November 2017</div>
           </CCol>
           <CCol sm="7" class="d-none d-md-block">
