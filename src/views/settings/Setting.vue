@@ -34,7 +34,7 @@
   </div>
 </template>
 <script>
-import HrSettingForm from "@/components/settings/HrSettingForm";
+// import HrSettingForm from "@/components/settings/HrSettingForm";
 import AccountingSettingForm from "@/components/settings/AccountingSettingForm";
 import CustomerSettingForm from "@/components/settings/CustomerSettingForm";
 import DashboardSettingForm from "@/components/settings/DashboardSettingForm";
@@ -46,7 +46,7 @@ export default {
   cilUser,
   cisCircle,
   components: {
-    HrSettingForm,
+    // HrSettingForm,
     AccountingSettingForm,
     CustomerSettingForm,
     DashboardSettingForm,
@@ -54,11 +54,12 @@ export default {
   },
   data() {
     return {
-      activeTab: "HrSettingForm",
+      // activeTab: "HrSettingForm",
+      activeTab: "AccountingSettingForm",
       tabs: [
         { key: "", name: "General" },
         { key: "DashboardSettingForm", name: "Dashboard" },
-        { key: "HrSettingForm", name: "HR" },
+        // { key: "HrSettingForm", name: "HR" },
         { key: "AccountingSettingForm", name: "Accounting" },
         { key: "CustomerSettingForm", name: "Customer" },
         { key: "DeliverySettingForm", name: "Delivery" },

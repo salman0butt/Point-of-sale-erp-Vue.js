@@ -30,7 +30,8 @@ const state = {
     total:0,
     subTotal:0,
     discount:0,
-  }
+  },
+  language: localStorage.getItem('language') || 'en',
 }
 
 const mutations = {
@@ -115,6 +116,9 @@ const mutations = {
   },
   set_quotation_total_discount(state, discount) {
     state.quotations.discount = discount;
+  },
+  set_language(state, language) {
+    state.language = language;
   }
 }
 const actions = {
@@ -184,6 +188,10 @@ const actions = {
         });
     })
   },
+  setLanguage({commit}, language){
+    commit('set_language', language);
+    localStorage.setItem("language", language);
+  }
 }
 const getters = {
   isLoggedIn: state => !!state.token,
@@ -202,7 +210,9 @@ const getters = {
   getSearchProductItems: state => state.searchProductItems,
   getQuotationTotal: state => state.quotations.total,
   getQuotationSubTotal: state => state.quotations.subTotal,
-  getQuotationDiscount: state => state.quotations.discount
+  getQuotationDiscount: state => state.quotations.discount,
+  getLanguage: state => state.language,
+
 }
 
 export default new Vuex.Store({

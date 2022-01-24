@@ -35,6 +35,14 @@ export default {
     minimize() {
       return this.$store.state.sidebarMinimize;
     },
+    lang() {
+      return this.$store.getters.getLanguage;
+    },
+  },
+  watch: {
+    lang(value) {
+      this.$forceUpdate();
+    },
   },
 };
 </script>

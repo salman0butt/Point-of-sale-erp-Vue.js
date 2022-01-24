@@ -89,6 +89,11 @@
             </form>
           </CCol>
         </CRow>
+      </CCardBody>
+    </CCard>
+    <CCard>
+      <CCardHeader> Taxes </CCardHeader>
+      <CCardBody>
         <TaxForm />
       </CCardBody>
     </CCard>

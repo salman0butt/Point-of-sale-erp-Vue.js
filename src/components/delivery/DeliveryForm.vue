@@ -358,6 +358,7 @@ export default {
       }
     },
     resetForm() {
+      this.$v.$reset();
       for (let key in this.form) {
         this.form[key] = "";
       }
