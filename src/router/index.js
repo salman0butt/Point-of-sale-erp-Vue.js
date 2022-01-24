@@ -40,6 +40,7 @@ import userRoutes from '@/router/users/userRoutes';
 import modifierRoutes from '@/router/modifiers/modifierRoutes';
 import salesRoutes from '@/router/sales/salesRoutes';
 import invoiceRoutes from '@/router/sales/invoiceRoutes';
+import reportRoutes from '@/router/reports/reportRoutes';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -228,6 +229,7 @@ const router = new Router({
         offerRoutes,
         userRoutes,
         modifierRoutes,
+        reportRoutes,
 
         // {
         //   path: 'theme',
