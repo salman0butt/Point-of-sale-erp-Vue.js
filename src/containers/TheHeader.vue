@@ -25,6 +25,7 @@
         <CHeaderNavLink class="headerFont"> </CHeaderNavLink>
       </CHeaderNavItem>
     </CHeaderNav>
+    <CHeaderNav><LanguageSwitcher /> </CHeaderNav>
     <CHeaderNav> <TheSelectBranchForm /></CHeaderNav>
     <CHeaderNav>
       <CHeaderNavItem class="px-3 c-d-legacy-none headerFont">
@@ -53,6 +54,7 @@ import TheHeaderDropdownAccnt from "./TheHeaderDropdownAccnt";
 // import TheHeaderDropdownTasks from "./TheHeaderDropdownTasks";
 // import TheHeaderDropdownMssgs from "./TheHeaderDropdownMssgs";
 import TheSelectBranchForm from "@/containers/TheSelectBranchForm";
+import LanguageSwitcher from "@/containers/LanguageSwitcher";
 
 export default {
   name: "TheHeader",
@@ -60,6 +62,7 @@ export default {
     TheHeaderDropdownAccnt,
     // TheHeaderDropdownNotif,
     TheSelectBranchForm,
+    LanguageSwitcher,
     // TheHeaderDropdownTasks,
     // TheHeaderDropdownMssgs,
   },

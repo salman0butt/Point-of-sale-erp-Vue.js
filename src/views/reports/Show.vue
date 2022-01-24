@@ -34,35 +34,25 @@
   </div>
 </template>
 <script>
-// import HrSettingForm from "@/components/settings/HrSettingForm";
-import AccountingSettingForm from "@/components/settings/AccountingSettingForm";
-import CustomerSettingForm from "@/components/settings/CustomerSettingForm";
-import DashboardSettingForm from "@/components/settings/DashboardSettingForm";
-import DeliverySettingForm from "@/components/settings/DeliverySettingForm";
+import Report1 from "@/components/reports/Report1";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
-  name: "Setting",
+  name: "ShowReport",
   cilUser,
   cisCircle,
   components: {
-    // HrSettingForm,
-    AccountingSettingForm,
-    CustomerSettingForm,
-    DashboardSettingForm,
-    DeliverySettingForm,
+    Report1,
   },
   data() {
     return {
-      // activeTab: "HrSettingForm",
-      activeTab: "AccountingSettingForm",
+      activeTab: "Report1",
       tabs: [
-        { key: "", name: "General" },
-        { key: "DashboardSettingForm", name: "Dashboard" },
-        // { key: "HrSettingForm", name: "HR" },
-        { key: "AccountingSettingForm", name: "Accounting" },
-        { key: "CustomerSettingForm", name: "Customer" },
-        { key: "DeliverySettingForm", name: "Delivery" },
+        { key: "Report1", name: "Report1" },
+        { key: "Report2", name: "Report2" },
+        { key: "Report3", name: "Report3" },
+        { key: "Report4", name: "Report4" },
+        { key: "Report5", name: "Report5" },
       ],
     };
   },

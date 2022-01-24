@@ -86,10 +86,10 @@
             <label for="area">Area</label>
             <vue-tags-input
               id="area"
-              v-model="form.tag"
+              v-model="area"
               placeholder="Add Area"
-              :tags="form.area"
-              @tags-changed="(newTags) => (form.area = newTags)"
+              :tags="areas"
+              @tags-changed="(newTags) => (areas = newTags)"
               :class="{ error: $v.form.area.$error }"
               @input="$v.form.area.$touch()"
             />
@@ -164,7 +164,8 @@ export default {
   components: { VueEditor, VueTagsInput },
   data: () => ({
     updatedObj: "",
-    tax: "",
+    area: "",
+    areas: [],
     form: {
       id: "",
       tax_id: "",
@@ -172,7 +173,7 @@ export default {
       rate_on_us: "",
       rate_on_customer: "",
       delivery_time_in_day: "",
-      area: [],
+      area: "",
       description: "",
       is_default: "",
       status: "",
@@ -199,6 +200,15 @@ export default {
     },
     isEditing: false,
   }),
+  watch: {
+    areas(newVal) {
+      this.form.area = newVal
+        .map(function (item) {
+          return item.text;
+        })
+        .join(",");
+    },
+  },
   validations() {
     return {
       form: {
@@ -233,7 +243,15 @@ export default {
             this.form.rate_on_us = data.rate_on_us;
             this.form.rate_on_customer = data.rate_on_customer;
             this.form.delivery_time_in_day = data.delivery_time_in_day;
-            this.form.area = data.area;
+            if (data.area) {
+              let splt_areas = data.area.split(",");
+              splt_areas.forEach((element) => {
+                this.areas.push({
+                  text: element,
+                  tiClasses: ["ti-valid"],
+                });
+              });
+            }
             this.form.description = data.description;
             this.form.is_default = data.is_default;
             this.form.status = data.status;
@@ -288,7 +306,7 @@ export default {
               this.$v.$reset();
               this.$store.commit("close_loader");
               // this.updatedObj = { type: "store", payload: res.data };
-              this.$emit("update-delivery", { type: "store", payload: res.data });
+              this.$emit("update-delivery");
             }
           })
           .catch((error) => {
@@ -323,7 +341,7 @@ export default {
               this.$v.$reset();
               this.isEditing = false;
               this.$store.commit("close_loader");
-              this.$emit("update-delivery", { type: "store", payload: res.data });
+              this.$emit("update-delivery");
               // this.updatedObj = { type: "update", payload: res.data };
             }
           })
@@ -340,10 +358,11 @@ export default {
       }
     },
     resetForm() {
+      this.$v.$reset();
       for (let key in this.form) {
         this.form[key] = "";
       }
-      this.form.area = [];
+      this.areas = [];
     },
     getEditData(uuid) {
       this.isEditing = true;

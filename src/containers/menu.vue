@@ -16,6 +16,25 @@ export default {
     sidebarItems() {
       return [];
     },
+    language() {
+      return this.$store.getters.getLanguage;
+    },
+  },
+  watch: {
+    language() {
+      this.sidebarItems.splice(0);
+      this.sideBarItems = [];
+      this.sideBarItems_hr = [];
+      this.sideBarItems_contacts = [];
+      this.sideBarItems_accounting = [];
+      this.sideBarItems_products = [];
+      this.sideBarItems_sales = [];
+      this.pushingSideBarItems();
+      this.sidebarItems.push({
+        _name: "CSidebarNav",
+        _children: this.sideBarItems,
+      });
+    },
   },
   created() {
     this.pushingSideBarItems();
@@ -42,7 +61,7 @@ export default {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",
-              name: "Quotations",
+              name: this.$t("menu.sale.quotations"),
               to: "/sales/quotations",
               icon: "cil-lan",
             },
@@ -52,7 +71,7 @@ export default {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",
-              name: "Invoices",
+              name: this.$t("menu.sale.invoices"),
               to: "/sales/invoices",
               icon: "cil-lan",
             },
@@ -61,7 +80,7 @@ export default {
 
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
-          name: "Sales",
+          name: this.$t("menu.sale.name"),
           icon: "cil-lan",
           items: this.sideBarItems_sales,
         });
@@ -81,7 +100,7 @@ export default {
         if (this.permissions.includes("read customers")) {
           this.sideBarItems_contacts.push({
             _name: "CSidebarNavItem",
-            name: "Customers",
+            name: this.$t("menu.contacts.customers"),
             to: { name: "Index Customers" },
             icon: "cil-lan",
           });
@@ -90,7 +109,7 @@ export default {
         if (this.permissions.includes("read suppliers")) {
           this.sideBarItems_contacts.push({
             _name: "CSidebarNavItem",
-            name: "Suppliers",
+            name: this.$t("menu.contacts.suppliers"),
             to: { name: "Index Supplier" },
             icon: "cil-lan",
           });
@@ -98,7 +117,7 @@ export default {
 
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
-          name: "Contacts",
+          name: this.$t("menu.contacts.name"),
           icon: "cil-lan",
           _children: this.sideBarItems_contacts,
         });
@@ -111,7 +130,7 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: "Brand",
+              name: this.$t("menu.catalogs.brands"),
               to: "/catalogs/brands/index",
               icon: "cil-lan",
             },
@@ -122,7 +141,7 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: "Category",
+              name: this.$t("menu.catalogs.categories"),
               to: "/catalogs/category/index",
               icon: "cil-lan",
             },
@@ -132,7 +151,7 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: "Products",
+              name: this.$t("menu.catalogs.products"),
               to: "/products/index",
               icon: "cil-lan",
             },
@@ -142,7 +161,7 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: "Receivings",
+              name: this.$t("menu.catalogs.receivings"),
               to: "/receivings/index",
               icon: "cil-lan",
             },
@@ -152,7 +171,7 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: "Damages",
+              name: this.$t("menu.catalogs.damages"),
               to: "/catalogs/damages/index",
               icon: "cil-lan",
             },
@@ -162,7 +181,7 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: "Offers",
+              name: this.$t("menu.catalogs.offers"),
               to: "/catalogs/offers/index",
               icon: "cil-lan",
             },
@@ -180,7 +199,7 @@ export default {
         // }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
-          name: "Catalogs",
+          name: this.$t("menu.catalogs.name"),
           icon: "cil-lan",
           items: this.sideBarItems_products,
         });
@@ -193,7 +212,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Chart of Accounts",
+              name: this.$t("menu.accounting.name"),
               to: "/accounting/accounts/index",
               icon: "cil-lan",
             },
@@ -203,7 +222,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Payment Methods",
+              name: this.$t("menu.accounting.paymentMethods"),
               to: "/accounting/paymentMethods/index",
               icon: "cil-lan",
             },
@@ -214,7 +233,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Category",
+              name: this.$t("menu.accounting.category"),
               to: "/accounting/category/index",
               icon: "cil-lan",
             },
@@ -224,7 +243,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Income",
+              name: this.$t("menu.accounting.income"),
               to: "/accounting/income/index",
               icon: "cil-lan",
             },
@@ -234,7 +253,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Expense",
+              name: this.$t("menu.accounting.expense"),
               to: "/accounting/expense/index",
               icon: "cil-lan",
             },
@@ -244,7 +263,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Transfer",
+              name: this.$t("menu.accounting.transfer"),
               to: "/accounting/transfer/index",
               icon: "cil-lan",
             },
@@ -272,7 +291,7 @@ export default {
         // }
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
-          name: "Accounting",
+          name: this.$t("menu.accounting.name"),
           icon: "cil-lan",
           items: this.sideBarItems_accounting,
         });
@@ -283,7 +302,7 @@ export default {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
           _attrs: { class: "hide-me" },
-          name: "Branches",
+          name: this.$t("menu.branches"),
           to: "/branches",
           icon: "cil-lan",
         });
@@ -293,7 +312,7 @@ export default {
       if (this.permissions.includes("read Settings")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
-          name: "Users",
+          name: this.$t("menu.users"),
           to: "/users/index",
           icon: "cil-settings",
         });
@@ -302,20 +321,20 @@ export default {
       if (this.permissions.includes("read merchant")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
-          name: "Merchant",
+          name: this.$t("menu.merchant"),
           to: "/merchant",
           icon: "cil-institution",
         });
       }
 
-      if (this.permissions.includes("read profile")) {
-        this.sideBarItems.push({
-          _name: "CSidebarNavItem",
-          name: "Profile",
-          to: "/profile/" + localStorage.getItem("employee_id") ?? "",
-          icon: "cil-lan",
-        });
-      }
+      // if (this.permissions.includes("read profile")) {
+      //   this.sideBarItems.push({
+      //     _name: "CSidebarNavItem",
+      //     name: "Profile",
+      //     to: "/profile/" + localStorage.getItem("employee_id") ?? "",
+      //     icon: "cil-lan",
+      //   });
+      // }
       if (this.permissions.includes("read hr")) {
         // different modules of hr
         if (this.permissions.includes("read department")) {
@@ -535,7 +554,15 @@ export default {
       if (this.permissions.includes("read Settings")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
-          name: "Settings",
+          name: this.$t("menu.reports"),
+          to: "/reports/index",
+          icon: "cil-lan",
+        });
+      }
+      if (this.permissions.includes("read Settings")) {
+        this.sideBarItems.push({
+          _name: "CSidebarNavItem",
+          name: this.$t("menu.settings"),
           to: "/settings",
           icon: "cil-settings",
         });
