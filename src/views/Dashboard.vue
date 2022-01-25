@@ -1,328 +1,122 @@
 <template>
   <div>
-    <WidgetsDropdown />
-    <CCard>
-      <CCardBody>
-        <CRow>
-          <CCol sm="5">
-            <h4 id="traffic" class="card-title mb-0">Traffic</h4>
-            <h4 id="traffic" class="card-title mb-0">{{ $t("menu.dashboard") }}</h4>
-            <div class="small text-muted">November 2017</div>
-          </CCol>
-          <CCol sm="7" class="d-none d-md-block">
-            <CButton color="primary" class="float-right">
-              <CIcon name="cil-cloud-download" />
-            </CButton>
-            <CButtonGroup class="float-right mr-3">
-              <CButton
-                color="outline-secondary"
-                v-for="(value, key) in ['Day', 'Month', 'Year']"
-                :key="key"
-                class="mx-0"
-                :pressed="value === selected ? true : false"
-                @click="selected = value"
-              >
-                {{ value }}
-              </CButton>
-            </CButtonGroup>
-          </CCol>
-        </CRow>
-        <MainChartExample style="height: 300px; margin-top: 40px" />
-      </CCardBody>
-      <CCardFooter>
-        <CRow class="text-center">
-          <CCol md sm="12" class="mb-sm-2 mb-0">
-            <div class="text-muted">Visits</div>
-            <strong>29.703 Users (40%)</strong>
-            <CProgress
-              class="progress-xs mt-2"
-              :precision="1"
-              color="success"
-              :value="40"
-            />
-          </CCol>
-          <CCol md sm="12" class="mb-sm-2 mb-0 d-md-down-none">
-            <div class="text-muted">Unique</div>
-            <strong>24.093 Users (20%)</strong>
-            <CProgress class="progress-xs mt-2" :precision="1" color="info" :value="20" />
-          </CCol>
-          <CCol md sm="12" class="mb-sm-2 mb-0">
-            <div class="text-muted">Pageviews</div>
-            <strong>78.706 Views (60%)</strong>
-            <CProgress
-              class="progress-xs mt-2"
-              :precision="1"
-              color="warning"
-              :value="60"
-            />
-          </CCol>
-          <CCol md sm="12" class="mb-sm-2 mb-0">
-            <div class="text-muted">New Users</div>
-            <strong>22.123 Users (80%)</strong>
-            <CProgress
-              class="progress-xs mt-2"
-              :precision="1"
-              color="danger"
-              :value="80"
-            />
-          </CCol>
-          <CCol md sm="12" class="mb-sm-2 mb-0 d-md-down-none">
-            <div class="text-muted">Bounce Rate</div>
-            <strong>Average Rate (40.15%)</strong>
-            <CProgress class="progress-xs mt-2" :precision="1" :value="40" />
-          </CCol>
-        </CRow>
-      </CCardFooter>
-    </CCard>
-    <WidgetsBrand />
     <CRow>
-      <CCol md="12">
+      <CCol sm="12" md="12">
+        <CCardGroup class="mb-4 remove-progress">
+          <CWidgetProgressIcon header="87.500" text="Visitors" color="gradient-info">
+            <CIcon name="cil-people" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon header="385" text="New Clients" color="gradient-success">
+            <CIcon name="cil-userFollow" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon
+            header="1238"
+            text="Products sold"
+            color="gradient-warning"
+          >
+            <CIcon name="cil-basket" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon header="28%" text="Returning Visitors">
+            <CIcon name="cil-chartPie" height="36" />
+          </CWidgetProgressIcon>
+        </CCardGroup>
+      </CCol>
+    </CRow>
+    <CRow>
+      <CCol sm="2" md="2">
+        <CButton color="primary" class="btn-block">
+          <CIcon class="headerFont" name="cil-bell" /> Primary</CButton
+        >
+      </CCol>
+      <CCol sm="2" md="2">
+        <CButton color="secondary" class="btn-block">
+          <CIcon class="headerFont" name="cil-bell" /> Success</CButton
+        >
+      </CCol>
+      <CCol sm="2" md="2">
+        <CButton color="success" class="btn-block">
+          <CIcon class="headerFont" name="cil-bell" /> Success</CButton
+        >
+      </CCol>
+      <CCol sm="2" md="2">
+        <CButton color="danger" class="btn-block">
+          <CIcon class="headerFont" name="cil-bell" /> Danger</CButton
+        >
+      </CCol>
+      <CCol sm="2" md="2">
+        <CButton color="warning" class="btn-block">
+          <CIcon class="headerFont" name="cil-bell" /> Warning</CButton
+        >
+      </CCol>
+      <CCol sm="2" md="2">
+        <CButton color="info" class="btn-block">
+          <CIcon class="headerFont" name="cil-bell" /> Warning</CButton
+        >
+      </CCol>
+    </CRow>
+    <br />
+    <CCard>
+      <CCardHeader>
+        BarChart
+        <CCol sm="2" md="2" class="pt-2" style="float: right">
+          <CSelect placeholder="By Month" :options="options.chart" :value.sync="chart1" />
+        </CCol>
+      </CCardHeader>
+      <CCardBody>
+        <BarChart />
+      </CCardBody>
+    </CCard>
+    <CRow>
+      <CCol sm="6" md="6">
         <CCard>
-          <CCardHeader> Traffic &amp; Sales </CCardHeader>
+          <CCardHeader> Best Payment Method </CCardHeader>
           <CCardBody>
-            <CRow>
-              <CCol sm="12" lg="6">
-                <CRow>
-                  <CCol sm="6">
-                    <CCallout color="info">
-                      <small class="text-muted">New Clients</small><br />
-                      <strong class="h4">9,123</strong>
-                    </CCallout>
-                  </CCol>
-                  <CCol sm="6">
-                    <CCallout color="danger">
-                      <small class="text-muted">Recurring Clients</small><br />
-                      <strong class="h4">22,643</strong>
-                    </CCallout>
-                  </CCol>
-                </CRow>
-                <hr class="mt-0" />
-                <div class="progress-group mb-4">
-                  <div class="progress-group-prepend">
-                    <span class="progress-group-text"> Monday </span>
-                  </div>
-                  <div class="progress-group-bars">
-                    <CProgress class="progress-xs" color="info" :value="34" />
-                    <CProgress class="progress-xs" color="danger" :value="78" />
-                  </div>
-                </div>
-                <div class="progress-group mb-4">
-                  <div class="progress-group-prepend">
-                    <span class="progress-group-text"> Tuesday </span>
-                  </div>
-                  <div class="progress-group-bars">
-                    <CProgress class="progress-xs" :value="56" color="info" />
-                    <CProgress class="progress-xs" :value="94" color="danger" />
-                  </div>
-                </div>
-                <div class="progress-group mb-4">
-                  <div class="progress-group-prepend">
-                    <span class="progress-group-text"> Wednesday </span>
-                  </div>
-                  <div class="progress-group-bars">
-                    <CProgress class="progress-xs" :value="12" color="info" />
-                    <CProgress class="progress-xs" :value="67" color="danger" />
-                  </div>
-                </div>
-                <div class="progress-group mb-4">
-                  <div class="progress-group-prepend">
-                    <span class="progress-group-text"> Thursday </span>
-                  </div>
-                  <div class="progress-group-bars">
-                    <CProgress class="progress-xs" :value="43" color="info" />
-                    <CProgress class="progress-xs" :value="91" color="danger" />
-                  </div>
-                </div>
-                <div class="progress-group mb-4">
-                  <div class="progress-group-prepend">
-                    <span class="progress-group-text"> Friday </span>
-                  </div>
-                  <div class="progress-group-bars">
-                    <CProgress class="progress-xs" :value="22" color="info" />
-                    <CProgress class="progress-xs" :value="73" color="danger" />
-                  </div>
-                </div>
-                <div class="progress-group mb-4">
-                  <div class="progress-group-prepend">
-                    <span class="progress-group-text"> Saturday </span>
-                  </div>
-                  <div class="progress-group-bars">
-                    <CProgress class="progress-xs" :value="53" color="info" />
-                    <CProgress class="progress-xs" :value="82" color="danger" />
-                  </div>
-                </div>
-                <div class="progress-group mb-4">
-                  <div class="progress-group-prepend">
-                    <span class="progress-group-text"> Sunday </span>
-                  </div>
-                  <div class="progress-group-bars">
-                    <CProgress class="progress-xs" :value="9" color="info" />
-                    <CProgress class="progress-xs" :value="69" color="danger" />
-                  </div>
-                </div>
-                <div class="legend text-center">
-                  <small>
-                    <sup><CBadge shape="pill" color="info">&nbsp;</CBadge></sup>
-                    New clients &nbsp;&nbsp;
-                    <sup><CBadge shape="pill" color="danger">&nbsp;</CBadge></sup>
-                    Recurring clients
-                  </small>
-                </div>
-              </CCol>
-              <CCol sm="12" lg="6">
-                <CRow>
-                  <CCol sm="6">
-                    <CCallout color="warning">
-                      <small class="text-muted">Pageviews</small><br />
-                      <strong class="h4">78,623</strong>
-                    </CCallout>
-                  </CCol>
-                  <CCol sm="6">
-                    <CCallout color="success">
-                      <small class="text-muted">Organic</small><br />
-                      <strong class="h4">49,123</strong>
-                    </CCallout>
-                  </CCol>
-                </CRow>
-                <hr class="mt-0" />
-                <ul class="horizontal-bars type-2">
-                  <div class="progress-group">
-                    <div class="progress-group-header">
-                      <CIcon name="cil-user" class="progress-group-icon" />
-                      <span class="title">Male</span>
-                      <span class="ml-auto font-weight-bold">43%</span>
-                    </div>
-                    <div class="progress-group-bars">
-                      <CProgress class="progress-xs" :value="43" color="warning" />
-                    </div>
-                  </div>
-                  <div class="progress-group mb-5">
-                    <div class="progress-group-header">
-                      <CIcon name="cil-user-female" class="progress-group-icon" />
-                      <span class="title">Female</span>
-                      <span class="ml-auto font-weight-bold">37%</span>
-                    </div>
-                    <div class="progress-group-bars">
-                      <CProgress class="progress-xs" :value="37" color="warning" />
-                    </div>
-                  </div>
-                  <div class="progress-group">
-                    <div class="progress-group-header">
-                      <CIcon name="cil-globe-alt" class="progress-group-icon" />
-                      <span class="title">Organic Search</span>
-                      <span class="ml-auto font-weight-bold">
-                        191,235<span class="text-muted small">(56%)</span>
-                      </span>
-                    </div>
-                    <div class="progress-group-bars">
-                      <CProgress class="progress-xs" :value="56" color="success" />
-                    </div>
-                  </div>
-                  <div class="progress-group">
-                    <div class="progress-group-header">
-                      <CIcon
-                        name="cib-facebook"
-                        height="17"
-                        class="progress-group-icon"
-                      />
-                      <span class="title">Facebook</span>
-                      <span class="ml-auto font-weight-bold">
-                        51,223 <span class="text-muted small">(15%)</span>
-                      </span>
-                    </div>
-                    <div class="progress-group-bars">
-                      <CProgress class="progress-xs" :value="15" color="success" />
-                    </div>
-                  </div>
-                  <div class="progress-group">
-                    <div class="progress-group-header">
-                      <CIcon name="cib-twitter" height="17" class="progress-group-icon" />
-                      <span class="title">Twitter</span>
-                      <span class="ml-auto font-weight-bold">
-                        37,564 <span class="text-muted small">(11%)</span>
-                      </span>
-                    </div>
-                    <div class="progress-group-bars">
-                      <CProgress class="progress-xs" :value="11" color="success" />
-                    </div>
-                  </div>
-                  <div class="progress-group">
-                    <div class="progress-group-header">
-                      <CIcon
-                        name="cib-linkedin"
-                        height="17"
-                        class="progress-group-icon"
-                      />
-                      <span class="title">LinkedIn</span>
-                      <span class="ml-auto font-weight-bold">
-                        27,319 <span class="text-muted small">&nbsp;(8%)</span>
-                      </span>
-                    </div>
-                    <div class="progress-group-bars">
-                      <CProgress class="progress-xs" :value="8" color="success" />
-                    </div>
-                  </div>
-                  <div class="divider text-center">
-                    <CButton color="link" size="sm" class="text-muted">
-                      <CIcon name="cil-options" />
-                    </CButton>
-                  </div>
-                </ul>
-              </CCol>
-            </CRow>
-            <br />
-            <CDataTable
-              class="mb-0 table-outline"
-              hover
-              :items="tableItems"
-              :fields="tableFields"
-              head-color="light"
-              no-sorting
-            >
-              <td slot="avatar" class="text-center" slot-scope="{ item }">
-                <div class="c-avatar">
-                  <img :src="item.avatar.url" class="c-avatar-img" alt="" />
-                  <span
-                    class="c-avatar-status"
-                    :class="`bg-${item.avatar.status || 'secondary'}`"
-                  ></span>
-                </div>
-              </td>
-              <td slot="user" slot-scope="{ item }">
-                <div>{{ item.user.name }}</div>
-                <div class="small text-muted">
-                  <span>
-                    <template v-if="item.user.new">New</template>
-                    <template v-else>Recurring</template>
-                  </span>
-                  | Registered: {{ item.user.registered }}
-                </div>
-              </td>
-              <td slot="country" slot-scope="{ item }" class="text-center">
-                <CIcon :name="item.country.flag" height="25" />
-              </td>
-              <td slot="usage" slot-scope="{ item }">
-                <div class="clearfix">
-                  <div class="float-left">
-                    <strong>{{ item.usage.value }}%</strong>
-                  </div>
-                  <div class="float-right">
-                    <small class="text-muted">{{ item.usage.period }}</small>
-                  </div>
-                </div>
-                <CProgress
-                  class="progress-xs"
-                  v-model="item.usage.value"
-                  :color="color(item.usage.value)"
-                />
-              </td>
-              <td slot="payment" slot-scope="{ item }" class="text-center">
-                <CIcon :name="item.payment.icon" height="25" />
-              </td>
-              <td slot="activity" slot-scope="{ item }">
-                <div class="small text-muted">Last login</div>
-                <strong>{{ item.activity }}</strong>
-              </td>
+            <PieChart />
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol sm="6" md="6">
+        <CCard>
+          <CCardHeader> Recent Transections</CCardHeader>
+          <CCardBody>
+            <CDataTable :items="dataItems" :fields="transFields" hover />
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
+    <CRow>
+      <CCol sm="6" md="4">
+        <CCard>
+          <CCardHeader> Top 5 Products </CCardHeader>
+          <CCardBody>
+            <CDataTable :items="productData" :fields="productFields" hover />
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol sm="6" md="4">
+        <CCard>
+          <CCardHeader> Product Alert </CCardHeader>
+          <CCardBody>
+            <CDataTable :items="productAlertData" :fields="productAlertFields" hover>
+              <template slot="alert" slot-scope="{ item }">
+                <td>
+                  <CBadge color="danger" shape="rounded-pill">{{ item.alert }}</CBadge>
+                </td>
+              </template>
+            </CDataTable>
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol sm="6" md="4">
+        <CCard>
+          <CCardHeader> Last 5 Deliverd Order </CCardHeader>
+          <CCardBody>
+            <CDataTable :items="orderData" :fields="orderFields" hover>
+              <!-- <template slot="alert" slot-scope="{ item }">
+                <td>
+                  <CBadge color="danger" shape="rounded-pill">{{ item.alert }}</CBadge>
+                </td>
+              </template> -->
             </CDataTable>
           </CCardBody>
         </CCard>
@@ -332,94 +126,178 @@
 </template>
 
 <script>
-import MainChartExample from "./charts/MainChartExample";
-import WidgetsDropdown from "./widgets/WidgetsDropdown";
-import WidgetsBrand from "./widgets/WidgetsBrand";
+import BarChart from "@/components/dashboard/BarChart";
+import PieChart from "@/components/dashboard/PieChart";
 
+const transFields = [
+  { key: "name", label: "Name", _style: "min-width:40%" },
+  { key: "amount", label: "Amount", _style: "min-width:15%;" },
+  { key: "date", label: "Date", _style: "min-width:15%;" },
+];
+const productFields = [
+  { key: "name", label: "Name", _style: "min-width:40%" },
+  { key: "qty", label: "Quantity", _style: "min-width:15%;" },
+  { key: "serial_number", label: "Serial Number", _style: "min-width:15%;" },
+];
+
+const productAlertFields = [
+  { key: "name", label: "Name", _style: "min-width:40%" },
+  { key: "alert", label: "Alert", _style: "min-width:15%;" },
+  { key: "Date", label: "Date", _style: "min-width:15%;" },
+];
+
+const orderFields = [
+  { key: "customer_name", label: "Customer Name", _style: "min-width:40%" },
+  { key: "product", label: "Product", _style: "min-width:15%;" },
+  { key: "qty", label: "Quantity", _style: "min-width:15%;" },
+  { key: "Total", label: "Total", _style: "min-width:15%;" },
+];
 export default {
   name: "Dashboard",
-  components: {
-    MainChartExample,
-    WidgetsDropdown,
-    WidgetsBrand,
-  },
+  components: { BarChart, PieChart },
   data() {
     return {
-      selected: "Month",
-      tableItems: [
+      transFieldsitems: [
         {
-          avatar: { url: "img/avatars/1.jpg", status: "success" },
-          user: { name: "Yiorgos Avraamu", new: true, registered: "Jan 1, 2015" },
-          country: { name: "USA", flag: "cif-us" },
-          usage: { value: 50, period: "Jun 11, 2015 - Jul 10, 2015" },
-          payment: { name: "Mastercard", icon: "cib-cc-mastercard" },
-          activity: "10 sec ago",
+          name: "Jane Doe",
+          amount: "15,000",
+          date: "11/11/2019",
         },
         {
-          avatar: { url: "img/avatars/2.jpg", status: "danger" },
-          user: { name: "Avram Tarasios", new: false, registered: "Jan 1, 2015" },
-          country: { name: "Brazil", flag: "cif-br" },
-          usage: { value: 22, period: "Jun 11, 2015 - Jul 10, 2015" },
-          payment: { name: "Visa", icon: "cib-cc-visa" },
-          activity: "5 minutes ago",
+          name: "Joe Doe",
+          amount: "18,000",
+          date: "11/11/2019",
         },
         {
-          avatar: { url: "img/avatars/3.jpg", status: "warning" },
-          user: { name: "Quintin Ed", new: true, registered: "Jan 1, 2015" },
-          country: { name: "India", flag: "cif-in" },
-          usage: { value: 74, period: "Jun 11, 2015 - Jul 10, 2015" },
-          payment: { name: "Stripe", icon: "cib-stripe" },
-          activity: "1 hour ago",
+          name: "John Doe",
+          amount: "12,000",
+          date: "11/11/2019",
         },
         {
-          avatar: { url: "img/avatars/4.jpg", status: "" },
-          user: { name: "Enéas Kwadwo", new: true, registered: "Jan 1, 2015" },
-          country: { name: "France", flag: "cif-fr" },
-          usage: { value: 98, period: "Jun 11, 2015 - Jul 10, 2015" },
-          payment: { name: "PayPal", icon: "cib-paypal" },
-          activity: "Last month",
+          name: "Jane Doe",
+          amount: "15,000",
+          date: "11/11/2019",
         },
         {
-          avatar: { url: "img/avatars/5.jpg", status: "success" },
-          user: { name: "Agapetus Tadeáš", new: true, registered: "Jan 1, 2015" },
-          country: { name: "Spain", flag: "cif-es" },
-          usage: { value: 22, period: "Jun 11, 2015 - Jul 10, 2015" },
-          payment: { name: "Google Wallet", icon: "cib-google-pay" },
-          activity: "Last week",
-        },
-        {
-          avatar: { url: "img/avatars/6.jpg", status: "danger" },
-          user: { name: "Friderik Dávid", new: true, registered: "Jan 1, 2015" },
-          country: { name: "Poland", flag: "cif-pl" },
-          usage: { value: 43, period: "Jun 11, 2015 - Jul 10, 2015" },
-          payment: { name: "Amex", icon: "cib-cc-amex" },
-          activity: "Last week",
+          name: "Joe Doe",
+          amount: "18,000",
+          date: "11/11/2019",
         },
       ],
-      tableFields: [
-        { key: "avatar", label: "", _classes: "text-center" },
-        { key: "user" },
-        { key: "country", _classes: "text-center" },
-        { key: "usage" },
-        { key: "payment", label: "Payment method", _classes: "text-center" },
-        { key: "activity" },
+      productData: [
+        {
+          name: "Product 1",
+          qty: "10",
+          serial_number: "12345",
+        },
+        {
+          name: "Product 2",
+          qty: "20",
+          serial_number: "12345",
+        },
+        {
+          name: "Product 3",
+          qty: "30",
+          serial_number: "12345",
+        },
+        {
+          name: "Product 4",
+          qty: "40",
+          serial_number: "12345",
+        },
+        {
+          name: "Product 5",
+          qty: "50",
+          serial_number: "12345",
+        },
       ],
+      productAlertData: [
+        {
+          name: "Product 1",
+          alert: "Low",
+          Date: "11/11/2019",
+        },
+        {
+          name: "Product 2",
+          alert: "Low",
+          Date: "11/11/2019",
+        },
+        {
+          name: "Product 3",
+          alert: "Low",
+          Date: "11/11/2019",
+        },
+        {
+          name: "Product 4",
+          alert: "Low",
+          Date: "11/11/2019",
+        },
+        {
+          name: "Product 5",
+          alert: "Low",
+          Date: "11/11/2019",
+        },
+      ],
+      orderData: [
+        {
+          customer_name: "Customer 1",
+          product: "Product 1",
+          qty: "10",
+          Total: "10,000",
+        },
+        {
+          customer_name: "Customer 2",
+          product: "Product 2",
+          qty: "20",
+          Total: "20,000",
+        },
+        {
+          customer_name: "Customer 3",
+          product: "Product 3",
+          qty: "30",
+          Total: "30,000",
+        },
+        {
+          customer_name: "Customer 4",
+          product: "Product 4",
+          qty: "40",
+          Total: "40,000",
+        },
+        {
+          customer_name: "Customer 5",
+          product: "Product 5",
+          qty: "50",
+          Total: "50,000",
+        },
+      ],
+      productAlertFields,
+      productFields,
+      transFields,
+      orderFields,
+      chart1: "",
+      options: {
+        chart: [
+          // { value: "", label: "Choose Filter" },
+          { value: "month", label: "By Month", selected: "" },
+          { value: "week", label: "By Week" },
+          { value: "year", label: "By Year" },
+        ],
+      },
     };
   },
-  methods: {
-    color(value) {
-      let $color;
-      if (value <= 25) {
-        $color = "info";
-      } else if (value > 25 && value <= 50) {
-        $color = "success";
-      } else if (value > 50 && value <= 75) {
-        $color = "warning";
-      } else if (value > 75 && value <= 100) {
-        $color = "danger";
-      }
-      return $color;
+  computed: {
+    dataItems() {
+      return this.transFieldsitems;
     },
   },
+  methods: {},
 };
 </script>
+<style>
+.remove-progress .progress-xs.my-3.mb-0.progress {
+  display: none !important;
+}
+canvas#__safe_id__188 {
+  max-height: 400px !important;
+}
+</style>
