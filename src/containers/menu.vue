@@ -157,16 +157,7 @@ export default {
             },
           ]);
         }
-        if (this.permissions.includes("read accounts")) {
-          this.sideBarItems_products.push([
-            {
-              _name: "CSidebarNavItem",
-              name: this.$t("menu.catalogs.receivings"),
-              to: "/receivings/index",
-              icon: "cil-lan",
-            },
-          ]);
-        }
+
         if (this.permissions.includes("read accounts")) {
           this.sideBarItems_products.push([
             {
@@ -212,8 +203,18 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.accounting.name"),
+              name: this.$t("menu.accounting.chartOfAccount"),
               to: "/accounting/accounts/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.permissions.includes("read accounts")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: this.$t("menu.catalogs.receivings"),
+              to: "/receivings/index",
               icon: "cil-lan",
             },
           ]);

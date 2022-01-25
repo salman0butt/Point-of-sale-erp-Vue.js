@@ -55,17 +55,23 @@
         <CCard>
           <CCardHeader> Customers </CCardHeader>
           <CCardBody>
-            <router-link
+            <!-- <router-link
               class="btn btn-success"
               to="/customers/create"
               style="float: right"
               >Create Customer</router-link
-            >
+            > -->
             <router-link
               class="btn btn-success"
               to="/groups/create"
               style="float: right; margin-right: 10px"
               >Create Groups</router-link
+            >
+            <router-link
+              class="btn btn-success"
+              to="/customers/quick-add"
+              style="float: right; margin-right: 10px"
+              >Quick Add</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable

@@ -12,9 +12,7 @@
                 @input="$v.form.flat.$touch()"
               />
               <div v-if="$v.form.flat.$error">
-                <p v-if="!$v.form.flat.required" class="errorMsg">
-                  Flat No is required
-                </p>
+                <p v-if="!$v.form.flat.required" class="errorMsg">Flat No is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -43,9 +41,7 @@
                 @input="$v.form.street.$touch()"
               />
               <div v-if="$v.form.street.$error">
-                <p v-if="!$v.form.street.required" class="errorMsg">
-                  Street is required
-                </p>
+                <p v-if="!$v.form.street.required" class="errorMsg">Street is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -56,9 +52,7 @@
                 @input="$v.form.block.$touch()"
               />
               <div v-if="$v.form.block.$error">
-                <p v-if="!$v.form.block.required" class="errorMsg">
-                  Block is required
-                </p>
+                <p v-if="!$v.form.block.required" class="errorMsg">Block is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -69,9 +63,7 @@
                 @input="$v.form.area.$touch()"
               />
               <div v-if="$v.form.area.$error">
-                <p v-if="!$v.form.area.required" class="errorMsg">
-                  Area is required
-                </p>
+                <p v-if="!$v.form.area.required" class="errorMsg">Area is required</p>
               </div>
             </CCol>
           </CRow>
@@ -85,9 +77,7 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4 d-block">
             <CButton
               progress
@@ -228,13 +218,13 @@ export default {
         CustomerAddressServices.get(this.form.data_uuid)
           .then(({ data }) => {
             if (data != null && data != "") {
-              this.form.flat = data.flat.en;
-              this.form.floor = data.floor.en;
-              this.form.building = data.building.en;
-              this.form.street = data.street.en;
-              this.form.block = data.block.en;
-              this.form.area = data.area.en;
-              this.form.set_default = data.set_default;
+              this.form.flat = data.flat?.en;
+              this.form.floor = data.floor?.en;
+              this.form.building = data.building?.en;
+              this.form.street = data.street?.en;
+              this.form.block = data.block?.en;
+              this.form.area = data.area?.en;
+              this.form.set_default = data?.set_default;
             }
           })
           .catch((error) => {
