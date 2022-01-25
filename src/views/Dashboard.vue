@@ -56,9 +56,9 @@
     </CRow>
     <br />
     <CCard>
-      <CCardHeader>
-        BarChart
-        <CCol sm="2" md="2" class="pt-2" style="float: right">
+      <CCardHeader class="py-0">
+        <span style="position: relative; top: 15px">BarChart</span>
+        <CCol sm="2" md="2" class="pt-2" style="float: right; height: 3.2rem">
           <CSelect placeholder="By Month" :options="options.chart" :value.sync="chart1" />
         </CCol>
       </CCardHeader>
@@ -296,8 +296,5 @@ export default {
 <style>
 .remove-progress .progress-xs.my-3.mb-0.progress {
   display: none !important;
-}
-canvas#__safe_id__188 {
-  max-height: 400px !important;
 }
 </style>

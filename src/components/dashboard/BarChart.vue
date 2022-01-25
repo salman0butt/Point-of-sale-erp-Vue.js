@@ -1,5 +1,10 @@
 <template>
-  <CChartBar :datasets="defaultDatasets" labels="months" />
+  <CChartBar
+    :datasets="defaultDatasets"
+    labels="months"
+    style="height: 300px"
+    :options="{ maintainAspectRatio: false }"
+  />
 </template>
 
 <script>
@@ -14,7 +19,7 @@ export default {
         {
           label: "GitHub Commits",
           backgroundColor: "#f87979",
-          data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11],
+          data: [40, 20, 12, 39, 10, 40, 20, 12, 39, 10, 40, 20],
         },
       ];
     },
