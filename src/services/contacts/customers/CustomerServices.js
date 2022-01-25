@@ -26,6 +26,10 @@ class CustomerServices extends Helper {
         return http.post("/customers", data);
     }
 
+    quickAdd(data) {
+        return http.post("/customers/quick-add", data);
+    }
+
     update(id, data) {
         return http.put(`/customers/${id}`, data);
     }

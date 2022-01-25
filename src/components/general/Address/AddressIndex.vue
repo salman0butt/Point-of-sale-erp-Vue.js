@@ -15,6 +15,48 @@
           :loading="loading"
           ref="externalAgent"
         >
+          <!-- item.floor = item.floor?.en;
+                  item.building = item.building?.en;
+                  item.street = item.street?.en;
+                  item.block = item.block?.en;
+                  item.area = item.area?.en;
+                  item.flat = item.flat?.en; -->
+          <template #select="{ item }">
+            <td>
+              {{ item.floor ? item.floor : "" }}
+            </td>
+          </template>
+          <template #building="{ item }">
+            <td>
+              {{ item.building ? item.building : "" }}
+            </td>
+          </template>
+          <template #street="{ item }">
+            <td>
+              {{ item.street ? item.street : "" }}
+            </td>
+          </template>
+          <template #block="{ item }">
+            <td>
+              {{ item.block ? item.block : "" }}
+            </td>
+          </template>
+          <template #area="{ item }">
+            <td>
+              {{ item.area ? item.area : "" }}
+            </td>
+          </template>
+          <template #flat="{ item }">
+            <td>
+              {{ item.flat ? item.flat : "" }}
+            </td>
+          </template>
+          <template #floor="{ item }">
+            <td>
+              {{ item.floor ? item.floor : "" }}
+            </td>
+          </template>
+
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
@@ -38,11 +80,7 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination
-          v-show="pages > 1"
-          :pages="pages"
-          :active-page.sync="activePage"
-        />
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
       </CCol>
     </CRow>
   </div>
@@ -114,12 +152,12 @@ export default {
               this.loading = true;
               if (data.data) {
                 data.data.map((item, id) => {
-                  item.floor = item.floor.en;
-                  item.building = item.building.en;
-                  item.street = item.street.en;
-                  item.block = item.block.en;
-                  item.area = item.area.en;
-                  item.flat = item.flat.en;
+                  item.floor = item.floor?.en;
+                  item.building = item.building?.en;
+                  item.street = item.street?.en;
+                  item.block = item.block?.en;
+                  item.area = item.area?.en;
+                  item.flat = item.flat?.en;
                   this.AddressesData.push({ ...item, id });
                 });
               }

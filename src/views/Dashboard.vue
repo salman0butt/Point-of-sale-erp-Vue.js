@@ -78,7 +78,7 @@
       <CCol sm="6" md="6">
         <CCard>
           <CCardHeader> Recent Transections</CCardHeader>
-          <CCardBody>
+          <CCardBody style="padding-bottom: 15px">
             <CDataTable :items="dataItems" :fields="transFields" hover />
           </CCardBody>
         </CCard>
