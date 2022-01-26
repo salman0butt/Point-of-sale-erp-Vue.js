@@ -67,11 +67,19 @@
               style="float: right; margin-right: 10px"
               >Create Groups</router-link
             >
-            <router-link
+            <!-- <router-link
               class="btn btn-success"
               to="/customers/quick-add"
               style="float: right; margin-right: 10px"
               >Quick Add</router-link
+            > -->
+            <CButton
+              color="success"
+              class="btn"
+              style="float: right; margin-right: 10px"
+              @click="quickAddCustomer()"
+            >
+              Quick Add</CButton
             >
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
@@ -131,12 +139,14 @@
         </CCard>
       </CCol>
     </CRow>
+    <CustomerModel />
   </div>
 </template>
 
 <script>
 import CustomerServices from "@/services/contacts/customers/CustomerServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import CustomerModel from "@/components/contacts/customers/CustomerModel";
 
 const fields = [
   { key: "serial_no", label: "Serial No", _style: "min-width:15%;" },
@@ -149,6 +159,9 @@ const fields = [
 
 export default {
   name: "IndexAccounts",
+  components: {
+    CustomerModel,
+  },
   cilPencil,
   cilTrash,
   cilEye,
@@ -178,10 +191,20 @@ export default {
     activePage() {
       this.getServerData(this.activePage, this.perPage);
     },
+    updateTable: function (val) {
+      if (!val) {
+        setTimeout(() => {
+          this.getServerData();
+        }, 1000);
+      }
+    },
   },
   computed: {
     items() {
       return this.serverData;
+    },
+    updateTable() {
+      return this.$store.getters.getSaveCustomerModel;
     },
   },
   methods: {
@@ -236,7 +259,9 @@ export default {
     editRow(uuid) {
       this.$router.push({ path: "/customers/edit/" + uuid });
     },
-
+    quickAddCustomer() {
+      this.$store.commit("set_customer_model", true);
+    },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal

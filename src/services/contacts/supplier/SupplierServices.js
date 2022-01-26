@@ -28,6 +28,10 @@ class SupplierServices extends Helper {
         });
     }
 
+    quickAdd(data) {
+      return http.post("/supplier/quick-add", data);
+    }
+
     update(id, data) {
         return http.put(`/supplier/${id}`, data);
     }
