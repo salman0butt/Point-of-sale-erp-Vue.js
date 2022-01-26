@@ -34,6 +34,10 @@ const state = {
   },
 
   language: localStorage.getItem('language') || 'en',
+  customerModel: false,
+  saveCustomerModel: false,
+  supplierModel: false,
+  saveSupplierModel: false,
 }
 
 const mutations = {
@@ -124,7 +128,20 @@ const mutations = {
   },
   set_language(state, language) {
     state.language = language;
+  },
+  set_customer_model(state, status) {
+    state.customerModel = status;
+  },
+  set_save_customer_model(state, status) {
+    state.saveCustomerModel = status;
+  },
+  set_supplier_model(state, status) {
+    state.supplierModel = status;
+  },
+  set_save_supplier_model(state, status) {
+    state.saveSupplierModel = status;
   }
+
 }
 const actions = {
   login({ commit }, user) {
@@ -218,6 +235,10 @@ const getters = {
   getQuotationTaxTotal: state => state.quotations.taxTotal,
   getQuotationDiscount: state => state.quotations.discount,
   getLanguage: state => state.language,
+  getCustomerModel: state => state.customerModel,
+  getSaveCustomerModel: state => state.saveCustomerModel,
+  getSupplierModel: state => state.supplierModel,
+  getSaveSupplierModel: state => state.saveSupplierModel
 
 }
 

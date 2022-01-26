@@ -55,17 +55,25 @@
         <CCardHeader> Suppliers </CCardHeader>
         <CCard>
           <CCardBody>
-            <router-link
+            <!-- <router-link
               class="btn btn-success"
               to="/supplier/create"
               style="float: right"
               >Create Supplier</router-link
-            >
+            > -->
             <router-link
               class="btn btn-success"
               to="/groups/create"
               style="float: right; margin-right: 10px"
               >Create Groups</router-link
+            >
+            <CButton
+              color="success"
+              class="btn"
+              style="float: right; margin-right: 10px"
+              @click="quickAddSupplier()"
+            >
+              Quick Add</CButton
             >
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
@@ -125,12 +133,14 @@
         </CCard>
       </CCol>
     </CRow>
+    <SupplierModel />
   </div>
 </template>
 
 <script>
 import SupplierServices from "@/services/contacts/supplier/SupplierServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import SupplierModel from "@/components/contacts/supplier/SupplierModel";
 
 const fields = [
   { key: "serial_no", label: "Serial No", _style: "min-width:15%;" },
@@ -147,6 +157,9 @@ const fields = [
 
 export default {
   name: "IndexSupplier",
+  components: {
+    SupplierModel,
+  },
   cilPencil,
   cilTrash,
   cilEye,
@@ -176,13 +189,27 @@ export default {
     activePage() {
       this.getServerData(this.activePage, this.perPage);
     },
+    updateTable: function (val) {
+      if (!val) {
+        setTimeout(() => {
+          this.getServerData();
+        }, 1000);
+      }
+    },
   },
+
   computed: {
     items() {
       return this.serverData;
     },
+    updateTable() {
+      return this.$store.getters.getSaveSupplierModel;
+    },
   },
   methods: {
+    quickAddSupplier() {
+      this.$store.commit("set_supplier_model", true);
+    },
     getServerData() {
       SupplierServices.getAll(this.activePage, this.perPage)
         .then(({ data }) => {
