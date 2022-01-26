@@ -124,21 +124,36 @@
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
+                <CButton
+                  @click="removeProduct(k)"
+                  class="btn-sm"
+                  style="background: transparent"
+                >
+                  <CIcon :content="$options.cilTrash" style="color: red" />
+                </CButton>
                 <CInput
                   label="Product"
                   class="col-md-3"
                   :value.sync="input.name"
                   disabled
                 />
-                <CInput
-                  label="Qty"
-                  class="col-md-1"
-                  type="number"
-                  placeholder="0"
-                  min="1"
-                  v-model="input.qty"
-                  @input="calculateQutationTotal()"
-                />
+
+                <div class="input-group mb-3 col-md-2 row">
+                  <CInput
+                    label="Qty"
+                    type="number"
+                    class="col-8"
+                    placeholder="0"
+                    min="1"
+                    v-model="input.qty"
+                    @input="calculateQutationTotal()"
+                  />
+                  <span
+                    class="input-group-text form-control mt-4 col-4"
+                    id="basic-addon2"
+                    >{{ input.weight_unit }}</span
+                  >
+                </div>
 
                 <CInput
                   label="Unit Price"
@@ -152,7 +167,7 @@
 
                 <CInput
                   label="Unit Tax"
-                  class="col-md-2 col-lg-2"
+                  class="col-md-1 col-lg-1"
                   type="number"
                   placeholder="0.00."
                   :value.sync="input.tax_price"
@@ -161,7 +176,6 @@
                 <CInput
                   label="Disc %"
                   class="col-md-1 col-lg-1"
-                  step="any"
                   type="text"
                   placeholder="0.00 OR %"
                   :value.sync="input.discount"
@@ -174,14 +188,13 @@
                   type="number"
                   :value.sync="input.total"
                 />
-
-                <CButton
-                  @click="removeProduct(k)"
-                  class="btn-sm"
-                  style="background: transeparent"
-                >
-                  <CIcon :content="$options.cilTrash" style="color: red" />
-                </CButton>
+                <CInput
+                  label="Description of Product"
+                  class="col-md-11 col-lg-11 ml-4"
+                  type="text"
+                  placeholder="Description of produt"
+                  :value.sync="input.description"
+                />
               </CRow>
             </div>
           </CCol>
@@ -504,6 +517,7 @@ export default {
                     expiry_date: "",
                   });
                 } else if (this.searchType === "quotation") {
+                  // console.log(product.weight_unit);
                   this.form.items.push({
                     uuid: variation.uuid,
                     type: "variation",
@@ -590,6 +604,7 @@ export default {
               expiry_date: "",
             });
           } else if (this.searchType === "quotation") {
+            // console.log(product.weight_unit);
             this.form.items.push({
               uuid: product.uuid,
               type: "product",
@@ -598,6 +613,8 @@ export default {
               tax_price: option.tax_price.toFixed(3) ?? 0,
               qty: 1,
               discount: 0,
+              description: "",
+              weight_unit: product.weight_unit,
               total: 0,
             });
           }

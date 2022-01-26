@@ -46,7 +46,8 @@ export default {
   },
   watch: {
     previousValueCustomer(newValue, oldValue) {
-      this.search = newValue.full_name + " (Sr No: " + newValue.serial_no + ")";
+      this.search =
+        newValue.full_name.en + " (Sr No: " + newValue.serial_no + ")";
       this.customer = newValue.uuid;
     },
   },

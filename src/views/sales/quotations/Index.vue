@@ -40,6 +40,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButton
+                    v-if="item.status == 'pending'"
                     @click="approveQuotation(item.uuid)"
                     class="btn-sm mr-3"
                     color="success"
@@ -134,7 +135,7 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.customer = item.customer.full_name;
+              item.customer = item.customer.full_name.en;
               this.serverData.push({ ...item, id });
             });
             this.loading = false;
