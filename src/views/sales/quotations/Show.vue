@@ -6,16 +6,12 @@
         <a href="#" class="btn btn-sm btn-info">
           <CIcon name="cil-save" /> Save
         </a>
-        <a
-          href="#"
-          class="btn btn-sm btn-info ml-1"
-          onclick="javascript:window.print();"
-        >
-          <CIcon name="cil-print" class="mr-1" /> Print
+        <a class="btn btn-sm btn-info ml-1" @click="print">
+          <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
       </div>
     </CCardHeader>
-    <CCardBody>
+    <CCardBody id="printMe">
       <CRow class="mb-4">
         <CCol sm="4">
           <CImg
@@ -122,6 +118,7 @@ export default {
   name: "Invoice",
   data() {
     return {
+      output: null,
       uuid: "",
 
       invoice: {
@@ -149,6 +146,10 @@ export default {
     this.getServerData();
   },
   methods: {
+    async print() {
+      // Pass the element id here
+      await this.$htmlToPaper("printMe");
+    },
     getServerData() {
       // Quotation Data
       this.uuid = this.$route.params.id;
