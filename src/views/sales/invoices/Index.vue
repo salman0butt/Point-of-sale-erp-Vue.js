@@ -81,7 +81,7 @@ import InvoiceService from "@/services/sale/InvoiceService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
-  { key: "quotation_ref_no", label: "Ref No", _style: "min-width:15%;" },
+  { key: "invoice_ref_no", label: "Ref No", _style: "min-width:15%;" },
   { key: "customer", label: "Customer", _style: "min-width:40%" },
   { key: "dated", label: "Dated", _style: "min-width:40%" },
   { key: "due_date", label: "Due Date", _style: "min-width:15%;" },
@@ -134,7 +134,7 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.customer = item.customer.full_name;
+              item.customer = item.customer.full_name.en;
               this.serverData.push({ ...item, id });
             });
             this.loading = false;

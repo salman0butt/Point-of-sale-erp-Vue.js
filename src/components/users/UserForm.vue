@@ -32,7 +32,11 @@
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
-          <CSelect label="Gender" :options="options.gender" :value.sync="form.gender" />
+          <CSelect
+            label="Gender"
+            :options="options.gender"
+            :value.sync="form.gender"
+          />
         </CCol>
       </CRow>
       <CRow>
@@ -59,7 +63,9 @@
             @input="$v.form.email.$touch()"
           />
           <div v-if="$v.form.email.$error">
-            <p v-if="!$v.form.email.email" class="errorMsg">Email Should be Valid</p>
+            <p v-if="!$v.form.email.email" class="errorMsg">
+              Email Should be Valid
+            </p>
           </div>
         </CCol>
 
@@ -77,7 +83,9 @@
             @input="$v.form.cpr_no.$touch()"
           />
           <div v-if="$v.form.cpr_no.$error">
-            <p v-if="!$v.form.cpr_no.required" class="errorMsg">CPR is required</p>
+            <p v-if="!$v.form.cpr_no.required" class="errorMsg">
+              CPR is required
+            </p>
             <p v-if="!$v.form.cpr_no.minLength" class="errorMsg">
               CPR should be at least 9 character
             </p>
@@ -116,20 +124,28 @@
             :preselect-first="true"
           >
             <template slot="selection" slot-scope="{ values, search, isOpen }">
-              <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+              <span
+                class="multiselect__single"
+                v-if="values.value &amp;&amp; !isOpen"
                 >{{ values.length }} options selected</span
               ></template
             >
           </multiselect>
 
           <div v-if="$v.form.branch_id.$error">
-            <p v-if="!$v.form.branch_id.required" class="errorMsg">Branch is required</p>
+            <p v-if="!$v.form.branch_id.required" class="errorMsg">
+              Branch is required
+            </p>
           </div>
         </CCol>
       </CRow>
       <CRow>
         <CCol sm="6" md="4" class="pt-2">
-          <CInput label="Passport No" type="text" :value.sync="form.passport_no" />
+          <CInput
+            label="Passport No"
+            type="text"
+            :value.sync="form.passport_no"
+          />
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
@@ -140,7 +156,11 @@
           />
         </CCol>
         <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
-          <CSelect label="Status" :options="options.status" :value.sync="form.status" />
+          <CSelect
+            label="Status"
+            :options="options.status"
+            :value.sync="form.status"
+          />
         </CCol>
       </CRow>
       <div>
@@ -196,7 +216,9 @@
               @input="$v.form.user_role.$touch()"
             />
             <div v-if="$v.form.user_role.$error">
-              <p v-if="!$v.form.user_role.required" class="errorMsg">Role is required</p>
+              <p v-if="!$v.form.user_role.required" class="errorMsg">
+                Role is required
+              </p>
             </div>
           </CCol>
           <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
@@ -244,7 +266,13 @@
 
 <script>
 import UserService from "@/services/users/UserService";
-import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
+import {
+  required,
+  email,
+  numeric,
+  minLength,
+  maxLength,
+} from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader";
 import Multiselect from "vue-multiselect";
 
@@ -288,7 +316,9 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
-      user_role: [{ value: "", label: "Choose Role", disabled: true, selected: "" }],
+      user_role: [
+        { value: "", label: "Choose Role", disabled: true, selected: "" },
+      ],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },
@@ -465,7 +495,9 @@ export default {
               this.form.passport_no = data.employee.passport_no ?? "";
               this.form.passport_expiry = data.employee.passport_expiry ?? "";
               if (data.employee && data.employee.branches) {
-                this.form.branch_id = data.employee.branches?.map(function (item) {
+                this.form.branch_id = data.employee.branches?.map(function (
+                  item
+                ) {
                   return { label: item.name.en, value: item.uuid };
                 });
               }
