@@ -39,48 +39,6 @@
                 </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Bank"
-                    :options="options.banks"
-                    :value.sync="form.banks"
-                    :class="{ error: $v.form.banks.$error }"
-                    @input="$v.form.banks.$touch()"
-                  />
-                  <div v-if="$v.form.banks.$error">
-                    <p v-if="!$v.form.banks.required" class="errorMsg">
-                      Bank Name is required
-                    </p>
-                  </div>
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CInput
-                    label="Opening Balance"
-                    type="number"
-                    min="0"
-                    step="any"
-                    v-model="form.opening_amount"
-                    :class="{ error: $v.form.opening_amount.$error }"
-                    @input="$v.form.opening_amount.$touch()"
-                  />
-                  <div v-if="$v.form.opening_amount.$error">
-                    <p v-if="!$v.form.opening_amount.required" class="errorMsg">
-                      Opening balance is required
-                    </p>
-                    <p v-if="!$v.form.opening_amount.decimal" class="errorMsg">
-                      Must be Digit
-                    </p>
-                    <p v-if="!$v.form.opening_amount.minValue" class="errorMsg">
-                      Minimum number must be zero
-                    </p>
-                  </div>
-                </CCol>
-
-                <CCol sm="6" md="4" class="pt-2">
-                  <AccountDropdown @getAccountDropdown="getAccountDropdown" />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
                   <CTextarea label="Desription" v-model="form.description" />
                 </CCol>
               </CRow>
@@ -107,7 +65,6 @@
 <script>
 import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
-import AccountDropdown from "@/components/accounting/general/AccountDropdown";
 
 import {
   required,
@@ -118,9 +75,7 @@ import {
 
 export default {
   name: "CreateAccount",
-  components: {
-    AccountDropdown,
-  },
+  components: {},
   data: () => ({
     form: {
       name: "",
