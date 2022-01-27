@@ -9,6 +9,22 @@
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
+                    label="Code"
+                    v-model="form.code"
+                    :class="{ error: $v.form.code.$error }"
+                    @input="$v.form.code.$touch()"
+                  />
+                  <div v-if="$v.form.code.$error">
+                    <p v-if="!$v.form.code.required" class="errorMsg">
+                      Account Code is required
+                    </p>
+                    <p v-if="!$v.form.code.minLength" class="errorMsg">
+                      Account Code should be at least 4 character
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
                     label="Name"
                     v-model="form.name"
                     :class="{ error: $v.form.name.$error }"
@@ -23,21 +39,10 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Type"
-                    :options="options.type"
-                    :value.sync="form.type"
-                    :class="{ error: $v.form.type.$error }"
-                    @input="$v.form.type.$touch()"
-                  />
-                  <div v-if="$v.form.type.$error">
-                    <p v-if="!$v.form.type.required" class="errorMsg">
-                      Type of Account is required
-                    </p>
-                  </div>
-                </CCol>
 
+                <CCol sm="6" md="4" class="pt-2">
+                  <AccountDropdown @getAccountDropdown="getAccountDropdown" />
+                </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CTextarea label="Desription" v-model="form.description" />
                 </CCol>
@@ -63,99 +68,35 @@
 </template>
 
 <script>
-import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
+import AccountDropdown from "@/components/accounting/general/AccountDropdown";
 
-import {
-  required,
-  minValue,
-  minLength,
-  decimal,
-} from "vuelidate/lib/validators";
+import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
   name: "CreateAccount",
-  components: {},
+  components: {
+    AccountDropdown,
+  },
   data: () => ({
     form: {
+      code: "",
       name: "",
-      type: "",
-      banks: "",
-      opening_amount: "0.000",
-      currency: "BHD",
       parent: "",
       description: "",
     },
-    options: {
-      type: [
-        {
-          value: "",
-          label: "Choose Type",
-          disabled: true,
-          selected: "",
-        },
-      ],
-      banks: [
-        {
-          value: "",
-          label: "Choose Bank",
-          disabled: true,
-          selected: "",
-        },
-      ],
-      currency: [
-        { value: "", label: "Choose Currency", disabled: true, selected: "" },
-        { value: "BHD", label: "Bahraini Dinar" },
-      ],
-    },
+    options: {},
   }),
   validations() {
     return {
       form: {
+        code: { required, minLength: minLength(4) },
         name: { required, minLength: minLength(4) },
-        type: { required },
-        banks: { required },
-        opening_amount: { required, decimal, minValue: minValue(0) },
       },
     };
   },
-  created() {
-    this.getAccountingSetting();
-  },
+  created() {},
   methods: {
-    getAccountingSetting() {
-      let type = "accounting";
-      AccoutingSettingService.getAll(type)
-        .then(({ data }) => {
-          let type = this.options.type;
-          let banks = this.options.banks;
-
-          data.map(function (val) {
-            // Account Types
-            if (val.key == "account_types") {
-              let account_types = JSON.parse(val.value);
-              account_types.forEach((element) => {
-                type.push({
-                  value: element,
-                });
-              });
-            }
-
-            // Banks
-            if (val.key == "banks_types") {
-              let banks_types = JSON.parse(val.value);
-              banks_types.forEach((element) => {
-                banks.push({
-                  value: element,
-                });
-              });
-            }
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
     saveAccount() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
