@@ -55,7 +55,10 @@
         <CCard>
           <CCardHeader> Groups </CCardHeader>
           <CCardBody>
-            <router-link class="btn btn-success" to="/groups/create" style="float: right"
+            <router-link
+              class="btn btn-success"
+              to="/groups/create"
+              style="float: right"
               >Create Group</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -244,7 +247,9 @@ export default {
                     text: "Employee Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
+                  this.usersData = this.usersData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.getTotalCardData();
                 }
               })
