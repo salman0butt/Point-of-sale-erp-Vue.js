@@ -43,7 +43,10 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
                     >
                     <CButton
@@ -82,9 +85,7 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
   { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  { key: "banks", label: "BANK NAME", _style: "min-width:15%;" },
-  { key: "parent", label: "Parent Account", _style: "min-width:15%;" },
+  { key: "accountType", label: "TYPE", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
@@ -135,7 +136,7 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              // item.parent = item.parent.name.en;
+              item.accountType = item.accountType.name;
               this.serverData.push({ ...item, id });
             });
             this.loading = false;
@@ -185,7 +186,9 @@ export default {
                     text: "Employee Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
+                  this.usersData = this.usersData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.getTotalCardData();
                 }
               })

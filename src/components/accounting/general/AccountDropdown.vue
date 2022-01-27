@@ -31,6 +31,13 @@ export default {
       account: "",
     };
   },
+  watch: {
+    // It listens to the change in prop name
+    uuid: function () {
+      // console.log("name change"); // print out when the name changes
+      this.setValue();
+    },
+  },
   created() {
     this.setValue();
     this.getData();
@@ -44,31 +51,38 @@ export default {
         .then(({ data }) => {
           let account = this.options.account;
           data.map(function (val) {
-            // console.log(val);
-            if (!val.parent) {
-              // Main Accounts
+            // Main Accounts
 
-              account.push({
-                value: val.uuid,
-                label: val.name,
-              });
-              //   seconday accounts
-              if (val.children.length != 0) {
-                val.children.map(function (child) {
-                  account.push({
-                    value: child.uuid,
-                    label: "-" + child.name.en,
-                  });
-                  if (child.children.length != 0) {
-                    child.children.map(function (child2) {
-                      account.push({
-                        value: child2.uuid,
-                        label: "--" + child2.name.en,
-                      });
-                    });
-                  }
+            account.push({
+              value: val.uuid,
+              label: val.name,
+              disabled: true,
+              custom: true,
+              attrs: [{ style: "font-size: 15px; font-weight: bold" }],
+            });
+            //   seconday accounts
+            if (val.children.length > 0) {
+              val.children.map(function (child) {
+                account.push({
+                  value: child.uuid,
+                  label: "-" + child.name,
+                  disabled: true,
                 });
-              }
+                if (child.accounts.length > 0) {
+                  child.accounts.map(function (child2) {
+                    account.push({
+                      value: child2.uuid,
+                      label: "--" + child2.name,
+                      attrs: [
+                        {
+                          style:
+                            "font-size: 15px; font-weight: bold; color:black",
+                        },
+                      ],
+                    });
+                  });
+                }
+              });
             }
           });
         })
@@ -82,3 +96,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.coloring {
+  color: red;
+}
+</style>
