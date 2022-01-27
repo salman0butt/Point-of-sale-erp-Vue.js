@@ -57,6 +57,8 @@ export default {
               value: val.uuid,
               label: val.name,
               disabled: true,
+              custom: true,
+              attrs: [{ style: "font-size: 15px; font-weight: bold" }],
             });
             //   seconday accounts
             if (val.children.length > 0) {
@@ -71,6 +73,12 @@ export default {
                     account.push({
                       value: child2.uuid,
                       label: "--" + child2.name,
+                      attrs: [
+                        {
+                          style:
+                            "font-size: 15px; font-weight: bold; color:black",
+                        },
+                      ],
                     });
                   });
                 }
@@ -88,3 +96,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.coloring {
+  color: red;
+}
+</style>
