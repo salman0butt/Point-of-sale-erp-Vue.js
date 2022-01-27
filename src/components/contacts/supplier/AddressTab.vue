@@ -79,9 +79,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>

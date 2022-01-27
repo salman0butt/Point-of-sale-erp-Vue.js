@@ -47,6 +47,9 @@ import General from "@/components/contacts/customers/General";
 import Address from "@/components/contacts/customers/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 import Email from "@/components/general/Email/Email";
+import NoteTab from "@/components/contacts/customers/notes/NoteTab";
+import QuotationTab from "@/components/contacts/customers/quotations/QuotationTab";
+import InvoiceTab from "@/components/contacts/customers/invoices/InvoiceTab";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
@@ -59,6 +62,9 @@ export default {
     Address,
     Contact,
     Email,
+    NoteTab,
+    QuotationTab,
+    InvoiceTab,
   },
   data() {
     return {
@@ -72,18 +78,17 @@ export default {
         { key: "Address", name: "Address" },
         { key: "Contact", name: "Contact" },
         { key: "Email", name: "Email" },
-        { key: "Notes", name: "Notes", disabled: true },
-        { key: "Quotations", name: "Quotations", disabled: true },
-        { key: "Invoice", name: "Invoice", disabled: true },
-        { key: "Sales", name: "Sales", disabled: true },
-        { key: "Payments", name: "Payments", disabled: true },
-        { key: "Returns", name: "Returns", disabled: true },
+        { key: "NoteTab", name: "Notes" },
+        { key: "QuotationTab", name: "Quotations" },
+        { key: "InvoiceTab", name: "Invoice" },
+        // { key: "Sales", name: "Sales" },
+        // { key: "Payments", name: "Payments" },
+        { key: "Returns", name: "Returns" },
         {
-          key: "Credit Account Payment",
+          key: "CreditAccountPayment",
           name: "Credit Account Payment",
-          disabled: true,
         },
-        { key: "Discounts", name: "Discounts", disabled: true },
+        { key: "Discounts", name: "Discounts" },
       ],
     };
   },

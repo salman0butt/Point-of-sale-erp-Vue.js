@@ -77,34 +77,33 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">
-                Please Fill the required data
-              </p>
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4">
-                <CButton
+                <!-- <CLoadingButton
+                  progress
+                  timeout="2000"
+                  color="success"
+                  style="float: right; width: 200px; margin-left: 20px"
+                  >Save</CLoadingButton
+                > -->
+                <CLoadingButton
                   progress
                   timeout="2000"
                   block
                   color="success"
                   style="float: right; width: 200px; margin-left: 20px"
                   type="submit"
-                  @click="saveAndExit = false"
-                  >Save & Continue</CButton
+                  >Save</CLoadingButton
                 >
-                <CButton
+                <!--<CButton
                   timeout="2000"
                   block
                   color="danger"
-                  style="
-                    float: right;
-                    width: 140px;
-                    margin-left: 20px;
-                    margin-top: 0;
-                  "
+                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                   @click="saveAndExit = true"
                   type="submit"
                   >Save & Exit</CButton
-                >
+                > -->
               </CRow>
             </form>
           </CCardBody>
@@ -135,9 +134,7 @@ export default {
 
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
-      group: [
-        { value: "", label: "Choose Group", disabled: true, selected: "" },
-      ],
+      group: [{ value: "", label: "Choose Group", disabled: true, selected: "" }],
     },
     type_selected: false,
   }),
@@ -257,9 +254,9 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-              if (this.saveAndExit) {
-                this.$router.push({ path: "/customers" });
-              }
+              // if (this.saveAndExit) {
+              //   this.$router.push({ path: "/customers" });
+              // }
               //  else {
               //   this.$router.push({ path: "/customers/edit/" + res.data.uuid });
               // }
@@ -300,9 +297,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.errorMsg {
-  color: red;
-}
-</style>
