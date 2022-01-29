@@ -1,7 +1,7 @@
 <template>
   <div>
     <CModal
-      title="Modal title"
+      title="Quick Customer Add"
       :fade="true"
       :centered="true"
       :closeOnBackdrop="false"
@@ -11,7 +11,7 @@
       <template #header>
         <h6 class="modal-title">Quick Customer Add</h6>
       </template>
-      <QuickAddCustomer />
+      <QuickAddCustomer :submit="isSubmit" @reset-model="resetModel()" />
       <template #footer>
         <CButton @click="closeModel()" color="danger">Close</CButton>
         <CButton @click="saveCustomer()" color="success">Save</CButton>
@@ -28,24 +28,26 @@ export default {
     QuickAddCustomer,
   },
   data() {
-    return {};
+    return {
+      isSubmit: false,
+    };
   },
-  watch: {},
-  created() {},
   computed: {
     showCustomerModel() {
       return this.$store.getters.getCustomerModel;
     },
   },
   methods: {
+    resetModel() {
+      this.isSubmit = false;
+      this.$store.commit("set_customer_model", false);
+    },
     saveCustomer() {
-      if (this.$store.getters.getSaveCustomerModel) {
-        this.$store.commit("set_save_customer_model", false);
-      } else {
-        this.$store.commit("set_save_customer_model", true);
-      }
+      this.isSubmit = true;
+      this.$emit("update-table");
     },
     closeModel() {
+      this.isSubmit = false;
       this.$store.commit("set_customer_model", false);
     },
   },

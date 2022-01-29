@@ -35,9 +35,9 @@ const state = {
 
   language: localStorage.getItem('language') || 'en',
   customerModel: false,
-  saveCustomerModel: false,
   supplierModel: false,
-  saveSupplierModel: false,
+  brandModel: false,
+  categoryModel: false,
 }
 
 const mutations = {
@@ -132,15 +132,16 @@ const mutations = {
   set_customer_model(state, status) {
     state.customerModel = status;
   },
-  set_save_customer_model(state, status) {
-    state.saveCustomerModel = status;
-  },
   set_supplier_model(state, status) {
     state.supplierModel = status;
   },
-  set_save_supplier_model(state, status) {
-    state.saveSupplierModel = status;
-  }
+  set_brand_model(state, status) {
+    state.brandModel = status;
+  },
+  set_category_model(state, status) {
+    state.categoryModel = status;
+  },
+
 
 }
 const actions = {
@@ -236,9 +237,9 @@ const getters = {
   getQuotationDiscount: state => state.quotations.discount,
   getLanguage: state => state.language,
   getCustomerModel: state => state.customerModel,
-  getSaveCustomerModel: state => state.saveCustomerModel,
   getSupplierModel: state => state.supplierModel,
-  getSaveSupplierModel: state => state.saveSupplierModel
+  getBrandModel: state => state.brandModel,
+  getCategoryModel: state => state.categoryModel,
 
 }
 

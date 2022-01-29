@@ -1,33 +1,45 @@
 <template>
   <div>
+    <Loader />
     <CCard>
       <CCardBody>
         <CRow>
           <CCol sm="6" md="3">
-            <img src="/img/images/iphone.jpg" class="product-img" alt="product image" />
+            <img :src="product.image" class="product-img" alt="product image" />
           </CCol>
           <CCol sm="6" md="4">
-            <h2>iPhone 13 pro max</h2>
-            <h6><strong>Brand:</strong> Apple</h6>
-            <h6><strong>Category:</strong> Mobiles</h6>
-            <h6><strong>Branch:</strong> Manama</h6>
-            <h6><strong>Description:</strong> This is an iphone apple mobile.</h6>
+            <h2>{{ product.name }}</h2>
+            <h6><strong>Brand:</strong> {{ product.brand }}</h6>
+            <h6><strong>Category:</strong> {{ product.category }}</h6>
+            <h6><strong>Branch:</strong> {{ product.branch }}</h6>
+            <h6>
+              <strong>Description:</strong>
+              {{ product.description.replace(/<\/?[^>]+>/gi, " ") }}
+            </h6>
           </CCol>
           <CCol
             sm="6"
             md="2"
             style="border-right: 1px solid #8080804a; text-align: right"
           >
-            <h6 class="mt-2"><strong>Selling Price:</strong> BD 0.00</h6>
-            <h6><strong>Cost Price:</strong> BD 0.00</h6>
-            <h6><strong>Profit:</strong> BD 0.00</h6>
+            <h6 class="mt-2">
+              <strong>Selling Price:</strong> BD {{ product.selling_price }}
+            </h6>
+            <h6><strong>Cost Price:</strong> BD {{ product.cost_price }}</h6>
+            <h6><strong>Profit:</strong> BD {{ product.profit }}</h6>
           </CCol>
           <CCol sm="6" md="3">
-            <h6>Short Name</h6>
-            <img src="/img/images/barcode.png" alt="barcode" style="width: 60%" />
-            <h6 class="mt-2"><strong>Alert Qty:</strong> 0</h6>
-            <h6><strong>Weight Unit:</strong> Kg</h6>
-            <h6><strong>Expiry:</strong> Yes</h6>
+            <h6>{{ product.short_name }}</h6>
+            <!-- <img src="/img/images/barcode.png" alt="barcode" style="width: 60%" /> -->
+            <barcode v-bind:value="product.barcode">
+              Show this if the rendering fails.
+            </barcode>
+            <h6 class="mt-2"><strong>Alert Qty:</strong> {{ product.alert_qty }}</h6>
+            <h6><strong>Weight Unit:</strong> {{ product.weight_unit }}</h6>
+            <h6>
+              <strong>Expiry:</strong> {{ product.expiry }} | <strong>Favourite:</strong>
+              {{ product.favorite }}
+            </h6>
           </CCol>
         </CRow>
       </CCardBody>
@@ -85,12 +97,15 @@
 
 <script>
 import { cilUser, cisCircle } from "@coreui/icons-pro";
+import ProductService from "@/services/products/ProductService";
+import VueBarcode from "vue-barcode";
+import Loader from "@/components/layouts/Loader";
 
 const inventoryFields = [
   { key: "date", label: "Date", _style: "min-width:40%" },
   { key: "user", label: "User", _style: "min-width:15%;" },
   { key: "stock", label: "In/Out", _style: "min-width:15%;" },
-  { key: "balance", label: "Balance", _style: "min-width:15%;" },
+  { key: "expiry", label: "Expiry", _style: "min-width:15%;" },
 ];
 const unitFields = [
   { key: "name", label: "Name", _style: "min-width:40%" },
@@ -106,60 +121,37 @@ const variationFields = [
 
 export default {
   name: "ShowProduct",
+  components: {
+    barcode: VueBarcode,
+    Loader,
+  },
   cilUser,
   cisCircle,
   data: () => ({
+    productId: null,
+    product: {
+      name: "",
+      description: "",
+      brand: "",
+      category: "",
+      branch: "",
+      cost_price: "",
+      selling_price: "",
+      profit: "",
+      alert_qty: "",
+      weight_unit: "",
+      expiry: "",
+      favorite: "",
+      short_name: "",
+      barcode: "",
+      image: "/img/images/no-logo.png",
+    },
     inventoryFields,
     unitFields,
     variationFields,
-    InventoryItems: [
-      { date: "2020-01-01", user: "John Doe", stock: "3", balance: "3" },
-      { date: "2020-01-01", user: "John Doe", stock: "4", balance: "4" },
-      { date: "2020-01-01", user: "John Doe", stock: "5", balance: "5" },
-      { date: "2020-01-01", user: "John Doe", stock: "4", balance: "6" },
-      { date: "2020-01-01", user: "John Doe", stock: "5", balance: "7" },
-      { date: "2020-01-01", user: "John Doe", stock: "6", balance: "4" },
-      { date: "2020-01-01", user: "John Doe", stock: "3", balance: "5" },
-      { date: "2020-01-01", user: "John Doe", stock: "8", balance: "6" },
-      { date: "2020-01-01", user: "John Doe", stock: "8", balance: "6" },
-    ],
-    unitItems: [
-      {
-        name: "Pack of 2",
-        cost_price: "300",
-        selling_price: "320",
-        barcode: "1234535345345",
-      },
-      {
-        name: "Pack of 6",
-        cost_price: "600",
-        selling_price: "720",
-        barcode: "3453443534534",
-      },
-      {
-        name: "Pack of 12",
-        cost_price: "1000",
-        selling_price: "1200",
-        barcode: "7654326777890",
-      },
-    ],
-    variationItems: [
-      {
-        name: "Iphone Lite",
-        attributes: "color:white, size:64gb",
-        barcode: "123435345345",
-      },
-      {
-        name: "Iphone pro",
-        attributes: "color:black, size:128gb",
-        barcode: "123435345345",
-      },
-      {
-        name: "Iphone Gold",
-        attributes: "color:gold, size:256gb",
-        barcode: "123435345345",
-      },
-    ],
+    InventoryItems: [],
+    unitItems: [],
+    variationItems: [],
   }),
   computed: {
     inventory() {
@@ -172,7 +164,80 @@ export default {
       return this.variationItems;
     },
   },
-  methods: {},
+  created() {
+    this.productId = this.$route.params.id;
+    this.getProductData();
+  },
+  methods: {
+    getProductData() {
+      this.$store.commit("set_loader");
+      ProductService.get(this.productId)
+        .then(({ data }) => {
+          if (data !== "" && data !== undefined) {
+            this.product.name = data.name ?? "N/A";
+            this.product.description = data.short_description ?? "N/A";
+            this.product.brand = data.brand.name ?? "N/A";
+            this.product.category =
+              data.categories?.map((category) => category.name).join(", ") ?? "N/A";
+            this.product.branch =
+              data.branches?.map((branch) => branch.name).join(", ") ?? "N/A";
+            this.product.cost_price =
+              parseFloat(data.price?.cost_price).toFixed(2) ?? "N/A";
+            this.product.selling_price =
+              parseFloat(data.price?.selling_price_without_tax).toFixed(2) ?? "N/A";
+            this.product.profit =
+              parseFloat(
+                data.price?.selling_price_without_tax - data.price?.cost_price
+              ).toFixed(2) ?? "N/A";
+            this.product.alert_qty = data.alert_qty ?? "N/A";
+            this.product.weight_unit = data.weight_unit ?? "N/A";
+            this.product.expiry = data.is_expiry === "yes" ? "Yes" : "No";
+            this.product.favorite = data.is_favorite === "yes" ? "Yes" : "No";
+            this.product.short_name = data.short_name ?? "N/A";
+            this.product.barcode = data.barcode;
+            this.product.image = data.images[0]?.path ?? "/img/images/no-logo.png";
+
+            if (data.inventory && data.inventory.length) {
+              data.inventory.map((item) => {
+                this.inventory.push({
+                  date: item.date ?? "",
+                  user: item.created_by?.name,
+                  stock: item.qty ?? "",
+                  expiry: item.expiry_date ?? "",
+                });
+              });
+            }
+            this.units = [];
+            if (data.quantity_units && data.quantity_units.length) {
+              data.quantity_units.map((unit) => {
+                this.units.push({
+                  name: unit.name ?? "",
+                  cost_price: unit.price?.cost_price ?? "",
+                  selling_price: unit.price?.selling_price_without_tax ?? "",
+                  barcode: unit.barcode ?? "",
+                });
+              });
+            }
+            if (data.variations && data.variations.length) {
+              data.variations?.map((variation) => {
+                let name = JSON.parse(variation.name)?.en;
+                this.variations.push({
+                  name: name,
+                  attributes: name,
+                  barcode: variation.barcode,
+                });
+              });
+            }
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$store.commit("close_loader");
+          this.$router.push("/products/index");
+        });
+    },
+  },
 };
 </script>
 

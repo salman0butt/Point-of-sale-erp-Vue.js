@@ -139,6 +139,12 @@ import { required, numeric } from "vuelidate/lib/validators";
 
 export default {
   name: "QuickAddCustomer",
+  props: {
+    submit: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     form: {
       full_name: "",
@@ -173,20 +179,17 @@ export default {
     this.getDependenices();
   },
   watch: {
-    saveIt: function (val) {
+    submitForm() {
       this.$v.$touch();
-      if (val && !this.$v.$invalid) {
+      if (this.submit && !this.$v.$invalid) {
         this.saveData();
-        this.$store.commit("set_save_customer_model", false);
-        this.$store.commit("set_customer_model", false);
-      } else {
-        this.$store.commit("set_save_customer_model", false);
+        this.$emit("reset-model");
       }
     },
   },
   computed: {
-    saveIt() {
-      return this.$store.getters.getSaveCustomerModel;
+    submitForm() {
+      return this.submit;
     },
   },
   methods: {

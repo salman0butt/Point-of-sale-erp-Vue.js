@@ -6,11 +6,19 @@
           <CCardHeader> Categories </CCardHeader>
           <CCardBody>
             <div>
-              <router-link
+              <!-- <router-link
                 class="btn btn-success"
                 to="/catalogs/category/create"
                 style="float: right"
                 >Create Category</router-link
+              > -->
+              <CButton
+                color="success"
+                class="btn"
+                style="float: right; margin-right: 10px"
+                @click="addCategory()"
+              >
+                Quick Add</CButton
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -63,13 +71,14 @@
         </CCard>
       </CCol>
     </CRow>
+    <CategoryModel @update-table="updateTable" />
   </div>
 </template>
 
 <script>
-import ProductCategoryService from "@/services//catalogs/category/ProductCategoryService";
+import ProductCategoryService from "@/services/catalogs/category/ProductCategoryService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-
+import CategoryModel from "@/components/catalogs/category/CategoryModel";
 const fields = [
   { key: "name", label: "NAME", _style: "width:40%" },
   { key: "parent", label: "PARENT", _style: "width:25%;" },
@@ -82,6 +91,9 @@ export default {
   cilPencil,
   cilTrash,
   cilEye,
+  components: {
+    CategoryModel,
+  },
   data() {
     return {
       productCategoryData: [],
@@ -112,6 +124,11 @@ export default {
     },
   },
   methods: {
+    updateTable() {
+      setTimeout(() => {
+        this.getProductCategoryData();
+      }, 1000);
+    },
     getProductCategoryData(page = "", per_page = "") {
       ProductCategoryService.getAll(page, per_page)
         .then(({ data }) => {
@@ -138,6 +155,9 @@ export default {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
       }
+    },
+    addCategory() {
+      this.$store.commit("set_category_model", true);
     },
     check(item) {
       const val = Boolean(this.productCategoryData[item.id]._selected);

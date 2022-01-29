@@ -6,11 +6,19 @@
           <CCardHeader> Brands </CCardHeader>
           <CCardBody>
             <div>
-              <router-link
+              <!-- <router-link
                 class="btn btn-success"
                 to="/catalogs/brands/create"
                 style="float: right"
                 >Create Brand</router-link
+              > -->
+              <CButton
+                color="success"
+                class="btn"
+                style="float: right; margin-right: 10px"
+                @click="addBrand()"
+              >
+                Quick Add</CButton
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -56,12 +64,14 @@
         </CCard>
       </CCol>
     </CRow>
+    <BrandModel @update-table="updateTable" />
   </div>
 </template>
 
 <script>
 import BrandService from "@/services/catalogs/brands/BrandService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import BrandModel from "@/components/catalogs/brands/BrandModel";
 
 const fields = [
   { key: "name", label: "NAME", _style: "width:50%" },
@@ -71,6 +81,9 @@ const fields = [
 
 export default {
   name: "IndexBrand",
+  components: {
+    BrandModel,
+  },
   cilPencil,
   cilTrash,
   cilEye,
@@ -103,6 +116,11 @@ export default {
     },
   },
   methods: {
+    updateTable() {
+      setTimeout(() => {
+        this.getBrandData();
+      }, 1000);
+    },
     getBrandData(page = "", per_page = "") {
       BrandService.getAll(page, per_page)
         .then(({ data }) => {
@@ -133,6 +151,9 @@ export default {
     check(item) {
       const val = Boolean(this.BrandData[item.id]._selected);
       this.$set(this.BrandData[item.id], "_selected", !val);
+    },
+    addBrand() {
+      this.$store.commit("set_brand_model", true);
     },
     viewRow(uuid) {
       alert("page not ready");
