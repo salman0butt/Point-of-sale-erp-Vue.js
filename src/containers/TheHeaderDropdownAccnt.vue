@@ -15,7 +15,6 @@
 
     <CDropdownItem @click="profile"> <CIcon name="cil-user" /> Profile </CDropdownItem>
     <CDropdownDivider />
-    <CDropdownItem> <CIcon name="cil-shield-alt" /> Lock Account </CDropdownItem>
     <CDropdownItem @click="logout">
       <CIcon name="cil-lock-locked" /> Logout
     </CDropdownItem>
