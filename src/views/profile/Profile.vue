@@ -87,7 +87,7 @@
                 <CCol sm="6" md="4" class="pt-2">
                   <label class="typo__label">Branches</label>
                   <multiselect
-                    disabled
+                    :disabled="true"
                     v-model="form.branch_id"
                     :options="options.branches"
                     :multiple="true"
@@ -222,7 +222,6 @@ export default {
       status: "",
       personal_photo: "",
       documents: "",
-      previewImage: "https://picsum.photos/1024/480/?image=54",
       create_user: false,
       user_name: "",
       user_email: "",
@@ -427,13 +426,15 @@ export default {
                 text: "Employee Updated Successfully",
                 timer: 3600,
               });
-              if (res.data.personal_photo !== "") {
-                this.$store.commit("set_emp_img", res.data.personal_photo);
-                if (res.data.uuid && res.data.uuid === this.$store.state.employee_id) {
-                  this.$store.commit("set_profile_img", res.data.personal_photo);
+              if (res.data) {
+                if (res.data.personal_photo !== "") {
+                  this.$store.commit("set_emp_img", res.data.personal_photo);
+                  if (res.data.uuid && res.data.uuid === this.$store.state.employee_id) {
+                    this.$store.commit("set_profile_img", res.data.personal_photo);
+                  }
                 }
               }
-
+              this.getEmployee();
               this.$v.$reset();
             }
           })
@@ -491,7 +492,7 @@ export default {
     },
     getDOB() {
       let dtToday = new Date();
-      let month = dtToday.getMonth() + 1; // jan=0; feb=1 .......
+      let month = dtToday.getMonth() + 1;
       let day = dtToday.getDate();
       let year = dtToday.getFullYear() - 18;
       if (month < 10) month = "0" + month.toString();

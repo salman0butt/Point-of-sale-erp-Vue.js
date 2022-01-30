@@ -62,10 +62,24 @@ if (token) {
 http.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
-  if (error.response && error.response.status === 401) {
-    store.dispatch('auto_logout');
-    router.push('/login');
+  let routerPath = router.app?._router?.history?.current.path !== '/login';
+  if(error && error.response && routerPath) {
+    let path = '/wrong';
+    switch (error.response.status) {
+      case 401:
+        store.dispatch('auto_logout');
+        path = '/login';
+      break;
+      case 404:
+        path = '/not-found';
+       break;
+      case 500:
+        path = '/wrong';
+      break;
+    }
+    router.push(path);
   }
+
   return Promise.reject(error);
 });
 
