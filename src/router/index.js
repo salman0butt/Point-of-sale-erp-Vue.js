@@ -631,7 +631,7 @@ const router = new Router({
       component:Page404
     },
     {
-      path :'/wrong',
+      path :'/somthing-wrong',
       name: "Page500",
       component:Page500
     },

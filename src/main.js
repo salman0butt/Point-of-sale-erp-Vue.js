@@ -74,7 +74,7 @@ http.interceptors.response.use(function (response) {
         path = '/not-found';
        break;
       case 500:
-        path = '/wrong';
+        path = '/somthing-wrong';
       break;
     }
     router.push(path);
