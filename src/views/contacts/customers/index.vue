@@ -139,7 +139,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <CustomerModel />
+    <CustomerModel @update-table="updateTable" />
   </div>
 </template>
 
@@ -191,23 +191,18 @@ export default {
     activePage() {
       this.getServerData(this.activePage, this.perPage);
     },
-    updateTable: function (val) {
-      if (!val) {
-        setTimeout(() => {
-          this.getServerData();
-        }, 1000);
-      }
-    },
   },
   computed: {
     items() {
       return this.serverData;
     },
-    updateTable() {
-      return this.$store.getters.getSaveCustomerModel;
-    },
   },
   methods: {
+    updateTable() {
+      setTimeout(() => {
+        this.getServerData();
+      }, 1000);
+    },
     getServerData() {
       CustomerServices.getAll(this.activePage, this.perPage)
         .then(({ data }) => {

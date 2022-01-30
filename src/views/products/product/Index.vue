@@ -7,15 +7,15 @@
           <CCardBody>
             <router-link
               class="btn btn-success"
-              to="/products/create"
               style="float: right"
-              >Create Product</router-link
+              to="/products/import"
+              >Import Products</router-link
             >
             <router-link
               class="btn btn-success"
+              to="/products/create"
               style="float: right; margin-right: 10px"
-              to="/products/import"
-              >Import Products</router-link
+              >Create Product</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable

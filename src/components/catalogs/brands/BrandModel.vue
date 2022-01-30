@@ -1,31 +1,31 @@
 <template>
   <div>
     <CModal
-      title="Quick Supplier Add"
+      title="Create Brand"
       :fade="true"
       :centered="true"
       :closeOnBackdrop="false"
       color="success"
-      :show.sync="showSupplierModel"
+      :show.sync="showBrandModel"
     >
       <template #header>
-        <h6 class="modal-title">Quick Supplier Add</h6>
+        <h6 class="modal-title">Create Brand</h6>
       </template>
-      <QuickAddSupplier :submit="isSubmit" @reset-model="resetModel()" />
+      <BrandForm :submit="isSubmit" @reset-model="resetModel()" />
       <template #footer>
         <CButton @click="closeModel()" color="danger">Close</CButton>
-        <CButton @click="saveSupplier()" color="success">Save</CButton>
+        <CButton @click="saveBrand()" color="success">Save</CButton>
       </template>
     </CModal>
   </div>
 </template>
 
 <script>
-import QuickAddSupplier from "./QuickAddSupplier";
+import BrandForm from "./BrandForm";
 export default {
-  name: "SupplierModel",
+  name: "BrandModel",
   components: {
-    QuickAddSupplier,
+    BrandForm,
   },
   data() {
     return {
@@ -33,22 +33,23 @@ export default {
     };
   },
   computed: {
-    showSupplierModel() {
-      return this.$store.getters.getSupplierModel;
+    showBrandModel() {
+      return this.$store.getters.getBrandModel;
     },
   },
   methods: {
     resetModel() {
       this.isSubmit = false;
-      this.$store.commit("set_supplier_model", false);
+      this.$store.commit("set_brand_model", false);
     },
-    saveSupplier() {
+    saveBrand() {
       this.isSubmit = true;
+
       this.$emit("update-table");
     },
     closeModel() {
       this.isSubmit = false;
-      this.$store.commit("set_supplier_model", false);
+      this.$store.commit("set_brand_model", false);
     },
   },
 };
