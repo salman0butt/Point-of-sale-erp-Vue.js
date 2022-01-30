@@ -64,7 +64,7 @@ http.interceptors.response.use(function (response) {
 }, function (error) {
   let routerPath = router.app?._router?.history?.current.path !== '/login';
   if(error && error.response && routerPath) {
-    let path = '/something-wrong'';
+    let path = '/something-wrong';
     switch (error.response.status) {
       case 401:
         store.dispatch('auto_logout');
