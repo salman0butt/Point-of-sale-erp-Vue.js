@@ -122,14 +122,7 @@
                       label="Password"
                       type="password"
                       :value.sync="form.user_pass"
-                      :class="{ error: $v.form.user_pass.$error }"
-                      @input="$v.form.user_pass.$touch()"
                     />
-                    <div v-if="$v.form.user_pass.$error">
-                      <p v-if="!$v.form.user_pass.required" class="errorMsg">
-                        Password is required
-                      </p>
-                    </div>
                   </CCol>
                   <CCol sm="6" md="4" class="pt-2">
                     <CInput
@@ -140,9 +133,6 @@
                       @input="$v.form.user_pass_confirmation.$touch()"
                     />
                     <div v-if="$v.form.user_pass_confirmation.$error">
-                      <p v-if="!$v.form.user_pass_confirmation.required" class="errorMsg">
-                        Confirm Password is required
-                      </p>
                       <p v-if="!$v.form.user_pass_confirmation.sameAs" class="errorMsg">
                         Password and Confirm Password should be same
                       </p>
@@ -196,6 +186,7 @@
 import EmployeeService from "@/services/employees/EmployeeService";
 import {
   sameAs,
+  requiredIf,
   required,
   email,
   numeric,
@@ -303,13 +294,8 @@ export default {
         full_name: { required },
         phone_number: { required, numeric },
         email: { required, email },
-        user_pass: {
-          required,
-          minLength: minLength(8),
-          maxLength: maxLength(20),
-        },
         user_pass_confirmation: {
-          required,
+          requiredIf: requiredIf("form.user_pass"),
           minLength: minLength(8),
           maxLength: maxLength(20),
           sameAsPassword: sameAs("user_pass"),
