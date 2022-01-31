@@ -29,7 +29,6 @@ class EmployeeService extends Helper {
   }
 
   update(id, data, config) {
-    console.log(id, data);
     return http.post(`/employees/${id}`, data, config);
   }
 

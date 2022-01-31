@@ -117,8 +117,8 @@ const EditBranch = () => import('@/views/branches/edit')
 
 
 // Views - Pages
-// const Page404 = () => import('@/views/pages/Page404')
-// const Page500 = () => import('@/views/pages/Page500')
+const Page404 = () => import('@/views/pages/Page404')
+const Page500 = () => import('@/views/pages/Page500')
 // const Register = () => import('@/views/pages/Register')
 
 // Users
@@ -624,6 +624,20 @@ const router = new Router({
       path: '/reset-password/:token/:email',
       name: 'ResetPassword',
       component: ResetPassword
+    },
+    {
+      path :'/not-found',
+      name: "Page404",
+      component:Page404
+    },
+    {
+      path :'/something-wrong',
+      name: "Page500",
+      component:Page500
+    },
+    {
+      path :'*',
+      component:Page404
     },
     // {
     //   path: '/register',
