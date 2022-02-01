@@ -307,7 +307,7 @@ export default {
         this.form.id = data.uuid;
         this.form.name = data.name;
         this.form.color = data.color;
-        if (data.parent_id !== "" && data.parent_id !== null) {
+        if (data.parent) {
           this.form.parent_id = data.parent.uuid ?? "";
         }
         this.form.status = data.status;

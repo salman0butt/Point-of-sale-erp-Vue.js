@@ -12,6 +12,7 @@ import i18n from './i18n.js'
 import http from '../src/http-common';
 import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
+import {mixin} from './mixins/mixin';
 import Skeleton from 'vue-loading-skeleton';
 import { ColorPicker, ColorPanel } from 'one-colorpicker'
 import VueHtmlToPaper from 'vue-html-to-paper';
@@ -51,9 +52,6 @@ Vue.prototype.$swal = Swal;
 Vue.prototype.$http = http;
 // Vue.prototype.$ability = defineAbility;
 
-
-
-
 const token = 'Bearer ' + localStorage.getItem('token');
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = token;
@@ -64,20 +62,7 @@ http.interceptors.response.use(function (response) {
 }, function (error) {
   let routerPath = router.app?._router?.history?.current.path !== '/login';
   if(error && error.response && routerPath) {
-    let path = '/something-wrong';
-    switch (error.response.status) {
-      case 401:
-        store.dispatch('auto_logout');
-        path = '/login';
-      break;
-      case 404:
-        path = '/not-found';
-       break;
-      case 500:
-        path = '/something-wrong';
-      break;
-    }
-    router.push(path);
+    mixin.methods.errorHandler(error.response.status);
   }
 
   return Promise.reject(error);
@@ -89,6 +74,7 @@ Vue.config.errorHandler = err => {
 
 new Vue({
   el: '#app',
+  mixins: [mixin],
   router,
   store,
   //CIcon component documentation: https://coreui.io/vue/docs/components/icon

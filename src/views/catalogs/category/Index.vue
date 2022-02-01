@@ -43,6 +43,11 @@
 
                 <td v-else>-</td>
               </template>
+              <template #status="{ item }">
+                <td>
+                  {{ item.status ? item.status : "" }}
+                </td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -79,6 +84,8 @@
 import ProductCategoryService from "@/services/catalogs/category/ProductCategoryService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import CategoryModel from "@/components/catalogs/category/CategoryModel";
+import { tableMixin } from "@/mixins/tableMixin";
+
 const fields = [
   { key: "name", label: "NAME", _style: "width:40%" },
   { key: "parent", label: "PARENT", _style: "width:25%;" },
@@ -88,6 +95,7 @@ const fields = [
 
 export default {
   name: "IndexProductCategory",
+  mixins: [tableMixin],
   cilPencil,
   cilTrash,
   cilEye,
@@ -96,72 +104,29 @@ export default {
   },
   data() {
     return {
-      productCategoryData: [],
+      data: [],
       fields,
-      loading: false,
-      deleteRows: [],
-      activePage: 1,
-      pages: 0,
-      perPage: 10,
     };
   },
   created() {
-    this.loading = true;
-    this.getProductCategoryData();
-    console.log();
-  },
-  watch: {
-    reloadParams() {
-      this.onTableChange();
-    },
-    activePage() {
-      this.getProductCategoryData(this.activePage, this.perPage);
-    },
+    this.getData();
   },
   computed: {
     productCategory() {
-      return this.productCategoryData;
+      return this.data;
     },
   },
   methods: {
     updateTable() {
       setTimeout(() => {
-        this.getProductCategoryData();
+        this.getData();
       }, 1000);
     },
-    getProductCategoryData(page = "", per_page = "") {
-      ProductCategoryService.getAll(page, per_page)
-        .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
-            this.productCategoryData = [];
-            this.loading = true;
-            if (data.data) {
-              data.data.map((item, id) => {
-                this.productCategoryData.push({ ...item, id });
-              });
-            }
-            if (data.meta) {
-              this.setPagination(data.meta);
-            }
-
-            this.loading = false;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    rowClicked(item, index, column, e) {
-      if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
-        this.check(item);
-      }
+    getData(page = "", per_page = "") {
+      this.getServerData(ProductCategoryService, page, per_page);
     },
     addCategory() {
       this.$store.commit("set_category_model", true);
-    },
-    check(item) {
-      const val = Boolean(this.productCategoryData[item.id]._selected);
-      this.$set(this.productCategoryData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
@@ -171,59 +136,7 @@ export default {
     },
 
     deleteRow(uuid) {
-      this.deleteRows = JSON.stringify([uuid]);
-      this.$swal
-        .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            ProductCategoryService.delete(this.deleteRows)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Product Category Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.productCategoryData = this.productCategoryData.filter(
-                    (department) => department.uuid != uuid
-                  );
-                  this.deleteRows = [];
-                }
-              })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-              });
-          }
-        });
-    },
-    setPagination(meta) {
-      this.activePage = parseInt(meta.current_page);
-      this.pages = parseInt(meta.last_page);
-      this.perPage = parseInt(meta.per_page);
-    },
-    onTableChange() {
-      setTimeout(() => {
-        this.loading = false;
-        const agent = this.$refs.externalAgent;
-        this.productCategoryData = agent.currentItems;
-        this.pages = Math.ceil(agent.sortedItems.length / 5);
-      }, 1000);
-    },
-    changePagination(value) {
-      this.perPage = parseInt(value);
-      this.getProductCategoryData("", this.perPage);
+      this.deleteData(ProductCategoryService, uuid);
     },
   },
 };

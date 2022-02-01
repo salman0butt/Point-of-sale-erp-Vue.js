@@ -67,6 +67,7 @@
 <script>
 import OfferService from "@/services/catalogs/offers/OfferService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import { tableMixin } from "@/mixins/tableMixin";
 
 const fields = [
   { key: "name", label: "NAME", _style: "min-width:40%" },
@@ -80,69 +81,27 @@ const fields = [
 
 export default {
   name: "IndexOffer",
+  mixins: [tableMixin],
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      OfferData: [],
+      data: [],
       fields,
-      loading: false,
-      deleteRows: [],
-      activePage: 1,
-      pages: 0,
-      perPage: 10,
     };
   },
   created() {
-    this.loading = true;
-    this.getOfferData();
-    console.log();
-  },
-  watch: {
-    reloadParams() {
-      this.onTableChange();
-    },
-    activePage() {
-      this.getOfferData(this.activePage, this.perPage);
-    },
+    this.getData();
   },
   computed: {
     Offer() {
-      return this.OfferData;
+      return this.data;
     },
   },
   methods: {
-    getOfferData(page = "", per_page = "") {
-      OfferService.getAll(page, per_page)
-        .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
-            this.OfferData = [];
-            this.loading = true;
-            if (data.data) {
-              data.data.map((item, id) => {
-                this.OfferData.push({ ...item, id });
-              });
-            }
-            if (data.meta) {
-              this.setPagination(data.meta);
-            }
-
-            this.loading = false;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    rowClicked(item, index, column, e) {
-      if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
-        this.check(item);
-      }
-    },
-    check(item) {
-      const val = Boolean(this.OfferData[item.id]._selected);
-      this.$set(this.OfferData[item.id], "_selected", !val);
+    getData(page = "", per_page = "") {
+      this.getServerData(OfferService, page, per_page);
     },
     viewRow(uuid) {
       alert("page not ready");
@@ -150,61 +109,8 @@ export default {
     editRow(uuid) {
       this.$router.push({ path: "/catalogs/offers/edit/" + uuid });
     },
-
     deleteRow(uuid) {
-      this.deleteRows = JSON.stringify([uuid]);
-      this.$swal
-        .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            OfferService.delete(this.deleteRows)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Offer Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.OfferData = this.OfferData.filter(
-                    (department) => department.uuid != uuid
-                  );
-                  this.deleteRows = [];
-                }
-              })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-              });
-          }
-        });
-    },
-    setPagination(meta) {
-      this.activePage = parseInt(meta.current_page);
-      this.pages = parseInt(meta.last_page);
-      this.perPage = parseInt(meta.per_page);
-    },
-    onTableChange() {
-      setTimeout(() => {
-        this.loading = false;
-        const agent = this.$refs.externalAgent;
-        this.OfferData = agent.currentItems;
-        this.pages = Math.ceil(agent.sortedItems.length / 5);
-      }, 1000);
-    },
-    changePagination(value) {
-      this.perPage = parseInt(value);
-      this.getOfferData("", this.perPage);
+      this.deleteData(OfferService, uuid);
     },
   },
 };

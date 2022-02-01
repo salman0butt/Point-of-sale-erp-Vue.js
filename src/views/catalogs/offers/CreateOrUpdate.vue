@@ -231,6 +231,8 @@
                         label="label"
                         track-by="label"
                         :preselect-first="true"
+                        :class="{ error: $v.form.categories.$error }"
+                        @input="$v.form.categories.$touch()"
                       >
                         <template
                           slot="selection"
@@ -243,6 +245,11 @@
                           ></template
                         >
                       </multiselect>
+                      <div v-if="$v.form.categories.$error">
+                        <p v-if="!$v.form.categories.required" class="errorMsg">
+                          Categories is required
+                        </p>
+                      </div>
                     </CCol>
                     <CCol sm="6" md="4" class="pt-2">
                       <label class="typo__label">Branches</label>
@@ -257,6 +264,8 @@
                         label="label"
                         track-by="label"
                         :preselect-first="true"
+                        :class="{ error: $v.form.branches.$error }"
+                        @input="$v.form.branches.$touch()"
                       >
                         <template
                           slot="selection"
@@ -269,6 +278,11 @@
                           ></template
                         >
                       </multiselect>
+                      <div v-if="$v.form.branches.$error">
+                        <p v-if="!$v.form.branches.required" class="errorMsg">
+                          Branches is required
+                        </p>
+                      </div>
                     </CCol>
                     <CCol sm="6" md="4" class="pt-2">
                       <label class="typo__label">Products</label>
@@ -283,6 +297,8 @@
                         label="label"
                         track-by="label"
                         :preselect-first="true"
+                        :class="{ error: $v.form.products.$error }"
+                        @input="$v.form.products.$touch()"
                       >
                         <template
                           slot="selection"
@@ -295,6 +311,11 @@
                           ></template
                         >
                       </multiselect>
+                      <div v-if="$v.form.products.$error">
+                        <p v-if="!$v.form.products.required" class="errorMsg">
+                          Products is required
+                        </p>
+                      </div>
                     </CCol>
                     <CCol sm="6" md="4" class="pt-2">
                       <label class="typo__label">Brands</label>
@@ -309,6 +330,8 @@
                         label="label"
                         track-by="label"
                         :preselect-first="true"
+                        :class="{ error: $v.form.brands.$error }"
+                        @input="$v.form.brands.$touch()"
                       >
                         <template
                           slot="selection"
@@ -321,6 +344,11 @@
                           ></template
                         >
                       </multiselect>
+                      <div v-if="$v.form.brands.$error">
+                        <p v-if="!$v.form.brands.required" class="errorMsg">
+                          Brands is required
+                        </p>
+                      </div>
                     </CCol>
                     <CCol sm="6" md="4" class="pt-2">
                       <label class="typo__label">Tags</label>
@@ -438,6 +466,10 @@ export default {
           quantity_to_buy: { required },
           discount_type: { required },
           discount_amount: { required },
+          branches: { required },
+          brands: { required },
+          products: { required },
+          categories: { required },
         },
       };
     } else if (this.form.type === "offer_spend_x_get_discount") {
@@ -453,6 +485,10 @@ export default {
           spend_amount: { required },
           discount_type: { required },
           discount_amount: { required },
+          branches: { required },
+          brands: { required },
+          products: { required },
+          categories: { required },
         },
       };
     } else if (this.form.type === "offer_discount") {
@@ -467,6 +503,10 @@ export default {
           status: { required },
           discount_type: { required },
           discount_amount: { required },
+          branches: { required },
+          brands: { required },
+          products: { required },
+          categories: { required },
         },
       };
     } else if (this.form.type === "offer_x_get_y_free") {
@@ -481,6 +521,10 @@ export default {
           status: { required },
           quantity_to_buy: { required },
           quantity_to_get: { required },
+          branches: { required },
+          brands: { required },
+          products: { required },
+          categories: { required },
         },
       };
     } else {
@@ -493,6 +537,10 @@ export default {
           end_date: { required },
           allowed_per_sale: { required },
           status: { required },
+          branches: { required },
+          brands: { required },
+          products: { required },
+          categories: { required },
         },
       };
     }
@@ -641,7 +689,7 @@ export default {
           }
           if (data.type == "offer_spend_x_get_discount") {
             this.form.spend_amount = data.detail.spend_amount;
-            this.form.quantity_to_get = data.detail.quantity_to_get;
+            // this.form.quantity_to_get = data.detail.quantity_to_get;
             this.form.discount_type = data.detail.discount_type;
             this.form.discount_amount = data.detail.discount_amount;
           }

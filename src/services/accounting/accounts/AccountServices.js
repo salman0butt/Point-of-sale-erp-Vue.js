@@ -19,7 +19,6 @@ class AccountServices extends Helper {
             url = super.updateQueryStringParameter(url, "active", active);
 
         return http.get(url);
-
     }
 
 

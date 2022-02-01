@@ -100,6 +100,8 @@
                 label="Status"
                 :options="options.status"
                 :value.sync="form.status"
+                :class="{ error: $v.form.status.$error }"
+                @input="$v.form.status.$touch()"
               />
             </CCol>
           </CRow>
@@ -207,6 +209,7 @@ export default {
         debit: { required },
         credit: { required },
         date: { required },
+        status: { required },
       },
     };
   },
