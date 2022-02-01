@@ -397,7 +397,7 @@ export default {
       ],
       user_language: [
         { value: "", label: "Choose Language", disabled: true, selected: "" },
-        { value: "eng", label: "English" },
+        { value: "en", label: "English" },
         { value: "ar", label: "Arabic" },
       ],
       branch_shift: [

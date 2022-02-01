@@ -69,6 +69,9 @@
               />
               <div v-if="$v.form.email.$error">
                 <p v-if="!$v.form.email.required" class="errorMsg">Email is required</p>
+                <p v-if="!$v.form.email.email" class="errorMsg">
+                  Please Enter a valid email
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="6" class="pt-2">
@@ -118,7 +121,7 @@
 import CustomerSettingService from "@/services/settings/CustomerSettingService";
 import GroupServices from "@/services/groups/GroupServices";
 import SupplierServices from "@/services/contacts/supplier/SupplierServices";
-import { required, numeric } from "vuelidate/lib/validators";
+import { required, numeric, email } from "vuelidate/lib/validators";
 
 export default {
   name: "QuickAddCustomer",
@@ -150,7 +153,7 @@ export default {
         reference: { required },
         group: { required },
         contact: { required, numeric },
-        email: { required },
+        email: { required, email },
         address: { required },
       },
     };

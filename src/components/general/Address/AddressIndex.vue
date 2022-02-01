@@ -179,12 +179,12 @@ export default {
               this.loading = true;
               if (data.data) {
                 data.data.map((item, id) => {
-                  item.floor = item.floor.en;
-                  item.building = item.building.en;
-                  item.street = item.street.en;
-                  item.block = item.block.en;
-                  item.area = item.area.en;
-                  item.flat = item.flat.en;
+                  item.floor = item.floor?.en;
+                  item.building = item.building?.en;
+                  item.street = item.street?.en;
+                  item.block = item.block?.en;
+                  item.area = item.area?.en;
+                  item.flat = item.flat?.en;
                   this.AddressesData.push({ ...item, id });
                 });
               }

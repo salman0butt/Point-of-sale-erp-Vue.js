@@ -73,7 +73,12 @@
                 label="Status"
                 :options="options.status"
                 :value.sync="form.status"
+                :class="{ error: $v.form.status.$error }"
+                @input="$v.form.status.$touch()"
               />
+              <div v-if="$v.form.status.$error">
+                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
+              </div>
             </CCol>
           </CRow>
           <CRow>
@@ -176,6 +181,7 @@ export default {
         to_payment_method_id: { required },
         credit: { required },
         date: { required },
+        status: { required },
       },
     };
   },

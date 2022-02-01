@@ -36,6 +36,9 @@
                   />
                 </td>
               </template>
+              <template #account="{ item }">
+                <td>{{ item.account ? item.account.name : "" }}</td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>

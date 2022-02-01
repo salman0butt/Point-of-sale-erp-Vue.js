@@ -185,12 +185,21 @@ export default {
       if (!this.$v.$invalid) {
         this.$store.commit("set_loader");
         let formData = new FormData();
-        formData.append("name", this.form.name);
-        formData.append("parent_id", this.form.parent_id);
-        formData.append("color", this.form.color);
-        formData.append("image", this.form.image);
-        formData.append("status", this.form.status);
-
+        if (this.form.name) {
+          formData.append("name", this.form.name);
+        }
+        if (this.form.parent_id) {
+          formData.append("parent_id", this.form.parent_id);
+        }
+        if (this.form.color) {
+          formData.append("color", this.form.color);
+        }
+        if (this.form.image) {
+          formData.append("image", this.form.image);
+        }
+        if (this.form.status) {
+          formData.append("status", this.form.status);
+        }
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };

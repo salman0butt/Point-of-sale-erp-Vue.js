@@ -30,25 +30,23 @@
                   </CRow>
 
                   <p v-if="$v.$anyError" class="errorMsg">
-                    Please Fill the required data
+                    Damage Qty and Reason is required
                   </p>
                   <CRow class="mt-4">
                     <CButton
                       progress
                       timeout="2000"
-                      block
                       color="success"
                       style="float: right; width: 200px; margin-left: 20px"
                       type="submit"
-                      @click="saveAndExit = false"
+                      @click="toggleSaveAndExit(false)"
                       >Save & Continue</CButton
                     >
                     <CButton
                       timeout="2000"
-                      block
                       color="danger"
-                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
-                      @click="saveAndExit = true"
+                      style="float: right; width: 140px; margin-left: 20px"
+                      @click="toggleSaveAndExit(true)"
                       type="submit"
                       >Save & Exit</CButton
                     >
@@ -63,20 +61,21 @@
   </div>
 </template>
 <script>
+//TODO: start from Catalogs section offers
 import DamageService from "@/services/catalogs/damages/DamageService";
 import { required } from "vuelidate/lib/validators";
 import { cilTrash } from "@coreui/icons-pro";
 import SearchProduct from "@/components/layouts/SearchProduct";
+import { formMixin } from "@/mixins/formMixin";
 
 export default {
   name: "CreateOrUpdateDamage",
   components: {
     SearchProduct,
   },
+  mixins: [formMixin],
   cilTrash,
   data: () => ({
-    isEditing: false,
-    saveAndExit: false,
     form: {
       id: "",
       date: "",

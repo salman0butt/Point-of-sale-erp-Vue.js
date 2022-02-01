@@ -68,9 +68,7 @@
                     <p v-if="!$v.form.percent.required" class="errorMsg">
                       Percent is required
                     </p>
-                    <p v-if="!$v.form.percent.decimal" class="errorMsg">
-                      Must be Digit
-                    </p>
+                    <p v-if="!$v.form.percent.decimal" class="errorMsg">Must be Digit</p>
                     <p v-if="!$v.form.percent.minValue" class="errorMsg">
                       Minimum number must be zero
                     </p>
@@ -90,9 +88,7 @@
                     <p v-if="!$v.form.amount.required" class="errorMsg">
                       Fix amount is required
                     </p>
-                    <p v-if="!$v.form.amount.decimal" class="errorMsg">
-                      Must be Digit
-                    </p>
+                    <p v-if="!$v.form.amount.decimal" class="errorMsg">Must be Digit</p>
                     <p v-if="!$v.form.amount.minValue" class="errorMsg">
                       Minimum number must be zero
                     </p>
@@ -140,12 +136,7 @@ import AccoutingSettingService from "@/services/settings/AccoutingSettingService
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import PaymentMethodsServices from "@/services/accounting/paymentMethods/PaymentMethodsServices";
 
-import {
-  required,
-  minValue,
-  minLength,
-  decimal,
-} from "vuelidate/lib/validators";
+import { required, minValue, minLength, decimal } from "vuelidate/lib/validators";
 
 export default {
   name: "CreatePaymentMethods",
@@ -241,7 +232,7 @@ export default {
         let data = this.form;
         PaymentMethodsServices.create(data)
           .then((res) => {
-            if (res.status == 201) {
+            if (res.status === 201 || res.status === 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -267,9 +258,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.errorMsg {
-  color: red;
-}
-</style>

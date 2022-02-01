@@ -207,7 +207,7 @@ export default {
                 });
               });
             }
-            this.units = [];
+            // this.units = [];
             if (data.quantity_units && data.quantity_units.length) {
               data.quantity_units.map((unit) => {
                 this.units.push({
@@ -234,7 +234,8 @@ export default {
         .catch((err) => {
           console.log(err);
           this.$store.commit("close_loader");
-          this.$router.push("/products/index");
+          this.errorHandler(err.status);
+          // this.$router.push("/products/index");
         });
     },
   },

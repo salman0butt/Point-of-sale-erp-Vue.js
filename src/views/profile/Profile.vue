@@ -164,17 +164,15 @@
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-              <CRow class="mt-4">
-                <CButton
-                  progress
-                  timeout="2000"
-                  block
-                  color="success"
-                  style="float: right; width: 200px; margin-left: 20px"
-                  type="submit"
-                  >Save</CButton
-                >
-              </CRow>
+
+              <CLoadingButton
+                progress
+                timeout="2000"
+                color="success"
+                style="width: 200px; margin-left: 5px"
+                type="submit"
+                >Save</CLoadingButton
+              >
             </form>
           </CCardBody>
         </CCard>
@@ -274,7 +272,7 @@ export default {
       ],
       user_language: [
         { value: "", label: "Choose Language", disabled: true, selected: "" },
-        { value: "eng", label: "English" },
+        { value: "en", label: "English" },
         { value: "ar", label: "Arabic" },
       ],
       branch_shift: [
@@ -406,7 +404,7 @@ export default {
         })
         .catch((error) => {
           this.$store.commit("close_loader");
-          this.$router.push("/employee");
+          this.$router.push("/not-found");
           console.log(error);
         });
     },
@@ -432,6 +430,11 @@ export default {
                   if (res.data.uuid && res.data.uuid === this.$store.state.employee_id) {
                     this.$store.commit("set_profile_img", res.data.personal_photo);
                   }
+                }
+                const language = res.data.user.language;
+                if (language) {
+                  this.$store.dispatch("setLanguage", language);
+                  this.$i18n.locale = language;
                 }
               }
               this.getEmployee();

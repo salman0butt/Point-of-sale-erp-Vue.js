@@ -36,6 +36,10 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
+              <template #status="{ item }">
+                <td>{{ item.status ? item.status : "" }}</td>
+              </template>
+
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -72,7 +76,7 @@
 import BrandService from "@/services/catalogs/brands/BrandService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import BrandModel from "@/components/catalogs/brands/BrandModel";
-
+import { tableMixin } from "@/mixins/tableMixin";
 const fields = [
   { key: "name", label: "NAME", _style: "width:50%" },
   { key: "status", label: "STATUS", _style: "width:30%;" },
@@ -81,6 +85,7 @@ const fields = [
 
 export default {
   name: "IndexBrand",
+  mixins: [tableMixin],
   components: {
     BrandModel,
   },
@@ -89,68 +94,26 @@ export default {
   cilEye,
   data() {
     return {
-      BrandData: [],
+      data: [],
       fields,
-      loading: false,
-      deleteRows: [],
-      activePage: 1,
-      pages: 0,
-      perPage: 10,
     };
   },
   created() {
-    this.loading = true;
-    this.getBrandData();
-  },
-  watch: {
-    reloadParams() {
-      this.onTableChange();
-    },
-    activePage() {
-      this.getBrandData(this.activePage, this.perPage);
-    },
+    this.getData();
   },
   computed: {
     Brand() {
-      return this.BrandData;
+      return this.data;
     },
   },
   methods: {
     updateTable() {
       setTimeout(() => {
-        this.getBrandData();
+        this.getData();
       }, 1000);
     },
-    getBrandData(page = "", per_page = "") {
-      BrandService.getAll(page, per_page)
-        .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
-            this.BrandData = [];
-            this.loading = true;
-            if (data.data) {
-              data.data.map((item, id) => {
-                this.BrandData.push({ ...item, id });
-              });
-            }
-            if (data.meta) {
-              this.setPagination(data.meta);
-            }
-
-            this.loading = false;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    rowClicked(item, index, column, e) {
-      if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
-        this.check(item);
-      }
-    },
-    check(item) {
-      const val = Boolean(this.BrandData[item.id]._selected);
-      this.$set(this.BrandData[item.id], "_selected", !val);
+    getData(page = "", per_page = "") {
+      this.getServerData(BrandService, page, per_page);
     },
     addBrand() {
       this.$store.commit("set_brand_model", true);
@@ -161,59 +124,8 @@ export default {
     editRow(uuid) {
       this.$router.push({ path: "/catalogs/brands/edit/" + uuid });
     },
-
     deleteRow(uuid) {
-      this.deleteRows = JSON.stringify([uuid]);
-      this.$swal
-        .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            BrandService.delete(this.deleteRows)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Brand Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.BrandData = this.BrandData.filter((item) => item.uuid != uuid);
-                  this.deleteRows = [];
-                }
-              })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-              });
-          }
-        });
-    },
-    setPagination(meta) {
-      this.activePage = parseInt(meta.current_page);
-      this.pages = parseInt(meta.last_page);
-      this.perPage = parseInt(meta.per_page);
-    },
-    onTableChange() {
-      setTimeout(() => {
-        this.loading = false;
-        const agent = this.$refs.externalAgent;
-        this.BrandData = agent.currentItems;
-        this.pages = Math.ceil(agent.sortedItems.length / 5);
-      }, 1000);
-    },
-    changePagination(value) {
-      this.perPage = parseInt(value);
-      this.getBrandData("", this.perPage);
+      this.deleteData(BrandService, uuid);
     },
   },
 };
