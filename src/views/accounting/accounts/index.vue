@@ -12,45 +12,33 @@
               >Create Account</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
-            <CDataTable
-              :items="items"
-              :fields="fields"
-              table-filter
-              items-per-page-select
-              @pagination-change="changePagination"
-              :items-per-page="perPage"
-              sorter
-              pagination
-              clickable-rows
-              hover
-              :loading="loading"
-              @row-clicked="rowClicked"
-              ref="externalAgent"
+            <vue-ads-table-tree
+              :columns="columns"
+              :rows="rows"
+              :filter="filterValue"
+              :page="page"
+              @filter-change="filterChanged"
+              @page-change="pageChanged"
             >
-              <template #select="{ item }">
-                <td>
-                  <CInputCheckbox
-                    :checked="item._selected"
-                    @update:checked="() => check(item)"
-                    custom
-                  />
-                </td>
-              </template>
-              <template #parent="{ item }">
-                <td v-if="item.parent">{{ item.parent.name.en }}</td>
-                <td v-else>Main</td>
-              </template>
-              <template #actions="{ item }">
+              <!-- <template slot="firstName" slot-scope="props">
+            <a
+              :href="`https://www.google.com/search?q=${props.row.firstName}+${props.row.lastName}`"
+              target="_blank"
+            >
+              {{ props.row.firstName }}
+            </a>
+          </template> -->
+              <template slot="actions" slot-scope="props">
                 <td>
                   <CButtonGroup>
                     <CButton
-                      @click="viewRow(item.uuid)"
+                      @click="viewRow(props.row.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
                     >
                     <CButton
-                      @click="editRow(item.uuid)"
+                      @click="editRow(props.row.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
@@ -66,12 +54,7 @@
                   </CButtonGroup>
                 </td>
               </template>
-            </CDataTable>
-            <CPagination
-              v-show="pages > 1"
-              :pages="pages"
-              :active-page.sync="activePage"
-            />
+            </vue-ads-table-tree>
           </CCardBody>
         </CCard>
       </CCol>
@@ -82,81 +65,176 @@
 <script>
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import "@/../node_modules/@fortawesome/fontawesome-free/css/all.css";
 
-const fields = [
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "accountType", label: "TYPE", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
-  { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
-];
+import VueAdsTableTree from "vue-ads-table-tree";
 
 export default {
   name: "IndexAccounts",
   cilPencil,
   cilTrash,
   cilEye,
+  components: {
+    VueAdsTableTree,
+  },
   data() {
     return {
-      serverData: [],
-      fields,
-      loading: false,
-      // cards: {
-      //   employees_count: 0,
-      //   female_count: 0,
-      //   male_count: 0,
-      //   departments_count: 0,
-      //   manager_count: 0,
-      // },
-      // deleteRows: [],
-      activePage: 1,
-      pages: 0,
-      perPage: 10,
+      page: 0,
+      filterValue: "",
+      columns: [
+        {
+          property: "parent",
+          title: "Parent",
+          direction: null,
+          filterable: true,
+          collapseIcon: true,
+        },
+        // {
+        //   property: "type",
+        //   title: "Type",
+        //   direction: null,
+        //   filterable: true,
+        //   // collapseIcon: true,
+        // },
+        // {
+        //   property: "status",
+        //   title: "Status",
+        //   direction: null,
+        //   filterable: true,
+        //   // collapseIcon: true,
+        // },
+        {
+          property: "actions",
+          title: "Action",
+          direction: null,
+          filterable: false,
+          // collapseIcon: true,
+        },
+      ],
+      rows: [],
+      // rows: [
+      //   {
+      //     firstName: "Josephine",
+      //     lastName: "Astrid",
+      //   },
+      //   {
+      //     firstName: "Boudewijn",
+      //     lastName: "Van Brabandt",
+      //   },
+      //   {
+      //     firstName: "Albert II",
+      //     lastName: "Van Belgie",
+      //     _children: [
+      //       {
+      //         firstName: "Filip",
+      //         lastName: "Van Belgie",
+      //         _children: [
+      //           {
+      //             firstName: "Elisabeth",
+      //             lastName: "Van Brabant",
+      //           },
+      //           {
+      //             firstName: "Gabriel",
+      //             lastName: "Boudwijn",
+      //           },
+      //           {
+      //             firstName: "Emmanuel",
+      //             lastName: "Van Belgie",
+      //           },
+      //           {
+      //             firstName: "Eleonore",
+      //             lastName: "Boudwijn",
+      //             _hasChildren: true,
+      //           },
+      //         ],
+      //       },
+      //       {
+      //         firstName: "Astrid",
+      //         lastName: "Van Belgie",
+      //       },
+      //       {
+      //         firstName: "Laurent",
+      //         lastName: "Van Belgie",
+      //       },
+      //     ],
+      //   },
+      // ],
     };
   },
   created() {
-    this.loading = true;
-    // this.getTotalCardData();
     this.getServerData();
   },
-  watch: {
-    activePage() {
-      this.getServerData(this.activePage, this.perPage);
-    },
-  },
+  // watch: {
+  //   activePage() {
+  //     this.getServerData(this.activePage, this.perPage);
+  //   },
+  // },
   computed: {
     items() {
       return this.serverData;
     },
   },
   methods: {
+    filterChanged(filter) {
+      this.filter = filter;
+    },
+
+    pageChanged(page) {
+      this.page = page;
+    },
     getServerData() {
-      AccountServices.getAll(this.activePage, this.perPage)
+      AccountServices.getAll(1, 5)
         .then(({ data }) => {
-          this.loading = true;
           if (data !== "" && data !== undefined) {
-            this.serverData = [];
-            data.data.map((item, id) => {
-              item.accountType = item.accountType.name;
-              this.serverData.push({ ...item, id });
+            this.rows = [];
+            data.map((item, id) => {
+              item.type = item.accountType ? item.accountType.name : "N/A";
+              // if (item._children && item._children.length > 0) {
+              //   item._children = item._children.map((child, index) => {
+              //     child.type = child.accountType.name;
+              //     // item._children.push({ ...child, _id: index });
+              //     return child;
+              //   });
+              //   // item._hasChildren = true;
+              //   // item._selectable = true;
+              //   // item._showChildren = true;
+              // }
+              if (item.parent) {
+                item = {
+                  uuid: item.uuid,
+                  parent: "Parent: " + item.parent.name,
+                  _children: [
+                    {
+                      uuid: item.uuid,
+                      parent: "Type: " + item.type,
+                      _children: [{ uuid: item.uuid, parent: "Name: " + item.name }],
+                    },
+                  ],
+                };
+              } else {
+                item = {
+                  uuid: item.uuid,
+                  parent: "parent: " + "N/A",
+                  _children: [
+                    {
+                      uuid: item.uuid,
+                      parent: "Type: " + item.type,
+                      _children: [{ uuid: item.uuid, parent: "Name: " + item.name }],
+                    },
+                  ],
+                };
+              }
+
+              this.rows.push({ ...item, _id: id });
             });
-            this.loading = false;
           }
-          if (data.meta) {
-            this.setPagination(data.meta);
-          }
+          // if (data.meta) {
+          //   this.setPagination(data.meta);
+          // }
         })
         .catch((err) => {
           console.log(err);
         });
-    },
-    rowClicked(item, index, column, e) {
-      if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
-        this.check(item);
-      }
-    },
-    check(item) {
-      const val = Boolean(this.usersData[item.id]._selected);
-      this.$set(this.usersData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
@@ -164,61 +242,13 @@ export default {
     editRow(uuid) {
       this.$router.push({ path: "/accounting/accounts/" + uuid });
     },
-
-    deleteRow(uuid) {
-      this.deleteRows = JSON.stringify([uuid]);
-      this.$swal
-        .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            EmployeeService.delete(this.deleteRows)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Employee Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.usersData = this.usersData.filter(
-                    (item) => item.uuid != uuid
-                  );
-                  this.getTotalCardData();
-                }
-              })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-              });
-            this.deleteRows = [];
-          }
-        });
-    },
-    setPagination(meta) {
-      this.activePage = parseInt(meta.current_page);
-      this.pages = parseInt(meta.last_page);
-      this.perPage = parseInt(meta.per_page);
-    },
-
-    changePagination(value) {
-      this.perPage = parseInt(value);
-      this.getServerData(this.activePage, this.perPage);
-    },
   },
 };
 </script>
+
+<style src="vue-ads-table-tree/dist/vue-ads-table-tree.css"></style>
 <style scoped>
-.bolder {
-  font-weight: 600;
+.leftAlign {
+  text-align: left;
 }
 </style>

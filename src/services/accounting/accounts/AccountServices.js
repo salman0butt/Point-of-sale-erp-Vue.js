@@ -10,6 +10,7 @@ class AccountServices extends Helper {
         if (per_page !== '')
             url = super.updateQueryStringParameter(url, "per_page", per_page);
 
+            url = super.updateQueryStringParameter(url, "active", "active");
         return http.get(url);
     }
 

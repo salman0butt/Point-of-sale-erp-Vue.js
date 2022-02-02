@@ -61,7 +61,6 @@
   </div>
 </template>
 <script>
-//TODO: start from Catalogs section offers
 import DamageService from "@/services/catalogs/damages/DamageService";
 import { required } from "vuelidate/lib/validators";
 import { cilTrash } from "@coreui/icons-pro";

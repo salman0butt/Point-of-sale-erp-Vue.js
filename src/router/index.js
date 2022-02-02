@@ -72,8 +72,8 @@ const Login = () => import('@/views/pages/Login')
 // const Paginations = () => import('@/views/base/Paginations')
 // const Popovers = () => import('@/views/base/Popovers')
 // const ProgressBars = () => import('@/views/base/ProgressBars')
-// const Tables = () => import('@/views/tables/Tables')
-// const AdvancedTables = () => import('@/views/tables/AdvancedTables')
+const Tables = () => import('@/views/tables/Tables')
+const AdvancedTables = () => import('@/views/tables/AdvancedTables')
 // const Tooltips = () => import('@/views/base/Tooltips')
 
 // Views - Buttons
@@ -256,26 +256,26 @@ const router = new Router({
         //   name: 'Charts',
         //   component: Charts
         // },
-        // {
-        //   path: 'tables',
-        //   redirect: '/tables/tables',
-        //   name: 'Tables',
-        //   component: {
-        //     render(c) { return c('router-view') }
-        //   },
-        //   children: [
-        //     {
-        //       path: 'tables',
-        //       name: 'Basic tables',
-        //       component: Tables
-        //     },
-        //     {
-        //       path: 'advanced-tables',
-        //       name: 'Advanced tables',
-        //       component: AdvancedTables
-        //     }
-        //   ]
-        // },
+        {
+          path: 'tables',
+          redirect: '/tables/tables',
+          name: 'Tables',
+          component: {
+            render(c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'tables',
+              name: 'Basic tables',
+              component: Tables
+            },
+            {
+              path: 'advanced-tables',
+              name: 'Advanced tables',
+              component: AdvancedTables
+            }
+          ]
+        },
         // {
         //   path: 'widgets',
         //   name: 'Widgets',
