@@ -100,7 +100,11 @@
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
-                  <app-upload ref="fileUpload" @file:changed="handleFile" />
+                  <app-upload
+                    fileType="image/jpg,image/jpeg,image/png"
+                    ref="fileUpload"
+                    @file:changed="handleFile"
+                  />
 
                   <div
                     v-if="display_images && display_images.length"
@@ -274,10 +278,6 @@ export default {
           this.form.images.map((image) => {
             formData.append("images[]", image);
           });
-        }
-        // Display the key/value pairs
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
         }
 
         if (!this.isEditing) {

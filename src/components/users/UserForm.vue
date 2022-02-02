@@ -176,10 +176,10 @@
               label="Password"
               type="password"
               :value.sync="form.user_pass"
-              :class="{ error: $v.form.user_pass.$error }"
+              :class="{ error: !isEditing && $v.form.user_pass.$error }"
               @input="$v.form.user_pass.$touch()"
             />
-            <div v-if="$v.form.user_pass.$error">
+            <div v-if="!isEditing && $v.form.user_pass.$error">
               <p v-if="!$v.form.user_pass.required" class="errorMsg">
                 Password is required
               </p>
@@ -302,21 +302,39 @@ export default {
     },
   }),
   validations() {
-    return {
-      form: {
-        full_name: { required },
-        phone_number: { required, numeric },
-        cpr_no: { required, minLength: minLength(9), maxLength: maxLength(9) },
-        cpr_no_expiry: { required },
-        email: { email },
-        branch_id: { required },
-        serial_no: { required },
-        user_name: { required },
-        user_email: { required },
-        user_pass: { required },
-        user_role: { required },
-      },
-    };
+    if (this.isEditing) {
+      return {
+        form: {
+          full_name: { required },
+          phone_number: { required, numeric },
+          cpr_no: { required, minLength: minLength(9), maxLength: maxLength(9) },
+          cpr_no_expiry: { required },
+          email: { email },
+          branch_id: { required },
+          serial_no: { required },
+          user_name: { required },
+          user_email: { required },
+
+          user_role: { required },
+        },
+      };
+    } else {
+      return {
+        form: {
+          full_name: { required },
+          phone_number: { required, numeric },
+          cpr_no: { required, minLength: minLength(9), maxLength: maxLength(9) },
+          cpr_no_expiry: { required },
+          email: { email },
+          branch_id: { required },
+          serial_no: { required },
+          user_name: { required },
+          user_email: { required },
+          user_pass: { required },
+          user_role: { required },
+        },
+      };
+    }
   },
   created() {
     this.form.id = this.$route.params.id;

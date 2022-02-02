@@ -253,7 +253,7 @@ export default {
               });
             }
             this.form.description = data.description;
-            this.form.is_default = data.is_default;
+            this.form.is_default = data.is_default == 0 ? "0" : "1";
             this.form.status = data.status;
           }
           this.$store.commit("close_loader");

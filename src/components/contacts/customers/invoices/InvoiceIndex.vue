@@ -79,10 +79,12 @@ export default {
       activePage: 1,
       pages: 0,
       perPage: 10,
+      customer_id: null,
     };
   },
   created() {
     this.loading = true;
+    this.customer_id = this.$route.params.id;
     this.getServerData();
   },
   watch: {
@@ -97,7 +99,7 @@ export default {
   },
   methods: {
     getServerData() {
-      InvoiceService.getAll(this.activePage, this.perPage)
+      InvoiceService.getAll(this.activePage, this.perPage, this.customer_id)
         .then(({ data }) => {
           this.loading = true;
           if (data !== "" && data !== undefined) {

@@ -99,7 +99,11 @@
                   <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <app-upload ref="fileUpload" @file:changed="handleFile" />
+                  <app-upload
+                    fileType="image/jpg,image/jpeg,image/png"
+                    ref="fileUpload"
+                    @file:changed="handleFile"
+                  />
 
                   <div
                     v-if="display_images && display_images.length"

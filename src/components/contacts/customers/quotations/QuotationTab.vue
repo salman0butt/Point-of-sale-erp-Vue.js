@@ -67,7 +67,7 @@ export default {
     },
     QuotationUpdated() {
       this.ToggleQuotation();
-      this.$refs.QuotationRef.getQuotationData();
+      this.$refs.QuotationRef.getServerData();
     },
     QuotationEdited(uuid) {
       this.ToggleQuotation();
