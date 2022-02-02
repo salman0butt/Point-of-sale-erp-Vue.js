@@ -247,7 +247,7 @@ export default {
 </script>
 
 <style src="vue-ads-table-tree/dist/vue-ads-table-tree.css"></style>
-<style>
+<style scoped>
 .leftAlign {
   text-align: left;
 }

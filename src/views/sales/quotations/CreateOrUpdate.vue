@@ -3,8 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader v-if="!isEditing"> New Quotation </CCardHeader>
-          <CCardHeader v-if="isEditing"> Edit Quotation </CCardHeader>
+          <CCardHeader v-if="!isEditing">
+            {{ isEditing ? "Edit" : "New" }} Quotation
+          </CCardHeader>
           <form @submit.prevent="formSubmit()">
             <CCardBody>
               <CRow>
@@ -64,11 +65,22 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2">
-                  <SearchProduct
-                    searchType="quotation"
-                    :itemsData="form.items"
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Status"
+                    :options="options.status"
+                    :value.sync="form.status"
+                    @change="$v.form.status.$touch()"
+                    :class="{ error: $v.form.status.$error }"
                   />
+                  <div v-if="$v.form.status.$error">
+                    <p v-if="!$v.form.status.required" class="errorMsg">
+                      Status is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol sm="12" md="12" class="pt-2">
+                  <SearchProduct searchType="quotation" :itemsData="form.items" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Sub Total" readonly :value="subTotal" />
@@ -77,23 +89,16 @@
                   <CInput label="Tax Total" readonly :value="taxTotal" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
-                  <CInput
-                    label="Total Discount"
-                    readonly
-                    :value="totalDiscount"
-                  />
+                  <CInput label="Total Discount" readonly :value="totalDiscount" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Total" readonly :value="allTotal" />
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
-                  <CTextarea
-                    label="Note"
-                    placeholder="Content..."
-                    v-model="form.note"
-                  />
+                  <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
                 </CCol>
+
                 <CCol sm="12" md="12" class="pt-2">
                   <app-upload ref="fileUpload" @file:changed="handleFile" />
 
@@ -179,6 +184,15 @@ export default {
       note: "",
       items: [],
       images: [],
+      status: "",
+    },
+    options: {
+      status: [
+        { label: "Choose Status", value: "", selected: true, disabled: "" },
+        { label: "Pending", value: "pending" },
+        { label: "Approved", value: "approved" },
+        { label: "Rejected", value: "rejected" },
+      ],
     },
     sales_persons: [],
     display_images: [],
@@ -192,6 +206,7 @@ export default {
         dated: { required },
         due_date: { required },
         sales_persons: { required },
+        status: { required },
       },
     };
   },
@@ -248,13 +263,11 @@ export default {
         formData.append("customer", this.form.customer);
         formData.append("sales_persons", this.form.sales_persons);
         formData.append("note", this.form.note);
+        formData.append("status", this.form.status);
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
-        formData.append(
-          "total_discount",
-          this.$store.getters.getQuotationDiscount
-        );
+        formData.append("total_discount", this.$store.getters.getQuotationDiscount);
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
 
         if (this.form.images && this.form.images.length > 0) {
@@ -379,6 +392,7 @@ export default {
             this.form.dated = res.data.dated;
             this.form.due_date = res.data.due_date;
             this.form.note = res.data.note;
+            this.form.status = res.data.status;
 
             this.form.sales_persons = [];
             if (res.data.salespersons && res.data.salespersons.length > 0) {
@@ -421,9 +435,7 @@ export default {
                   qty: item.qty,
                   description: item.description,
                   weight_unit: item.product.weight_unit,
-                  discount: item.discount_per
-                    ? item.discount + "%"
-                    : item.discount,
+                  discount: item.discount_per ? item.discount + "%" : item.discount,
                   total: total_each,
                 });
               });
@@ -432,10 +444,7 @@ export default {
 
             this.$store.commit("set_quotation_sub_total", res.data.sub_total);
             this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-            this.$store.commit(
-              "set_quotation_total_discount",
-              res.data.total_discount
-            );
+            this.$store.commit("set_quotation_total_discount", res.data.total_discount);
             this.$store.commit("set_quotation_total", res.data.grand_total);
 
             this.previousValueCustomer = res.data.customer;
