@@ -5,7 +5,7 @@
         <CCard>
           <CCardHeader>Invoices</CCardHeader>
           <CCardBody>
-            <CRow>
+            <CRow v-if="!readOnly">
               <CCol xs="12" lg="12">
                 <CButton
                   @click="ToggleInvoice()"
@@ -25,6 +25,7 @@
                     module="customer"
                     ref="InvoiceRef"
                     @invoice-edit="InvoiceEdited"
+                    :readOnly="readOnly"
                   />
                 </CCollapse>
                 <CCollapse :show="collapse">
@@ -48,6 +49,12 @@ import InvoiceForm from "@/components/contacts/customers/invoices/InvoiceForm";
 
 export default {
   name: "InvoiceTab",
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: { InvoiceIndex, InvoiceForm },
   data: () => ({
     toggleName: "Add New Invoice",

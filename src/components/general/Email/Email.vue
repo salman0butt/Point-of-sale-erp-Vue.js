@@ -5,7 +5,7 @@
       <CCardBody>
         <form @submit.prevent="storeMedia()">
           <CCardBody>
-            <CRow>
+            <CRow v-if="!readOnly">
               <CCol sm="3" md="3" class="pt-2">
                 <CInput label="Name" v-model="mediaitem.name" />
               </CCol>
@@ -23,17 +23,46 @@
                   block
                   color="default"
                   @click="AddMedia"
-                  style="
-                    width: 39px;
-                    border-radius: 35px;
-                    margin: auto;
-                    margin-top: 25px;
-                  "
+                  style="width: 39px; border-radius: 35px; margin: auto; margin-top: 25px"
                   ><CIcon name="cil-plus"
                 /></CButton>
               </CCol>
             </CRow>
-            <CRow v-for="(item, index) in form.mediaLst" :key="item.name">
+            <CRow class="mt-2">
+              <Loader />
+              <table class="table" v-if="form.mediaLst && form.mediaLst.length">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Email</th>
+                    <th scope="col" v-if="!readOnly">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in form.mediaLst" :key="item.name">
+                    <th scope="row">{{ index + 1 }}</th>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.designation }}</td>
+                    <td>{{ item.email }}</td>
+                    <td v-if="!readOnly">
+                      <CButton
+                        block
+                        color="default"
+                        style="width: 39px; border-radius: 35px; margin: auto"
+                        @click="DelMedia(index)"
+                        ><CIcon name="cil-minus"
+                      /></CButton>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </CRow>
+            <div v-if="form.mediaLst && form.mediaLst == 0 && readOnly">
+              <p class="text-center">No record found</p>
+            </div>
+            <!-- <CRow v-for="(item, index) in form.mediaLst" :key="item.name">
               <CCol sm="3" md="3" class="pt-2">
                 {{ item.name }}
               </CCol>
@@ -50,8 +79,9 @@
                   ><CIcon name="cil-minus"
                 /></CButton>
               </CCol>
-            </CRow>
+            </CRow> -->
             <CButton
+              v-if="!readOnly"
               block
               color="success"
               style="float: right; width: 100px; margin-top: 25px"
@@ -67,12 +97,17 @@
 <script>
 import CustomerEmailServices from "@/services/contacts/customers/CustomerEmailServices";
 import SupplierEmailServices from "@/services/contacts/supplier/SupplierEmailServices";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "Contact",
-
+  components: { Loader },
   props: {
     module: String,
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -97,36 +132,44 @@ export default {
   methods: {
     getAllMedia() {
       this.form.uuid = this.$route.params.id;
-
+      this.$store.commit("set_loader");
       if (this.form.module == "customer") {
         CustomerEmailServices.getCustomerEmails(this.form.uuid)
           .then(({ data }) => {
-            data.forEach((value, index) => {
-              var data = {
-                name: value.name,
-                designation: value.designation,
-                email: value.email,
-              };
-              this.form.mediaLst.push(data);
-            });
+            if (data) {
+              data.forEach((value, index) => {
+                var data = {
+                  name: value.name,
+                  designation: value.designation,
+                  email: value.email,
+                };
+                this.form.mediaLst.push(data);
+              });
+            }
+            this.$store.commit("close_loader");
           })
           .catch((err) => {
+            this.$store.commit("close_loader");
             console.log(err);
           });
       }
       if (this.form.module == "supplier") {
         SupplierEmailServices.getSupplierEmails(this.form.uuid)
           .then(({ data }) => {
-            data.forEach((value, index) => {
-              var data = {
-                name: value.name,
-                designation: value.designation,
-                email: value.email,
-              };
-              this.form.mediaLst.push(data);
-            });
+            if (data) {
+              data.forEach((value, index) => {
+                var data = {
+                  name: value.name,
+                  designation: value.designation,
+                  email: value.email,
+                };
+                this.form.mediaLst.push(data);
+              });
+            }
+            this.$store.commit("close_loader");
           })
           .catch((err) => {
+            this.$store.commit("close_loader");
             console.log(err);
           });
       }
@@ -137,6 +180,11 @@ export default {
         this.mediaitem.designation == "" ||
         this.mediaitem.email == ""
       ) {
+        this.$swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Please Add You data",
+        });
         return false;
       }
       var data = {
@@ -145,6 +193,9 @@ export default {
         email: this.mediaitem.email,
       };
       this.form.mediaLst.push(data);
+      this.mediaitem.name = "";
+      this.mediaitem.designation = "";
+      this.mediaitem.email = "";
     },
     DelMedia(index) {
       this.form.mediaLst.splice(index, 1);

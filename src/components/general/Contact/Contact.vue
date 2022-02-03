@@ -5,7 +5,7 @@
       <CCardBody>
         <form @submit.prevent="storeMedia()">
           <CCardBody>
-            <CRow>
+            <CRow v-if="!readOnly">
               <CCol sm="3" md="3" class="pt-2">
                 <CInput label="Name" v-model="mediaitem.name" />
               </CCol>
@@ -27,27 +27,54 @@
                   block
                   color="default"
                   @click="AddMedia"
-                  style="
-                    width: 39px;
-                    border-radius: 35px;
-                    margin: auto;
-                    margin-top: 25px;
-                  "
+                  style="width: 39px; border-radius: 35px; margin: auto; margin-top: 25px"
                   ><CIcon name="cil-plus"
                 /></CButton>
               </CCol>
             </CRow>
-            <CRow v-for="(item, index) in form.mediaLst" :key="item.name">
+            <CRow class="mt-2">
+              <Loader />
+              <table class="table" v-if="form.mediaLst && form.mediaLst.length">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col" v-if="!readOnly">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in form.mediaLst" :key="item.name">
+                    <th scope="row">{{ index + 1 }}</th>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.country.dialCode }}</td>
+                    <td>{{ item.number }}</td>
+                    <td v-if="!readOnly">
+                      <CButton
+                        block
+                        color="default"
+                        style="width: 39px; border-radius: 35px; margin: auto"
+                        @click="DelMedia(index)"
+                        ><CIcon name="cil-minus"
+                      /></CButton>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </CRow>
+            <div v-if="form.mediaLst && form.mediaLst == 0 && readOnly">
+              <p class="text-center">No record found</p>
+            </div>
+            <!-- <CRow v-for="(item, index) in form.mediaLst" :key="item.name">
               <CCol sm="3" md="3" class="pt-2">
                 {{ item.name }}
               </CCol>
-              <CCol sm="1" md="1" class="pt-2">
-                +{{ item.country.dialCode }}
-              </CCol>
+              <CCol sm="1" md="1" class="pt-2"> +{{ item.country.dialCode }} </CCol>
               <CCol sm="6" md="3" class="pt-2">
                 {{ item.number }}
               </CCol>
-              <CCol sm="6" md="1" class="pt-2">
+              <CCol sm="6" md="1" class="pt-2" v-if="!readOnly">
                 <CButton
                   block
                   color="default"
@@ -56,8 +83,9 @@
                   ><CIcon name="cil-minus"
                 /></CButton>
               </CCol>
-            </CRow>
+            </CRow> -->
             <CButton
+              v-if="!readOnly"
               block
               color="success"
               style="float: right; width: 100px; margin-top: 25px"
@@ -74,17 +102,22 @@
 import VueCountryCode from "vue-country-code-select";
 import CustomerContactServices from "@/services/contacts/customers/CustomerContactServices";
 import SupplierContactServices from "@/services/contacts/supplier/SupplierContactServices";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "Contact",
 
   components: {
     VueCountryCode: VueCountryCode,
+    Loader,
   },
   props: {
     module: String,
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
-
   data() {
     return {
       form: {
@@ -107,34 +140,42 @@ export default {
   methods: {
     getAllMedia() {
       this.form.uuid = this.$route.params.id;
-
+      this.$store.commit("set_loader");
       if (this.form.module == "customer") {
         CustomerContactServices.getCustomerContacts(this.form.uuid)
           .then(({ data }) => {
-            data.forEach((value, index) => {
-              var data = {
-                name: value.name.en,
-                country: value.country,
-                number: value.number.en,
-              };
-              this.form.mediaLst.push(data);
-            });
+            if (data) {
+              data.forEach((value, index) => {
+                var data = {
+                  name: value.name.en,
+                  country: value.country,
+                  number: value.number.en,
+                };
+                this.form.mediaLst.push(data);
+              });
+            }
+            this.$store.commit("close_loader");
           })
           .catch((err) => {
+            this.$store.commit("close_loader");
             console.log(err);
           });
       }
       if (this.form.module == "supplier") {
+        this.$store.commit("set_loader");
         SupplierContactServices.getSupplierContacts(this.form.uuid)
           .then(({ data }) => {
-            data.forEach((value, index) => {
-              var data = {
-                name: value.name.en,
-                country: value.country,
-                number: value.number.en,
-              };
-              this.form.mediaLst.push(data);
-            });
+            if (data) {
+              data.forEach((value, index) => {
+                var data = {
+                  name: value.name.en,
+                  country: value.country,
+                  number: value.number.en,
+                };
+                this.form.mediaLst.push(data);
+              });
+            }
+            this.$store.commit("close_loader");
           })
           .catch((err) => {
             console.log(err);
@@ -151,6 +192,11 @@ export default {
         this.mediaitem.country == "" ||
         this.mediaitem.number == ""
       ) {
+        this.$swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Please Add You data",
+        });
         return false;
       }
       var data = {
@@ -159,6 +205,9 @@ export default {
         number: this.mediaitem.number,
       };
       this.form.mediaLst.push(data);
+      this.mediaitem.name = "";
+      this.mediaitem.number = "";
+      this.mediaitem.country = "";
     },
     DelMedia(index) {
       this.form.mediaLst.splice(index, 1);
@@ -226,8 +275,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.errorMsg {
-  color: red;
-}
-</style>

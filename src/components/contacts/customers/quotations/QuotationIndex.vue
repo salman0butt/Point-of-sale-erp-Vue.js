@@ -63,7 +63,7 @@
 import QuotationService from "@/services/sale/QuotationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
-const fields = [
+let fields = [
   { key: "quotation_ref_no", label: "Ref No", _style: "min-width:15%;" },
   { key: "customer", label: "Customer", _style: "min-width:40%" },
   { key: "dated", label: "Dated", _style: "min-width:40%" },
@@ -75,6 +75,12 @@ const fields = [
 
 export default {
   name: "IndexQuotations",
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   cilPencil,
   cilTrash,
   cilEye,
@@ -82,7 +88,6 @@ export default {
     return {
       serverData: [],
       fields,
-      loading: false,
       activePage: 1,
       pages: 0,
       perPage: 10,
@@ -91,8 +96,10 @@ export default {
   },
   created() {
     this.customer_id = this.$route.params.id;
-    this.loading = true;
     this.getServerData();
+    if (this.readOnly) {
+      this.fields = this.fields.filter((field) => field.key !== "actions");
+    }
   },
   watch: {
     activePage() {
@@ -103,25 +110,29 @@ export default {
     items() {
       return this.serverData;
     },
+    loading() {
+      return this.$store.getters.loading;
+    },
   },
   methods: {
     getServerData() {
+      this.$store.commit("set_loader");
       QuotationService.getAll(this.activePage, this.perPage, this.customer_id)
         .then(({ data }) => {
-          this.loading = true;
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
               item.customer = item.customer.full_name.en;
               this.serverData.push({ ...item, id });
             });
-            this.loading = false;
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
           }
-          if (data.meta) {
-            this.setPagination(data.meta);
-          }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },

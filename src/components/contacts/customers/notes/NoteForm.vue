@@ -19,19 +19,21 @@
                 />
                 <span
                   >Created by: {{ note.created_by ? note.created_by.username : "N/A" }} |
-                  {{ note.created_at }} - {{ note.time }} ((<a
-                    class="del-record"
-                    @click.prevent="deleteNote(note.uuid)"
-                    >Delete</a
+                  {{ note.created_at }} - {{ note.time }}
+                  <span v-if="!readOnly"
+                    >((<a class="del-record" @click.prevent="deleteNote(note.uuid)"
+                      >Delete</a
+                    >
+                    -
+                    <a class="edit-record" @click.prevent="editNote(k)">Edit</a>))</span
                   >
-                  -
-                  <a class="edit-record" @click.prevent="editNote(k)">Edit</a>))
                 </span>
 
                 <!-- <div v-if="$v.form.note.$error">
                 <p v-if="!$v.form.note.required" class="errorMsg">Notes is required</p>
               </div> -->
                 <CButton
+                  v-if="!readOnly"
                   :class="{ 'd-none': notesData[k].disabled }"
                   progress
                   timeout="2000"
@@ -48,10 +50,10 @@
           </form>
         </div>
 
-        <!-- <div v-else>
+        <div v-if="notesData && notesData.length == 0 && readOnly">
           <p class="text-center">No record found</p>
-        </div> -->
-        <form @submit.prevent="saveNote()">
+        </div>
+        <form @submit.prevent="saveNote()" v-if="!readOnly">
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
               <CTextarea
@@ -91,6 +93,16 @@ import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "NoteForm",
+  props: {
+    module: {
+      type: String,
+      default: "customer",
+    },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     Loader,
   },
@@ -125,12 +137,7 @@ export default {
       },
     };
   },
-  props: {
-    module: String,
-    default: {
-      value: "customer",
-    },
-  },
+
   watch: {
     activePage() {
       this.getNoteData(this.activePage, this.perPage);

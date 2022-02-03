@@ -7,6 +7,7 @@
           <CCardBody>
             <form @submit.prevent="isEditing ? updateData() : saveData()">
               <CRow>
+                <Loader />
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Type"
@@ -15,6 +16,7 @@
                     :class="{ error: $v.form.type.$error }"
                     v-on:change="CustomerType"
                     @input="$v.form.type.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.type.$error">
                     <p v-if="!$v.form.type.required" class="errorMsg">
@@ -30,6 +32,7 @@
                     v-model="form.serial_no"
                     :class="{ error: $v.form.serial_no.$error }"
                     @input="$v.form.serial_no.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.serial_no.$error">
                     <p v-if="!$v.form.serial_no.required" class="errorMsg">
@@ -46,6 +49,7 @@
                     v-model="form.full_name"
                     :class="{ error: $v.form.full_name.$error }"
                     @input="$v.form.full_name.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.full_name.$error">
                     <p v-if="!$v.form.full_name.required" class="errorMsg">
@@ -62,6 +66,7 @@
                     :value.sync="form.group"
                     :class="{ error: $v.form.group.$error }"
                     @input="$v.form.group.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.group.$error">
                     <p v-if="!$v.form.group.required" class="errorMsg">
@@ -70,15 +75,23 @@
                   </div>
                 </CCol>
                 <CCol v-show="type_selected" sm="6" md="4" class="pt-2">
-                  <CInput label="Vat Number" v-model="form.vat_no" />
+                  <CInput
+                    label="Vat Number"
+                    v-model="form.vat_no"
+                    v-bind:disabled="readOnly"
+                  />
                 </CCol>
                 <CCol v-show="type_selected" sm="6" md="4" class="pt-2">
-                  <CInput label="License Number" v-model="form.license_no" />
+                  <CInput
+                    label="License Number"
+                    v-model="form.license_no"
+                    v-bind:disabled="readOnly"
+                  />
                 </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
-              <CRow class="mt-4">
+              <CRow class="mt-4" v-if="!readOnly">
                 <!-- <CLoadingButton
                   progress
                   timeout="2000"
@@ -117,9 +130,16 @@ import CustomerSettingService from "@/services/settings/CustomerSettingService";
 import GroupServices from "@/services/groups/GroupServices";
 import CustomerServices from "@/services/contacts/customers/CustomerServices";
 import { required, numeric } from "vuelidate/lib/validators";
-
+import Loader from "@/components/layouts/Loader";
 export default {
   name: "CustomerGeneralForm",
+  components: { Loader },
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     saveAndExit: false,
     isEditing: false,
@@ -244,6 +264,7 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         let data = this.form;
+        this.$store.commit("set_loader");
         CustomerServices.update(this.$route.params.id, data)
           .then((res) => {
             if (res.status == 200) {
@@ -261,9 +282,11 @@ export default {
               //   this.$router.push({ path: "/customers/edit/" + res.data.uuid });
               // }
             }
+            this.$store.commit("close_loader");
           })
           .catch((error) => {
             console.log(error);
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",
@@ -277,19 +300,24 @@ export default {
     checkUpdateOrCreate() {
       if (this.$route.params.id) {
         this.isEditing = true;
+        this.$store.commit("set_loader");
         CustomerServices.get(this.$route.params.id)
           .then((res) => {
-            this.form.full_name = res.data.full_name;
-            this.form.serial_no = res.data.serial_no;
-            this.form.type = res.data.type;
-            if (res.data.type == "company") {
-              this.type_selected = true;
+            if (res.data) {
+              this.form.full_name = res.data.full_name;
+              this.form.serial_no = res.data.serial_no;
+              this.form.type = res.data.type;
+              if (res.data.type == "company") {
+                this.type_selected = true;
+              }
+              this.form.vat_no = res.data.vat_no;
+              this.form.license_no = res.data.license_no;
+              this.form.group = res.data.group.uuid;
             }
-            this.form.vat_no = res.data.vat_no;
-            this.form.license_no = res.data.license_no;
-            this.form.group = res.data.group.uuid;
+            this.$store.commit("close_loader");
           })
           .catch((error) => {
+            this.$store.commit("close_loader");
             this.$router.push({ path: "/customers" });
           });
       }

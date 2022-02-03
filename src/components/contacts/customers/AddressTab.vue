@@ -5,7 +5,7 @@
         <CCard>
           <CCardHeader>Address</CCardHeader>
           <CCardBody>
-            <CRow>
+            <CRow v-if="!readOnly">
               <CCol xs="12" lg="12">
                 <CButton
                   @click="ToggleAddress()"
@@ -25,6 +25,7 @@
                     module="customer"
                     ref="AddressRef"
                     @AddressEdit="AddressEdited"
+                    v-bind:readOnly="readOnly"
                   />
                 </CCollapse>
                 <CCollapse :show="collapse">
@@ -48,6 +49,12 @@ import AddressForm from "@/components/general/Address/AddressForm";
 
 export default {
   name: "AddressTab",
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: { AddressIndex, AddressForm },
   data: () => ({
     toggleName: "Add New Address",

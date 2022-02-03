@@ -14,6 +14,7 @@
                     v-model="form.serial_no"
                     :class="{ error: $v.form.serial_no.$error }"
                     @input="$v.form.serial_no.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.serial_no.$error">
                     <p v-if="!$v.form.serial_no.required" class="errorMsg">
@@ -30,6 +31,7 @@
                     v-model="form.name"
                     :class="{ error: $v.form.name.$error }"
                     @input="$v.form.name.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.name.$error">
                     <p v-if="!$v.form.name.required" class="errorMsg">
@@ -43,6 +45,7 @@
                     v-model="form.reference"
                     :class="{ error: $v.form.reference.$error }"
                     @input="$v.form.reference.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.reference.$error">
                     <p v-if="!$v.form.reference.required" class="errorMsg">
@@ -59,6 +62,7 @@
                     :value.sync="form.group"
                     :class="{ error: $v.form.group.$error }"
                     @input="$v.form.group.$touch()"
+                    v-bind:disabled="readOnly"
                   />
                   <div v-if="$v.form.group.$error">
                     <p v-if="!$v.form.group.required" class="errorMsg">
@@ -71,11 +75,12 @@
                     label="Status"
                     :options="options.status"
                     :value.sync="form.status"
+                    v-bind:disabled="readOnly"
                   />
                 </CCol>
               </CRow>
 
-              <CRow class="mt-4">
+              <CRow class="mt-4" v-if="!readOnly">
                 <CButton
                   progress
                   timeout="2000"
@@ -83,23 +88,17 @@
                   color="success"
                   style="float: right; width: 200px; margin-left: 20px"
                   type="submit"
-                  @click="saveAndExit = false"
-                  >Save & Continue</CButton
+                  >Save</CButton
                 >
-                <CButton
+                <!-- <CButton
                   timeout="2000"
                   block
                   color="danger"
-                  style="
-                    float: right;
-                    width: 140px;
-                    margin-left: 20px;
-                    margin-top: 0;
-                  "
+                  style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                   @click="saveAndExit = true"
                   type="submit"
                   >Save & Exit</CButton
-                >
+                > -->
               </CRow>
             </form>
           </CCardBody>
@@ -116,6 +115,12 @@ import { required, numeric } from "vuelidate/lib/validators";
 
 export default {
   name: "SupplierGeneralForm",
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     saveAndExit: false,
     isEditing: false,
@@ -127,9 +132,7 @@ export default {
     },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
-      group: [
-        { value: "", label: "Choose Group", disabled: true, selected: "" },
-      ],
+      group: [{ value: "", label: "Choose Group", disabled: true, selected: "" }],
       status: [
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
