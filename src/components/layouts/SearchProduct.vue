@@ -35,7 +35,7 @@
                   class="col-md-2"
                   type="number"
                   placeholder="0"
-                  min="1"
+                  step="any"
                   v-model="input.qty"
                   @input="calculateTotal()"
                 />
@@ -82,7 +82,7 @@
                   class="col-md-3"
                   type="number"
                   placeholder="0"
-                  min="1"
+                  step="any"
                   v-model="input.qty"
                 />
                 <CInput label="Reason" class="col-md-4" :value.sync="input.reason" />
@@ -122,7 +122,7 @@
                     type="number"
                     class="col-8"
                     placeholder="0"
-                    min="1"
+                    step="any"
                     v-model="input.qty"
                     @input="calculateQutationTotal()"
                   />
@@ -297,7 +297,7 @@ export default {
                           unit_id: unit.uuid,
                           unit_qty: unit.qty ?? 1,
                           unit_cost_price: unit.price?.cost_price,
-                          unit_selling_price: unit.price?.selling_price,
+                          unit_selling_price: unit.price?.selling_price_without_tax,
                         });
                       } else {
                         this.options.products.push({
@@ -308,7 +308,7 @@ export default {
                           unit_id: unit.uuid,
                           unit_qty: unit.qty ?? 1,
                           unit_cost_price: unit.price?.cost_price,
-                          unit_selling_price: unit.price?.selling_price,
+                          unit_selling_price: unit.price?.selling_price_without_tax,
                         });
                       }
                     });
@@ -611,7 +611,7 @@ export default {
                   type: "variation",
                   name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
                   cost_price: variation.price?.cost_price ?? 0,
-                  selling_price: variation.price?.selling_price ?? 0,
+                  selling_price: variation.price?.selling_price_without_tax ?? 0,
                   qty: 1,
                   expiry_date: "",
                 });
@@ -620,7 +620,7 @@ export default {
                   uuid: variation.uuid,
                   type: "variation",
                   name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
-                  unit_price: variation.price?.selling_price ?? 0,
+                  unit_price: variation.price?.selling_price_without_tax ?? 0,
                   qty: 1,
                   discount: "",
                   total: 0,

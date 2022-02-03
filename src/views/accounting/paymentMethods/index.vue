@@ -127,7 +127,7 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.account = item.account.name.en;
+              item.account = item.account.name;
               this.serverData.push({ ...item, id });
             });
             this.loading = false;

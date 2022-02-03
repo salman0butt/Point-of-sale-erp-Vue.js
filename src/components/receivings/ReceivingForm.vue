@@ -374,7 +374,7 @@ export default {
                   JSON.parse(item.product_variation.name).en +
                   ")",
                 cost_price: item.price?.cost_price ?? 0,
-                selling_price: item.price?.selling_price ?? 0,
+                selling_price: item.price?.selling_price_without_tax ?? 0,
                 qty: item.qty,
                 expiry_date: item.inventory?.expiry_date ?? "",
               });
@@ -384,7 +384,7 @@ export default {
                 type: "product",
                 name: item.product.name,
                 cost_price: item.price?.cost_price ?? 0,
-                selling_price: item.price?.selling_price ?? 0,
+                selling_price: item.price?.selling_price_without_tax ?? 0,
                 qty: item.qty,
                 expiry_date: item.inventory?.expiry_date ?? "",
               });

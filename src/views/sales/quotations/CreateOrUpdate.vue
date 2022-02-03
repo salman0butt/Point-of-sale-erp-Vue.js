@@ -106,29 +106,22 @@
                     v-if="display_images && display_images.length"
                     class="attachment-display"
                   >
-                    <ul class="mt-5 d-flex">
+                    <ul class="mt-5">
                       <li
                         v-for="(img, index) in display_images"
                         v-bind:key="index"
                         class="display-attachment-row"
                       >
-                        <div>
-                          <span>
-                            <img
-                              v-bind:src="img.path"
-                              class="name-attachment"
-                              style="max-width: 80px"
-                            />
-                          </span>
-                        </div>
-                        <span
-                          >{{ img.name }}
-                          <a
-                            @click.prevent="deleteAttachment(img.uuid)"
-                            class="delete-attachment"
-                          >
-                            <CIcon :content="$options.cilTrash" /> </a
-                        ></span>
+                        <CIcon :content="$options.cisFile" />
+                        <a v-bind:href="img.path" target="_blank" class="name-attachment">
+                          {{ img.name }}</a
+                        >
+                        <a
+                          @click.prevent="deleteAttachment(img.uuid)"
+                          class="delete-attachment"
+                        >
+                          <CIcon :content="$options.cilTrash" />
+                        </a>
                       </li>
                     </ul>
                   </div>
@@ -161,7 +154,7 @@ import SelectSalePerson from "@/components/general/SelectSalePerson";
 import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import QuotationService from "@/services/sale/QuotationService";
-import { cilTrash } from "@coreui/icons-pro";
+import { cilTrash, cisFile } from "@coreui/icons-pro";
 
 export default {
   name: "CreateBrand",
@@ -172,7 +165,7 @@ export default {
     AppUpload,
   },
   cilTrash,
-
+  cisFile,
   data: () => ({
     isEditing: false,
     form: {
@@ -274,10 +267,6 @@ export default {
           this.form.images.map((image) => {
             formData.append("images[]", image);
           });
-        }
-        // Display the key/value pairs
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
         }
 
         if (!this.isEditing) {
