@@ -91,7 +91,7 @@ import SupplierAddressServices from "@/services/contacts/supplier/SupplierAddres
 import CustomerAddressServices from "@/services/contacts/customers/CustomerAddressServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
-const fields = [
+let fields = [
   { key: "flat", label: "FLAT", _style: "min-width:40%" },
   { key: "floor", label: "FLOOR", _style: "min-width:15%;" },
   { key: "building", label: "BUILDING", _style: "min-width:15%;" },
@@ -112,7 +112,6 @@ export default {
     return {
       AddressesData: [],
       fields,
-      loading: true,
       deleteRows: [],
       uuid: null,
       activePage: 1,
@@ -122,15 +121,23 @@ export default {
   },
   props: {
     module: String,
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
-
   created() {
-    this.loading = false;
     this.getAddressData();
+    if (this.readOnly) {
+      this.fields = this.fields.filter((field) => field.key !== "actions");
+    }
   },
   computed: {
     Addresses() {
       return this.AddressesData;
+    },
+    loading() {
+      return this.$store.getters.loading;
     },
   },
   watch: {
@@ -145,11 +152,11 @@ export default {
     getAddressData(page = "", per_page = "") {
       this.uuid = this.$route.params.id;
       if (this.module == "customer") {
+        this.$store.commit("set_loader");
         CustomerAddressServices.getCustomerAddresses(this.uuid, page, per_page)
           .then(({ data }) => {
             if (data !== "" && data !== undefined) {
               this.AddressesData = [];
-              this.loading = true;
               if (data.data) {
                 data.data.map((item, id) => {
                   item.floor = item.floor?.en;
@@ -165,18 +172,19 @@ export default {
                 this.setPagination(data.meta);
               }
             }
-            this.loading = false;
+            this.$store.commit("close_loader");
           })
           .catch((err) => {
+            this.$store.commit("close_loader");
             console.log(err);
           });
       }
       if (this.module == "supplier") {
+        this.$store.commit("set_loader");
         SupplierAddressServices.getCustomerAddresses(this.uuid, page, per_page)
           .then(({ data }) => {
             if (data !== "" && data !== undefined) {
               this.AddressesData = [];
-              this.loading = true;
               if (data.data) {
                 data.data.map((item, id) => {
                   item.floor = item.floor?.en;
@@ -192,9 +200,10 @@ export default {
                 this.setPagination(data.meta);
               }
             }
-            this.loading = false;
+            this.$store.commit("close_loader");
           })
           .catch((err) => {
+            this.$store.commit("close_loader");
             console.log(err);
           });
       }
@@ -252,7 +261,6 @@ export default {
     },
     onTableChange() {
       setTimeout(() => {
-        this.loading = false;
         const agent = this.$refs.externalAgent;
         this.AddressesData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
@@ -265,8 +273,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>

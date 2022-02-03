@@ -10,11 +10,7 @@ class CustomerServices extends Helper {
         if (per_page !== '')
             url = super.updateQueryStringParameter(url, "per_page", per_page);
 
-        return http.get(url, {
-            headers: {
-                "selected-branches": localStorage.getItem("selected_branches"),
-            },
-        });
+        return http.get(url, super.selectedBranch());
     }
 
 
@@ -35,7 +31,7 @@ class CustomerServices extends Helper {
     }
 
     delete(id) {
-        return http.delete(`/assets/${id}`);
+        return http.delete(`/customers/${id}`);
     }
 
     search(name) {

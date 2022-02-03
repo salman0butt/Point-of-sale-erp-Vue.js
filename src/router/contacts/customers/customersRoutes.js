@@ -4,6 +4,7 @@ import auth from '@/middleware/auth'
 const IndexCustomers = () => import('@/views/contacts/customers/index')
 const CreateCustomer = () => import('@/views/contacts/customers/create')
 const EditCustomer = () => import('@/views/contacts/customers/edit')
+const ShowCustomer = () => import('@/views/contacts/customers/show')
 // const QuickAddCustomer = () => import('@/views/contacts/customers/QuickAddCustomer')
 
 
@@ -36,7 +37,12 @@ const customersRoutes =
             path: 'edit/:id',
             name: 'Edit Customer',
             component: EditCustomer
-        }
+        },
+        {
+            path: 'show/:id',
+            name: 'Show Customer',
+            component: ShowCustomer
+        },
     ]
 };
 

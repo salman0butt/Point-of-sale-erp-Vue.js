@@ -7,7 +7,7 @@
           <CCardBody>
             <CRow>
               <CCol xs="12" lg="12">
-                <NoteForm module="customer" />
+                <NoteForm module="customer" :readOnly="readOnly" />
               </CCol>
             </CRow>
           </CCardBody>
@@ -20,11 +20,15 @@
 import NoteForm from "@/components/contacts/customers/notes/NoteForm";
 export default {
   name: "NoteTab",
+  props: {
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
   components: {
     NoteForm,
   },
-  data: () => ({}),
-
-  methods: {},
 };
 </script>

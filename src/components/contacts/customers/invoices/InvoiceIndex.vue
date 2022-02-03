@@ -67,6 +67,12 @@ const fields = [
 
 export default {
   name: "IndexQuotations",
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   cilPencil,
   cilTrash,
   cilEye,
@@ -74,7 +80,6 @@ export default {
     return {
       serverData: [],
       fields,
-      loading: false,
       deleteRows: [],
       activePage: 1,
       pages: 0,
@@ -83,8 +88,10 @@ export default {
     };
   },
   created() {
-    this.loading = true;
     this.customer_id = this.$route.params.id;
+    if (this.readOnly) {
+      this.fields = this.fields.filter((field) => field.key !== "actions");
+    }
     this.getServerData();
   },
   watch: {
@@ -96,25 +103,30 @@ export default {
     items() {
       return this.serverData;
     },
+    loading() {
+      return this.$store.getters.loading;
+    },
   },
   methods: {
     getServerData() {
+      this.$store.commit("set_loader");
       InvoiceService.getAll(this.activePage, this.perPage, this.customer_id)
         .then(({ data }) => {
-          this.loading = true;
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
               item.customer = item.customer.full_name.en;
               this.serverData.push({ ...item, id });
             });
-            this.loading = false;
+
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
           }
-          if (data.meta) {
-            this.setPagination(data.meta);
-          }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },

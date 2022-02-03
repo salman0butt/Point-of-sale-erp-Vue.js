@@ -36,9 +36,9 @@ class SupplierServices extends Helper {
         return http.put(`/supplier/${id}`, data);
     }
 
-    // delete(id) {
-    //     return http.delete(`/assets/${id}`);
-    // }
+    delete(id) {
+        return http.delete(`/supplier/${id}`);
+    }
 }
 
 export default new SupplierServices();

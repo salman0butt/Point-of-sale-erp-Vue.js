@@ -5,7 +5,7 @@
         <CCard>
           <CCardHeader>Quotations</CCardHeader>
           <CCardBody>
-            <CRow>
+            <CRow v-if="!readOnly">
               <CCol xs="12" lg="12">
                 <CButton
                   @click="ToggleQuotation()"
@@ -25,6 +25,7 @@
                     module="customer"
                     ref="QuotationRef"
                     @quotation-edit="QuotationEdited"
+                    :readOnly="readOnly"
                   />
                 </CCollapse>
                 <CCollapse :show="collapse">
@@ -48,6 +49,12 @@ import QuotationForm from "@/components/contacts/customers/quotations/QuotationF
 
 export default {
   name: "QuotationTab",
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: { QuotationIndex, QuotationForm },
   data: () => ({
     toggleName: "Add New Quotation",
