@@ -143,7 +143,7 @@ export default {
       this.$store.commit("set_supplier_model", true);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/supplier/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/supplier/edit/" + uuid });

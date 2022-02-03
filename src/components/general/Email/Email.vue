@@ -45,7 +45,7 @@
                     <th scope="row">{{ index + 1 }}</th>
                     <td>{{ item.name }}</td>
                     <td>{{ item.designation }}</td>
-                    <td>@{{ item.email }}</td>
+                    <td>{{ item.email }}</td>
                     <td v-if="!readOnly">
                       <CButton
                         block
@@ -59,6 +59,9 @@
                 </tbody>
               </table>
             </CRow>
+            <div v-if="form.mediaLst && form.mediaLst == 0 && readOnly">
+              <p class="text-center">No record found</p>
+            </div>
             <!-- <CRow v-for="(item, index) in form.mediaLst" :key="item.name">
               <CCol sm="3" md="3" class="pt-2">
                 {{ item.name }}
