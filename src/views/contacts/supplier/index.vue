@@ -12,12 +12,14 @@
               >Create Supplier</router-link
             > -->
             <router-link
+              v-if="$can('create groups')"
               class="btn btn-success"
               to="/groups/create"
               style="float: right; margin-right: 10px"
               >Create Groups</router-link
             >
             <CButton
+              v-if="$can('create suppliers')"
               color="success"
               class="btn"
               style="float: right; margin-right: 10px"
@@ -58,17 +60,27 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      v-if="$can('view suppliers')"
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
                     >
                     <CButton
+                      v-if="$can('edit suppliers')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      v-if="$can('delete suppliers')"
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>

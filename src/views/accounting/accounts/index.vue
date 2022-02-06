@@ -6,6 +6,7 @@
           <CCardHeader> Accounts </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create accounts')"
               class="btn btn-success"
               to="/accounting/accounts/create"
               style="float: right"
@@ -32,12 +33,14 @@
                 <td>
                   <CButtonGroup>
                     <CButton
+                      v-if="$can('view accounts')"
                       @click="viewRow(props.row.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
                     >
                     <CButton
+                      v-if="$can('edit accounts')"
                       @click="editRow(props.row.uuid)"
                       class="btn-sm text-white"
                       color="warning"

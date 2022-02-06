@@ -318,7 +318,7 @@ export default {
         });
       }
       // merchant
-      if (this.$can("read merchant")) {
+      if (this.$can("read business")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
           name: this.$t("menu.merchant"),

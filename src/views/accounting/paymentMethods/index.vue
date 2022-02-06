@@ -6,6 +6,7 @@
           <CCardHeader> Payment Methods </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create paymentMethod')"
               class="btn btn-success"
               to="/accounting/paymentMethods/create"
               style="float: right"
@@ -42,10 +43,15 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      v-if="$can('view paymentMethod')"
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
                     >
                     <CButton
+                      v-if="$can('edit paymentMethod')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"

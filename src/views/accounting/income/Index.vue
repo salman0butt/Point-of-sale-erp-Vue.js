@@ -6,6 +6,7 @@
           <CCardHeader> Incomes </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create income')"
               class="btn btn-success"
               to="/accounting/income/create"
               style="float: right"

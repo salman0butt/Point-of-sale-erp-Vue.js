@@ -6,6 +6,7 @@
           <CCardHeader> Transfers </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create transfer')"
               class="btn btn-success"
               to="/accounting/transfer/create"
               style="float: right"

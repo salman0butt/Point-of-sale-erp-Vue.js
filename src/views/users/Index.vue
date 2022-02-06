@@ -6,12 +6,14 @@
           <CCardHeader> Users </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('read roles')"
               class="btn btn-success"
               to="/rolesandpermissions/roles/index"
               style="float: right"
               >Roles & Permissions</router-link
             >
             <router-link
+              v-if="$can('create users')"
               class="btn btn-success"
               to="/users/create"
               style="float: right; margin-right: 10px"

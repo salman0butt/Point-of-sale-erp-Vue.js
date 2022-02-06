@@ -6,6 +6,7 @@
           <CCardHeader> Quotations </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create quotations')"
               class="btn btn-success"
               to="/sales/quotations/create"
               style="float: right"
@@ -40,7 +41,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButton
-                    v-if="item.status == 'pending'"
+                    v-if="$can('edit quotations') && item.status == 'pending'"
                     @click="approveQuotation(item.uuid)"
                     class="btn-sm mr-3"
                     color="success"
@@ -48,12 +49,14 @@
                   >
                   <CButtonGroup>
                     <CButton
+                      v-if="$can('view quotations')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
                     >
                     <CButton
+                      v-if="$can('edit quotations')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -61,6 +64,7 @@
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
+                      v-if="$can('delete quotations')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
@@ -200,9 +204,7 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {
