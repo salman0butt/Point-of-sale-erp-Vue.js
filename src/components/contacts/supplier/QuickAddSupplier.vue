@@ -75,6 +75,9 @@
               </div>
             </CCol>
             <CCol sm="6" md="6" class="pt-2">
+              <CInput label="Tax ID" v-model="form.tax_id" />
+            </CCol>
+            <CCol sm="12" md="12" class="pt-2">
               <CInput
                 label="Address"
                 v-model="form.address"
@@ -139,6 +142,7 @@ export default {
       contact: "",
       email: "",
       address: "",
+      tax_id: "",
     },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],

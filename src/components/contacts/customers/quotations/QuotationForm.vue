@@ -131,9 +131,10 @@ import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import QuotationService from "@/services/sale/QuotationService";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
-
+import { globalMixin } from "@/mixins/globalMixin";
 export default {
   name: "CreateBrand",
+  mixins: [globalMixin],
   components: {
     CustomerSearchField,
     SearchProduct,
@@ -171,6 +172,8 @@ export default {
   },
   created() {
     // this.form.id = this.$route.params.id;
+    this.form.dated = this.calculateTodayDate();
+    this.form.due_date = this.calculateDueDate();
   },
   computed: {
     receivingItems() {

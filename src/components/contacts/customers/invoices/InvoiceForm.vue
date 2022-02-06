@@ -131,9 +131,11 @@ import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import InvoiceService from "@/services/sale/InvoiceService";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
+import { globalMixin } from "@/mixins/globalMixin";
 
 export default {
   name: "InvoiceForm",
+  mixins: [globalMixin],
   components: {
     CustomerSearchField,
     SearchProduct,
@@ -171,6 +173,8 @@ export default {
   },
   created() {
     this.customer_id = this.$route.params.id;
+    this.form.dated = this.calculateTodayDate();
+    this.form.due_date = this.calculateDueDate();
   },
   computed: {
     receivingItems() {
