@@ -10,7 +10,7 @@ class AccountServices extends Helper {
         if (per_page !== '')
             url = super.updateQueryStringParameter(url, "per_page", per_page);
 
-            url = super.updateQueryStringParameter(url, "active", "active");
+        url = super.updateQueryStringParameter(url, "active", "active");
         return http.get(url);
     }
 
@@ -33,6 +33,9 @@ class AccountServices extends Helper {
 
     update(id, data) {
         return http.patch(`/account/${id}`, data);
+    }
+    getAllAccountTypes() {
+        return http.get(`/account-types`);
     }
 
 

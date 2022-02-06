@@ -20,14 +20,6 @@
               @filter-change="filterChanged"
               @page-change="pageChanged"
             >
-              <!-- <template slot="firstName" slot-scope="props">
-            <a
-              :href="`https://www.google.com/search?q=${props.row.firstName}+${props.row.lastName}`"
-              target="_blank"
-            >
-              {{ props.row.firstName }}
-            </a>
-          </template> -->
               <template slot="actions" slot-scope="props">
                 <td>
                   <CButtonGroup>
@@ -183,45 +175,45 @@ export default {
       this.page = page;
     },
     getServerData() {
-      AccountServices.getAll(1, 5)
+      AccountServices.getAllAccountTypes()
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
             this.rows = [];
             data.map((item, id) => {
-              item.type = item.accountType ? item.accountType.name : "N/A";
-              // if (item._children && item._children.length > 0) {
-              //   item._children = item._children.map((child, index) => {
-              //     child.type = child.accountType.name;
-              //     // item._children.push({ ...child, _id: index });
-              //     return child;
-              //   });
-              //   // item._hasChildren = true;
-              //   // item._selectable = true;
-              //   // item._showChildren = true;
-              // }
-              if (item.parent) {
+              if (item.children.length > 0) {
+                let children = [];
+                item.children.map((accountsubtype, id2) => {
+                  if (accountsubtype.accounts.length > 0) {
+                    let children2 = [];
+                    accountsubtype.accounts.map((account, id3) => {
+                      children2.push({
+                        uuid: account.uuid,
+                        parent: account.name,
+                      });
+                    });
+
+                    children.push({
+                      uuid: accountsubtype.uuid,
+                      parent: accountsubtype.name,
+                      _children: children2,
+                    });
+                  } else {
+                    children.push({
+                      uuid: accountsubtype.uuid,
+                      parent: accountsubtype.name,
+                    });
+                  }
+                });
+
                 item = {
                   uuid: item.uuid,
-                  parent: "Parent: " + item.parent.name,
-                  _children: [
-                    {
-                      uuid: item.uuid,
-                      parent: "Type: " + item.type,
-                      _children: [{ uuid: item.uuid, parent: "Name: " + item.name }],
-                    },
-                  ],
+                  parent: item.name,
+                  _children: children,
                 };
               } else {
                 item = {
                   uuid: item.uuid,
-                  parent: "parent: " + "N/A",
-                  _children: [
-                    {
-                      uuid: item.uuid,
-                      parent: "Type: " + item.type,
-                      _children: [{ uuid: item.uuid, parent: "Name: " + item.name }],
-                    },
-                  ],
+                  parent: item.name,
                 };
               }
 
@@ -237,7 +229,7 @@ export default {
         });
     },
     viewRow(uuid) {
-      alert("page not ready");
+      alert(uuid);
     },
     editRow(uuid) {
       this.$router.push({ path: "/accounting/accounts/" + uuid });
