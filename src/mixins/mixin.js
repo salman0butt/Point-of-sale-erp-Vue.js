@@ -20,6 +20,13 @@ export const mixin = {
       if(path) {
         router.push(path);
       }
+    },
+    Can(permission) {
+      const permissions = store.getters.getPermissions ?? [];
+      if (permissions) {
+        return permissions.some(item => item.includes(permission));
+      }
+      return false;
     }
   }
 }

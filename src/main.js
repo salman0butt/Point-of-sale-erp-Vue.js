@@ -16,6 +16,9 @@ import {mixin} from './mixins/mixin';
 import Skeleton from 'vue-loading-skeleton';
 import { ColorPicker, ColorPanel } from 'one-colorpicker'
 import VueHtmlToPaper from 'vue-html-to-paper';
+
+const { errorHandler,  Can} = mixin.methods;
+
 const options = {
   name: '_blank',
   specs: [
@@ -35,7 +38,6 @@ const options = {
 Vue.use(VueHtmlToPaper, options);
 
 
-
 Vue.use(ColorPanel)
 Vue.use(ColorPicker)
 // import { abilitiesPlugin } from '@casl/vue';
@@ -51,6 +53,7 @@ Vue.prototype.$log = console.log.bind(console);
 Vue.prototype.$swal = Swal;
 Vue.prototype.$http = http;
 // Vue.prototype.$ability = defineAbility;
+Vue.prototype.$can = Can;
 
 const token = 'Bearer ' + localStorage.getItem('token');
 if (token) {
@@ -62,7 +65,7 @@ http.interceptors.response.use(function (response) {
 }, function (error) {
   let routerPath = router.app?._router?.history?.current.path !== '/login';
   if(error && error.response && routerPath) {
-    mixin.methods.errorHandler(error.response.status);
+    errorHandler(error.response.status);
   }
 
   return Promise.reject(error);
