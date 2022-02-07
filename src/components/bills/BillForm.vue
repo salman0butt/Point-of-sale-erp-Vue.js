@@ -2,7 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <form @submit.prevent="isEditing ? updateReceiving() : saveReceiving()">
+        <form @submit.prevent="isEditing ? updateBill() : saveBill()">
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -32,7 +32,7 @@
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Receiving Status"
+                label="Bill Status"
                 :options="options.receiving_status"
                 :value.sync="form.receiving_status"
               />
@@ -129,14 +129,14 @@
   </div>
 </template>
 <script>
-import ReceivingService from "@/services/receivings/ReceivingService";
+import BillService from "@/services/bills/BillService";
 import { required } from "vuelidate/lib/validators";
 import { cilTrash } from "@coreui/icons-pro";
 import SearchProduct from "@/components/layouts/SearchProduct";
 import AppUpload from "@/components/uploads/Upload.vue";
 
 export default {
-  name: "ReceivingForm",
+  name: "BillForm",
   components: {
     SearchProduct,
     AppUpload,
@@ -163,7 +163,7 @@ export default {
       receiving_status: [
         {
           value: "",
-          label: "Choose receiving Status",
+          label: "Choose Bill Status",
           disabled: true,
           selected: "",
         },
@@ -186,12 +186,12 @@ export default {
     this.getAllSuppliers();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
-      this.getReceiving();
+      this.getBill();
     }
   },
   computed: {
     total_cost() {
-      return this.$store.getters.getTotalReceivingsCost;
+      return this.$store.getters.getTotalBillsCost;
     },
     receivingItems() {
       return this.$store.getters.getSearchProductItems;
@@ -210,7 +210,7 @@ export default {
   },
   methods: {
     getAllSuppliers() {
-      ReceivingService.getAllSuppliers()
+      BillService.getAllSuppliers()
         .then(({ data }) => {
           if (data !== undefined && data !== "") {
             data.data.map((supplier) => {
@@ -225,7 +225,7 @@ export default {
           console.log(error);
         });
     },
-    saveReceiving() {
+    saveBill() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.$store.commit("set_loader");
@@ -233,13 +233,13 @@ export default {
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };
-        ReceivingService.create(formData, config)
+        BillService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Receiving Added Successfully",
+                text: "Bill Added Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -248,10 +248,10 @@ export default {
               this.$store.commit("close_loader");
 
               if (this.saveAndExit) {
-                this.$router.push({ path: "/receivings/index" });
+                this.$router.push({ path: "/bills/index" });
               } else {
                 this.$router.push({
-                  path: "/receivings/edit/" + res.data.uuid,
+                  path: "/bills/edit/" + res.data.uuid,
                 });
               }
             }
@@ -268,7 +268,7 @@ export default {
           });
       }
     },
-    updateReceiving() {
+    updateBill() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.$store.commit("set_loader");
@@ -276,13 +276,13 @@ export default {
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };
-        ReceivingService.update(this.form.id, formData, config)
+        BillService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Receiving Updated Successfully",
+                text: "Bill Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -290,7 +290,7 @@ export default {
               this.displayData(res.data);
               this.$store.commit("close_loader");
               if (this.saveAndExit) {
-                this.$router.push({ path: "/receivings/index" });
+                this.$router.push({ path: "/bills/index" });
               }
               //  else {
               //   this.$router.push({
@@ -332,15 +332,15 @@ export default {
       }
       return formData;
     },
-    getReceiving() {
-      ReceivingService.get(this.form.id)
+    getBill() {
+      BillService.get(this.form.id)
         .then(({ data }) => {
           this.displayData(data);
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
-          this.$router.push({ path: "/receivings/index" });
+          this.$router.push({ path: "/bills/index" });
         });
     },
     displayData(data = null) {

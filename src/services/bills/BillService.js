@@ -1,7 +1,7 @@
 import http from "@/http-common";
 import Helper from "@/helpers/Helper";
 
-class ReceivingService extends Helper {
+class BillService extends Helper {
     getAll(page, per_page) {
         let url = "/receivings";
 
@@ -47,4 +47,4 @@ class ReceivingService extends Helper {
     }
 }
 
-export default new ReceivingService();
+export default new BillService();

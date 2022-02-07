@@ -17,7 +17,7 @@ export default {
       products: "منتجات",
       categories: "التصنيفات",
       brands: "العلامات التجارية",
-     receivings: "المقبوضات",
+     receivings: "فاتورة",
      damages: "الأضرار",
      offers: "عروض",
     },

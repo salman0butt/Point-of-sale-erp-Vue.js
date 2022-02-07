@@ -17,7 +17,7 @@ export default {
       products: "Products",
       categories: "Categories",
       brands: "Brands",
-     receivings: "Receivings",
+     receivings: "Bill",
      damages: "Damages",
      offers: "Offers",
     },
