@@ -6,6 +6,7 @@
           <CCardHeader> Invoices </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create invoices')"
               class="btn btn-success"
               to="/sales/invoices/create"
               style="float: right"
@@ -41,6 +42,7 @@
                 <td>
                   <CButtonGroup>
                     <CButton
+                      v-if="$can('view invoices')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
@@ -50,10 +52,12 @@
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
+                      v-if="$can('edit invoices')"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
+                      v-if="$can('delete invoices')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
@@ -199,9 +203,7 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {

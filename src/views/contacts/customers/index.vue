@@ -6,6 +6,7 @@
           <CCardHeader> Customers </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create groups')"
               class="btn btn-success"
               to="/groups/create"
               style="float: right; margin-right: 10px"
@@ -18,6 +19,7 @@
               >Quick Add</router-link
             > -->
             <CButton
+              v-if="$can('create customers')"
               color="success"
               class="btn"
               style="float: right; margin-right: 10px"
@@ -58,17 +60,27 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      v-if="$can('view customers')"
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
                     >
                     <CButton
+                      v-if="$can('edit customers')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      v-if="$can('delete customers')"
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>

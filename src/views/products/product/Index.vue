@@ -6,12 +6,14 @@
           <CCardHeader> Products </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('importProduct products')"
               class="btn btn-success"
               style="float: right"
               to="/products/import"
               >Import Products</router-link
             >
             <router-link
+              v-if="$can('create products')"
               class="btn btn-success"
               to="/products/create"
               style="float: right; margin-right: 10px"
@@ -77,17 +79,27 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      v-if="$can('view products')"
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
                     >
                     <CButton
+                      v-if="$can('edit products')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      v-if="$can('delete products')"
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>

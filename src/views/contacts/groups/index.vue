@@ -2,60 +2,11 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
-        <!-- <CRow>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader>
-                <span class="bolder">No of Groups</span>
-              </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>123456</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader>
-                <span class="bolder">Total Departments</span>
-              </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>123456</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader> <span class="bolder">Genders</span> </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong
-                    ><span>Man 123456</span> | <span>Women 123456</span></strong
-                  >
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol sm="6" md="3" class="pt-2">
-            <CCard>
-              <CCardHeader>
-                <span class="bolder">Total Managers</span>
-              </CCardHeader>
-              <CCardBody>
-                <h4>
-                  <strong>123456</strong>
-                </h4>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        </CRow> -->
         <CCard>
           <CCardHeader> Groups </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create groups')"
               class="btn btn-success"
               to="/groups/create"
               style="float: right"
@@ -96,6 +47,7 @@
                       >View</CButton
                     > -->
                     <CButton
+                      v-if="$can('edit groups')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -247,9 +199,7 @@ export default {
                     text: "Employee Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
                   this.getTotalCardData();
                 }
               })

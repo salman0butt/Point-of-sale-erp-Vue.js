@@ -6,6 +6,7 @@
           <CCardHeader> Expenses </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create expense')"
               class="btn btn-success"
               to="/accounting/expense/create"
               style="float: right"
