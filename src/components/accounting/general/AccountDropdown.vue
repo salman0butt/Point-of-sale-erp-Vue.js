@@ -47,13 +47,13 @@ export default {
       this.account = this.uuid;
     },
     getData() {
-      AccountServices.getActiveAccounts("active")
+      AccountServices.getAllAccountTypes()
         .then(({ data }) => {
           if (data) {
             let account = this.options.account;
             data.map(function (val) {
+              console.log(val);
               // Main Accounts
-
               account.push({
                 value: val.uuid,
                 label: val.name,
@@ -67,21 +67,21 @@ export default {
                   account.push({
                     value: child.uuid,
                     label: "-" + child.name,
-                    disabled: true,
                   });
-                  if (child.accounts && child.accounts.length > 0) {
-                    child.accounts.map(function (child2) {
-                      account.push({
-                        value: child2.uuid,
-                        label: "--" + child2.name,
-                        attrs: [
-                          {
-                            style: "font-size: 15px; font-weight: bold; color:black",
-                          },
-                        ],
-                      });
-                    });
-                  }
+                  //     if (child.accounts && child.accounts.length > 0) {
+                  //       child.accounts.map(function (child2) {
+                  //         account.push({
+                  //           value: child2.uuid,
+                  //           label: "--" + child2.name,
+                  //           attrs: [
+                  //             {
+                  //               style:
+                  //                 "font-size: 15px; font-weight: bold; color:black",
+                  //             },
+                  //           ],
+                  //         });
+                  //       });
+                  //     }
                 });
               }
             });
