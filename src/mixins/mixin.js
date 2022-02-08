@@ -9,15 +9,15 @@ export const mixin = {
         case 401:
           store.dispatch('auto_logout');
           path = '/login';
-        break;
+          break;
         case 404:
           path = '/not-found';
-         break;
+          break;
         case 500:
           path = '/something-wrong';
-        break;
+          break;
       }
-      if(path) {
+      if (path) {
         router.push(path);
       }
     },
