@@ -124,7 +124,7 @@ export default {
           this.form.name = res.data.name;
           this.form.description = res.data.description;
           this.form.status = res.data.status;
-          this.form.parent = res.data.parent.uuid;
+          this.form.parent = res.data.accountType.uuid;
         }
       });
     },

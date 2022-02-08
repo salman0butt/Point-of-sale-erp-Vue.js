@@ -8,7 +8,9 @@
             <CRow>
               <Loader />
               <CCol xs="12" lg="12">
-                <form @submit.prevent="isEditing ? updateJournal() : saveJournal()">
+                <form
+                  @submit.prevent="isEditing ? updateJournal() : saveJournal()"
+                >
                   <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CInput
@@ -162,7 +164,10 @@
                             </td>
                             <td>
                               <CButton @click="removeItem(k)">
-                                <CIcon :content="$options.cilTrash" style="color: red" />
+                                <CIcon
+                                  :content="$options.cilTrash"
+                                  style="color: red"
+                                />
                               </CButton>
                             </td>
                           </tr>
@@ -176,7 +181,9 @@
                             color="default"
                             @click="addItem()"
                             >Add another line
-                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
+                            <CIcon
+                              :content="$options.cisCaretBottom"
+                              style="width: 10px"
                           /></CButton>
                         </CCol>
                         <CCol xs="12" md="5" class="pt-2 ml-5">
@@ -221,7 +228,12 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                      style="
+                        float: right;
+                        width: 140px;
+                        margin-left: 20px;
+                        margin-top: 0;
+                      "
                       @click="saveAndExit = true"
                       type="submit"
                       >Save & Exit</CButton
@@ -348,7 +360,7 @@ export default {
       // calulcate total and sub total
       let total = 0;
       this.form.items.map((item) => {
-        if (item.debit && item.credit) {
+        if (item.debit || item.credit) {
           total += parseFloat(item.debit) - parseFloat(item.credit);
         }
       });
