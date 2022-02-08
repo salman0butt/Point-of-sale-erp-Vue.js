@@ -24,7 +24,7 @@ export const mixin = {
     Can(permission) {
       const permissions = store.getters.getPermissions ?? [];
       if (permissions) {
-        return permissions.some(item => item.includes(permission));
+        return permissions.includes(permission);
       }
       return false;
     }

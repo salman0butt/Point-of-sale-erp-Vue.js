@@ -7,6 +7,7 @@
           <CCardBody>
             <div>
               <router-link
+                v-if="$can('create product-damages')"
                 class="btn btn-success"
                 to="/catalogs/damages/create"
                 style="float: right"
@@ -35,12 +36,18 @@
                       >View</CButton
                     > -->
                     <CButton
+                      v-if="$can('edit product-damages')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                       >Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      v-if="$can('delete product-damages')"
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>

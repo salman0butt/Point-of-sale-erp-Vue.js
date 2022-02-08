@@ -42,6 +42,7 @@
                   >View</CButton
                 > -->
                 <CButton
+                  v-if="$can('edit category')"
                   @click="editRow(item.uuid)"
                   class="btn-sm text-white"
                   color="warning"
@@ -50,6 +51,7 @@
                   <CIcon :content="$options.cilPencil"
                 /></CButton>
                 <CButton
+                  v-if="$can('delete category')"
                   @click="deleteRow(item.uuid)"
                   class="btn-sm"
                   color="danger"

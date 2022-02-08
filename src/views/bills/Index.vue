@@ -3,19 +3,20 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Receivings </CCardHeader>
+          <CCardHeader> Bills </CCardHeader>
           <CCardBody>
             <div>
               <router-link
+                v-if="$can('create receivings')"
                 class="btn btn-success"
-                to="/receivings/create"
+                to="/bills/create"
                 style="float: right"
-                >Create Receiving</router-link
+                >Create Bill</router-link
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
-              :items="Receiving"
+              :items="Bill"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -35,12 +36,18 @@
                       >View</CButton
                     > -->
                     <CButton
+                      v-if="$can('edit receivings')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                       >Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      v-if="$can('delete receivings')"
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -65,7 +72,7 @@
 </template>
 
 <script>
-import ReceivingService from "@/services/receivings/ReceivingService";
+import BillService from "@/services/bills/BillService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -77,13 +84,13 @@ const fields = [
 ];
 
 export default {
-  name: "IndexReceiving",
+  name: "IndexBill",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      ReceivingData: [],
+      BillData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -94,7 +101,7 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getReceivingData();
+    this.getBillData();
     console.log();
   },
   watch: {
@@ -102,24 +109,24 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getReceivingData(this.activePage, this.perPage);
+      this.getBillData(this.activePage, this.perPage);
     },
   },
   computed: {
-    Receiving() {
-      return this.ReceivingData;
+    Bill() {
+      return this.BillData;
     },
   },
   methods: {
-    getReceivingData(page = "", per_page = "") {
-      ReceivingService.getAll(page, per_page)
+    getBillData(page = "", per_page = "") {
+      BillService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.ReceivingData = [];
+            this.BillData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.ReceivingData.push({ ...item, id });
+                this.BillData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -139,14 +146,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.ReceivingData[item.id]._selected);
-      this.$set(this.ReceivingData[item.id], "_selected", !val);
+      const val = Boolean(this.BillData[item.id]._selected);
+      this.$set(this.BillData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/receivings/edit/" + uuid });
+      this.$router.push({ path: "/bills/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -161,16 +168,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            ReceivingService.delete(this.deleteRows)
+            BillService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Receiving Deleted Successfully",
+                    text: "Bill Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ReceivingData = this.ReceivingData.filter(
+                  this.BillData = this.BillData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -196,13 +203,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.ReceivingData = agent.currentItems;
+        this.BillData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getReceivingData("", this.perPage);
+      this.getBillData("", this.perPage);
     },
   },
 };

@@ -8,6 +8,7 @@
           <CCardBody>
             <div>
               <router-link
+                v-if="$can('create branches')"
                 class="btn btn-success"
                 to="/branch/create"
                 style="text-align: center; float: right"
@@ -41,7 +42,12 @@
                     <!-- <CButton @click="viewRow(item.uuid)" color="success"
                         >View</CButton
                       > -->
-                    <CButton @click="editRow(item.uuid)" color="warning">Edit</CButton>
+                    <CButton
+                      v-if="$can('edit branches')"
+                      @click="editRow(item.uuid)"
+                      color="warning"
+                      >Edit</CButton
+                    >
                     <!-- <CButton @click="deleteRow(item.uuid)" color="danger"
                       >Delete</CButton
                     > -->

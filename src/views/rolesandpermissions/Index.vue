@@ -6,6 +6,7 @@
           <CCardHeader> Roles </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create roles')"
               class="btn btn-success"
               :to="{ name: 'Create Role' }"
               style="float: right"
@@ -42,6 +43,7 @@
                       >View</CButton
                     >
                     <CButton
+                      v-if="$can('edit roles')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -132,6 +134,9 @@ export default {
     check(item) {
       const val = Boolean(this.usersData[item.id]._selected);
       this.$set(this.usersData[item.id], "_selected", !val);
+    },
+    viewRow(uuid) {
+      alert("page not ready");
     },
     editRow(uuid) {
       this.$router.push({ name: "Edit Role", params: { id: uuid } });

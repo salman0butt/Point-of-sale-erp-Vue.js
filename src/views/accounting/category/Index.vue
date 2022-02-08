@@ -6,6 +6,7 @@
           <CCardHeader> Categories </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create category')"
               class="btn btn-success"
               to="/accounting/category/create"
               style="float: right"

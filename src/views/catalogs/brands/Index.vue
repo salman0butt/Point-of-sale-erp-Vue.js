@@ -13,6 +13,7 @@
                 >Create Brand</router-link
               > -->
               <CButton
+                v-if="$can('create brands')"
                 color="success"
                 class="btn"
                 style="float: right; margin-right: 10px"
@@ -47,12 +48,18 @@
                       >View</CButton
                     > -->
                     <CButton
+                      v-if="$can('edit brands')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                       >Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      v-if="$can('delete brands')"
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>

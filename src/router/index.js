@@ -33,7 +33,7 @@ import groupRoutes from '@/router/contacts/groups/groupRoutes';
 import productRoutes from '@/router/products/productRoutes';
 import productCategoryRoutes from '@/router/catalogs/category/productCategoryRoutes';
 import brandRoutes from '@/router/catalogs/brands/brandRoutes';
-import receivingRoutes from '@/router/receivings/receivingRoutes';
+import receivingRoutes from '@/router/bills/billRoutes';
 import damageRoutes from '@/router/catalogs/damages/damageRoutes';
 import offerRoutes from '@/router/catalogs/offers/offerRoutes';
 import userRoutes from '@/router/users/userRoutes';
@@ -41,6 +41,8 @@ import modifierRoutes from '@/router/modifiers/modifierRoutes';
 import salesRoutes from '@/router/sales/salesRoutes';
 import invoiceRoutes from '@/router/sales/invoiceRoutes';
 import reportRoutes from '@/router/reports/reportRoutes';
+import purchaseOrderRoutes from '@/router/accounting/purchaseOrder/purchaseOrderRoutes';
+import journalRoutes from '@/router/accounting/journal/journalRoutes';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -230,6 +232,8 @@ const router = new Router({
         userRoutes,
         modifierRoutes,
         reportRoutes,
+        purchaseOrderRoutes,
+        journalRoutes,
 
         // {
         //   path: 'theme',

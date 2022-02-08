@@ -27,10 +27,19 @@
             <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     > -->
-            <CButton @click="editRow(item.uuid)" class="btn-sm text-white" color="warning"
+            <CButton
+              v-if="$can('edit users')"
+              @click="editRow(item.uuid)"
+              class="btn-sm text-white"
+              color="warning"
               >Edit <CIcon :content="$options.cilPencil"
             /></CButton>
-            <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+            <CButton
+              v-if="$can('delete users')"
+              @click="deleteRow(item.uuid)"
+              class="btn-sm"
+              color="danger"
+            >
               <CIcon :content="$options.cilTrash" />
             </CButton>
           </CButtonGroup>

@@ -213,7 +213,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: this.$t("menu.catalogs.receivings"),
-              to: "/receivings/index",
+              to: "/bills/index",
               icon: "cil-lan",
             },
           ]);
@@ -269,6 +269,16 @@ export default {
             },
           ]);
         }
+        if (this.$can("read transfer")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Purchase Order",
+              to: "/purchases/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
         // if (this.$can("read payment-methods")) {
         //   this.sideBarItems_accounting.push([
         //     {
@@ -318,7 +328,7 @@ export default {
         });
       }
       // merchant
-      if (this.$can("read merchant")) {
+      if (this.$can("read business")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
           name: this.$t("menu.merchant"),

@@ -6,6 +6,7 @@
           <CCardHeader> Accounts </CCardHeader>
           <CCardBody>
             <router-link
+              v-if="$can('create accounts')"
               class="btn btn-success"
               to="/accounting/accounts/create"
               style="float: right"
