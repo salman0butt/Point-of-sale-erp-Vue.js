@@ -128,26 +128,42 @@
                             <th>
                               <CSelect
                                 :options="options.account"
-                                :value.sync="form.account"
+                                :value.sync="form.items[k].account"
                               />
                             </th>
                             <td>
                               <CTextarea
                                 placeholder="content..."
-                                v-model="form.description"
+                                v-model="form.items[k].description"
                               />
                             </td>
                             <td>
                               <CSelect
                                 :options="options.contact"
-                                :value.sync="form.contact"
+                                :value.sync="form.items[k].contact"
                               />
                             </td>
-                            <td></td>
-
-                            <td></td>
                             <td>
-                              <CIcon :content="$options.cilTrash" style="color: red" />
+                              <CInput
+                                placeholder="0.00"
+                                style="max-width: 100px"
+                                v-model="form.items[k].debit"
+                                @change="calculateTotal()"
+                              />
+                            </td>
+
+                            <td>
+                              <CInput
+                                placeholder="0.00"
+                                style="max-width: 100px"
+                                v-model="form.items[k].credit"
+                                @change="calculateTotal()"
+                              />
+                            </td>
+                            <td>
+                              <CButton @click="removeItem(k)">
+                                <CIcon :content="$options.cilTrash" style="color: red" />
+                              </CButton>
                             </td>
                           </tr>
                         </tbody>
@@ -167,7 +183,9 @@
                           <CRow class="pt-2 ra">
                             <CCol> <h6>Sub Total</h6> </CCol>
                             <CCol> </CCol>
-                            <CCol><h6>0.00</h6> </CCol>
+                            <CCol
+                              ><h6>{{ form.subTotal }}</h6>
+                            </CCol>
                           </CRow>
                           <CRow class="pt-2 ra">
                             <CCol>
@@ -175,7 +193,9 @@
                             </CCol>
                             <CCol> </CCol>
                             <CCol
-                              ><h5><strong>0.00</strong></h5>
+                              ><h5>
+                                <strong>{{ form.total }}</strong>
+                              </h5>
                             </CCol>
                           </CRow>
                         </CCol>
@@ -221,6 +241,7 @@
 import { required } from "vuelidate/lib/validators";
 import { cilTrash, cisCaretBottom } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
+import AccountServices from "@/services/accounting/accounts/AccountServices";
 
 export default {
   name: "CreateOrUpdateJournal",
@@ -240,6 +261,8 @@ export default {
       notes: "",
       journal_type: "",
       currency: "",
+      total: "0.00",
+      subTotal: "0.00",
       items: [
         {
           account: "",
@@ -251,18 +274,6 @@ export default {
       ],
     },
     options: {
-      supplier: [
-        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
-        { value: "1", label: "Supplier 1" },
-        { value: "2", label: "Supplier 2" },
-        { value: "3", label: "Supplier 3" },
-      ],
-      products: [
-        { value: "", label: "Choose Item", disabled: true, selected: "" },
-        { value: "1", label: "Product 1" },
-        { value: "2", label: "Product 2" },
-        { value: "3", label: "Product 3" },
-      ],
       currency: [
         { value: "", label: "Choose Currency", disabled: true, selected: "" },
         { value: "1", label: "Currency 1" },
@@ -270,10 +281,12 @@ export default {
         { value: "3", label: "Currency 3" },
       ],
       account: [
-        { value: "", label: "Choose Account", disabled: true, selected: "" },
-        { value: "1", label: "Account 1" },
-        { value: "2", label: "Account 2" },
-        { value: "3", label: "Account 3" },
+        {
+          value: "",
+          label: "Choose Account",
+          disabled: true,
+          selected: "",
+        },
       ],
       contact: [
         { value: "", label: "Choose Contact", disabled: true, selected: "" },
@@ -296,6 +309,7 @@ export default {
     };
   },
   created() {
+    this.getAccounts();
     // this.form.id = this.$route.params.id;
     // if (this.form.id !== "" && this.form.id !== undefined) {
     //   this.isEditing = true;
@@ -312,51 +326,115 @@ export default {
         credit: "",
       });
     },
-
-    // saveJournal() {
-    //   this.$v.$touch();
-    //   if (!this.$v.$invalid) {
-    //     this.$store.commit("set_loader");
-    //     let formData = new FormData();
-    //     formData.append("name", this.form.name);
-    //     const config = {
-    //       headers: { "Content-Type": "multipart/form-data" },
-    //     };
-    //     // let data = this.form;
-    //     JournalService.create(formData, config)
-    //       .then((res) => {
-    //         if (res.status == 201) {
-    //           this.displayData(res.data);
-    //           this.$swal.fire({
-    //             icon: "success",
-    //             title: "Success",
-    //             text: "Journal Added Successfully",
-    //             timer: 3600,
-    //           });
-    //           this.$v.$reset();
-    //           this.resetForm();
-    //           this.$store.commit("close_loader");
-    //           if (this.saveAndExit) {
-    //             this.$router.push({ path: "/catalogs/brands/index" });
-    //           } else {
-    //             this.$router.push({
-    //               path: "/catalogs/brands/edit/" + res.data.uuid,
-    //             });
-    //           }
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //         this.$store.commit("close_loader");
-    //         this.$swal.fire({
-    //           icon: "error",
-    //           title: "Error",
-    //           text: "Something Went Wrong.",
-    //           timer: 3600,
-    //         });
-    //       });
-    //   }
+    getAccounts() {
+      AccountServices.getActiveAccounts("active")
+        .then(({ data }) => {
+          let account = this.options.account;
+          data.map(function (val) {
+            account.push({
+              value: val.uuid,
+              label: val.name,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    removeItem(index) {
+      this.form.items.splice(index, 1);
+    },
+    calculateTotal() {
+      // calulcate total and sub total
+      let total = 0;
+      this.form.items.map((item) => {
+        if (item.debit && item.credit) {
+          total += parseFloat(item.debit) - parseFloat(item.credit);
+        }
+      });
+      this.form.total = total;
+      this.form.subTotal = total;
+      if (total !== 0) {
+        this.$swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Debit and Credit must be equal to zero",
+          timer: 3600,
+        });
+      }
+    },
+    // getJournal() {
+    //   JournalService.getJournal(this.form.id)
+    //     .then(({ data }) => {
+    //       this.form = data;
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
     // },
+    // saveJournal() {
+    //   JournalService.saveJournal(this.form)
+    //     .then(({ data }) => {
+    //       this.$router.push("/journal");
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
+
+    saveJournal() {
+      if (this.form.total !== 0) {
+        this.$swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Debit and Credit must be equal to zero",
+          timer: 3600,
+        });
+        return;
+      }
+      // this.$v.$touch();
+      // if (!this.$v.$invalid) {
+      //   this.$store.commit("set_loader");
+      //   let formData = new FormData();
+      //   formData.append("name", this.form.name);
+      //   const config = {
+      //     headers: { "Content-Type": "multipart/form-data" },
+      //   };
+      //   // let data = this.form;
+      //   JournalService.create(formData, config)
+      //     .then((res) => {
+      //       if (res.status == 201) {
+      //         this.displayData(res.data);
+      //         this.$swal.fire({
+      //           icon: "success",
+      //           title: "Success",
+      //           text: "Journal Added Successfully",
+      //           timer: 3600,
+      //         });
+      //         this.$v.$reset();
+      //         this.resetForm();
+      //         this.$store.commit("close_loader");
+      //         if (this.saveAndExit) {
+      //           this.$router.push({ path: "/catalogs/brands/index" });
+      //         } else {
+      //           this.$router.push({
+      //             path: "/catalogs/brands/edit/" + res.data.uuid,
+      //           });
+      //         }
+      //       }
+      //     })
+      //     .catch((error) => {
+      //       console.log(error);
+      //       this.$store.commit("close_loader");
+      //       this.$swal.fire({
+      //         icon: "error",
+      //         title: "Error",
+      //         text: "Something Went Wrong.",
+      //         timer: 3600,
+      //       });
+      //     });
+      // }
+    },
     // updateJournal() {
     //   this.$v.$touch();
     //   if (!this.$v.$invalid) {
@@ -437,6 +515,7 @@ export default {
     //     this.form[index] = "";
     //   }
     //   this.isEditing = false;
+    // },
     // },
   },
 };
