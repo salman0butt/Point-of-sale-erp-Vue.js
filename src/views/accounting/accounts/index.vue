@@ -21,14 +21,8 @@
               @page-change="pageChanged"
             >
               <template slot="actions" slot-scope="props">
-                <td>
+                <td v-if="props.row.editable">
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(props.row.uuid)"
-                      class="btn-sm"
-                      color="success"
-                      >View</CButton
-                    >
                     <CButton
                       @click="editRow(props.row.uuid)"
                       class="btn-sm text-white"
@@ -36,13 +30,13 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <!-- <CButton
-                      @click="deleteRow(item.uuid)"
+                    <CButton
+                      @click="deleteRow(props.row.uuid)"
                       class="btn-sm"
                       color="danger"
                     >
                       <CIcon :content="$options.cilTrash" />
-                    </CButton> -->
+                    </CButton>
                   </CButtonGroup>
                 </td>
               </template>
@@ -81,20 +75,6 @@ export default {
           filterable: true,
           collapseIcon: true,
         },
-        // {
-        //   property: "type",
-        //   title: "Type",
-        //   direction: null,
-        //   filterable: true,
-        //   // collapseIcon: true,
-        // },
-        // {
-        //   property: "status",
-        //   title: "Status",
-        //   direction: null,
-        //   filterable: true,
-        //   // collapseIcon: true,
-        // },
         {
           property: "actions",
           title: "Action",
@@ -104,53 +84,6 @@ export default {
         },
       ],
       rows: [],
-      // rows: [
-      //   {
-      //     firstName: "Josephine",
-      //     lastName: "Astrid",
-      //   },
-      //   {
-      //     firstName: "Boudewijn",
-      //     lastName: "Van Brabandt",
-      //   },
-      //   {
-      //     firstName: "Albert II",
-      //     lastName: "Van Belgie",
-      //     _children: [
-      //       {
-      //         firstName: "Filip",
-      //         lastName: "Van Belgie",
-      //         _children: [
-      //           {
-      //             firstName: "Elisabeth",
-      //             lastName: "Van Brabant",
-      //           },
-      //           {
-      //             firstName: "Gabriel",
-      //             lastName: "Boudwijn",
-      //           },
-      //           {
-      //             firstName: "Emmanuel",
-      //             lastName: "Van Belgie",
-      //           },
-      //           {
-      //             firstName: "Eleonore",
-      //             lastName: "Boudwijn",
-      //             _hasChildren: true,
-      //           },
-      //         ],
-      //       },
-      //       {
-      //         firstName: "Astrid",
-      //         lastName: "Van Belgie",
-      //       },
-      //       {
-      //         firstName: "Laurent",
-      //         lastName: "Van Belgie",
-      //       },
-      //     ],
-      //   },
-      // ],
     };
   },
   created() {
@@ -189,6 +122,7 @@ export default {
                       children2.push({
                         uuid: account.uuid,
                         parent: account.name,
+                        editable: account.editable,
                       });
                     });
 
@@ -233,6 +167,44 @@ export default {
     },
     editRow(uuid) {
       this.$router.push({ path: "/accounting/accounts/" + uuid });
+    },
+    deleteRow(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this record",
+          text: "This will be record from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            AccountServices.delete(uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Account  Deleted Successfully",
+                    timer: 3600,
+                  });
+                  console.log(this.row);
+                  // this.AccountCategoryData = this.AccountCategoryData.filter(
+                  //   (item) => item.uuid != uuid
+                  // );
+                  // // this.deleteRows = [];
+                }
+              })
+              .catch((error) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+              });
+          }
+        });
     },
   },
 };

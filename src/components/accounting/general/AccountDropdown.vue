@@ -52,7 +52,6 @@ export default {
           if (data) {
             let account = this.options.account;
             data.map(function (val) {
-              console.log(val);
               // Main Accounts
               account.push({
                 value: val.uuid,
