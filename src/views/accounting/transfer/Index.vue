@@ -12,6 +12,14 @@
               style="float: right"
               >Create Transfer</router-link
             >
+            <router-link
+              v-if="$can('create transfer')"
+              class="btn btn-success"
+              to="/journals/create"
+              style="float: right; margin-right: 10px"
+              >New JE</router-link
+            >
+
             <div style="clear: both; margin-bottom: 20px"></div>
             <TransferIndex />
           </CCardBody>

@@ -28,7 +28,7 @@ export default {
       category: "Category",
       income: "Income",
       expense: "Expense",
-      transfer: "Transfer",
+      transfer: "Journal Entry",
     },
     branches: "Branches",
     users: "Users",

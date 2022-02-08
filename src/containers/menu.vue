@@ -274,7 +274,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: "Purchase Order",
-              to: "/accounting/transfer/index",
+              to: "/purchases/index",
               icon: "cil-lan",
             },
           ]);
