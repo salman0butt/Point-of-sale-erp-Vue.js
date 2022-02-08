@@ -213,7 +213,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: this.$t("menu.catalogs.receivings"),
-              to: "/receivings/index",
+              to: "/bills/index",
               icon: "cil-lan",
             },
           ]);
@@ -265,6 +265,16 @@ export default {
               _name: "CSidebarNavItem",
               name: this.$t("menu.accounting.transfer"),
               to: "/accounting/transfer/index",
+              icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.$can("read transfer")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "Purchase Order",
+              to: "/purchases/index",
               icon: "cil-lan",
             },
           ]);
