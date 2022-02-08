@@ -189,11 +189,7 @@ export default {
                     text: "Account  Deleted Successfully",
                     timer: 3600,
                   });
-                  console.log(this.row);
-                  // this.AccountCategoryData = this.AccountCategoryData.filter(
-                  //   (item) => item.uuid != uuid
-                  // );
-                  // // this.deleteRows = [];
+                  window.location.reload();
                 }
               })
               .catch((error) => {
