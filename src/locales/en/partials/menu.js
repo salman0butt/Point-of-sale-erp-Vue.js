@@ -1,6 +1,6 @@
 export default {
   menu: {
-    dashboard: 'Dashboard',
+    dashboard: "Dashboard",
     sale: {
       name: "Sales",
       quotations: "Quotations",
@@ -17,24 +17,23 @@ export default {
       products: "Products",
       categories: "Categories",
       brands: "Brands",
-     receivings: "Bill",
-     damages: "Damages",
-     offers: "Offers",
+      receivings: "Receivings",
+      damages: "Damages",
+      offers: "Offers"
     },
     accounting: {
-      name: 'Accounting',
+      name: "Accounting",
       chartOfAccount: "Chart of Accounts",
       paymentMethods: "Payment Methods",
       category: "Category",
       income: "Income",
       expense: "Expense",
-      transfer: "Journal Entry",
+      transfer: "Journal Entry"
     },
     branches: "Branches",
     users: "Users",
     merchant: "Merchant",
     reports: "Reports",
-    settings: "Settings",
-
+    settings: "Settings"
   }
-}
+};

@@ -220,7 +220,7 @@
   </div>
 </template>
 <script>
-import ReceivingService from "@/services/bills/BillService";
+import ReceivingService from "@/services/receivings/ReceivingService";
 import { cilTrash } from "@coreui/icons-pro";
 
 export default {
