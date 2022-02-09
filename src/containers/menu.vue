@@ -213,7 +213,7 @@ export default {
             {
               _name: "CSidebarNavItem",
               name: this.$t("menu.catalogs.receivings"),
-              to: "/bills/index",
+              to: "/receivings/index",
               icon: "cil-lan",
             },
           ]);

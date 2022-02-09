@@ -5,6 +5,7 @@
         <CCard>
           <CCardHeader> Accounts </CCardHeader>
           <CCardBody>
+            <Loader />
             <router-link
               v-if="$can('create accounts')"
               class="btn btn-success"
@@ -21,9 +22,17 @@
               @filter-change="filterChanged"
               @page-change="pageChanged"
             >
-              <template slot="actions" slot-scope="props">
-                <td v-if="props.row.editable">
-                  <CButtonGroup>
+              <template slot="parent" slot-scope="props">
+                <td>
+                  {{ props.row.parent }}
+                  <span v-if="props.row.editable"
+                    >(<a class="drecord" @click.prevent="editRow(props.row.uuid)">Edit</a>
+                    -
+                    <a class="drecord" @click.prevent="deleteRow(props.row.uuid)"
+                      >Delete</a
+                    >)</span
+                  >
+                  <!-- <CButtonGroup>
                     <CButton
                       @click="editRow(props.row.uuid)"
                       class="btn-sm text-white"
@@ -38,7 +47,7 @@
                     >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
-                  </CButtonGroup>
+                  </CButtonGroup> -->
                 </td>
               </template>
             </vue-ads-table-tree>
@@ -53,7 +62,7 @@
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import "@/../node_modules/@fortawesome/fontawesome-free/css/all.css";
-
+import Loader from "@/components/layouts/Loader";
 import VueAdsTableTree from "vue-ads-table-tree";
 
 export default {
@@ -63,6 +72,7 @@ export default {
   cilEye,
   components: {
     VueAdsTableTree,
+    Loader,
   },
   data() {
     return {
@@ -75,13 +85,6 @@ export default {
           direction: null,
           filterable: true,
           collapseIcon: true,
-        },
-        {
-          property: "actions",
-          title: "Action",
-          direction: null,
-          filterable: false,
-          // collapseIcon: true,
         },
       ],
       rows: [],
@@ -109,6 +112,7 @@ export default {
       this.page = page;
     },
     getServerData() {
+      this.$store.commit("set_loader");
       AccountServices.getAllAccountTypes()
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
@@ -116,10 +120,10 @@ export default {
             data.map((item, id) => {
               if (item.children.length > 0) {
                 let children = [];
-                item.children.map((accountsubtype, id2) => {
+                item.children.map((accountsubtype) => {
                   if (accountsubtype.accounts.length > 0) {
                     let children2 = [];
-                    accountsubtype.accounts.map((account, id3) => {
+                    accountsubtype.accounts.map((account) => {
                       children2.push({
                         uuid: account.uuid,
                         parent: account.name,
@@ -155,11 +159,13 @@ export default {
               this.rows.push({ ...item, _id: id });
             });
           }
+          this.$store.commit("close_loader");
           // if (data.meta) {
           //   this.setPagination(data.meta);
           // }
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },
@@ -211,5 +217,8 @@ export default {
 <style scoped>
 .leftAlign {
   text-align: left;
+}
+.drecord {
+  cursor: pointer;
 }
 </style>

@@ -186,23 +186,25 @@
                             <th>
                               <CSelect
                                 :options="options.products"
-                                :value.sync="form.product"
+                                :value.sync="item.product"
                               />
                             </th>
                             <td>
                               <CSelect
                                 :options="options.accounts"
-                                :value.sync="form.payment_terms"
+                                :value.sync="item.payment_terms"
                               />
                             </td>
                             <td>1.00</td>
                             <td>0.00</td>
                             <td>
-                              <CSelect :options="options.tax" :value.sync="form.tax" />
+                              <CSelect :options="options.tax" :value.sync="item.tax" />
                             </td>
                             <td>0.000</td>
                             <td>
-                              <CIcon :content="$options.cilTrash" style="color: red" />
+                              <CButton @click="removeItem(k)">
+                                <CIcon :content="$options.cilTrash" style="color: red" />
+                              </CButton>
                             </td>
                           </tr>
                         </tbody>
@@ -259,12 +261,7 @@
                         </CCol>
                         <CCol xs="12" md="4" class="mt-3">
                           <label for="attachment">Attach File(s) to Purchase Order</label>
-                          <input
-                            class="form-control"
-                            id="attachment"
-                            type="file"
-                            @change="pickFile"
-                          />
+                          <input class="form-control" id="attachment" type="file" />
                           <span style="font-size: 12px"
                             >You can upload maximum of 5 files</span
                           >
@@ -338,13 +335,9 @@ export default {
       payment_terms: "",
       items: [
         {
-          item: "",
-          description: "",
-          quantity: "",
-          unit_price: "",
-          discount: "",
+          product: "",
+          payment_terms: "",
           tax: "",
-          amount: "",
         },
       ],
     },
@@ -431,14 +424,13 @@ export default {
   methods: {
     addItem() {
       this.form.items.push({
-        item: "",
-        description: "",
-        quantity: "",
-        unit_price: "",
-        discount: "",
+        product: "",
+        payment_terms: "",
         tax: "",
-        amount: "",
       });
+    },
+    removeItem(index) {
+      this.form.items.splice(index, 1);
     },
 
     // savePurchase() {

@@ -1,6 +1,10 @@
 <template>
   <div>
-    <Loader />
+    <vue-element-loading
+      :active="isLoading"
+      spinner="mini-spinner"
+      color="#FF6700"
+    />
     <CRow>
       <CCol xs="12" lg="12">
         <form @submit.prevent="isUpdatePage ? updateData() : saveData()">
@@ -28,7 +32,7 @@
               </CRow>
 
               <h2><u> Permissions</u></h2>
-              <div v-for="(module, key) in modules" :key="key">
+              <div v-for="module in modules">
                 <h4>
                   <u> {{ module }}</u>
                 </h4>
@@ -38,9 +42,9 @@
                     sm="6"
                     md="4"
                     class="pt-2"
-                    v-for="(item, k) in form.items"
                     v-if="item.module == module"
-                    :key="k"
+                    v-for="item in form.items"
+                    :key="item.uuid"
                   >
                     <CSwitch
                       class="mx-1 pt-2"
@@ -78,14 +82,15 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 
 import { required, minLength } from "vuelidate/lib/validators";
-import Loader from "@/components/layouts/Loader";
+import VueElementLoading from "vue-element-loading";
 
 export default {
   name: "UpdateOrCreateRole",
   components: {
-    Loader,
+    VueElementLoading,
   },
   data: () => ({
+    isLoading: false,
     isUpdatePage: false,
     form: {
       items: [],
@@ -101,6 +106,7 @@ export default {
       },
     };
   },
+  mounted() {},
   created() {
     this.getSetting();
   },
@@ -134,29 +140,22 @@ export default {
     getEditData() {
       if (this.$route.params.id) {
         this.isUpdatePage = true;
-        this.$store.commit("set_loader");
         RolesAndPermissionsService.get(this.$route.params.id)
-          .then(async (res) => {
+          .then((res) => {
             if (res.status == 200) {
               this.form.name = res.data.name;
               let increment = "";
-              // promise
-              await new Promise((resolve) => {
-                res.data.permissions.forEach((element) => {
-                  increment = element.uuid;
-                  this.form.items.forEach((element2) => {
-                    if (element2.uuid == increment) {
-                      element2.value = true;
-                    }
-                  });
+              res.data.permissions.forEach((element) => {
+                increment = element.uuid;
+                this.form.items.forEach((element2) => {
+                  if (element2.uuid == increment) {
+                    element2.value = true;
+                  }
                 });
-                resolve();
               });
             }
-            this.$store.commit("close_loader");
           })
           .catch((error) => {
-            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: error.message,
@@ -171,7 +170,7 @@ export default {
     saveData() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        this.$store.commit("set_loader");
+        this.isLoading = true;
         let data = this.form;
         RolesAndPermissionsService.create(data)
           .then((res) => {
@@ -182,13 +181,13 @@ export default {
                 text: "Role Created Successfully",
                 timer: 3600,
               });
-              this.$store.commit("close_loader");
+              this.isLoading = false;
               this.$v.$reset();
               this.$router.push({ name: "Index Roles" });
             }
           })
           .catch((error) => {
-            this.$store.commit("close_loader");
+            this.isLoading = false;
             this.$swal.fire({
               icon: "error",
               title: error.message,
@@ -201,7 +200,7 @@ export default {
     updateData() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        this.$store.commit("set_loader");
+        this.isLoading = true;
         let data = this.form;
         let id = this.$route.params.id;
         RolesAndPermissionsService.update(id, data)
@@ -214,13 +213,13 @@ export default {
                 text: "Role Updated Successfully",
                 timer: 3600,
               });
-              this.$store.commit("close_loader");
+              this.isLoading = false;
               this.$v.$reset();
               this.$router.push({ name: "Index Roles" });
             }
           })
           .catch((error) => {
-            this.$store.commit("close_loader");
+            this.isLoading = false;
             this.$swal.fire({
               icon: "error",
               title: error.message,
@@ -233,3 +232,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.errorMsg {
+  color: red;
+}
+</style>
