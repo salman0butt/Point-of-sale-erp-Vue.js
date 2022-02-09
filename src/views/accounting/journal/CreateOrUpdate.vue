@@ -8,9 +8,7 @@
             <CRow>
               <Loader />
               <CCol xs="12" lg="12">
-                <form
-                  @submit.prevent="isEditing ? updateJournal() : saveJournal()"
-                >
+                <form @submit.prevent="isEditing ? updateJournal() : saveJournal()">
                   <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CInput
@@ -96,30 +94,13 @@
                     </CCol>
                   </CRow>
                   <CRow>
-                    <CCol xs="12" md="6" class="pt-2">
-                      <CSelect
-                        label="Currency"
-                        horizontal
-                        :options="options.currency"
-                        :value.sync="form.currency"
-                        :class="{ error: $v.form.currency.$error }"
-                        @input="$v.form.currency.$touch()"
-                      />
-                      <div v-if="$v.form.currency.$error">
-                        <p v-if="!$v.form.currency.required" class="errorMsg">
-                          Currency To is required
-                        </p>
-                      </div>
-                    </CCol>
-                  </CRow>
-                  <CRow>
                     <CCol xs="12" md="12" class="pt-2">
                       <table class="table table-bordered">
                         <thead>
                           <tr>
                             <th scope="col">Account</th>
                             <th scope="col">Description</th>
-                            <th scope="col">Contact(BHD)</th>
+
                             <th scope="col">Debits</th>
                             <th scope="col">Credits</th>
                             <th scope="col">Actions</th>
@@ -130,44 +111,40 @@
                             <th>
                               <CSelect
                                 :options="options.account"
-                                :value.sync="form.items[k].account"
+                                :value.sync="item.account"
                               />
                             </th>
                             <td>
                               <CTextarea
                                 placeholder="content..."
-                                v-model="form.items[k].description"
-                              />
-                            </td>
-                            <td>
-                              <CSelect
-                                :options="options.contact"
-                                :value.sync="form.items[k].contact"
-                              />
-                            </td>
-                            <td>
-                              <CInput
-                                placeholder="0.00"
-                                style="max-width: 100px"
-                                v-model="form.items[k].debit"
-                                @change="calculateTotal()"
+                                v-model="item.description"
                               />
                             </td>
 
                             <td>
                               <CInput
+                                type="number"
                                 placeholder="0.00"
                                 style="max-width: 100px"
-                                v-model="form.items[k].credit"
+                                v-model="item.debit"
                                 @change="calculateTotal()"
+                                step="any"
+                              />
+                            </td>
+
+                            <td>
+                              <CInput
+                                type="number"
+                                placeholder="0.00"
+                                style="max-width: 100px"
+                                v-model="item.credit"
+                                @change="calculateTotal()"
+                                step="any"
                               />
                             </td>
                             <td>
                               <CButton @click="removeItem(k)">
-                                <CIcon
-                                  :content="$options.cilTrash"
-                                  style="color: red"
-                                />
+                                <CIcon :content="$options.cilTrash" style="color: red" />
                               </CButton>
                             </td>
                           </tr>
@@ -181,9 +158,7 @@
                             color="default"
                             @click="addItem()"
                             >Add another line
-                            <CIcon
-                              :content="$options.cisCaretBottom"
-                              style="width: 10px"
+                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
                           /></CButton>
                         </CCol>
                         <CCol xs="12" md="5" class="pt-2 ml-5">
@@ -228,12 +203,7 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       @click="saveAndExit = true"
                       type="submit"
                       >Save & Exit</CButton
@@ -272,26 +242,18 @@ export default {
       reference: "",
       notes: "",
       journal_type: "",
-      currency: "",
-      total: "0.00",
-      subTotal: "0.00",
+      total: 0.0,
+      subTotal: 0.0,
       items: [
         {
           account: "",
           description: "",
-          contact: "",
-          debit: "",
-          credit: "",
+          debit: 0,
+          credit: 0,
         },
       ],
     },
     options: {
-      currency: [
-        { value: "", label: "Choose Currency", disabled: true, selected: "" },
-        { value: "1", label: "Currency 1" },
-        { value: "2", label: "Currency 2" },
-        { value: "3", label: "Currency 3" },
-      ],
       account: [
         {
           value: "",
@@ -299,12 +261,6 @@ export default {
           disabled: true,
           selected: "",
         },
-      ],
-      contact: [
-        { value: "", label: "Choose Contact", disabled: true, selected: "" },
-        { value: "1", label: "Contact 1" },
-        { value: "2", label: "Contact 2" },
-        { value: "3", label: "Contact 3" },
       ],
     },
   }),
@@ -316,7 +272,6 @@ export default {
         reference: { required },
         notes: { required },
         journal_type: { required },
-        currency: { required },
       },
     };
   },
@@ -333,9 +288,8 @@ export default {
       this.form.items.push({
         account: "",
         description: "",
-        contact: "",
-        debit: "",
-        credit: "",
+        debit: 0,
+        credit: 0,
       });
     },
     getAccounts() {
@@ -356,24 +310,26 @@ export default {
     removeItem(index) {
       this.form.items.splice(index, 1);
     },
-    calculateTotal() {
+    async calculateTotal() {
       // calulcate total and sub total
       let total = 0;
+
       this.form.items.map((item) => {
-        if (item.debit || item.credit) {
+        if (item.credit || item.debit) {
           total += parseFloat(item.debit) - parseFloat(item.credit);
         }
       });
+
       this.form.total = total;
       this.form.subTotal = total;
-      if (total !== 0) {
-        this.$swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Debit and Credit must be equal to zero",
-          timer: 3600,
-        });
-      }
+      // if (total !== 0) {
+      //   this.$swal.fire({
+      //     icon: "error",
+      //     title: "Error",
+      //     text: "Debit and Credit must be equal to zero",
+      //     timer: 3600,
+      //   });
+      // }
     },
     // getJournal() {
     //   JournalService.getJournal(this.form.id)
@@ -404,6 +360,7 @@ export default {
         });
         return;
       }
+      alert("done");
       // this.$v.$touch();
       // if (!this.$v.$invalid) {
       //   this.$store.commit("set_loader");

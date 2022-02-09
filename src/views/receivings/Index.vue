@@ -3,20 +3,20 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Bills </CCardHeader>
+          <CCardHeader> Receivings </CCardHeader>
           <CCardBody>
             <div>
               <router-link
                 v-if="$can('create receivings')"
                 class="btn btn-success"
-                to="/bills/create"
+                to="/receivings/create"
                 style="float: right"
-                >Create Bill</router-link
+                >Create Receiving</router-link
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
-              :items="Bill"
+              :items="Receiving"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import BillService from "@/services/bills/BillService";
+import ReceivingService from "@/services/receivings/ReceivingService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -84,13 +84,13 @@ const fields = [
 ];
 
 export default {
-  name: "IndexBill",
+  name: "IndexReceiving",
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      BillData: [],
+      ReceivingData: [],
       fields,
       loading: false,
       deleteRows: [],
@@ -101,7 +101,7 @@ export default {
   },
   created() {
     this.loading = true;
-    this.getBillData();
+    this.getReceivingData();
     console.log();
   },
   watch: {
@@ -109,24 +109,24 @@ export default {
       this.onTableChange();
     },
     activePage() {
-      this.getBillData(this.activePage, this.perPage);
+      this.getReceivingData(this.activePage, this.perPage);
     },
   },
   computed: {
-    Bill() {
-      return this.BillData;
+    Receiving() {
+      return this.ReceivingData;
     },
   },
   methods: {
-    getBillData(page = "", per_page = "") {
-      BillService.getAll(page, per_page)
+    getReceivingData(page = "", per_page = "") {
+      ReceivingService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
-            this.BillData = [];
+            this.ReceivingData = [];
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
-                this.BillData.push({ ...item, id });
+                this.ReceivingData.push({ ...item, id });
               });
             }
             if (data.meta) {
@@ -146,14 +146,14 @@ export default {
       }
     },
     check(item) {
-      const val = Boolean(this.BillData[item.id]._selected);
-      this.$set(this.BillData[item.id], "_selected", !val);
+      const val = Boolean(this.ReceivingData[item.id]._selected);
+      this.$set(this.ReceivingData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/bills/edit/" + uuid });
+      this.$router.push({ path: "/receivings/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -168,16 +168,16 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            BillService.delete(this.deleteRows)
+            ReceivingService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Bill Deleted Successfully",
+                    text: "Receiving Deleted Successfully",
                     timer: 3600,
                   });
-                  this.BillData = this.BillData.filter(
+                  this.ReceivingData = this.ReceivingData.filter(
                     (department) => department.uuid != uuid
                   );
                   this.deleteRows = [];
@@ -203,13 +203,13 @@ export default {
       setTimeout(() => {
         this.loading = false;
         const agent = this.$refs.externalAgent;
-        this.BillData = agent.currentItems;
+        this.ReceivingData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
       }, 1000);
     },
     changePagination(value) {
       this.perPage = parseInt(value);
-      this.getBillData("", this.perPage);
+      this.getReceivingData("", this.perPage);
     },
   },
 };
