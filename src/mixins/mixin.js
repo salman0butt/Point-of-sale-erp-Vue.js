@@ -13,9 +13,9 @@ export const mixin = {
         case 404:
           path = '/not-found';
           break;
-        case 500:
-          path = '/something-wrong';
-          break;
+        // case 500:
+        //   path = '/something-wrong';
+        //   break;
       }
       if (path) {
         router.push(path);

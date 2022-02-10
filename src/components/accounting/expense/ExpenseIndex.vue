@@ -73,7 +73,11 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
       </CCol>
     </CRow>
   </div>
@@ -91,8 +95,7 @@ const fields = [
   //   sorter: false,
   //   filter: false,
   // },
-  { key: "category", label: "CATEGORY", _style: "min-width:15%;" },
-  { key: "from_payment_method", label: "PAYMENT METHOD", _style: "min-width:15%;" },
+  { key: "account", label: "Account", _style: "min-width:15%;" },
   { key: "debit", label: "DEBIT", _style: "min-width:15%;" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "ref_id", label: "REFERNCE NO", _style: "min-width:15%;" },
@@ -143,6 +146,7 @@ export default {
             this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
+                item.account = item.account.name;
                 this.ExpenseData.push({ ...item, id });
               });
             }
@@ -193,7 +197,9 @@ export default {
                     text: "Expense Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ExpenseData = this.ExpenseData.filter((item) => item.uuid != uuid);
+                  this.ExpenseData = this.ExpenseData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })
