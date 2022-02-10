@@ -8,7 +8,9 @@
             <CRow>
               <Loader />
               <CCol xs="12" lg="12">
-                <form @submit.prevent="isEditing ? updateJournal() : saveJournal()">
+                <form
+                  @submit.prevent="isEditing ? updateJournal() : saveJournal()"
+                >
                   <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CInput
@@ -65,18 +67,18 @@
                         class="mt-4"
                         label="Notes"
                         placeholder="content here.."
-                        v-model="form.description"
-                        :class="{ error: $v.form.reference.$error }"
-                        @input="$v.form.reference.$touch()"
+                        v-model="form.notes"
+                        :class="{ error: $v.form.notes.$error }"
+                        @input="$v.form.notes.$touch()"
                       />
-                      <div v-if="$v.form.reference.$error">
-                        <p v-if="!$v.form.reference.required" class="errorMsg">
+                      <div v-if="$v.form.notes.$error">
+                        <p v-if="!$v.form.notes.required" class="errorMsg">
                           Notes is required
                         </p>
                       </div>
                     </CCol>
                   </CRow>
-                  <CRow>
+                  <!-- <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CRow>
                         <CCol xs="12" md="3" class="pt-2">
@@ -92,7 +94,7 @@
                         </CCol>
                       </CRow>
                     </CCol>
-                  </CRow>
+                  </CRow> -->
                   <CRow>
                     <CCol xs="12" md="12" class="pt-2">
                       <table class="table table-bordered">
@@ -144,7 +146,10 @@
                             </td>
                             <td>
                               <CButton @click="removeItem(k)">
-                                <CIcon :content="$options.cilTrash" style="color: red" />
+                                <CIcon
+                                  :content="$options.cilTrash"
+                                  style="color: red"
+                                />
                               </CButton>
                             </td>
                           </tr>
@@ -158,7 +163,9 @@
                             color="default"
                             @click="addItem()"
                             >Add another line
-                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
+                            <CIcon
+                              :content="$options.cisCaretBottom"
+                              style="width: 10px"
                           /></CButton>
                         </CCol>
                         <CCol xs="12" md="5" class="pt-2 ml-5">
@@ -203,7 +210,12 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                      style="
+                        float: right;
+                        width: 140px;
+                        margin-left: 20px;
+                        margin-top: 0;
+                      "
                       @click="saveAndExit = true"
                       type="submit"
                       >Save & Exit</CButton
@@ -224,6 +236,7 @@ import { required } from "vuelidate/lib/validators";
 import { cilTrash, cisCaretBottom } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
+import JournalServices from "@/services/accounting/journal/JournalServices";
 
 export default {
   name: "CreateOrUpdateJournal",
@@ -276,12 +289,11 @@ export default {
     };
   },
   created() {
-    this.getAccounts();
-    // this.form.id = this.$route.params.id;
-    // if (this.form.id !== "" && this.form.id !== undefined) {
-    //   this.isEditing = true;
-    //   this.getJournal();
-    // }
+    this.getPreRequisites();
+    if (this.$route.params.id) {
+      this.form.id = this.$route.params.id;
+      this.getJournal();
+    }
   },
   methods: {
     addItem() {
@@ -292,7 +304,7 @@ export default {
         credit: 0,
       });
     },
-    getAccounts() {
+    getPreRequisites() {
       AccountServices.getActiveAccounts("active")
         .then(({ data }) => {
           let account = this.options.account;
@@ -331,25 +343,6 @@ export default {
       //   });
       // }
     },
-    // getJournal() {
-    //   JournalService.getJournal(this.form.id)
-    //     .then(({ data }) => {
-    //       this.form = data;
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // },
-    // saveJournal() {
-    //   JournalService.saveJournal(this.form)
-    //     .then(({ data }) => {
-    //       this.$router.push("/journal");
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // },
-
     saveJournal() {
       if (this.form.total !== 0) {
         this.$swal.fire({
@@ -360,132 +353,121 @@ export default {
         });
         return;
       }
-      alert("done");
-      // this.$v.$touch();
-      // if (!this.$v.$invalid) {
-      //   this.$store.commit("set_loader");
-      //   let formData = new FormData();
-      //   formData.append("name", this.form.name);
-      //   const config = {
-      //     headers: { "Content-Type": "multipart/form-data" },
-      //   };
-      //   // let data = this.form;
-      //   JournalService.create(formData, config)
-      //     .then((res) => {
-      //       if (res.status == 201) {
-      //         this.displayData(res.data);
-      //         this.$swal.fire({
-      //           icon: "success",
-      //           title: "Success",
-      //           text: "Journal Added Successfully",
-      //           timer: 3600,
-      //         });
-      //         this.$v.$reset();
-      //         this.resetForm();
-      //         this.$store.commit("close_loader");
-      //         if (this.saveAndExit) {
-      //           this.$router.push({ path: "/catalogs/brands/index" });
-      //         } else {
-      //           this.$router.push({
-      //             path: "/catalogs/brands/edit/" + res.data.uuid,
-      //           });
-      //         }
-      //       }
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //       this.$store.commit("close_loader");
-      //       this.$swal.fire({
-      //         icon: "error",
-      //         title: "Error",
-      //         text: "Something Went Wrong.",
-      //         timer: 3600,
-      //       });
-      //     });
-      // }
+      let formData = this.form;
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+
+      JournalServices.create(formData, config)
+        .then((res) => {
+          this.$swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Journal Added Successfully",
+            timer: 3600,
+          });
+
+          if (this.saveAndExit) {
+            this.$router.push({ path: "/accounting/journals/index" });
+          } else {
+            this.$router.push({
+              path: "/accounting/journals/index",
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
+          });
+        });
     },
-    // updateJournal() {
-    //   this.$v.$touch();
-    //   if (!this.$v.$invalid) {
-    //     this.$store.commit("set_loader");
-    //     let formData = new FormData();
-    //     formData.append("name", this.form.name);
-    //     formData.append("status", this.form.status);
-    //     formData.append("image", this.form.image);
-    //     formData.append("parent_id", this.form.parent_id);
-    //     formData.append("_method", "PATCH");
-    //     const config = {
-    //       headers: { "Content-Type": "multipart/form-data" },
-    //     };
-    //     JournalService.update(this.form.id, formData, config)
-    //       .then((res) => {
-    //         if (res.status == 200) {
-    //           this.displayData(res.data);
-    //           this.$swal.fire({
-    //             icon: "success",
-    //             title: "Success",
-    //             text: "Journal Updated Successfully",
-    //             timer: 3600,
-    //           });
-    //           this.$v.$reset();
-    //           this.$store.commit("close_loader");
-    //           if (this.saveAndExit) {
-    //             this.$router.push({ path: "/catalogs/brands/index" });
-    //           }
-    //           //  else {
-    //           //   this.$router.push({
-    //           //     path: "/catalogs/brands/edit/" + res.data.uuid,
-    //           //   });
-    //           // }
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //         this.$store.commit("close_loader");
-    //         this.$swal.fire({
-    //           icon: "error",
-    //           title: "Error",
-    //           text: "Something Went Wrong.",
-    //           timer: 3600,
-    //         });
-    //       });
-    //   }
-    // },
-    // getJournal() {
-    //   this.$store.commit("set_loader");
-    //   JournalService.get(this.form.id)
-    //     .then(({ data }) => {
-    //       this.displayData(data);
-    //       this.$store.commit("close_loader");
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       this.$store.commit("close_loader");
-    //       this.isEditing = false;
-    //       this.$router.push({ path: "/catalogs/brands/index" });
-    //     });
-    // },
-    // displayData(data = null) {
-    //   if (data != null && data != "") {
-    //     this.resetForm();
-    //     this.isEditing = true;
-    //     this.form.id = data.uuid;
-    //     this.form.name = data.name;
-    //     if (data.parent_id !== "" && data.parent_id !== null) {
-    //       this.form.parent_id = data.parent_id ?? "";
-    //     }
-    //     this.form.status = data.status;
-    //     this.display_images = data.image ?? "";
-    //     this.form.image = "";
-    //   }
-    // },
-    // resetForm() {
-    //   for (let index in this.form) {
-    //     this.form[index] = "";
-    //   }
-    //   this.isEditing = false;
-    // },
-    // },
+    updateJournal() {
+      //   this.$v.$touch();
+      this.$store.commit("set_loader");
+      let formData = this.form;
+
+      // formData.append("_method", "PATCH");
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+      JournalServices.update(this.form.id, formData, config)
+        .then((res) => {
+          if (res.status == 200) {
+            this.displayData(res.data);
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Journal Updated Successfully",
+              timer: 3600,
+            });
+            this.$v.$reset();
+            this.$store.commit("close_loader");
+            this.$router.push({ path: "/accounting/journals/index" });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$store.commit("close_loader");
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
+          });
+        });
+    },
+    getJournal() {
+      this.$store.commit("set_loader");
+      JournalServices.get(this.form.id)
+        .then(({ data }) => {
+          console.log(data);
+          this.displayData(data);
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$store.commit("close_loader");
+          // this.isEditing = false;
+          // this.$router.push({ path: "/catalogs/brands/index" });
+        });
+    },
+    displayData(data = null) {
+      if (data != null && data != "") {
+        this.resetForm();
+        this.isEditing = true;
+        this.form.id = data.uuid;
+        this.form.date = data.date;
+        this.form.journal = data.journal_no;
+        this.form.reference = data.ref_id;
+        this.form.notes = data.description;
+        if (data.transactions && data.transactions.length > 0) {
+          data.transactions.map((value, index) => {
+            var account_uuid = "";
+            if (value.from_account) {
+              account_uuid = value.from_account.uuid;
+            } else {
+              account_uuid = value.to_account.uuid;
+            }
+            this.form.items.push({
+              account: account_uuid,
+              description: value.description,
+              debit: value.debit,
+              credit: value.credit,
+            });
+          });
+        }
+      }
+    },
+    resetForm() {
+      // for (let index in this.form) {
+      //   this.form[index] = "";
+      // }
+      this.form.items = [];
+      this.isEditing = false;
+    },
   },
 };
 </script>
