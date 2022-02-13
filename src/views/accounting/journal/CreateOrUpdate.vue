@@ -8,9 +8,7 @@
             <CRow>
               <Loader />
               <CCol xs="12" lg="12">
-                <form
-                  @submit.prevent="isEditing ? updateJournal() : saveJournal()"
-                >
+                <form @submit.prevent="isEditing ? updateJournal() : saveJournal()">
                   <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CInput
@@ -161,10 +159,7 @@
                             </td>
                             <td>
                               <CButton @click="removeItem(k)">
-                                <CIcon
-                                  :content="$options.cilTrash"
-                                  style="color: red"
-                                />
+                                <CIcon :content="$options.cilTrash" style="color: red" />
                               </CButton>
                             </td>
                           </tr>
@@ -178,9 +173,7 @@
                             color="default"
                             @click="addItem()"
                             >Add another line
-                            <CIcon
-                              :content="$options.cisCaretBottom"
-                              style="width: 10px"
+                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
                           /></CButton>
                         </CCol>
                         <CCol xs="12" md="5" class="pt-2 ml-1">
@@ -215,9 +208,7 @@
                             <CCol> </CCol>
                             <CCol
                               ><h5>
-                                <strong style="color: red">
-                                  {{ form.difference }}</strong
-                                >
+                                <strong style="color: red"> {{ form.difference }}</strong>
                               </h5>
                             </CCol>
                           </CRow>
@@ -244,12 +235,7 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       type="submit"
                       @click="saveAsDraft = true"
                       >Save As Draft</CButton
@@ -507,11 +493,16 @@ export default {
           data.transactions.map((value, index) => {
             var account_uuid = "";
             if (value.from_account) {
-              account_uuid = value.from_account.uuid;
+              account_uuid = {
+                label: value.from_account.name,
+                value: value.from_account.uuid,
+              };
             } else {
-              account_uuid = value.to_account.uuid;
+              account_uuid = {
+                label: value.to_account.name,
+                value: value.to_account.uuid,
+              };
             }
-            // console.log(account_uuid);
             this.form.items.push({
               account: account_uuid,
               description: value.description,
@@ -541,4 +532,3 @@ export default {
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
-
