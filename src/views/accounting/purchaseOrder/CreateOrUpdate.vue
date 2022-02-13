@@ -238,7 +238,7 @@
                             </td>
                             <td>
                               <CSelect
-                                :options="item.options.tax"
+                                :options="options.taxes"
                                 :value.sync="item.tax"
                                 @change="calculateAmount(k)"
                               />
@@ -286,11 +286,11 @@
                             v-model="form.customer_notes"
                           />
                         </CCol>
-                        <CCol xs="12" md="5" class="pt-2 ml-5">
+                        <CCol xs="12" md="4" class="pt-2 offset-md-2">
                           <CRow class="pt-2 ra">
                             <CCol> <h6>Sub Total</h6> </CCol>
                             <CCol> </CCol>
-                            <CCol
+                            <CCol md="3"
                               ><h6>{{ form.subTotal }}</h6>
                             </CCol>
                           </CRow>
@@ -302,14 +302,14 @@
                                 @change="calculateTotalAmount()"
                               />
                             </CCol>
-                            <CCol
+                            <CCol md="3"
                               ><h6>{{ form.discount_val }}</h6>
                             </CCol>
                           </CRow>
                           <CRow class="pt-2 ra">
                             <CCol><h5>Total</h5> </CCol>
                             <CCol> </CCol>
-                            <CCol
+                            <CCol md="3"
                               ><h5>
                                 <strong>{{ form.total }}</strong>
                               </h5>
@@ -412,10 +412,11 @@ import Loader from "@/components/layouts/Loader.vue";
 import ReceivingService from "@/services/receivings/ReceivingService";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import { attachmentMixin } from "@/mixins/attachmentMixin";
+import { globalMixin } from "@/mixins/globalMixin";
 
 export default {
   name: "CreateOrUpdatePurchase",
-  mixins: [attachmentMixin],
+  mixins: [attachmentMixin, globalMixin],
   components: {
     Loader,
   },
@@ -445,11 +446,12 @@ export default {
       expected_delivery_date: "",
       payment_terms: "",
       status: "",
+
       items: [
         {
-          uuid: "",
+          // uuid: "",
           name: "",
-          type: "",
+          // type: "",
           account: "",
           qty: "",
           rate: "",
@@ -457,13 +459,13 @@ export default {
           amount: "",
           options: {
             products: [],
-            tax: [{ value: "", label: "Choose Tax" }],
           },
         },
       ],
     },
     products_list: [],
     options: {
+      taxes: [{ value: "", label: "Choose Tax" }],
       suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
       deliver_to: [
         { value: "", label: "Choose Deliver To", disabled: true, selected: "" },
@@ -526,21 +528,28 @@ export default {
     }
   },
   async created() {
+    this.form.date = this.calculateTodayDate();
     await this.getAccounts();
     await this.getAllSuppliers();
     await this.getAllBranches();
     await this.getAllCustomers();
+    await this.getTaxes();
     this.form.id = this.$route.params.id;
     if (this.form.id) {
       await this.getPurchaseOrder();
     }
   },
+  computed: {
+    taxData() {
+      return this.options.taxes;
+    },
+  },
   methods: {
     addItem() {
       this.form.items.push({
-        uuid: "",
+        // uuid: "",
         name: "",
-        type: "",
+        // type: "",
         account: "",
         qty: "",
         rate: "",
@@ -548,7 +557,6 @@ export default {
         amount: "",
         options: {
           products: [],
-          tax: [{ value: "", label: "Choose Tax" }],
         },
       });
     },
@@ -596,7 +604,6 @@ export default {
                         unit_qty: unit.qty ?? 1,
                         unit_cost_price: unit.price?.cost_price,
                         unit_selling_price: unit.price?.selling_price_without_tax,
-                        tax: unit.price?.tax?.name,
                       });
                     } else {
                       this.form.items[k].options.products.push({
@@ -608,7 +615,6 @@ export default {
                         unit_qty: unit.qty ?? 1,
                         unit_cost_price: unit.price?.cost_price,
                         unit_selling_price: unit.price?.selling_price_without_tax,
-                        tax: unit.price?.tax?.name,
                       });
                     }
                   });
@@ -661,27 +667,28 @@ export default {
             if (option.type === "product") {
               this.pro_unit = true;
               this.addProduct(option);
-            } else if (option.type === "variation") {
-              if (product.uuid === this.form.product_id) {
-                let parts = product.variations.length;
-                let num = option.unit_qty;
-                let half_qty = [...Array(parts)].map(
-                  (_, i) => 0 | (num / parts + (i < num % parts))
-                );
-                product.variations.find((variation, index) => {
-                  this.unit_form.push({
-                    uuid: variation.uuid,
-                    type: "variation",
-                    name: `${JSON.parse(variation.name)?.en}`,
-                    qty: half_qty[index] ?? 1,
-                    rate: option.unit_cost_price,
-                    account: "",
-                    tax: "",
-                    amount: "",
-                  });
-                });
-              }
             }
+            // else if (option.type === "variation") {
+            //   if (product.uuid === this.form.product_id) {
+            //     let parts = product.variations.length;
+            //     let num = option.unit_qty;
+            //     let half_qty = [...Array(parts)].map(
+            //       (_, i) => 0 | (num / parts + (i < num % parts))
+            //     );
+            //     product.variations.find((variation, index) => {
+            //       this.unit_form.push({
+            //         uuid: variation.uuid,
+            //         type: "variation",
+            //         name: `${JSON.parse(variation.name)?.en}`,
+            //         qty: half_qty[index] ?? 1,
+            //         rate: option.unit_cost_price,
+            //         account: "",
+            //         tax: "",
+            //         amount: "",
+            //       });
+            //     });
+            //   }
+            // }
           });
           // if (option.type === "variation") {
           //   this.toggleModel = true;
@@ -793,20 +800,20 @@ export default {
         // } else {
         if (k !== null) {
           let item = this.form.items[k];
-          item.options.tax = [{ value: "", label: "Choose Tax" }];
-          item.uuid = product.uuid;
-          item.type = "product";
+          // item.options.tax = [{ value: "", label: "Choose Tax" }];
+          // item.uuid = product.uuid;
+          // item.type = "product";
           item.name = product.name;
           item.account = "";
           item.rate = option.unit_cost_price;
-          if (product.price && product.price.tax) {
-            item.options.tax.push({
-              // uuid: product.price.tax.uuid,
-              label: product.price.tax.name,
-              percentage: product.price.tax.percentage,
-              value: product.price.tax.uuid,
-            });
-          }
+          // if (product.price && product.price.tax) {
+          //   item.options.tax.push({
+          //     // uuid: product.price.tax.uuid,
+          //     label: product.price.tax.name,
+          //     percentage: product.price.tax.percentage,
+          //     value: product.price.tax.uuid,
+          //   });
+          // }
           item.qty = option.unit_qty;
           item.amount = "";
         }
@@ -875,9 +882,12 @@ export default {
         amount = parseFloat(this.form.items[k].qty) * parseFloat(this.form.items[k].rate);
         // calculate tax
         if (this.form.items[k].tax) {
-          amount =
-            amount +
-            amount * (parseFloat(this.form.items[k].options.tax[1].percentage) / 100);
+          let tax = this.options.taxes.find(
+            (tax) => tax.value === this.form.items[k].tax
+          );
+          if (tax) {
+            amount = amount + amount * (parseFloat(tax.percentage) / 100);
+          }
         }
         this.form.items[k].amount = amount;
       }
@@ -886,17 +896,25 @@ export default {
     calculateTotalAmount() {
       let sub_total = 0;
       let discount = 0;
+      let total = 0;
       this.form.items.map((item) => {
         sub_total = sub_total + parseFloat(item.amount);
       });
       this.form.subTotal = sub_total.toFixed(2);
       if (this.form.discount) {
-        discount = parseFloat(this.form.discount);
-        this.form.discount_val = ((sub_total * parseFloat(discount)) / 100).toFixed(2);
-        this.form.total = (sub_total - this.form.discount_val).toFixed(2);
+        let isPercentage = /%/gi;
+        if (isPercentage.test(this.form.discount)) {
+          discount = parseFloat(this.form.discount);
+          this.form.discount_val = ((sub_total * parseFloat(discount)) / 100).toFixed(2);
+          total = (sub_total - this.form.discount_val).toFixed(2);
+        } else {
+          total = sub_total - parseFloat(this.form.discount);
+          this.form.discount_val = parseFloat(this.form.discount);
+        }
       } else {
-        this.form.total = sub_total.toFixed(2);
+        total = sub_total.toFixed(2);
       }
+      this.form.total = total;
     },
 
     resetSearch() {
@@ -988,7 +1006,7 @@ export default {
         PurchaseService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
-              // this.displayData(res.data);
+              this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -1116,7 +1134,7 @@ export default {
         this.form.deliver_to = data.deliver_to ? data.deliver_to : "organization";
         this.form.date = data.date;
         this.form.expected_delivery_date = data.expected_delivery_date;
-        this.form.discount = data.discount ? parseFloat(data.discount) : parseFloat(0);
+        this.form.discount = data.discount ? data.discount : "";
         this.form.total = parseFloat(data.total);
         this.form.customer_notes = data.customer_note;
         this.form.terms_and_conditions = data.terms_and_conditions;
@@ -1134,9 +1152,9 @@ export default {
           this.form.items = [];
           data.items.forEach((item) => {
             const data = {
-              uuid: item.product?.uuid,
-              type: "product",
-              name: item.product?.name,
+              // uuid: item.product?.uuid,
+              // type: "product",
+              name: item.name,
               account: item.account?.uuid,
               rate: parseFloat(item.rate) ?? 0,
               qty: parseFloat(item.qty),
@@ -1144,36 +1162,35 @@ export default {
               amount: parseFloat(item.amount),
               options: {
                 product: [],
-                tax: [{ value: "", label: "Choose Tax" }],
               },
             };
-            if (item.tax) {
-              data.options.tax = [
-                { value: "", label: "Choose Tax" },
-                {
-                  value: item.tax?.uuid,
-                  label: item.tax?.name,
-                  percentage: item.tax?.percentage,
-                },
-              ];
-            } else {
-              const product_tax = item.product.price.tax;
-              if (product_tax) {
-                data.options.tax = [
-                  { value: "", label: "Choose Tax" },
-                  {
-                    value: product_tax?.uuid,
-                    label: product_tax?.name,
-                    percentage: product_tax?.percentage,
-                  },
-                ];
-              }
-            }
             this.form.items.push(data);
           });
         }
         this.calculateAllItems();
       }
+    },
+    getTaxes() {
+      this.$store.commit("set_loader");
+      PurchaseService.getAllTaxes()
+        .then(({ data }) => {
+          if (data && data.data) {
+            let taxes = this.options.taxes;
+            data.data.forEach((tax) => {
+              taxes.push({
+                value: tax.uuid,
+                label: tax.name,
+                percentage: tax.percentage,
+              });
+            });
+
+            this.$store.commit("close_loader");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$store.commit("close_loader");
+        });
     },
     resetForm() {
       for (let index in this.form) {

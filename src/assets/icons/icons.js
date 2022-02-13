@@ -122,8 +122,16 @@ import {
   cilUserUnfollow,
   cilXCircle,
   cilWarning,
-  cilInstitution
-} from '@coreui/icons'
+  cilInstitution,
+  cilCart,
+  cilGroup,
+  cilBox,
+  cisDollar,
+  cilStore,
+  cisGroup,
+  cilBriefcase,
+  cilLibraryBooks,
+} from "@coreui/icons-pro"
 import { logo } from './logo'
 
 
@@ -141,6 +149,14 @@ export const iconsSet = Object.assign({}, { logo }, {
   cilCalculator,
   cilCalendar,
   cilInstitution,
+  cilCart,
+  cilGroup,
+  cilBox,
+  cisDollar,
+  cilStore,
+  cisGroup,
+  cilBriefcase,
+  cilLibraryBooks,
   cilLan,
   cilCloudDownload,
   cilChartPie,

@@ -60,9 +60,9 @@ export default {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.sale.quotations"),
+              name: "- " + this.$t("menu.sale.quotations"),
               to: "/sales/quotations",
-              icon: "cil-lan",
+              // icon: "cil-minus",
             },
           ]);
         }
@@ -70,9 +70,9 @@ export default {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.sale.invoices"),
+              name: "- " + this.$t("menu.sale.invoices"),
               to: "/sales/invoices",
-              icon: "cil-lan",
+              // icon: "cil-minus",
             },
           ]);
         }
@@ -80,7 +80,7 @@ export default {
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: this.$t("menu.sale.name"),
-          icon: "cil-lan",
+          icon: "cil-cart",
           items: this.sideBarItems_sales,
         });
       }
@@ -99,25 +99,25 @@ export default {
         if (this.$can("read customers")) {
           this.sideBarItems_contacts.push({
             _name: "CSidebarNavItem",
-            name: this.$t("menu.contacts.customers"),
+            name: "- " + this.$t("menu.contacts.customers"),
             to: { name: "Index Customers" },
-            icon: "cil-lan",
+            // icon: "cil-lan",
           });
         }
 
         if (this.$can("read suppliers")) {
           this.sideBarItems_contacts.push({
             _name: "CSidebarNavItem",
-            name: this.$t("menu.contacts.suppliers"),
+            name: "- " + this.$t("menu.contacts.suppliers"),
             to: { name: "Index Supplier" },
-            icon: "cil-lan",
+            // icon: "cil-lan",
           });
         }
 
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: this.$t("menu.contacts.name"),
-          icon: "cil-lan",
+          icon: "cil-group",
           _children: this.sideBarItems_contacts,
         });
       }
@@ -129,9 +129,9 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.catalogs.brands"),
+              name: "- " + this.$t("menu.catalogs.brands"),
               to: "/catalogs/brands/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -140,9 +140,9 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.catalogs.categories"),
+              name: "- " + this.$t("menu.catalogs.categories"),
               to: "/catalogs/category/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -150,9 +150,9 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.catalogs.products"),
+              name: "- " + this.$t("menu.catalogs.products"),
               to: "/products/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -161,9 +161,9 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.catalogs.damages"),
+              name: "- " + this.$t("menu.catalogs.damages"),
               to: "/catalogs/damages/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -171,9 +171,9 @@ export default {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.catalogs.offers"),
+              name: "- " + this.$t("menu.catalogs.offers"),
               to: "/catalogs/offers/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -190,7 +190,7 @@ export default {
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: this.$t("menu.catalogs.name"),
-          icon: "cil-lan",
+          icon: "cil-box",
           items: this.sideBarItems_products,
         });
       }
@@ -202,9 +202,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.accounting.chartOfAccount"),
+              name: "- " + this.$t("menu.accounting.chartOfAccount"),
               to: "/accounting/accounts/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -212,9 +212,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.catalogs.receivings"),
+              name: "- " + this.$t("menu.catalogs.receivings"),
               to: "/receivings/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -222,9 +222,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.accounting.paymentMethods"),
+              name: "- " + this.$t("menu.accounting.paymentMethods"),
               to: "/accounting/paymentMethods/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -233,9 +233,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.accounting.category"),
+              name: "- " + this.$t("menu.accounting.category"),
               to: "/accounting/category/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -243,9 +243,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.accounting.income"),
+              name: "- " + this.$t("menu.accounting.income"),
               to: "/accounting/income/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -253,9 +253,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.accounting.expense"),
+              name: "- " + this.$t("menu.accounting.expense"),
               to: "/accounting/expense/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -263,9 +263,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: this.$t("menu.accounting.transfer"),
-              to: "/accounting/journals/index",
-              icon: "cil-lan",
+              name: "- " + this.$t("menu.accounting.transfer"),
+              to: "/accounting/transfer/index",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -273,9 +273,9 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "Purchase Order",
+              name: "- " + "Purchase Order",
               to: "/purchases/index",
-              icon: "cil-lan",
+              // icon: "cil-lan",
             },
           ]);
         }
@@ -302,7 +302,7 @@ export default {
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
           name: this.$t("menu.accounting.name"),
-          icon: "cil-lan",
+          icon: "cis-dollar",
           items: this.sideBarItems_accounting,
         });
       }
@@ -314,7 +314,7 @@ export default {
           _attrs: { class: "hide-me" },
           name: this.$t("menu.branches"),
           to: "/branches",
-          icon: "cil-lan",
+          icon: "cil-store",
         });
       }
 
@@ -324,7 +324,7 @@ export default {
           _name: "CSidebarNavItem",
           name: this.$t("menu.users"),
           to: "/users/index",
-          icon: "cil-settings",
+          icon: "cis-group",
         });
       }
       // merchant
@@ -333,7 +333,7 @@ export default {
           _name: "CSidebarNavItem",
           name: this.$t("menu.merchant"),
           to: "/merchant",
-          icon: "cil-institution",
+          icon: "cil-briefcase",
         });
       }
 
@@ -566,7 +566,7 @@ export default {
           _name: "CSidebarNavItem",
           name: this.$t("menu.reports"),
           to: "/reports/index",
-          icon: "cil-lan",
+          icon: "cil-library-books",
         });
       }
       if (this.$can("read Settings")) {
