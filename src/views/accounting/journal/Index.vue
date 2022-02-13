@@ -78,6 +78,7 @@ const fields = [
   { key: "journal_no", label: "Journal #" },
   { key: "ref_id", label: "Reference #" },
   { key: "date", label: "Dated" },
+  { key: "status", label: "Status" },
   { key: "actions", label: "ACTION" },
 ];
 

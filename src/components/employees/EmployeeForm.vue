@@ -49,7 +49,9 @@
                 @input="$v.form.email.$touch()"
               />
               <div v-if="$v.form.email.$error">
-                <p v-if="!$v.form.email.email" class="errorMsg">Email Should be Valid</p>
+                <p v-if="!$v.form.email.email" class="errorMsg">
+                  Email Should be Valid
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -99,8 +101,13 @@
                 track-by="label"
                 :preselect-first="true"
               >
-                <template slot="selection" slot-scope="{ values, search, isOpen }">
-                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                <template
+                  slot="selection"
+                  slot-scope="{ values, search, isOpen }"
+                >
+                  <span
+                    class="multiselect__single"
+                    v-if="values.value &amp;&amp; !isOpen"
                     >{{ values.length }} options selected</span
                   ></template
                 >
@@ -130,7 +137,9 @@
                 @input="$v.form.cpr_no.$touch()"
               />
               <div v-if="$v.form.cpr_no.$error">
-                <p v-if="!$v.form.cpr_no.required" class="errorMsg">CPR is required</p>
+                <p v-if="!$v.form.cpr_no.required" class="errorMsg">
+                  CPR is required
+                </p>
                 <p v-if="!$v.form.cpr_no.minLength" class="errorMsg">
                   CPR should be at least 9 character
                 </p>
@@ -170,7 +179,11 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Passport No" type="text" :value.sync="form.passport_no" />
+              <CInput
+                label="Passport No"
+                type="text"
+                :value.sync="form.passport_no"
+              />
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
@@ -234,7 +247,11 @@
                 <CInput label="User Email" :value.sync="form.user_email" />
               </CCol>
               <CCol sm="6" md="4" class="pt-2">
-                <CInput label="Password" type="password" :value.sync="form.user_pass" />
+                <CInput
+                  label="Password"
+                  type="password"
+                  :value.sync="form.user_pass"
+                />
               </CCol>
               <CCol sm="6" md="4" class="pt-2">
                 <CInput
@@ -284,7 +301,9 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -300,7 +319,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -313,7 +337,13 @@
 </template>
 <script>
 import EmployeeService from "@/services/employees/EmployeeService";
-import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
+import {
+  required,
+  email,
+  numeric,
+  minLength,
+  maxLength,
+} from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import Loader from "@/components/layouts/Loader";
 
@@ -357,7 +387,9 @@ export default {
     empId: null,
     options: {
       branches: [],
-      managers: [{ value: "", label: "Choose Manager", disabled: true, selected: "" }],
+      managers: [
+        { value: "", label: "Choose Manager", disabled: true, selected: "" },
+      ],
       departments: [
         {
           value: "",
@@ -389,7 +421,9 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
-      user_role: [{ value: "", label: "Choose Role", disabled: true, selected: "" }],
+      user_role: [
+        { value: "", label: "Choose Role", disabled: true, selected: "" },
+      ],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },
@@ -592,8 +626,14 @@ export default {
               });
               if (res.data.personal_photo !== "") {
                 this.$store.commit("set_emp_img", res.data.personal_photo);
-                if (res.data.uuid && res.data.uuid === this.$store.state.employee_id) {
-                  this.$store.commit("set_profile_img", res.data.personal_photo);
+                if (
+                  res.data.uuid &&
+                  res.data.uuid === this.$store.state.employee_id
+                ) {
+                  this.$store.commit(
+                    "set_profile_img",
+                    res.data.personal_photo
+                  );
                 }
               }
 

@@ -14,6 +14,12 @@ class AccountServices extends Helper {
         return http.get(url);
     }
 
+    getTreeStructure() {
+        let url = "/account-tree-structure";
+        return http.get(url);
+
+    }
+
     getActiveAccounts(active) {
         let url = "/account";
         if (active !== '')
