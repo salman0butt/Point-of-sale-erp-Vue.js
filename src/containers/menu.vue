@@ -272,8 +272,8 @@ export default {
         if (this.$can("read transfer")) {
           this.sideBarItems_accounting.push([
             {
-              _name: "- " + "CSidebarNavItem",
-              name: "Purchase Order",
+              _name: "CSidebarNavItem",
+              name: "- " + "Purchase Order",
               to: "/purchases/index",
               // icon: "cil-lan",
             },
