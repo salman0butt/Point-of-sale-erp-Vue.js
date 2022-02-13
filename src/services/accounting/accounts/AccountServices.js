@@ -37,6 +37,14 @@ class AccountServices extends Helper {
     getAllAccountTypes() {
         return http.get(`/account-types`);
     }
+
+    getAllExpenseAccount() {
+        return http.get(`/account-expense`);
+
+    }
+
+
+
     delete(id) {
         return http.delete(`/account/${id}`);
     }
