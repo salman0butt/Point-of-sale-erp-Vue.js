@@ -60,24 +60,7 @@
                       </div>
                     </CCol>
                   </CRow>
-                  <CRow>
-                    <CCol xs="12" md="6" class="pt-2">
-                      <CTextarea
-                        horizontal
-                        class="mt-4"
-                        label="Notes"
-                        placeholder="content here.."
-                        v-model="form.notes"
-                        :class="{ error: $v.form.notes.$error }"
-                        @input="$v.form.notes.$touch()"
-                      />
-                      <div v-if="$v.form.notes.$error">
-                        <p v-if="!$v.form.notes.required" class="errorMsg">
-                          Notes is required
-                        </p>
-                      </div>
-                    </CCol>
-                  </CRow>
+
                   <!-- <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CRow>
@@ -225,6 +208,23 @@
                       </CRow>
                     </CCol>
                   </CRow>
+                  <CRow>
+                    <CCol xs="12" md="12" class="pt-2">
+                      <CTextarea
+                        class="mt-4"
+                        label="Notes"
+                        placeholder="content here.."
+                        v-model="form.notes"
+                        :class="{ error: $v.form.notes.$error }"
+                        @input="$v.form.notes.$touch()"
+                      />
+                      <div v-if="$v.form.notes.$error">
+                        <p v-if="!$v.form.notes.required" class="errorMsg">
+                          Notes is required
+                        </p>
+                      </div>
+                    </CCol>
+                  </CRow>
 
                   <p v-if="$v.$anyError" class="errorMsg">
                     Please Fill the required data
@@ -340,6 +340,12 @@ export default {
       });
     },
     getPreRequisites() {
+      var currentDateWithFormat = new Date()
+        .toJSON()
+        .slice(0, 10)
+        .replace(/-/g, "-");
+      this.form.date = currentDateWithFormat;
+
       AccountServices.getTreeStructure()
         .then(({ data }) => {
           let account = this.options.account;
