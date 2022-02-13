@@ -91,6 +91,15 @@
         </CRow>
       </CCardBody>
     </CCard>
+
+    <CCard>
+      <CCardHeader> Terms & Conditions </CCardHeader>
+      <CCardBody>
+        <CRow>
+          <CCol xs="12" lg="12"> There is some Terms & Conditions </CCol>
+        </CRow>
+      </CCardBody>
+    </CCard>
     <CCard>
       <CCardHeader> Taxes </CCardHeader>
       <CCardBody>
