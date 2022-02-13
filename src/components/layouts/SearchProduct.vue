@@ -37,6 +37,7 @@
                   placeholder="0"
                   step="any"
                   v-model="input.qty"
+                  required
                   @input="calculateTotal()"
                 />
                 <CInput
@@ -46,6 +47,7 @@
                   placeholder="0.00"
                   v-model="input.cost_price"
                   @input="calculateTotal()"
+                  required
                 />
                 <CInput
                   label="Selling Price"
@@ -53,6 +55,7 @@
                   type="number"
                   placeholder="0.00"
                   :value.sync="input.selling_price"
+                  required
                 />
                 <CInput
                   class="col-md-2"
@@ -84,6 +87,7 @@
                   placeholder="0"
                   step="any"
                   v-model="input.qty"
+                  required
                 />
                 <CInput label="Reason" class="col-md-4" :value.sync="input.reason" />
                 <CButton
@@ -125,6 +129,7 @@
                     step="any"
                     v-model="input.qty"
                     @input="calculateQutationTotal()"
+                    required
                   />
                   <span
                     class="input-group-text form-control mt-4 col-4"
@@ -141,6 +146,7 @@
                   step="any"
                   :value.sync="input.unit_price"
                   disabled
+                  required
                 />
 
                 <CInput

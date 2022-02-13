@@ -8,9 +8,7 @@
             <CRow>
               <Loader />
               <CCol xs="12" lg="12">
-                <form
-                  @submit.prevent="isEditing ? updateJournal() : saveJournal()"
-                >
+                <form @submit.prevent="isEditing ? updateJournal() : saveJournal()">
                   <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CInput
@@ -111,10 +109,25 @@
                         <tbody>
                           <tr v-for="(item, k) in form.items" :key="k">
                             <th>
-                              <CSelect
+                              <multiselect
+                                v-model="item.account"
                                 :options="options.account"
-                                :value.sync="item.account"
-                              />
+                                :close-on-select="true"
+                                :clear-on-select="false"
+                                :disabled="isDisabled"
+                                placeholder="Select Account"
+                                label="label"
+                              >
+                              </multiselect>
+
+                              <!-- <div v-if="$v.form.branch_id.$error">
+                                  <p
+                                    v-if="!$v.form.branch_id.required"
+                                    class="errorMsg"
+                                  >
+                                    Branch is required
+                                  </p>
+                                </div> -->
                             </th>
                             <td>
                               <CTextarea
@@ -146,10 +159,7 @@
                             </td>
                             <td>
                               <CButton @click="removeItem(k)">
-                                <CIcon
-                                  :content="$options.cilTrash"
-                                  style="color: red"
-                                />
+                                <CIcon :content="$options.cilTrash" style="color: red" />
                               </CButton>
                             </td>
                           </tr>
@@ -163,27 +173,42 @@
                             color="default"
                             @click="addItem()"
                             >Add another line
-                            <CIcon
-                              :content="$options.cisCaretBottom"
-                              style="width: 10px"
+                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
                           /></CButton>
                         </CCol>
-                        <CCol xs="12" md="5" class="pt-2 ml-5">
+                        <CCol xs="12" md="5" class="pt-2 ml-1">
                           <CRow class="pt-2 ra">
                             <CCol> <h6>Sub Total</h6> </CCol>
-                            <CCol> </CCol>
                             <CCol
-                              ><h6>{{ form.subTotal }}</h6>
+                              ><h6>{{ form.debitTotal }}</h6>
+                            </CCol>
+                            <CCol
+                              ><h6>{{ form.creditTotal }}</h6>
                             </CCol>
                           </CRow>
                           <CRow class="pt-2 ra">
                             <CCol>
                               <h5>Total</h5>
                             </CCol>
+                            <CCol>
+                              <h5>
+                                <strong>{{ form.debitTotal }}</strong>
+                              </h5></CCol
+                            >
+                            <CCol
+                              ><h5>
+                                <strong>{{ form.creditTotal }}</strong>
+                              </h5>
+                            </CCol>
+                          </CRow>
+                          <CRow class="pt-2 ra">
+                            <CCol>
+                              <h5 style="color: red">Difference</h5>
+                            </CCol>
                             <CCol> </CCol>
                             <CCol
                               ><h5>
-                                <strong>{{ form.total }}</strong>
+                                <strong style="color: red"> {{ form.difference }}</strong>
                               </h5>
                             </CCol>
                           </CRow>
@@ -202,23 +227,18 @@
                       block
                       color="success"
                       style="float: right; width: 200px; margin-left: 20px"
+                      @click="saveAndExit = true"
                       type="submit"
-                      @click="saveAndExit = false"
-                      >Save & Continue</CButton
+                      >Save & Exit</CButton
                     >
                     <CButton
                       timeout="2000"
                       block
                       color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
-                      @click="saveAndExit = true"
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       type="submit"
-                      >Save & Exit</CButton
+                      @click="saveAsDraft = true"
+                      >Save As Draft</CButton
                     >
                   </CRow>
                 </form>
@@ -237,17 +257,21 @@ import { cilTrash, cisCaretBottom } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import JournalServices from "@/services/accounting/journal/JournalServices";
+import Multiselect from "vue-multiselect";
 
 export default {
   name: "CreateOrUpdateJournal",
   components: {
     Loader,
+    Multiselect,
   },
   cilTrash,
   cisCaretBottom,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
+    saveAsDraft: false,
+    isDisabled: false,
     form: {
       id: "",
       date: "",
@@ -255,8 +279,12 @@ export default {
       reference: "",
       notes: "",
       journal_type: "",
-      total: 0.0,
-      subTotal: 0.0,
+      debitTotal: 0.0,
+      creditTotal: 0.0,
+      debitSubtotal: 0.0,
+      creditSubtotal: 0.0,
+      difference: 0,
+      status: "completed",
       items: [
         {
           account: "",
@@ -267,14 +295,7 @@ export default {
       ],
     },
     options: {
-      account: [
-        {
-          value: "",
-          label: "Choose Account",
-          disabled: true,
-          selected: "",
-        },
-      ],
+      account: [],
     },
   }),
   validations() {
@@ -305,14 +326,37 @@ export default {
       });
     },
     getPreRequisites() {
-      AccountServices.getActiveAccounts("active")
+      AccountServices.getTreeStructure()
         .then(({ data }) => {
           let account = this.options.account;
           data.map(function (val) {
-            account.push({
-              value: val.uuid,
-              label: val.name,
-            });
+            if (val) {
+              // Account type
+              account.push({
+                value: val.uuid,
+                label: val.name,
+                $isDisabled: true,
+              });
+            }
+            if (val.children && val.children.length > 0) {
+              // Account Subtype
+
+              val.children.map(function (val2) {
+                if (val2.accounts && val2.accounts.length > 0) {
+                  account.push({
+                    value: val2.uuid,
+                    label: "-" + val2.name,
+                    $isDisabled: true,
+                  });
+                  val2.accounts.map(function (val3) {
+                    account.push({
+                      value: val3.uuid,
+                      label: "-- " + val3.name,
+                    });
+                  });
+                }
+              });
+            }
           });
         })
         .catch((error) => {
@@ -321,37 +365,39 @@ export default {
     },
     removeItem(index) {
       this.form.items.splice(index, 1);
+      this.calculateTotal();
     },
     async calculateTotal() {
       // calulcate total and sub total
-      let total = 0;
+      let debitTotal = 0;
+      let creditTotal = 0;
 
       this.form.items.map((item) => {
         if (item.credit || item.debit) {
-          total += parseFloat(item.debit) - parseFloat(item.credit);
+          debitTotal += parseFloat(item.debit);
+          creditTotal += parseFloat(item.credit);
         }
       });
 
-      this.form.total = total;
-      this.form.subTotal = total;
-      // if (total !== 0) {
-      //   this.$swal.fire({
-      //     icon: "error",
-      //     title: "Error",
-      //     text: "Debit and Credit must be equal to zero",
-      //     timer: 3600,
-      //   });
-      // }
+      this.form.debitTotal = debitTotal.toFixed(3);
+      this.form.creditTotal = creditTotal.toFixed(3);
+      this.form.debitSubtotal = debitTotal.toFixed(3);
+      this.form.creditSubtotal = creditTotal.toFixed(3);
+      this.form.difference = (creditTotal - debitTotal).toFixed(3);
     },
     saveJournal() {
-      if (this.form.total !== 0) {
-        this.$swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Debit and Credit must be equal to zero",
-          timer: 3600,
-        });
-        return;
+      if (!this.saveAsDraft) {
+        if (this.form.difference != 0) {
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Debit and Credit must be equal to zero",
+            timer: 3600,
+          });
+          return;
+        }
+      } else {
+        this.form.status = "draft";
       }
       let formData = this.form;
       const config = {
@@ -447,9 +493,15 @@ export default {
           data.transactions.map((value, index) => {
             var account_uuid = "";
             if (value.from_account) {
-              account_uuid = value.from_account.uuid;
+              account_uuid = {
+                label: value.from_account.name,
+                value: value.from_account.uuid,
+              };
             } else {
-              account_uuid = value.to_account.uuid;
+              account_uuid = {
+                label: value.to_account.name,
+                value: value.to_account.uuid,
+              };
             }
             this.form.items.push({
               account: account_uuid,
@@ -457,7 +509,10 @@ export default {
               debit: value.debit,
               credit: value.credit,
             });
+
+            // console.log(this.form.items);
           });
+          this.calculateTotal();
         }
       }
     },
@@ -476,3 +531,4 @@ export default {
   align-items: baseline;
 }
 </style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

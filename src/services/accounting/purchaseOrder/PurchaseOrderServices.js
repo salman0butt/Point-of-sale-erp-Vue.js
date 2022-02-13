@@ -17,6 +17,10 @@ class PurchaseOrderServices extends Helper {
         return http.get("/supplier?all_data=true");
     }
 
+    getAllTaxes() {
+        return http.get("/taxes?all_data=true");
+    }
+
     getAllBranches() {
         return http.get("/branches", super.selectedBranch());
     }
