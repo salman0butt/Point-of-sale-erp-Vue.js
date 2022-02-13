@@ -384,8 +384,10 @@ export default {
         });
     },
     removeItem(index) {
-      this.form.items.splice(index, 1);
-      this.calculateTotal();
+      if (this.form.items.length != 1) {
+        this.form.items.splice(index, 1);
+        this.calculateTotal();
+      }
     },
     async calculateTotal() {
       // calulcate total and sub total
