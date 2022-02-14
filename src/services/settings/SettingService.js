@@ -1,6 +1,6 @@
 import http from "@/http-common";
 
-class CustomerSettingService {
+class SettingService {
 
     getAll(type) {
         return http.get('/settings', {
@@ -16,4 +16,4 @@ class CustomerSettingService {
 
 }
 
-export default new CustomerSettingService();
+export default new SettingService();

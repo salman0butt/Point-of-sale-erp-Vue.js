@@ -54,7 +54,7 @@ import { VueTagsInput } from "@johmun/vue-tags-input";
 import Loader from "@/components/layouts/Loader";
 
 export default {
-  name: "HrSettingForm",
+  name: "CustomerSettingForm",
   components: { VueTagsInput, Loader },
   data: () => ({
     settingData: [],

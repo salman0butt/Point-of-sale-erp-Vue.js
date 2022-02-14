@@ -38,6 +38,9 @@ const state = {
   supplierModel: false,
   brandModel: false,
   categoryModel: false,
+  TermAndConditionModel: false,
+  PaymentTermModel: false,
+  PaymernTermId: '',
 }
 
 const mutations = {
@@ -141,6 +144,15 @@ const mutations = {
   set_category_model(state, status) {
     state.categoryModel = status;
   },
+  set_term_and_condition_model(state, status) {
+    state.TermAndConditionModel = status;
+  },
+  set_payment_term_model(state, status) {
+    state.PaymentTermModel = status;
+  },
+  set_payment_term_id(state, id) {
+    state.PaymernTermId = id;
+  }
 
 
 }
@@ -245,6 +257,9 @@ const getters = {
   getSupplierModel: state => state.supplierModel,
   getBrandModel: state => state.brandModel,
   getCategoryModel: state => state.categoryModel,
+  getTermAndConditionModel: state => state.TermAndConditionModel,
+  getPaymentTermModel: state => state.PaymentTermModel,
+  getPaymentTermId: state => state.PaymernTermId
 
 }
 
