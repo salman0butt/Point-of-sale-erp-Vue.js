@@ -35,6 +35,7 @@
 </template>
 <script>
 import CustomerReport from "@/components/reports/CustomerReport";
+import ProductReport from "@/components/reports/ProductReport";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -43,13 +44,14 @@ export default {
   cisCircle,
   components: {
     CustomerReport,
+    ProductReport,
   },
   data() {
     return {
       activeTab: "CustomerReport",
       tabs: [
         { key: "CustomerReport", name: "Customer Report" },
-        { key: "Report2", name: "Report2" },
+        { key: "ProductReport", name: "Product Report" },
         { key: "Report3", name: "Report3" },
         { key: "Report4", name: "Report4" },
         { key: "Report5", name: "Report5" },
