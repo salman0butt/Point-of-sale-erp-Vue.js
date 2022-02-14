@@ -3,8 +3,19 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader v-if="!isEditing">
-            {{ isEditing ? "Edit" : "New" }} Invoice
+          <CCardHeader>
+            <div style="float: left" class="col-6 pt-3">
+              {{ isEditing ? "Edit" : "New" }} Invoice
+            </div>
+            <div style="text-align: right">
+              <CSelect
+                label="Quotation"
+                horizontal
+                :options="options.quotation"
+                :value.sync="form.id"
+                @change="quotationChange()"
+              />
+            </div>
           </CCardHeader>
           <form @submit.prevent="formSubmit()">
             <CCardBody>
@@ -80,7 +91,10 @@
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <SearchProduct searchType="quotation" :itemsData="form.items" />
+                  <SearchProduct
+                    searchType="quotation"
+                    :itemsData="form.items"
+                  />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Sub Total" readonly :value="subTotal" />
@@ -89,14 +103,22 @@
                   <CInput label="Tax Total" readonly :value="taxTotal" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Total Discount" readonly :value="totalDiscount" />
+                  <CInput
+                    label="Total Discount"
+                    readonly
+                    :value="totalDiscount"
+                  />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Total" readonly :value="allTotal" />
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
-                  <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
+                  <CTextarea
+                    label="Note"
+                    placeholder="Content..."
+                    v-model="form.note"
+                  />
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <app-upload ref="fileUpload" @file:changed="handleFile" />
@@ -112,7 +134,11 @@
                         class="display-attachment-row"
                       >
                         <CIcon :content="$options.cisFile" />
-                        <a v-bind:href="img.path" target="_blank" class="name-attachment">
+                        <a
+                          v-bind:href="img.path"
+                          target="_blank"
+                          class="name-attachment"
+                        >
                           {{ img.name }}</a
                         >
                         <a
@@ -182,10 +208,16 @@ export default {
     },
     options: {
       status: [
-        { label: "Choose Status", value: "", selected: true, disabled: "" },
-        { label: "Pending", value: "pending" },
+        { label: "Draft", value: "draft" },
         { label: "Approved", value: "approved" },
         { label: "Rejected", value: "rejected" },
+      ],
+      quotation: [
+        {
+          label: "Choose Quotation",
+          value: "",
+          selected: true,
+        },
       ],
     },
     sales_persons: [],
@@ -205,13 +237,10 @@ export default {
     };
   },
   created() {
-    this.form.id = this.$route.params.id;
     this.form.dated = this.calculateTodayDate();
     this.form.due_date = this.calculateDueDate();
-    if (this.form.id !== "" && this.form.id !== undefined) {
-      this.isEditing = true;
-      this.getEditData();
-    }
+    this.createFunction();
+    this.getEditData(this.$route.params.id);
   },
   computed: {
     receivingItems() {
@@ -246,6 +275,28 @@ export default {
     },
   },
   methods: {
+    quotationChange() {
+      let uuid = this.form.id;
+      this.resetForm();
+      this.getEditData(uuid);
+    },
+    createFunction() {
+      InvoiceService.getCreateRequisites()
+        .then(({ data }) => {
+          // console.log(data);
+          let quotations = this.options.quotation;
+          data.map((value, index) => {
+            // console.log(value);
+            quotations.push({
+              label: value.quotation_ref_no,
+              value: value.uuid,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     formSubmit() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -264,7 +315,10 @@ export default {
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
-        formData.append("total_discount", this.$store.getters.getQuotationDiscount);
+        formData.append(
+          "total_discount",
+          this.$store.getters.getQuotationDiscount
+        );
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
 
         if (this.form.images && this.form.images.length > 0) {
@@ -380,84 +434,110 @@ export default {
           }
         });
     },
-    getEditData() {
-      InvoiceService.get(this.form.id)
-        .then((res) => {
-          if (res.status == 200) {
-            this.isEditing = true;
-            this.form.customer = res.data.customer.uuid;
-            this.form.dated = res.data.dated;
-            this.form.due_date = res.data.due_date;
-            this.form.note = res.data.note;
-            this.form.status = res.data.status;
-            this.form.sales_persons = [];
-            if (res.data.salespersons && res.data.salespersons.length > 0) {
-              let sales_persons = this.form.sales_persons;
-              res.data.salespersons.map(function (item) {
-                sales_persons.push(item.uuid);
-              });
-            }
+    getEditData(uuid) {
+      this.form.id = uuid;
+      if (this.form.id !== "" && this.form.id !== undefined) {
+        this.isEditing = true;
 
-            // this.form.sales_persons
-            this.display_images = [];
-            if (res.data.attachments && res.data.attachments.length > 0) {
-              let display_images = this.display_images;
-              res.data.attachments.map(function (item) {
-                display_images.push(item);
-              });
-            }
-
-            if (res.data.products && res.data.products.length > 0) {
-              res.data.products.map((item) => {
-                let total_each = 0;
-                if (!item.discount_per) {
-                  total_each =
-                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                      parseInt(item.qty) -
-                    parseFloat(item.discount);
-                } else {
-                  total_each =
-                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                    parseInt(item.qty);
-                  total_each = total_each - total_each * (item.discount / 100);
-                }
-
-                this.form.items.push({
-                  uuid: item.product.uuid,
-                  type: "product",
-                  name: item.product.name.en,
-                  unit_price: item.selling_price ?? 0,
-                  tax_price: item.tax ?? 0,
-                  qty: item.qty,
-                  description: item.description,
-                  weight_unit: item.product.weight_unit,
-                  discount: item.discount_per ? item.discount + "%" : item.discount,
-                  total: total_each,
+        InvoiceService.get(this.form.id)
+          .then((res) => {
+            if (res.status == 200) {
+              this.isEditing = true;
+              this.form.customer = res.data.customer.uuid;
+              this.form.dated = res.data.dated;
+              this.form.due_date = res.data.due_date;
+              this.form.note = res.data.note;
+              this.form.status = res.data.status;
+              this.form.sales_persons = [];
+              if (res.data.salespersons && res.data.salespersons.length > 0) {
+                let sales_persons = this.form.sales_persons;
+                res.data.salespersons.map(function (item) {
+                  sales_persons.push(item.uuid);
                 });
-              });
-              // this.$store.commit("set_search_product_items", itemsData);
+              }
+
+              // this.form.sales_persons
+              this.display_images = [];
+              if (res.data.attachments && res.data.attachments.length > 0) {
+                let display_images = this.display_images;
+                res.data.attachments.map(function (item) {
+                  display_images.push(item);
+                });
+              }
+
+              if (res.data.products && res.data.products.length > 0) {
+                res.data.products.map((item) => {
+                  let total_each = 0;
+                  if (!item.discount_per) {
+                    total_each =
+                      (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                        parseInt(item.qty) -
+                      parseFloat(item.discount);
+                  } else {
+                    total_each =
+                      (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                      parseInt(item.qty);
+                    total_each =
+                      total_each - total_each * (item.discount / 100);
+                  }
+
+                  this.form.items.push({
+                    uuid: item.product.uuid,
+                    type: "product",
+                    name: item.product.name.en,
+                    unit_price: item.selling_price ?? 0,
+                    tax_price: item.tax ?? 0,
+                    qty: item.qty,
+                    description: item.description,
+                    weight_unit: item.product.weight_unit,
+                    discount: item.discount_per
+                      ? item.discount + "%"
+                      : item.discount,
+                    total: total_each,
+                  });
+                });
+                // this.$store.commit("set_search_product_items", itemsData);
+              }
+
+              this.$store.commit("set_quotation_sub_total", res.data.sub_total);
+              this.$store.commit("set_quotation_tax_total", res.data.total_tax);
+              this.$store.commit(
+                "set_quotation_total_discount",
+                res.data.total_discount
+              );
+              this.$store.commit("set_quotation_total", res.data.grand_total);
+
+              this.previousValueCustomer = res.data.customer;
+              this.previousSalesPersons = res.data.salespersons;
             }
-
-            this.$store.commit("set_quotation_sub_total", res.data.sub_total);
-            this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-            this.$store.commit("set_quotation_total_discount", res.data.total_discount);
-            this.$store.commit("set_quotation_total", res.data.grand_total);
-
-            this.previousValueCustomer = res.data.customer;
-            this.previousSalesPersons = res.data.salespersons;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          // this.$store.commit("close_loader");
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went Wrong.",
-            timer: 3600,
+          })
+          .catch((error) => {
+            console.log(error);
+            // this.$store.commit("close_loader");
+            this.$swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Something Went Wrong.",
+              timer: 3600,
+            });
           });
-        });
+      }
+    },
+    resetForm() {
+      for (let index in this.form) {
+        this.form[index] = "";
+      }
+      this.form.items = [];
+      this.form.images = [];
+      this.display_images = [];
+      this.sales_persons = [];
     },
   },
 };
 </script>
+<style scoped>
+.multiselect__tags {
+  min-height: 36px;
+  height: 36px;
+}
+</style>

@@ -20,6 +20,11 @@ class InvoiceService extends Helper {
         return http.get(`/invoices/${id}`);
     }
 
+    getCreateRequisites() {
+
+        return http.get(`/invoices/create`);
+    }
+
     create(data, config) {
         config = Object.assign(config, super.selectedBranch());
         return http.post("/invoices", data, config);

@@ -118,13 +118,14 @@
                               <CTextarea
                                 placeholder="content..."
                                 v-model="item.description"
+                                style="height: 42px"
                               />
                             </td>
 
                             <td>
                               <CInput
                                 type="number"
-                                placeholder="0.00"
+                                placeholder="0.000"
                                 style="max-width: 100px"
                                 v-model="item.debit"
                                 @change="calculateTotal()"
@@ -135,7 +136,7 @@
                             <td>
                               <CInput
                                 type="number"
-                                placeholder="0.00"
+                                placeholder="0.000"
                                 style="max-width: 100px"
                                 v-model="item.credit"
                                 @change="calculateTotal()"
@@ -293,18 +294,18 @@ export default {
       reference: "",
       notes: "",
       journal_type: "",
-      debitTotal: 0.0,
-      creditTotal: 0.0,
-      debitSubtotal: 0.0,
-      creditSubtotal: 0.0,
-      difference: 0,
+      debitTotal: "0.000",
+      creditTotal: "0.000",
+      debitSubtotal: "0.000",
+      creditSubtotal: "0.000",
+      difference: "0.000",
       status: "completed",
       items: [
         {
           account: "",
           description: "",
-          debit: 0,
-          credit: 0,
+          debit: "0.000",
+          credit: "0.000",
         },
       ],
     },
@@ -378,6 +379,23 @@ export default {
               });
             }
           });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      JournalServices.preRequisites()
+        .then(({ data }) => {
+          let journal_serial = 0;
+          if (data.journal && data.journal.journal_no) {
+            journal_serial = data.journal.journal_no;
+          } else {
+            data.map(function (value) {
+              if (value.key == "journal_start_from") {
+                journal_serial = value.value;
+              }
+            });
+          }
+          this.form.journal = parseInt(journal_serial) + 1;
         })
         .catch((error) => {
           console.log(error);
