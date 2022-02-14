@@ -32,6 +32,9 @@
               <template #status="{ item }">
                 <td>{{ item.status ? item.status : "" }}</td>
               </template>
+              <template #journal_no="{ item }">
+                <td>{{ item.journal_prefix + "-" + item.journal_no }}</td>
+              </template>
 
               <template #actions="{ item }">
                 <td>

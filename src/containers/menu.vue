@@ -146,12 +146,24 @@ export default {
             },
           ]);
         }
+
         if (this.$can("read products")) {
           this.sideBarItems_products.push([
             {
               _name: "CSidebarNavItem",
               name: "- " + this.$t("menu.catalogs.products"),
               to: "/products/index",
+              // icon: "cil-lan",
+            },
+          ]);
+        }
+
+        if (this.$can("read receivings")) {
+          this.sideBarItems_products.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "- " + this.$t("menu.catalogs.receivings"),
+              to: "/receivings/index",
               // icon: "cil-lan",
             },
           ]);
@@ -208,16 +220,7 @@ export default {
             },
           ]);
         }
-        if (this.$can("read receivings")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "- " + this.$t("menu.catalogs.receivings"),
-              to: "/receivings/index",
-              // icon: "cil-lan",
-            },
-          ]);
-        }
+
         if (this.$can("read paymentMethod")) {
           this.sideBarItems_accounting.push([
             {

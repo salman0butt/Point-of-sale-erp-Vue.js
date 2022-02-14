@@ -19,6 +19,10 @@ class JournalServices extends Helper {
         return http.get(`/journal/${id}`);
     }
 
+    preRequisites() {
+        return http.get(`/journal/create`);
+    }
+
     create(data, config) {
         config = Object.assign(config, super.selectedBranch());
         return http.post("/journal", data, config);
