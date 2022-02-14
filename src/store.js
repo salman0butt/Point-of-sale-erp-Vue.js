@@ -38,6 +38,7 @@ const state = {
   supplierModel: false,
   brandModel: false,
   categoryModel: false,
+  TermAndConditionModel: false,
 }
 
 const mutations = {
@@ -141,6 +142,9 @@ const mutations = {
   set_category_model(state, status) {
     state.categoryModel = status;
   },
+  set_term_and_condition_model(state, status) {
+    state.TermAndConditionModel = status;
+  }
 
 
 }
@@ -245,6 +249,7 @@ const getters = {
   getSupplierModel: state => state.supplierModel,
   getBrandModel: state => state.brandModel,
   getCategoryModel: state => state.categoryModel,
+  getTermAndConditionModel: state => state.TermAndConditionModel,
 
 }
 

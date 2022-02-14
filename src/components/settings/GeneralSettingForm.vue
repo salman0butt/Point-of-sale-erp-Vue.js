@@ -98,7 +98,9 @@ export default {
         .then(({ data }) => {
           if (data) {
             data.map((item) => {
-              this.form[item.key] = item.value;
+              if (this.form[item.key]) {
+                this.form[item.key] = item.value;
+              }
             });
           }
           this.$store.commit("close_loader");

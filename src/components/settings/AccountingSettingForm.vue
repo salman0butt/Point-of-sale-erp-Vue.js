@@ -1,10 +1,10 @@
 <template>
   <div>
+    <Loader />
     <CCard>
       <CCardHeader> Accounting </CCardHeader>
       <CCardBody>
         <CRow>
-          <Loader />
           <CCol xs="12" lg="12">
             <form @submit.prevent="updateAccountingSetting()">
               <CRow>
@@ -95,9 +95,7 @@
     <CCard>
       <CCardHeader> Terms & Conditions </CCardHeader>
       <CCardBody>
-        <CRow>
-          <CCol xs="12" lg="12"> There is some Terms & Conditions </CCol>
-        </CRow>
+        <TermAndCondition />
       </CCardBody>
     </CCard>
     <CCard>
@@ -114,10 +112,11 @@ import { required } from "vuelidate/lib/validators";
 import { VueTagsInput } from "@johmun/vue-tags-input";
 import Loader from "@/components/layouts/Loader";
 import TaxForm from "@/components/taxes/TaxForm";
+import TermAndCondition from "@/components/termsAndConditions/TermAndCondition";
 
 export default {
   name: "HrSettingForm",
-  components: { VueTagsInput, Loader, TaxForm },
+  components: { VueTagsInput, Loader, TaxForm, TermAndCondition },
   data: () => ({
     settingData: [],
     form: {
