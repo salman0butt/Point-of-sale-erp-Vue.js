@@ -9,6 +9,7 @@
                 <CCol sm="12" md="12" class="pt-2">
                   <vue-editor
                     v-model="form.term_and_condition"
+                    :editor-toolbar="customToolbar"
                     :class="{ error: $v.form.term_and_condition.$error }"
                     @input="$v.form.term_and_condition.$touch()"
                   ></vue-editor>
@@ -53,6 +54,10 @@ export default {
     form: {
       term_and_condition: "",
     },
+    customToolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "ordered" }, { list: "bullet" }],
+    ],
   }),
   validations() {
     return {

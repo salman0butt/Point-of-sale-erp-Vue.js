@@ -99,6 +99,10 @@
       </CCardBody>
     </CCard>
     <CCard>
+      <CCardHeader> Payment Terms </CCardHeader>
+      <CCardBody> <PaymentTermIndex /></CCardBody>
+    </CCard>
+    <CCard>
       <CCardHeader> Taxes </CCardHeader>
       <CCardBody>
         <TaxForm />
@@ -113,10 +117,11 @@ import { VueTagsInput } from "@johmun/vue-tags-input";
 import Loader from "@/components/layouts/Loader";
 import TaxForm from "@/components/taxes/TaxForm";
 import TermAndCondition from "@/components/termsAndConditions/TermAndCondition";
+import PaymentTermIndex from "@/components/paymentTerms/PaymentTermIndex";
 
 export default {
   name: "HrSettingForm",
-  components: { VueTagsInput, Loader, TaxForm, TermAndCondition },
+  components: { VueTagsInput, Loader, TaxForm, TermAndCondition, PaymentTermIndex },
   data: () => ({
     settingData: [],
     form: {
