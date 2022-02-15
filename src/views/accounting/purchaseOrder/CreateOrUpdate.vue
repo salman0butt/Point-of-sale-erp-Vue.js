@@ -449,7 +449,7 @@ export default {
 
       items: [
         {
-          // uuid: "",
+          uuid: "",
           name: "",
           // type: "",
           account: "",
@@ -547,7 +547,7 @@ export default {
   methods: {
     addItem() {
       this.form.items.push({
-        // uuid: "",
+        uuid: "",
         name: "",
         // type: "",
         account: "",
@@ -801,7 +801,7 @@ export default {
         if (k !== null) {
           let item = this.form.items[k];
           // item.options.tax = [{ value: "", label: "Choose Tax" }];
-          // item.uuid = product.uuid;
+          item.uuid = product.uuid;
           // item.type = "product";
           item.name = product.name;
           item.account = "";
@@ -1152,7 +1152,7 @@ export default {
           this.form.items = [];
           data.items.forEach((item) => {
             const data = {
-              // uuid: item.product?.uuid,
+              uuid: item.product?.uuid,
               // type: "product",
               name: item.name,
               account: item.account?.uuid,

@@ -33,11 +33,11 @@ class PurchaseOrderServices extends Helper {
     }
 
     create(data) {
-        return http.post("/purchase-orders", data);
+        return http.post("/purchase-orders", data, super.selectedBranch());
     }
 
     update(id, data) {
-        return http.post(`/purchase-orders/${id}`, data);
+        return http.post(`/purchase-orders/${id}`, data, super.selectedBranch());
     }
 
     delete(id) {
