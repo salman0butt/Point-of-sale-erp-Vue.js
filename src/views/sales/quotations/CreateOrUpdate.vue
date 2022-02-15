@@ -67,6 +67,13 @@
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
+                    label="Payment Terms"
+                    :options="options.payment_terms"
+                    :value.sync="form.payment_terms"
+                  />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
                     label="Status"
                     :options="options.status"
                     :value.sync="form.status"
@@ -102,6 +109,13 @@
                   <CInput label="Total" readonly :value="allTotal" />
                 </CCol>
 
+                <CCol sm="12" md="12" class="pt-2">
+                  <Label>Payment Terms </Label>
+                  <vue-editor
+                    v-model="form.payment_terms"
+                    :editor-toolbar="customToolbar"
+                  ></vue-editor>
+                </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <CTextarea
                     label="Note"
@@ -171,6 +185,9 @@ import AppUpload from "@/components/uploads/Upload.vue";
 import QuotationService from "@/services/sale/QuotationService";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
 import { globalMixin } from "@/mixins/globalMixin";
+import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
+import { VueEditor } from "vue2-editor";
+
 export default {
   name: "CreateBrand",
   mixins: [globalMixin],
@@ -179,6 +196,7 @@ export default {
     SearchProduct,
     SelectSalePerson,
     AppUpload,
+    VueEditor,
   },
   cilTrash,
   cisFile,
@@ -194,6 +212,7 @@ export default {
       items: [],
       images: [],
       status: "",
+      payment_terms: "",
     },
     options: {
       status: [
@@ -202,7 +221,19 @@ export default {
         { label: "Approved", value: "approved" },
         { label: "Rejected", value: "rejected" },
       ],
+      payment_terms: [
+        {
+          label: "Choose Payment Term",
+          value: "",
+          selected: true,
+          disabled: "",
+        },
+      ],
     },
+    customToolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "ordered" }, { list: "bullet" }],
+    ],
     sales_persons: [],
     display_images: [],
     previousValueCustomer: Object,
@@ -220,13 +251,7 @@ export default {
     };
   },
   created() {
-    this.form.id = this.$route.params.id;
-    this.form.dated = this.calculateTodayDate();
-    this.form.due_date = this.calculateDueDate();
-    if (this.form.id !== "" && this.form.id !== undefined) {
-      this.isEditing = true;
-      this.getEditData();
-    }
+    this.createMethod();
   },
   computed: {
     receivingItems() {
@@ -261,6 +286,27 @@ export default {
     },
   },
   methods: {
+    createMethod() {
+      this.form.id = this.$route.params.id;
+      this.form.dated = this.calculateTodayDate();
+      this.form.due_date = this.calculateDueDate();
+      if (this.form.id !== "" && this.form.id !== undefined) {
+        this.isEditing = true;
+        this.getEditData();
+      }
+
+      // Payment Terms
+      PaymentTermService.getAll(1, 1000)
+        .then(({ data }) => {
+          let paymentTerms = this.options.payment_terms;
+          data.data.map((value, index) => {
+            paymentTerms.push({ label: value.name, value: value.description });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     formSubmit() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -275,6 +321,7 @@ export default {
         formData.append("sales_persons", this.form.sales_persons);
         formData.append("note", this.form.note);
         formData.append("status", this.form.status);
+        formData.append("payment_terms", this.form.payment_terms);
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
@@ -403,6 +450,7 @@ export default {
             this.form.due_date = res.data.due_date;
             this.form.note = res.data.note;
             this.form.status = res.data.status;
+            this.form.payment_terms = res.data.payment_terms;
 
             this.form.sales_persons = [];
             if (res.data.salespersons && res.data.salespersons.length > 0) {
