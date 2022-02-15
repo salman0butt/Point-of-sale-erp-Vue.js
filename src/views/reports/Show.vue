@@ -4,24 +4,52 @@
       <CCol xs="12" lg="3">
         <CCard>
           <CCardBody>
-            <div
+            <ul
               class="nav flex-column nav-pills"
               id="v-pills-tab"
               role="tablist"
               aria-orientation="vertical"
               v-if="tabs && tabs.length > 0"
             >
-              <a
-                v-for="(tab, index) in tabs"
-                v-bind:key="index"
-                class="nav-link bborder"
-                @click.prevent="changeActiveTab(tab.key)"
-                href="#"
-                v-bind:class="{ active: activeTab === tab.key }"
-              >
-                <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}</a
-              >
-            </div>
+              <div v-for="(tab, index) in tabs" v-bind:key="index">
+                <li
+                  class="nav-link bborder"
+                  @click.prevent="changeActiveTab(tab.key)"
+                  v-bind:class="{ active: activeTab === tab.key }"
+                >
+                  <span v-if="tab.hasChildren" @click="subMenu(index)">
+                    {{ tab.isCollapse ? "-" : "+" }}
+                    <!-- <CIcon
+                      v-if="tab.isCollapse"
+                      :content="$options.cilMinus"
+                      style="font-size: 10px"
+                    />
+                    <CIcon v-else :content="$options.cilPlus" /> -->
+                  </span>
+                  <span v-else> &emsp;</span>
+                  <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
+                </li>
+                <ul
+                  class="nav flex-column nav-pills"
+                  id="v-pills-tab"
+                  role="tablist"
+                  aria-orientation="vertical"
+                  v-if="tab.isCollapse"
+                >
+                  <li
+                    class="nav-link bborder"
+                    style="color: #fff"
+                    v-for="(children, k) in tab.childrens"
+                    :key="k"
+                    @click.prevent="changeActiveTab(children.key)"
+                    v-bind:class="{ active: activeTab === children.key }"
+                  >
+                    &nbsp; - <CIcon :content="$options.cilUser" />&nbsp;
+                    {{ children.name }}
+                  </li>
+                </ul>
+              </div>
+            </ul>
           </CCardBody>
         </CCard>
       </CCol>
@@ -34,23 +62,48 @@
   </div>
 </template>
 <script>
-import Report1 from "@/components/reports/Report1";
+import CustomerReport from "@/components/reports/CustomerReport";
+import ProductReport from "@/components/reports/ProductReport";
+import SaleReport from "@/components/reports/SaleReport";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
   name: "ShowReport",
   cilUser,
   cisCircle,
+  // cilMinus,
+  // cilPlus,
   components: {
-    Report1,
+    CustomerReport,
+    ProductReport,
+    SaleReport,
   },
   data() {
     return {
-      activeTab: "Report1",
+      activeTab: "CustomerReport",
+      subMenuList: [],
       tabs: [
-        { key: "Report1", name: "Report1" },
-        { key: "Report2", name: "Report2" },
-        { key: "Report3", name: "Report3" },
+        {
+          key: "CustomerReport",
+          name: "Customer Report",
+          isCollapse: false,
+          hasChildren: true,
+          childrens: [
+            { key: "Child1", name: "Child1" },
+            { key: "Child2", name: "Child2" },
+          ],
+        },
+        {
+          key: "ProductReport",
+          name: "Product Report",
+          isCollapse: false,
+          hasChildren: true,
+          childrens: [
+            { key: "Child1", name: "Child1" },
+            { key: "Child2", name: "Child2" },
+          ],
+        },
+        { key: "SaleReport", name: "Sales Report" },
         { key: "Report4", name: "Report4" },
         { key: "Report5", name: "Report5" },
       ],
@@ -61,22 +114,29 @@ export default {
     changeActiveTab(value) {
       this.activeTab = value;
     },
+    subMenu(k) {
+      this.tabs[k].isCollapse = !this.tabs[k].isCollapse;
+    },
   },
 };
 </script>
 
 <style>
-a.nav-link {
-  color: black;
+.nav-link {
+  color: black !important;
 }
 .bborder {
   border-bottom: 1px solid #80808073;
   align-items: center;
 }
-a.nav-link.active,
+.nav-link.active,
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
   background-color: #52b947 !important;
   color: #fff !important;
+  cursor: pointer;
+}
+.nav-link {
+  cursor: pointer;
 }
 </style>
