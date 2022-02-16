@@ -31,9 +31,9 @@ const CreateTransfer = () => import('@/views/accounting/transfer/Create')
 const EditTransfer = () => import('@/views/accounting/transfer/Edit')
 
 // Biller
-const IndexBiller = () => import('@/views/accounting/biller/Index')
-const CreateBiller = () => import('@/views/accounting/biller/Create')
-const EditBiller = () => import('@/views/accounting/biller/Edit')
+const IndexRecurringBill = () => import('@/views/accounting/recurringBill/Index')
+const CreateRecurringBill = () => import('@/views/accounting/recurringBill/CreateOrUpdate')
+const EditRecurringBill = () => import('@/views/accounting/recurringBill/CreateOrUpdate')
 
 // Payment Biller
 const IndexPaymentBiller = () => import('@/views/accounting/paymentBiller/Index')
@@ -142,19 +142,19 @@ const accountingRoutes =
             component: EditTransfer,
         },
         {
-            path: 'biller/index',
-            name: 'IndexBiller',
-            component: IndexBiller,
+            path: 'biller/recurring/index',
+            name: 'IndexRecurringBill',
+            component: IndexRecurringBill,
         },
         {
-            path: 'biller/create',
-            name: 'CreateBiller',
-            component: CreateBiller,
+            path: 'biller/recurring/create',
+            name: 'CreateRecurringBill',
+            component: CreateRecurringBill,
         },
         {
-            path: 'biller/edit/:id',
-            name: 'EditBiller',
-            component: EditBiller,
+            path: 'biller/recurring/edit/:id',
+            name: 'EditRecurringBill',
+            component: EditRecurringBill,
         },
         {
             path: 'paymentBiller/index',

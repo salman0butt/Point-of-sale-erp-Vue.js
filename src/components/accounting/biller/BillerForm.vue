@@ -26,7 +26,9 @@
                 @input="$v.form.title.$touch()"
               />
               <div v-if="$v.form.title.$error">
-                <p v-if="!$v.form.title.required" class="errorMsg">Title is required</p>
+                <p v-if="!$v.form.title.required" class="errorMsg">
+                  Title is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -39,7 +41,9 @@
                 @input="$v.form.amount.$touch()"
               />
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">
+                  Amount is required
+                </p>
               </div>
             </CCol>
 
@@ -120,7 +124,11 @@
                     class="display-attachment-row"
                   >
                     <CIcon :content="$options.cisFile" />
-                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
+                    <a
+                      v-bind:href="doc.path"
+                      target="_blank"
+                      class="name-attachment"
+                    >
                       {{ doc.name }}</a
                     >
                     <a
@@ -134,7 +142,9 @@
               </div>
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -150,7 +160,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -199,7 +214,9 @@ export default {
         { value: "quarterly", label: "Quarterly" },
         { value: "yearly", label: "Yearly" },
       ],
-      categories: [{ value: "", label: "Choose Category", disabled: true, selected: "" }],
+      categories: [
+        { value: "", label: "Choose Category", disabled: true, selected: "" },
+      ],
     },
   }),
   validations() {
@@ -244,10 +261,12 @@ export default {
               this.resetForm();
 
               if (this.saveAndExit) {
-                this.$router.push({ path: "/accounting/biller/index" });
+                this.$router.push({
+                  path: "/accounting/biller/recurring/index",
+                });
               } else {
                 this.$router.push({
-                  path: "/accounting/biller/edit/" + res.data.uuid,
+                  path: "/accounting/biller/recurring/edit/" + res.data.uuid,
                 });
               }
             }
@@ -283,12 +302,14 @@ export default {
               this.$v.$reset();
 
               if (this.saveAndExit) {
-                this.$router.push({ path: "/accounting/biller/index" });
+                this.$router.push({
+                  path: "/accounting/biller/recurring/index",
+                });
               } else {
                 this.$refs.fileUpload.reset();
                 this.getBiller();
                 // this.$router.push({
-                //   path: "/accounting/biller/edit/" + res.data.uuid,
+                //   path: "/accounting/biller/recurring/edit/" + res.data.uuid,
                 // });
               }
             }
