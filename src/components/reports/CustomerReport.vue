@@ -369,6 +369,9 @@ export default {
     toggleSection() {
       this.toggleOptions = !this.toggleOptions;
     },
+    getCustomers(val) {
+      console.log(val);
+    },
     genrateReport() {
       this.$v.$touch();
       if (!this.$v.$invalid) {

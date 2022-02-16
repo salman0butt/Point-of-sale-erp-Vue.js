@@ -17,7 +17,6 @@ class CustomerServices extends Helper {
       return http.get("/customers?active=active");
   }
 
-
     get(id) {
         return http.get(`/customers/${id}`);
     }
@@ -38,8 +37,8 @@ class CustomerServices extends Helper {
         return http.delete(`/customers/${id}`);
     }
 
-    search(name) {
-        return http.get(`/customers/search/${name}`);
+    search(query = null) {
+        return http.get(`/customers/search/${query}`);
 
     }
 
