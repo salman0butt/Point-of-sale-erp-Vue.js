@@ -1,9 +1,9 @@
 <template>
   <div>
-    <label class="typo__label">Suppliers</label>
+    <label class="typo__label">Customers</label>
     <multiselect
-      v-model="form.supplier"
-      :options="options.suppliers"
+      v-model="form.customer"
+      :options="options.customers"
       :multiple="true"
       :close-on-select="false"
       :clear-on-select="false"
@@ -14,7 +14,7 @@
       track-by="label"
       :preselect-first="true"
       :limit="10"
-      @search-change="searchSuppliers"
+      @search-change="searchCustomers"
     >
       <template slot="selection" slot-scope="{ values, search, isOpen }">
         <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
@@ -27,10 +27,10 @@
 
 <script>
 import Multiselect from "vue-multiselect";
-import SupplierServices from "@/services/contacts/supplier/SupplierServices";
+import CustomerServices from "@/services/contacts/customers/CustomerServices";
 import store from "@/store";
 export default {
-  name: "SupplierSearch",
+  name: "CustomerSearch",
   components: {
     Multiselect,
   },
@@ -40,53 +40,52 @@ export default {
       default: () => [],
     },
   },
-
   data: () => ({
     form: {
-      supplier: [],
+      customer: [],
     },
     options: {
-      suppliers: [],
+      customers: [],
     },
   }),
   computed: {
-    suppliers() {
-      return this.form.supplier;
+    customers() {
+      return this.form.customer;
     },
     loading() {
       return this.$store.getters.loading;
     },
   },
   created() {
-    this.getSuppliers();
+    this.getCustomers();
   },
   watch: {
-    suppliers: {
+    customers: {
       handler: function (val) {
-        this.$emit("supplier-change", val);
+        this.$emit("customer-change", val);
       },
       deep: true,
     },
     previousValue: {
       handler: function (val) {
         if (val) {
-          this.form.supplier = val;
+          this.form.customer = val;
         }
       },
       deep: true,
     },
   },
   methods: {
-    getSuppliers() {
+    getCustomers() {
       store.commit("set_loader");
-      let suppliers = this.options.suppliers;
-      SupplierServices.getAll(1, 10)
+      let customers = this.options.customers;
+      CustomerServices.getAll(1, 10)
         .then(function ({ data }) {
           if (data && data.data) {
             data.data.map(function (item) {
-              suppliers.push({
+              customers.push({
                 value: item.uuid,
-                label: item.name + " (serial: " + item.serial_no + ")",
+                label: item.full_name + " (serial: " + item.serial_no + ")",
               });
             });
           }
@@ -97,18 +96,18 @@ export default {
           console.log(error);
         });
     },
-    searchSuppliers(searchQuery) {
+    searchCustomers(searchQuery) {
       if (searchQuery && searchQuery.length > 0) {
         store.commit("set_loader");
-        this.options.suppliers = [];
-        let suppliers = this.options.suppliers;
-        SupplierServices.searchSuppliers(searchQuery)
+        this.options.customers = [];
+        let customers = this.options.customers;
+        CustomerServices.search(searchQuery)
           .then(function ({ data }) {
             if (data) {
               data.map(function (item) {
-                suppliers.push({
+                customers.push({
                   value: item.uuid,
-                  label: item.name + " (serial: " + item.serial_no + ")",
+                  label: item.full_name + " (serial: " + item.serial_no + ")",
                 });
               });
             }

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <label class="typo__label">Suppliers</label>
+    <label class="typo__label">Products</label>
     <multiselect
-      v-model="form.supplier"
-      :options="options.suppliers"
+      v-model="form.product"
+      :options="options.products"
       :multiple="true"
       :close-on-select="false"
       :clear-on-select="false"
@@ -14,7 +14,7 @@
       track-by="label"
       :preselect-first="true"
       :limit="10"
-      @search-change="searchSuppliers"
+      @search-change="searchProducts"
     >
       <template slot="selection" slot-scope="{ values, search, isOpen }">
         <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
@@ -27,10 +27,10 @@
 
 <script>
 import Multiselect from "vue-multiselect";
-import SupplierServices from "@/services/contacts/supplier/SupplierServices";
+import ProductService from "@/services/products/ProductService";
 import store from "@/store";
 export default {
-  name: "SupplierSearch",
+  name: "ProductSearch",
   components: {
     Multiselect,
   },
@@ -43,50 +43,50 @@ export default {
 
   data: () => ({
     form: {
-      supplier: [],
+      product: [],
     },
     options: {
-      suppliers: [],
+      products: [],
     },
   }),
   computed: {
-    suppliers() {
-      return this.form.supplier;
+    products() {
+      return this.form.product;
     },
     loading() {
       return this.$store.getters.loading;
     },
   },
   created() {
-    this.getSuppliers();
+    this.getProducts();
   },
   watch: {
-    suppliers: {
+    products: {
       handler: function (val) {
-        this.$emit("supplier-change", val);
+        this.$emit("product-change", val);
       },
       deep: true,
     },
     previousValue: {
       handler: function (val) {
         if (val) {
-          this.form.supplier = val;
+          this.form.product = val;
         }
       },
       deep: true,
     },
   },
   methods: {
-    getSuppliers() {
+    getProducts() {
       store.commit("set_loader");
-      let suppliers = this.options.suppliers;
-      SupplierServices.getAll(1, 10)
+      let products = this.options.products;
+      ProductService.getAll(1, 10)
         .then(function ({ data }) {
           if (data && data.data) {
             data.data.map(function (item) {
-              suppliers.push({
+              products.push({
                 value: item.uuid,
-                label: item.name + " (serial: " + item.serial_no + ")",
+                label: item.name + " (serial: " + item.serial_number + ")",
               });
             });
           }
@@ -97,18 +97,18 @@ export default {
           console.log(error);
         });
     },
-    searchSuppliers(searchQuery) {
+    searchProducts(searchQuery) {
       if (searchQuery && searchQuery.length > 0) {
         store.commit("set_loader");
-        this.options.suppliers = [];
-        let suppliers = this.options.suppliers;
-        SupplierServices.searchSuppliers(searchQuery)
+        this.options.products = [];
+        let products = this.options.products;
+        ProductService.search(searchQuery)
           .then(function ({ data }) {
             if (data) {
               data.map(function (item) {
-                suppliers.push({
+                products.push({
                   value: item.uuid,
-                  label: item.name + " (serial: " + item.serial_no + ")",
+                  label: item.name + " (serial: " + item.serial_number + ")",
                 });
               });
             }

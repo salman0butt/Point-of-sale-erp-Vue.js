@@ -14,6 +14,10 @@ class ProductService extends Helper {
         return http.get(url, super.selectedBranch());
     }
 
+    search(query = null) {
+        return http.get(`/products/search/${query}`, super.selectedBranch());
+    }
+
     get(id) {
         return http.get(`/products/${id}`, super.selectedBranch());
     }
