@@ -232,26 +232,38 @@ export default {
           ]);
         }
 
+        // if (this.$can("read category")) {
+        //   this.sideBarItems_accounting.push([
+        //     {
+        //       _name: "CSidebarNavItem",
+        //       name: "- " + this.$t("menu.accounting.category"),
+        //       to: "/accounting/category/index",
+        //       // icon: "cil-lan",
+        //     },
+        //   ]);
+        // }
+
         if (this.$can("read category")) {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "- " + this.$t("menu.accounting.category"),
-              to: "/accounting/category/index",
+              name: "- " + this.$t("menu.accounting.RecurringBills"),
+              to: "/accounting/biller/recurring/index",
               // icon: "cil-lan",
             },
           ]);
         }
-        if (this.$can("read income")) {
-          this.sideBarItems_accounting.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "- " + this.$t("menu.accounting.income"),
-              to: "/accounting/income/index",
-              // icon: "cil-lan",
-            },
-          ]);
-        }
+
+        // if (this.$can("read income")) {
+        //   this.sideBarItems_accounting.push([
+        //     {
+        //       _name: "CSidebarNavItem",
+        //       name: "- " + this.$t("menu.accounting.income"),
+        //       to: "/accounting/income/index",
+        //       // icon: "cil-lan",
+        //     },
+        //   ]);
+        // }
         if (this.$can("read expense")) {
           this.sideBarItems_accounting.push([
             {

@@ -62,7 +62,11 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
       </CCol>
     </CRow>
   </div>
@@ -90,7 +94,7 @@ const fields = [
 ];
 
 export default {
-  name: "BillerIndex",
+  name: "RecurringBillerIndex",
   cilPencil,
   cilTrash,
   cilEye,
@@ -158,7 +162,7 @@ export default {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/accounting/biller/edit/" + uuid });
+      this.$router.push({ path: "/accounting/biller/recurring/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -182,7 +186,9 @@ export default {
                     text: "Biller Deleted Successfully",
                     timer: 3600,
                   });
-                  this.BillerData = this.BillerData.filter((item) => item.uuid != uuid);
+                  this.BillerData = this.BillerData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })

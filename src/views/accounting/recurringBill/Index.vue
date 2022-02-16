@@ -7,9 +7,9 @@
           <CCardBody>
             <router-link
               class="btn btn-success"
-              to="/accounting/biller/create"
+              to="/accounting/biller/recurring/create"
               style="float: right"
-              >Create Biller</router-link
+              >Create Recurring Bill</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
             <BillerIndex />
@@ -23,7 +23,7 @@
 <script>
 import BillerIndex from "@/components/accounting/biller/BillerIndex";
 export default {
-  name: "IndexBiller",
+  name: "RecurringIndexBiller",
   components: { BillerIndex },
 };
 </script>

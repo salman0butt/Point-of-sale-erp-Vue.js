@@ -1,162 +1,132 @@
 <template>
-  <div id="app">
-    <CCard>
-      <CCardHeader>Table </CCardHeader>
-      <CCardBody>
-        <vue-ads-table-tree
-          :columns="columns"
-          :rows="rows"
-          :filter="filterValue"
-          :page="page"
-          @filter-change="filterChanged"
-          @page-change="pageChanged"
-        >
-          <!-- <template slot="firstName" slot-scope="props">
-            <a
-              :href="`https://www.google.com/search?q=${props.row.firstName}+${props.row.lastName}`"
-              target="_blank"
-            >
-              {{ props.row.firstName }}
-            </a>
-          </template> -->
-        </vue-ads-table-tree>
-      </CCardBody>
-    </CCard>
+  <div>
+    <CRow>
+      <CCol xs="12" md="12" class="pt-2">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Account</th>
+              <th scope="col">Debits</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, k) in form.items" :key="k">
+              <td>
+                <multiselect
+                  v-model="item.account"
+                  :options="options.account"
+                  :close-on-select="true"
+                  :clear-on-select="false"
+                  placeholder="Select Account"
+                  label="label"
+                >
+                </multiselect>
+              </td>
+
+              <td>
+                <CInput
+                  type="number"
+                  placeholder="0.000"
+                  style="max-width: 100px"
+                  v-model="item.debit"
+                  step="any"
+                />
+              </td>
+
+              <td>
+                <CButton @click="removeItem(k)">
+                  <CIcon :content="$options.cilTrash" style="color: red" />
+                </CButton>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <CRow>
+          <CCol xs="12" md="6" class="pt-2">
+            <CButton progress timeout="2000" color="default" @click="addItem()"
+              >Add another line
+              <CIcon :content="$options.cisCaretBottom" style="width: 10px"
+            /></CButton>
+          </CCol>
+        </CRow>
+      </CCol>
+    </CRow>
   </div>
 </template>
 
 <script>
-// import { VueAdsTable } from "vue-ads-table-tree";
-import "@/../node_modules/@fortawesome/fontawesome-free/css/all.css";
+import Multiselect from "vue-multiselect";
+import AccountServices from "@/services/accounting/accounts/AccountServices";
+import { cilTrash, cisCaretBottom } from "@coreui/icons-pro";
 
-import VueAdsTableTree from "vue-ads-table-tree";
 export default {
-  name: "app",
-
+  name: "test",
   components: {
-    VueAdsTableTree,
+    Multiselect,
   },
+  cilTrash,
 
   data() {
     return {
-      page: 0,
-      filter: "",
-      columns: [
-        {
-          property: "firstName",
-          title: "First Name",
-          direction: null,
-          filterable: true,
-          collapseIcon: true,
-        },
-        {
-          property: "lastName",
-          title: "Last Name",
-          direction: null,
-          filterable: true,
-          // collapseIcon: true,
-        },
-      ],
-      rows: [
-        {
-          firstName: "Josephine",
-          lastName: "Astrid",
-        },
-        {
-          firstName: "Boudewijn",
-          lastName: "Van Brabandt",
-        },
-        {
-          firstName: "Albert II",
-          lastName: "Van Belgie",
-          _children: [
-            {
-              firstName: "Filip",
-              lastName: "Van Belgie",
-              _children: [
-                {
-                  firstName: "Elisabeth",
-                  lastName: "Van Brabant",
-                },
-                {
-                  firstName: "Gabriel",
-                  lastName: "Boudwijn",
-                },
-                {
-                  firstName: "Emmanuel",
-                  lastName: "Van Belgie",
-                },
-                {
-                  firstName: "Eleonore",
-                  lastName: "Boudwijn",
-                  _hasChildren: true,
-                },
-              ],
-            },
-            {
-              firstName: "Astrid",
-              lastName: "Van Belgie",
-            },
-            {
-              firstName: "Laurent",
-              lastName: "Van Belgie",
-            },
-          ],
-        },
-        {
-          firstName: "Alexander",
-          lastName: "Van Belgie",
-        },
-        {
-          firstName: "Marie-Christine",
-          lastName: "Leopoldine",
-        },
-        {
-          firstName: "Marie-Esmeralda",
-          lastName: "Leopoldine",
-        },
-        {
-          firstName: "Alexander",
-          lastName: "Van Belgie",
-        },
-        {
-          firstName: "Marie-Christine",
-          lastName: "Leopoldine",
-        },
-        {
-          firstName: "Marie-Esmeralda",
-          lastName: "Leopoldine",
-        },
-        {
-          firstName: "Alexander",
-          lastName: "Van Belgie",
-        },
-        {
-          firstName: "Marie-Christine",
-          lastName: "Leopoldine",
-        },
-        {
-          firstName: "Marie-Esmeralda",
-          lastName: "Leopoldine",
-        },
-      ],
+      form: {
+        items: [
+          {
+            account: "",
+            debit: "0.000",
+          },
+        ],
+      },
+      options: {
+        account: [],
+      },
     };
   },
+  created() {
+    this.createMethod();
+  },
   methods: {
-    filterChanged(filter) {
-      this.filter = filter;
-    },
+    createMethod() {
+      AccountServices.getTreeStructure()
+        .then(({ data }) => {
+          let account = this.options.account;
+          data.map(function (val) {
+            if (val) {
+              // Account type
+              account.push({
+                value: val.uuid,
+                label: val.name,
+                $isDisabled: true,
+              });
+            }
+            if (val.children && val.children.length > 0) {
+              // Account Subtype
 
-    pageChanged(page) {
-      this.page = page;
+              val.children.map(function (val2) {
+                if (val2.accounts && val2.accounts.length > 0) {
+                  account.push({
+                    value: val2.uuid,
+                    label: "-" + val2.name,
+                    $isDisabled: true,
+                  });
+                  val2.accounts.map(function (val3) {
+                    account.push({
+                      value: val3.uuid,
+                      label: "-- " + val3.name,
+                    });
+                  });
+                }
+              });
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
-<style src="vue-ads-table-tree/dist/vue-ads-table-tree.css"></style>
-<style>
-.leftAlign {
-  text-align: left;
-}
-</style>
+

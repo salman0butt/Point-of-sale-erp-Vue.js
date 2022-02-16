@@ -77,8 +77,17 @@
       </div>
       <CRow>
         <CCol lg="4" sm="5">
-          {{ invoice.note }}
+          <div>
+            <label><b> Payment Terms :</b></label>
+
+            <span v-html="invoice.payment_terms"></span>
+          </div>
+          <div>
+            <label><b> Note : </b></label>
+            {{ invoice.note }}
+          </div>
         </CCol>
+
         <CCol lg="4" sm="5" class="ml-auto">
           <table class="table table-clear">
             <tbody>
@@ -130,6 +139,7 @@ export default {
         grand_total: "",
         quotation_ref_no: "",
         invoice_ref_no: "",
+        payment_terms: "",
         note: "",
         products: [],
       },
@@ -165,6 +175,7 @@ export default {
           this.invoice.total_discount = data.total_discount;
           this.invoice.grand_total = data.grand_total;
           this.invoice.note = data.note;
+          this.invoice.payment_terms = data.payment_terms;
 
           // customer
           this.customer.name = data.customer.full_name.en;
