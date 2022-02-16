@@ -1,4 +1,4 @@
-import http from "../../../http-common";
+import http from "@/http-common";
 import Helper from "@/helpers/Helper";
 
 class CustomerServices extends Helper {
@@ -12,6 +12,10 @@ class CustomerServices extends Helper {
 
         return http.get(url, super.selectedBranch());
     }
+
+    getAllCustomers() {
+      return http.get("/customers?active=active");
+  }
 
 
     get(id) {

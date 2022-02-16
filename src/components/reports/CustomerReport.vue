@@ -19,7 +19,14 @@
                     label="Date Range"
                     :options="options.date_ranges"
                     :value.sync="form.date_range"
+                    :class="{ error: $v.form.date_range.$error }"
+                    @input="$v.form.date_range.$touch()"
                   />
+                  <div v-if="$v.form.date_range.$error">
+                    <p v-if="!$v.form.date_range.required" class="errorMsg">
+                      Date Range is required
+                    </p>
+                  </div>
                 </CCol>
 
                 <CCol
@@ -28,7 +35,18 @@
                   md="4"
                   class="pt-2"
                 >
-                  <CInput label="From Date" type="date" :value.sync="form.from_date" />
+                  <CInput
+                    label="From Date"
+                    type="date"
+                    :value.sync="form.from_date"
+                    :class="{ error: $v.form.from_date.$error }"
+                    @input="$v.form.from_date.$touch()"
+                  />
+                  <div v-if="$v.form.from_date.$error">
+                    <p v-if="!$v.form.from_date.required" class="errorMsg">
+                      From Date is required
+                    </p>
+                  </div>
                 </CCol>
                 <CCol
                   v-if="form.date_range === 'custom_date_range'"
@@ -36,7 +54,18 @@
                   md="4"
                   class="pt-2"
                 >
-                  <CInput label="To Date" type="date" :value.sync="form.to_date" />
+                  <CInput
+                    label="To Date"
+                    type="date"
+                    :value.sync="form.to_date"
+                    :class="{ error: $v.form.to_date.$error }"
+                    @input="$v.form.to_date.$touch()"
+                  />
+                  <div v-if="$v.form.to_date.$error">
+                    <p v-if="!$v.form.to_date.required" class="errorMsg">
+                      TO Date is required
+                    </p>
+                  </div>
                 </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
@@ -159,8 +188,11 @@
 </template>
 <script>
 import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
-// import BrandService from "@/services/catalogs/brands/BrandService";
+import CustomerServices from "@/services/contacts/customers/CustomerServices";
+import GroupServices from "@/services/groups/GroupServices";
 import { tableMixin } from "@/mixins/tableMixin";
+import { required } from "vuelidate/lib/validators";
+
 const fields = [
   { key: "custmer_name", label: "CUSTOMER NAME", _style: "width:50%" },
   { key: "phone_number", label: "PHONE NUMBER", _style: "width:30%;" },
@@ -275,34 +307,20 @@ export default {
         { value: "all_times", label: "All Times" },
         { value: "custom_date_range", label: "Custom Date Range" },
       ],
-      customers: [
-        { value: "", label: "Choose Customer", disabled: true, selected: "" },
-        { value: "customer1", label: "Customer 1" },
-        { value: "customer2", label: "Customer 2" },
-        { value: "customer3", label: "Customer 3" },
-        { value: "customer4", label: "Customer 4" },
-        { value: "customer5", label: "Customer 5" },
-      ],
+      customers: [{ value: "", label: "Choose Customer" }],
       total_spent: [
-        { value: "", label: "Choose Total Spent", disabled: true, selected: "" },
+        { value: "", label: "Choose Total Spent" },
         { value: "any_amount", label: "Any Amount" },
         { value: "grater", label: "Greater Than (>)" },
         { value: "less", label: "Less Than (<)" },
         { value: "equal", label: "Equal To (=)" },
       ],
       sale_types: [
-        { value: "", label: "Choose Sale Type", disabled: true, selected: "" },
+        { value: "", label: "Choose Sale Type" },
         { value: "sale", label: "Sales" },
         { value: "return", label: "Return" },
       ],
-      customer_groups: [
-        { value: "", label: "Choose Customer Group", disabled: true, selected: "" },
-        { value: "customer_group_1", label: "Customer Group 1" },
-        { value: "customer_group_2", label: "Customer Group 2" },
-        { value: "customer_group_3", label: "Customer Group 3" },
-        { value: "customer_group_4", label: "Customer Group 4" },
-        { value: "customer_group_5", label: "Customer Group 5" },
-      ],
+      customer_groups: [{ value: "", label: "Choose Customer Group" }],
       custom_fields: [
         { value: "", label: "Choose Custom Field", disabled: true, selected: "" },
         { value: "custom_field_1", label: "Custom Field 1" },
@@ -322,19 +340,81 @@ export default {
   }),
   created() {
     // this.getData();
+    this.getAllCustomers();
+    this.getCustomerGroups();
   },
   computed: {
     items() {
       return this.data;
     },
   },
+  validations() {
+    if (this.form.date_range === "custom_date_range") {
+      return {
+        form: {
+          date_range: { required },
+          from_date: { required },
+          to_date: { required },
+        },
+      };
+    } else {
+      return {
+        form: {
+          date_range: { required },
+        },
+      };
+    }
+  },
   methods: {
     toggleSection() {
       this.toggleOptions = !this.toggleOptions;
     },
     genrateReport() {
-      this.toggleSection();
-      // this.getData();
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        this.toggleSection();
+        console.log(this.form);
+      }
+    },
+    getAllCustomers() {
+      this.$store.commit("set_loader");
+      CustomerServices.getAllCustomers()
+        .then((res) => {
+          if (res.status === 200) {
+            const { data } = res;
+            if (data) {
+              data.map((customer) => {
+                this.options.customers.push({
+                  value: customer.uuid,
+                  label: customer.full_name,
+                });
+              });
+            }
+
+            this.$store.commit("close_loader");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$store.commit("close_loader");
+        });
+    },
+    getCustomerGroups() {
+      let active = "active";
+      let module_type = "customer";
+      GroupServices.getActivegroups(active, module_type)
+        .then(({ data }) => {
+          let group = this.options.customer_groups;
+          data.map(function (val) {
+            group.push({
+              value: val.uuid,
+              label: val.name,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };

@@ -20,6 +20,10 @@ class SupplierServices extends Helper {
         return http.get(`/supplier/${id}`);
     }
 
+    searchSuppliers(query = null) {
+        return http.get(`/supplier/search/${query}`);
+    }
+
     store(data) {
         return http.post("/supplier", data, {
             headers: {
