@@ -161,26 +161,27 @@ const actions = {
     return new Promise((resolve, reject) => {
       commit('remove_errors');
       http.post('/auth/login', user).then(res => {
-        if(res.data) {
-          const token = res.data.token;
+        if(res.status === 200 && res.data) {
+          const {data} = res;
+          const token = data.token;
           localStorage.setItem('token', token);
-          localStorage.setItem('employee_id', res.data.employee.uuid);
-          localStorage.setItem('permissions', JSON.stringify(res.data.permissions));
-          localStorage.setItem('list_branches', JSON.stringify(res.data.branches));
-          localStorage.setItem('business_id', res.data.business_id);
-          if (res.data.branches && res.data.branches.length == 1) {
-            localStorage.setItem('selected_branches', JSON.stringify([res.data.branches[0].uuid]));
+          localStorage.setItem('employee_id', data.employee.uuid);
+          localStorage.setItem('permissions', JSON.stringify(data.permissions));
+          localStorage.setItem('list_branches', JSON.stringify(data.branches));
+          localStorage.setItem('business_id', data.business_id);
+          if (data.branches && data.branches.length == 1) {
+            localStorage.setItem('selected_branches', JSON.stringify([data.branches[0].uuid]));
           }
           http.defaults.headers.common['Authorization'] = "Bearer " + token;
-          const profile_pic = res.data.employee.profile_pic;
-          if (profile_pic && profile_pic != "" && profile_pic != null) {
-            commit('set_profile_img', res.data.employee.personal_photo);
+          const profile_pic = data.employee?.personal_photo;
+          if (profile_pic) {
+            commit('set_profile_img', data.employee.personal_photo);
           }
-          commit('set_permissions', res.data.permissions);
-          commit('set_list_branches', res.data.branches);
+          commit('set_permissions', data.permissions);
+          commit('set_list_branches', data.branches);
           commit('auth_success', token);
-          if(res.data.employee.user && res.data.employee.user.language){
-            dispatch("setLanguage", res.data.employee.user.language);
+          if(data.employee.user && data.employee.user.language){
+            dispatch("setLanguage", data.employee.user.language);
           }
           resolve(res);
         }
