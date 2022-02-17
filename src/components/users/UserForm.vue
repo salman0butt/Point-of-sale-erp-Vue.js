@@ -50,56 +50,6 @@
             </p>
           </div>
         </CCol>
-        <CCol sm="6" md="4" class="pt-2">
-          <CInput
-            label="Email"
-            type="email"
-            :value.sync="form.email"
-            :class="{ error: $v.form.email.$error }"
-            @input="$v.form.email.$touch()"
-          />
-          <div v-if="$v.form.email.$error">
-            <p v-if="!$v.form.email.email" class="errorMsg">Email Should be Valid</p>
-          </div>
-        </CCol>
-
-        <CCol sm="6" md="4" class="pt-2">
-          <CInput label="Nationality" :value.sync="form.nationality" />
-        </CCol>
-      </CRow>
-      <CRow>
-        <CCol sm="6" md="4" class="pt-2">
-          <CInput
-            label="CPR No"
-            type="text"
-            :value.sync="form.cpr_no"
-            :class="{ error: $v.form.cpr_no.$error }"
-            @input="$v.form.cpr_no.$touch()"
-          />
-          <div v-if="$v.form.cpr_no.$error">
-            <p v-if="!$v.form.cpr_no.required" class="errorMsg">CPR is required</p>
-            <p v-if="!$v.form.cpr_no.minLength" class="errorMsg">
-              CPR should be at least 9 character
-            </p>
-            <p v-if="!$v.form.cpr_no.maxLength" class="errorMsg">
-              CPR should be 9 character
-            </p>
-          </div>
-        </CCol>
-        <CCol sm="6" md="4" class="pt-2">
-          <CInput
-            label="CPR Expiry"
-            type="date"
-            :value.sync="form.cpr_no_expiry"
-            :class="{ error: $v.form.cpr_no_expiry.$error }"
-            @input="$v.form.cpr_no_expiry.$touch()"
-          />
-          <div v-if="$v.form.cpr_no_expiry.$error">
-            <p v-if="!$v.form.cpr_no_expiry.required" class="errorMsg">
-              CPR Expiry is required
-            </p>
-          </div>
-        </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
           <label class="typo__label">Branches</label>
@@ -128,17 +78,6 @@
         </CCol>
       </CRow>
       <CRow>
-        <CCol sm="6" md="4" class="pt-2">
-          <CInput label="Passport No" type="text" :value.sync="form.passport_no" />
-        </CCol>
-
-        <CCol sm="6" md="4" class="pt-2">
-          <CInput
-            label="Passport Expiry"
-            type="date"
-            :value.sync="form.passport_expiry"
-          />
-        </CCol>
         <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
           <CSelect label="Status" :options="options.status" :value.sync="form.status" />
         </CCol>
@@ -215,6 +154,28 @@
           </CCol>
         </CRow>
       </div>
+      <CRow>
+        <CCol sm="6" md="3" class="pt-2">
+          <CCardBody>
+            <div>
+              Choose Profile:
+              <input
+                type="file"
+                @change="pickFile"
+                accept="image/png, image/gif, image/jpeg"
+              />
+            </div>
+          </CCardBody>
+        </CCol>
+        <CCol sm="6" md="3" class="pt-3">
+          <img
+            v-if="form.preview_pic"
+            :src="form.preview_pic"
+            alt="profile"
+            style="max-width: 200px"
+          />
+        </CCol>
+      </CRow>
 
       <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
       <CRow class="mt-4">
@@ -261,13 +222,9 @@ export default {
       full_name: "",
       gender: "",
       phone_number: "",
-      email: "",
-      nationality: "",
-      cpr_no: "",
-      cpr_no_expiry: "",
-      passport_no: "",
-      passport_expiry: "",
       branch_id: [],
+      personal_photo: "",
+      preview_pic: "",
       status: "",
       user_name: "",
       user_email: "",
@@ -307,14 +264,11 @@ export default {
         form: {
           full_name: { required },
           phone_number: { required, numeric },
-          cpr_no: { required, minLength: minLength(9), maxLength: maxLength(9) },
-          cpr_no_expiry: { required },
           email: { email },
           branch_id: { required },
           serial_no: { required },
           user_name: { required },
           user_email: { required },
-
           user_role: { required },
         },
       };
@@ -323,8 +277,6 @@ export default {
         form: {
           full_name: { required },
           phone_number: { required, numeric },
-          cpr_no: { required, minLength: minLength(9), maxLength: maxLength(9) },
-          cpr_no_expiry: { required },
           email: { email },
           branch_id: { required },
           serial_no: { required },
@@ -348,23 +300,16 @@ export default {
     saveUser() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = new FormData();
-        for (const index in this.form) {
-          if (index === "branch_id") {
-            data.append(
-              index + "[]",
-              this.form[index].map((item) => {
-                return item.value;
-              })
-            );
-          } else {
-            data.append(index, this.form[index]);
-          }
-        }
+        let data = this.formData();
+        const config = {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
 
-        UserService.create(data)
+        UserService.create(data, config)
           .then((res) => {
-            if (res.status == 201) {
+            if (res.status === 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
@@ -397,31 +342,33 @@ export default {
     updateUser() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        let data = new FormData();
-        for (const index in this.form) {
-          if (index === "branch_id") {
-            data.append(
-              index + "[]",
-              this.form[index].map((item) => {
-                return item.value;
-              })
-            );
-          } else {
-            data.append(index, this.form[index]);
-          }
-        }
-        data.append("_method", "PATCH");
-        UserService.update(this.form.id, data)
+        let data = this.formData(true);
+        const config = {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
+
+        UserService.update(this.form.id, data, config)
           .then((res) => {
-            if (res.status == 200) {
+            if (res.status === 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
                 text: "User Updated Successfully",
                 timer: 3600,
               });
+              const { data } = res;
+              if (data && data.employee && data.employee.personal_photo) {
+                if (
+                  data.employee.uuid &&
+                  data.employee.uuid === this.$store.state.employee_id
+                ) {
+                  this.$store.commit("set_profile_img", data.employee.personal_photo);
+                }
+              }
               this.$v.$reset();
-
+              this.displayData(data);
               if (this.saveAndExit) {
                 this.$router.push({ path: "/users/index" });
               }
@@ -442,6 +389,27 @@ export default {
             });
           });
       }
+    },
+    formData(update = false) {
+      let formData = new FormData();
+      for (const index in this.form) {
+        if (index === "branch_id") {
+          formData.append(
+            index + "[]",
+            this.form[index].map((item) => {
+              return item.value;
+            })
+          );
+        } else {
+          if (this.form[index]) {
+            formData.append(index, this.form[index]);
+          }
+        }
+      }
+      if (update) {
+        formData.append("_method", "PATCH");
+      }
+      return formData;
     },
     getDetail() {
       UserService.getCreateDetail()
@@ -467,35 +435,8 @@ export default {
       this.$store.commit("set_loader");
       UserService.get(this.form.id)
         .then(({ data }) => {
-          if (data != null && data != "") {
-            this.isEditing = true;
-            this.form.id = data.uuid;
-            if (data.employee) {
-              this.form.emp_id = data.employee.uuid ?? "";
-              this.form.serial_no = data.employee.serial_no ?? "";
-              this.form.full_name = data.employee.full_name ?? "";
-              this.form.gender = data.employee.gender ?? "";
-              this.form.phone_number = data.employee.phone_number ?? "";
-              this.form.email = data.employee.email ?? "";
-              this.form.nationality = data.employee.nationality ?? "";
-              this.form.cpr_no = data.employee.cpr_no ?? "";
-              this.form.cpr_no_expiry = data.employee.cpr_no_expiry ?? "";
-              this.form.passport_no = data.employee.passport_no ?? "";
-              this.form.passport_expiry = data.employee.passport_expiry ?? "";
-              if (data.employee && data.employee.branches) {
-                this.form.branch_id = data.employee.branches?.map(function (item) {
-                  return { label: item.name.en, value: item.uuid };
-                });
-              }
-
-              this.form.status = data.employee.status ?? "";
-            }
-            this.form.user_name = data.username ?? "";
-            this.form.user_email = data.email ?? "";
-            this.form.user_role = data.role[0] ?? "";
-            this.options.user_role.value = data.role[0] ?? "";
-            this.form.user_status = data.status?.toString() ?? "";
-            this.form.user_language = data.language ?? "";
+          if (data) {
+            this.displayData(data);
           }
           this.$store.commit("close_loader");
         })
@@ -506,11 +447,45 @@ export default {
           this.$router.push({ path: "/users/index" });
         });
     },
+    displayData(data) {
+      if (data) {
+        this.isEditing = true;
+        this.form.id = data.uuid;
+        if (data.employee) {
+          this.form.emp_id = data.employee.uuid ?? "";
+          this.form.serial_no = data.employee.serial_no ?? "";
+          this.form.full_name = data.employee.full_name ?? "";
+          this.form.gender = data.employee.gender ?? "";
+          this.form.phone_number = data.employee.phone_number ?? "";
+          this.form.preview_pic = data.employee.personal_photo ?? "";
+
+          if (data.employee && data.employee.branches) {
+            this.form.branch_id = data.employee.branches?.map(function (item) {
+              return { label: item.name.en, value: item.uuid };
+            });
+          }
+
+          this.form.status = data.employee.status ?? "";
+        }
+        this.form.user_name = data.username ?? "";
+        this.form.user_email = data.email ?? "";
+        this.form.user_role = data.role[0] ?? "";
+        this.options.user_role.value = data.role[0] ?? "";
+        this.form.user_status = data.status?.toString() ?? "";
+        this.form.user_language = data.language ?? "";
+      }
+    },
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";
       }
       this.isEditing = false;
+    },
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.form.personal_photo = file[0];
+      }
     },
   },
 };

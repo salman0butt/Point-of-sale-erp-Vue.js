@@ -8,9 +8,7 @@
             <CRow>
               <Loader />
               <CCol xs="12" lg="12">
-                <form
-                  @submit.prevent="isEditing ? updateJournal() : saveJournal()"
-                >
+                <form @submit.prevent="isEditing ? updateJournal() : saveJournal()">
                   <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CInput
@@ -102,17 +100,21 @@
                                 :disabled="isDisabled"
                                 placeholder="Select Account"
                                 label="label"
+                                :class="{
+                                  error: $v.form.items.$each[k].account.$error,
+                                }"
+                                @input="$v.form.items.$each[k].account.$touch()"
                               >
                               </multiselect>
 
-                              <!-- <div v-if="$v.form.branch_id.$error">
-                                  <p
-                                    v-if="!$v.form.branch_id.required"
-                                    class="errorMsg"
-                                  >
-                                    Branch is required
-                                  </p>
-                                </div> -->
+                              <div v-if="$v.form.items.$each[k].account.$error">
+                                <p
+                                  v-if="!$v.form.items.$each[k].account.required"
+                                  class="errorMsg"
+                                >
+                                  Account is required
+                                </p>
+                              </div>
                             </th>
                             <td>
                               <CTextarea
@@ -145,10 +147,7 @@
                             </td>
                             <td>
                               <CButton @click="removeItem(k)">
-                                <CIcon
-                                  :content="$options.cilTrash"
-                                  style="color: red"
-                                />
+                                <CIcon :content="$options.cilTrash" style="color: red" />
                               </CButton>
                             </td>
                           </tr>
@@ -162,9 +161,7 @@
                             color="default"
                             @click="addItem()"
                             >Add another line
-                            <CIcon
-                              :content="$options.cisCaretBottom"
-                              style="width: 10px"
+                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
                           /></CButton>
                         </CCol>
                         <CCol xs="12" md="5" class="pt-2 ml-1">
@@ -199,9 +196,7 @@
                             <CCol> </CCol>
                             <CCol
                               ><h5>
-                                <strong style="color: red">
-                                  {{ form.difference }}</strong
-                                >
+                                <strong style="color: red"> {{ form.difference }}</strong>
                               </h5>
                             </CCol>
                           </CRow>
@@ -245,12 +240,7 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       type="submit"
                       @click="saveAsDraft = true"
                       >Save As Draft</CButton
@@ -320,7 +310,13 @@ export default {
         journal: { required },
         reference: { required },
         notes: { required },
-        journal_type: { required },
+        // journal_type: { required },
+        items: {
+          required: true,
+          $each: {
+            account: { required },
+          },
+        },
       },
     };
   },
@@ -341,10 +337,7 @@ export default {
       });
     },
     getPreRequisites() {
-      var currentDateWithFormat = new Date()
-        .toJSON()
-        .slice(0, 10)
-        .replace(/-/g, "-");
+      var currentDateWithFormat = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
       this.form.date = currentDateWithFormat;
 
       AccountServices.getTreeStructure()
@@ -426,49 +419,52 @@ export default {
       this.form.difference = (creditTotal - debitTotal).toFixed(3);
     },
     saveJournal() {
-      if (!this.saveAsDraft) {
-        if (this.form.difference != 0) {
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Debit and Credit must be equal to zero",
-            timer: 3600,
-          });
-          return;
-        }
-      } else {
-        this.form.status = "draft";
-      }
-      let formData = this.form;
-      const config = {
-        headers: { "Content-Type": "multipart/form-data" },
-      };
-
-      JournalServices.create(formData, config)
-        .then((res) => {
-          this.$swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Journal Added Successfully",
-            timer: 3600,
-          });
-
-          if (this.saveAndExit) {
-            this.$router.push({ path: "/accounting/journals/index" });
-          } else {
-            this.$router.push({
-              path: "/accounting/journals/index",
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        if (!this.saveAsDraft) {
+          if (this.form.difference != 0) {
+            this.$swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Debit and Credit must be equal to zero",
+              timer: 3600,
             });
+            return;
           }
-        })
-        .catch((error) => {
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went Wrong.",
-            timer: 3600,
+        } else {
+          this.form.status = "draft";
+        }
+        let formData = this.form;
+        const config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+
+        JournalServices.create(formData, config)
+          .then((res) => {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Journal Added Successfully",
+              timer: 3600,
+            });
+
+            if (this.saveAndExit) {
+              this.$router.push({ path: "/accounting/journals/index" });
+            } else {
+              this.$router.push({
+                path: "/accounting/journals/index",
+              });
+            }
+          })
+          .catch((error) => {
+            this.$swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Something Went Wrong.",
+              timer: 3600,
+            });
           });
-        });
+      }
     },
     updateJournal() {
       //   this.$v.$touch();

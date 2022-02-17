@@ -22,12 +22,13 @@ class UserService extends Helper {
         return http.get(`/users/${id}`, super.selectedBranch());
     }
 
-    create(data) {
-        return http.post("/users", data, super.selectedBranch());
+    create(data, config) {
+      config = Object.assign(config, super.selectedBranch());
+        return http.post("/users", data, config);
     }
 
-    update(id, data) {
-        return http.post(`/users/${id}`, data);
+    update(id, data, config) {
+        return http.post(`/users/${id}`, data, config);
     }
 
     delete(id) {
