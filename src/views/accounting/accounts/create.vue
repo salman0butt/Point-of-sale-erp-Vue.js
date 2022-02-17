@@ -41,7 +41,9 @@
                 </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
-                  <AccountDropdown @getAccountDropdown="getAccountDropdown" />
+                  <AccountTypeDropdown
+                    @getAccountDropdown="getAccountDropdown"
+                  />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CTextarea label="Desription" v-model="form.description" />
@@ -69,14 +71,14 @@
 
 <script>
 import AccountServices from "@/services/accounting/accounts/AccountServices";
-import AccountDropdown from "@/components/accounting/general/AccountDropdown";
+import AccountTypeDropdown from "@/components/accounting/general/AccountTypeDropdown";
 
 import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
   name: "CreateAccount",
   components: {
-    AccountDropdown,
+    AccountTypeDropdown,
   },
   data: () => ({
     form: {

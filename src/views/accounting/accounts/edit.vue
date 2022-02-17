@@ -41,7 +41,7 @@
                 </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
-                  <AccountDropdown
+                  <AccountTypeDropdown
                     :uuid="form.parent"
                     @getAccountDropdown="getAccountDropdown"
                   />
@@ -79,14 +79,14 @@
 
 <script>
 import AccountServices from "@/services/accounting/accounts/AccountServices";
-import AccountDropdown from "@/components/accounting/general/AccountDropdown";
+import AccountTypeDropdown from "@/components/accounting/general/AccountTypeDropdown";
 
 import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
   name: "EditAccount",
   components: {
-    AccountDropdown,
+    AccountTypeDropdown,
   },
   data: () => ({
     url_data: "",
