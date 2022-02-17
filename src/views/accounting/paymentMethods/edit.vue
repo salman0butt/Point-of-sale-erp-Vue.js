@@ -23,37 +23,14 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Type"
-                    :options="options.type"
-                    :value.sync="form.type"
-                    :class="{ error: $v.form.type.$error }"
-                    @input="$v.form.type.$touch()"
-                  />
-                  <div v-if="$v.form.type.$error">
-                    <p v-if="!$v.form.type.required" class="errorMsg">
-                      Type of Payment Method is required
-                    </p>
-                  </div>
-                </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Choose Account"
-                    :options="options.account"
-                    :value.sync="form.account"
-                    :class="{ error: $v.form.account.$error }"
-                    @input="$v.form.account.$touch()"
+                  <AccountDropdown
+                    :previousValue="form.previousValue"
+                    @getAccountDropdown="getAccountDropdown"
                   />
-                  <div v-if="$v.form.account.$error">
-                    <p v-if="!$v.form.account.required" class="errorMsg">
-                      Account is required
-                    </p>
-                  </div>
                 </CCol>
-              </CRow>
-              <CRow>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Percent"
@@ -136,8 +113,6 @@
 </template>
 
 <script>
-import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
-import AccountServices from "@/services/accounting/accounts/AccountServices";
 import PaymentMethodsServices from "@/services/accounting/paymentMethods/PaymentMethodsServices";
 
 import {
@@ -146,38 +121,26 @@ import {
   minLength,
   decimal,
 } from "vuelidate/lib/validators";
+import AccountDropdown from "@/components/general/AccountDropdown";
 
 export default {
-  name: "CreatePaymentMethods",
+  name: "EditPaymentMethods",
+  components: {
+    AccountDropdown,
+  },
   data: () => ({
     url_data: "",
     form: {
       name: "",
-      type: "",
       account: "",
       percent: "0.000",
       amount: "0.000",
       status: "",
       tax: "",
+      previousValue: Object,
     },
     active: "active",
     options: {
-      type: [
-        {
-          value: "",
-          label: "Choose Type",
-          disabled: true,
-          selected: "",
-        },
-      ],
-      account: [
-        {
-          value: "",
-          label: "Choose Account",
-          disabled: true,
-          selected: "",
-        },
-      ],
       status: [
         { value: "active", label: "Active" },
         { value: "inactive", label: "Inactive" },
@@ -188,7 +151,6 @@ export default {
     return {
       form: {
         name: { required, minLength: minLength(4) },
-        type: { required },
         account: { required },
         percent: { required, decimal, minValue: minValue(0) },
         amount: { required, decimal, minValue: minValue(0) },
@@ -196,47 +158,13 @@ export default {
     };
   },
   created() {
-    this.getAccountingSetting();
-    this.getAccounts();
     this.getEditableData();
   },
   methods: {
-    getAccountingSetting() {
-      let type = "accounting";
-      AccoutingSettingService.getAll(type)
-        .then(({ data }) => {
-          let type = this.options.type;
-
-          data.map(function (val) {
-            // Payment Methods Types
-            if (val.key == "payment_methods_types") {
-              let payment_methods_types = JSON.parse(val.value);
-              payment_methods_types.forEach((element) => {
-                type.push({
-                  value: element,
-                });
-              });
-            }
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    getAccounts() {
-      AccountServices.getActiveAccounts(this.active)
-        .then(({ data }) => {
-          let account = this.options.account;
-          data.map(function (val) {
-            account.push({
-              value: val.uuid,
-              label: val.name,
-            });
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    getAccountDropdown(value) {
+      if (value) {
+        this.form.account = value.value;
+      }
     },
     getEditableData() {
       this.url_data = this.$route.params.id;
@@ -245,7 +173,10 @@ export default {
           if (res.status == 200) {
             this.form.name = res.data.name;
             this.form.type = res.data.type;
-            this.form.account = res.data.account;
+            this.form.previousValue = {
+              label: res.data.account.name,
+              value: res.data.account.uuid,
+            };
             this.form.percent = res.data.percent;
             this.form.amount = res.data.amount;
             this.form.tax = res.data.tax;
@@ -262,7 +193,6 @@ export default {
           });
         });
     },
-
     updateData() {
       this.$v.$touch();
       if (!this.$v.$invalid) {

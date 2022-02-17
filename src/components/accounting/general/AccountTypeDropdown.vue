@@ -12,7 +12,7 @@
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 
 export default {
-  name: "AccountDropdown",
+  name: "AccountTypeDropdown",
   props: {
     uuid: String,
   },

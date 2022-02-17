@@ -89,7 +89,6 @@ const fields = [
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "percent", label: "PERCENT", _style: "min-width:15%;" },
   { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
   { key: "tax", label: "TYPE", _style: "min-width:15%;" },
   { key: "account", label: "ACCOUNT", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
@@ -133,7 +132,6 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.account = item.account.name;
               this.serverData.push({ ...item, id });
             });
             this.loading = false;
