@@ -76,8 +76,7 @@
             <p v-if="!$v.form.branch_id.required" class="errorMsg">Branch is required</p>
           </div>
         </CCol>
-      </CRow>
-      <CRow>
+
         <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
           <CSelect label="Status" :options="options.status" :value.sync="form.status" />
         </CCol>
