@@ -88,6 +88,14 @@
                     v-bind:disabled="readOnly"
                   />
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CInput
+                    label="Birthday Date"
+                    type="date"
+                    v-model="form.birthday_date"
+                    v-bind:disabled="readOnly"
+                  />
+                </CCol>
               </CRow>
 
               <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
@@ -150,6 +158,7 @@ export default {
       group: "",
       vat_no: "",
       license_no: "",
+      birthday_date: "",
     },
 
     options: {
@@ -311,6 +320,7 @@ export default {
                 this.type_selected = true;
               }
               this.form.vat_no = res.data.vat_no;
+              this.form.birthday_date = res.data.birthday_date;
               this.form.license_no = res.data.license_no;
               this.form.group = res.data.group.uuid;
             }
