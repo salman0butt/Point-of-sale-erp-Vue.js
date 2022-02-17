@@ -1,7 +1,11 @@
 <template>
   <div>
+    <label @click="quickAddCustomer()"
+      >Customer
+      <a v-if="$can('create groups')" href="#">
+        <CIcon :content="$options.cibAddthis" /></a
+    ></label>
     <CInput
-      label="Customer"
       v-model="search"
       @input="searchCustomer()"
       placeholder="Search..."
@@ -18,14 +22,22 @@
         {{ item.label }}
       </li>
     </ul>
+    <CustomerModel @update-table="newCustomerAdded" />
   </div>
 </template>
 <script>
+import CustomerModel from "@/components/contacts/customers/CustomerModel";
+
 import { required } from "vuelidate/lib/validators";
 import CustomerServices from "@/services/contacts/customers/CustomerServices";
+import { cibAddthis } from "@coreui/icons-pro";
 
 export default {
   name: "CustomerSearchField",
+  components: {
+    CustomerModel,
+  },
+  cibAddthis,
   props: {
     previousValueCustomer: [Object, String, Array, Function],
   },
@@ -53,6 +65,12 @@ export default {
   },
   created() {},
   methods: {
+    quickAddCustomer() {
+      this.$store.commit("set_customer_model", true);
+    },
+    newCustomerAdded() {
+      // this.$emit("newCustomerAdded", this.customer);
+    },
     searchCustomer() {
       if (this.search !== "") {
         this.list = [];
