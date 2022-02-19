@@ -24,13 +24,15 @@
     </CRow>
     <CRow>
       <CCol sm="2" md="2">
-        <CButton color="primary" class="btn-block">
-          <CIcon class="headerFont" name="cil-bell" /> Primary</CButton
+        <CButton color="primary" class="btn-block" @click="opening()">
+          <CIcon class="headerFont" name="cil-bell" />
+          Opening</CButton
         >
       </CCol>
       <CCol sm="2" md="2">
-        <CButton color="secondary" class="btn-block">
-          <CIcon class="headerFont" name="cil-bell" /> Success</CButton
+        <CButton color="secondary" class="btn-block" @click="closing()">
+          <CIcon class="headerFont" name="cil-bell" />
+          Closing</CButton
         >
       </CCol>
       <CCol sm="2" md="2">
@@ -100,7 +102,7 @@
             <CDataTable :items="productAlertData" :fields="productAlertFields" hover>
               <template slot="alert" slot-scope="{ item }">
                 <td>
-                  <CBadge color="danger" shape="rounded-pill">{{ item.alert }}</CBadge>
+                  <CBadge color="danger" shape="pill">{{ item.alert }}</CBadge>
                 </td>
               </template>
             </CDataTable>
@@ -122,13 +124,16 @@
         </CCard>
       </CCol>
     </CRow>
+    <OpeningModel />
+    <ClosingModel />
   </div>
 </template>
 
 <script>
 import BarChart from "@/components/dashboard/BarChart";
 import PieChart from "@/components/dashboard/PieChart";
-
+import OpeningModel from "@/components/dashboard/OpeningModel";
+import ClosingModel from "@/components/dashboard/ClosingModel";
 const transFields = [
   { key: "name", label: "Name", _style: "min-width:40%" },
   { key: "amount", label: "Amount", _style: "min-width:15%;" },
@@ -154,7 +159,7 @@ const orderFields = [
 ];
 export default {
   name: "Dashboard",
-  components: { BarChart, PieChart },
+  components: { BarChart, PieChart, OpeningModel, ClosingModel },
   data() {
     return {
       transFieldsitems: [
@@ -290,7 +295,14 @@ export default {
       return this.transFieldsitems;
     },
   },
-  methods: {},
+  methods: {
+    opening() {
+      this.$store.commit("set_opening_model", true);
+    },
+    closing() {
+      this.$store.commit("set_closing_model", true);
+    },
+  },
 };
 </script>
 <style>

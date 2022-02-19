@@ -157,22 +157,33 @@
         <CCol sm="6" md="3" class="pt-2">
           <CCardBody>
             <div>
-              Choose Profile:
               <input
                 type="file"
                 @change="pickFile"
                 accept="image/png, image/gif, image/jpeg"
+                class="d-none"
+                ref="inputFile"
               />
+              <a href="#" @click.prevent="pickImage()">
+                <CImg
+                  v-bind:src="
+                    form.preview_pic ? form.preview_pic : '/img/images/no-logo.png'
+                  "
+                  block
+                  class="mb-2 imger"
+                  width="100%"
+                  style="border-style: dotted; padding: 10px"
+                />
+              </a>
+              <CButton
+                v-if="form.preview_pic"
+                color="danger"
+                @click="form.preview_pic = ''"
+                type="submit"
+                >Remove</CButton
+              >
             </div>
           </CCardBody>
-        </CCol>
-        <CCol sm="6" md="3" class="pt-3">
-          <img
-            v-if="form.preview_pic"
-            :src="form.preview_pic"
-            alt="profile"
-            style="max-width: 200px"
-          />
         </CCol>
       </CRow>
 
@@ -204,7 +215,7 @@
 
 <script>
 import UserService from "@/services/users/UserService";
-import { required, email, numeric, minLength, maxLength } from "vuelidate/lib/validators";
+import { required, email, numeric } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader";
 import Multiselect from "vue-multiselect";
 
@@ -296,6 +307,9 @@ export default {
     }
   },
   methods: {
+    pickImage() {
+      this.$refs.inputFile.click();
+    },
     saveUser() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -484,6 +498,11 @@ export default {
       let file = e.target.files;
       if (file && file[0]) {
         this.form.personal_photo = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.form.preview_pic = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
       }
     },
   },
