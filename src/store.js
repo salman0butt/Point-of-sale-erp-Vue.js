@@ -40,6 +40,8 @@ const state = {
   categoryModel: false,
   TermAndConditionModel: false,
   PaymentTermModel: false,
+  openingModel: false,
+  closingModel: false,
   PaymernTermId: '',
 }
 
@@ -152,8 +154,13 @@ const mutations = {
   },
   set_payment_term_id(state, id) {
     state.PaymernTermId = id;
+  },
+  set_opening_model(state, status) {
+    state.openingModel = status;
+  },
+  set_closing_model(state, status) {
+    state.closingModel = status;
   }
-
 
 }
 const actions = {
@@ -260,7 +267,9 @@ const getters = {
   getCategoryModel: state => state.categoryModel,
   getTermAndConditionModel: state => state.TermAndConditionModel,
   getPaymentTermModel: state => state.PaymentTermModel,
-  getPaymentTermId: state => state.PaymernTermId
+  getPaymentTermId: state => state.PaymernTermId,
+  getOpeningModel: state => state.openingModel,
+  getClosingModel: state => state.closingModel
 
 }
 
