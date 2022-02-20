@@ -42,7 +42,9 @@ export default {
   watch: {
     previousValue: {
       handler: function (val) {
-        this.account = val;
+        if (val) {
+          this.account = val;
+        }
       },
       deep: true,
     },
@@ -57,6 +59,9 @@ export default {
     // setValue() {
     //   this.account = this.previousValue;
     // },
+    updater() {
+      this.$forceUpdate();
+    },
     getData() {
       AccountServices.getTreeStructure()
         .then(({ data }) => {

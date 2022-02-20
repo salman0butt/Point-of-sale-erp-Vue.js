@@ -43,7 +43,7 @@
             <AccountDropdown
               :showLabel="false"
               @getAccountDropdown="getAccountDropDown($event, k)"
-              :previousValue.sync="item.previousAccount"
+              :previousValue="item.previousAccount"
               :key="k"
             />
           </td>
@@ -136,7 +136,7 @@ export default {
           uuid: "",
           name: "",
           // type: "",
-          account: Object,
+          account: "",
           previousAccount: {},
           qty: "",
           rate: "",
@@ -175,7 +175,7 @@ export default {
         uuid: "",
         name: "",
         // type: "",
-        account: Object,
+        account: "",
         previousAccount: {},
         qty: "",
         rate: "",
@@ -332,7 +332,7 @@ export default {
         this.calculateAmount(key);
       });
     },
-    async calculateAmount(k) {
+    calculateAmount(k) {
       let amount = 0;
       if (this.form.items[k].qty && this.form.items[k].rate) {
         amount = parseFloat(this.form.items[k].qty) * parseFloat(this.form.items[k].rate);
@@ -348,7 +348,7 @@ export default {
         this.form.items[k].amount = amount;
       }
       this.updateAmount();
-      await this.$nextTick();
+      // this.$forceUpdate();
 
       // this.calculateTotalAmount();
     },
