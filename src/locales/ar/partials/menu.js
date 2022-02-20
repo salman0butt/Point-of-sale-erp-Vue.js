@@ -25,6 +25,7 @@ export default {
       name: 'المحاسبة',
       chartOfAccount: "جدول الحسابات",
       RecurringBills: "الفواتير المتكررة",
+      Bills: "الفواتية",
       paymentMethods: "طرق الدفع",
       category: "فئة",
       income: "دخل",

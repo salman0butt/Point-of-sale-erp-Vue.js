@@ -87,10 +87,10 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
   { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "account", label: "PARENT ACCOUNT", _style: "min-width:15%;" },
   { key: "percent", label: "PERCENT", _style: "min-width:15%;" },
   { key: "amount", label: "AMOUNT", _style: "min-width:15%;" },
   { key: "tax", label: "TYPE", _style: "min-width:15%;" },
-  { key: "account", label: "ACCOUNT", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];

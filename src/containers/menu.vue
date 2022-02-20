@@ -247,6 +247,17 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
+              name: "- " + this.$t("menu.accounting.Bills"),
+              to: "/accounting/bill/index",
+              // icon: "cil-lan",
+            },
+          ]);
+        }
+
+        if (this.$can("read category")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
               name: "- " + this.$t("menu.accounting.RecurringBills"),
               to: "/accounting/biller/recurring/index",
               // icon: "cil-lan",

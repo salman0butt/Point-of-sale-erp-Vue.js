@@ -176,7 +176,7 @@ export default {
       this.$set(this.usersData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/sales/invoices/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/sales/invoices/edit/" + uuid });
@@ -203,7 +203,9 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
+                  this.serverData = this.serverData.filter(
+                    (item) => item.uuid != uuid
+                  );
                 }
               })
               .catch((error) => {
