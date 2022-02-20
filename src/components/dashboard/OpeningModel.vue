@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       isSubmit: false,
-      total: "0.00",
+      total: "0.000",
     };
   },
   computed: {

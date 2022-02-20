@@ -112,7 +112,7 @@
                         @input="$v.form.user_pass.$touch()"
                       />
                       <div v-if="$v.form.user_pass.$error">
-                        <p v-if="!$v.form.user_pass.requiredIf" class="errorMsg">
+                        <p v-if="!$v.form.user_pass.required" class="errorMsg">
                           New Password is required
                         </p>
                       </div>
@@ -259,7 +259,9 @@ export default {
         // full_name: { required },
         phone_number: { required, numeric, minLength: minLength(8) },
         user_pass: {
-          requiredIf: requiredIf("form.user_current_pass"),
+          required: requiredIf(function () {
+            return this.form.user_current_pass.length !== 0;
+          }),
         },
         user_pass_confirmation: {
           requiredIf: requiredIf("form.user_pass"),
