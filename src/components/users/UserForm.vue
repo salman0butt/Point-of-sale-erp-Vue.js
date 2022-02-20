@@ -48,6 +48,9 @@
             <p v-if="!$v.form.phone_number.required" class="errorMsg">
               Phone is required
             </p>
+            <p v-if="!$v.form.phone_number.minLength" class="errorMsg">
+              Min length Should b 8 Characters
+            </p>
           </div>
         </CCol>
 
@@ -172,7 +175,7 @@
                   block
                   class="mb-2 imger"
                   width="100%"
-                  style="border-style: dotted; padding: 10px"
+                  style="border-style: solid; padding: 10px; border-color: #999999"
                 />
               </a>
               <CButton
@@ -215,7 +218,7 @@
 
 <script>
 import UserService from "@/services/users/UserService";
-import { required, email, numeric } from "vuelidate/lib/validators";
+import { required, email, numeric, minLength } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader";
 import Multiselect from "vue-multiselect";
 
@@ -273,7 +276,7 @@ export default {
       return {
         form: {
           full_name: { required },
-          phone_number: { required, numeric },
+          phone_number: { required, numeric, minLength: minLength(8) },
           email: { email },
           branch_id: { required },
           serial_no: { required },
@@ -286,7 +289,7 @@ export default {
       return {
         form: {
           full_name: { required },
-          phone_number: { required, numeric },
+          phone_number: { required, numeric, minLength: minLength(8) },
           email: { email },
           branch_id: { required },
           serial_no: { required },
@@ -377,7 +380,8 @@ export default {
                   data.employee.uuid &&
                   data.employee.uuid === this.$store.state.employee_id
                 ) {
-                  this.$store.commit("set_profile_img", data.employee.personal_photo);
+                  this.$store.dispatch("setPorfileImage", res.data.personal_photo);
+                  // this.$store.commit("set_profile_img", data.employee.personal_photo);
                 }
               }
               this.$v.$reset();

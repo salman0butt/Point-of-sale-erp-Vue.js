@@ -239,7 +239,12 @@ const actions = {
   setLanguage({ commit }, language) {
     commit('set_language', language);
     localStorage.setItem("language", language);
+  },
+  setPorfileImage({ commit }, img) {
+    commit('set_profile_img', img);
+    localStorage.setItem("profile_pic", img)
   }
+
 }
 const getters = {
   isLoggedIn: state => !!state.token,

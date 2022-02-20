@@ -11,7 +11,7 @@
                   <p class="text-muted">Sign In to your account</p>
 
                   <CInput
-                    placeholder="Username or Email or Employee ID"
+                    placeholder="Username or Email or Employee ID or Mobile"
                     autocomplete="username"
                     v-model="username"
                     :class="{ error: $v.username.$error }"
@@ -20,7 +20,7 @@
                     <template #prepend-content><CIcon name="cil-user"/></template>
                   </CInput>
                   <div v-if="$v.username.$error">
-                <p v-if="!$v.username.required" class="errorMsg">Username or Email or Employee ID is required</p>
+                <p v-if="!$v.username.required" class="errorMsg">Username or Email or Employee ID or Mobile is required</p>
               </div>
                   <CInput
                     placeholder="Password"
