@@ -5,6 +5,7 @@ import auth from '@/middleware/auth'
 //Invoices
 const IndexInvoices = () => import('@/views/sales/invoices/Index')
 const CreateInvoices = () => import('@/views/sales/invoices/CreateOrUpdate')
+const ShowInvoices = () => import('@/views/sales/invoices/Show')
 const EditInvoices = () => import('@/views/sales/invoices/CreateOrUpdate')
 
 
@@ -27,6 +28,11 @@ const invoiceRoutes = {
             path: 'create',
             name: 'CreateInvoices',
             component: CreateInvoices
+        },
+        {
+            path: 'show/:id',
+            name: 'ShowInvoices',
+            component: ShowInvoices
         },
         {
             path: 'edit/:id',

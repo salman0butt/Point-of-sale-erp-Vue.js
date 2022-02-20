@@ -72,7 +72,7 @@
                     :value.sync="form.payment_terms"
                   />
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="6" md="4" class="pt-2" v-if="isEditing">
                   <CSelect
                     label="Status"
                     :options="options.status"
@@ -211,13 +211,12 @@ export default {
       note: "",
       items: [],
       images: [],
-      status: "",
+      status: "pending",
       payment_terms: "",
     },
     options: {
       status: [
-        { label: "Choose Status", value: "", selected: true, disabled: "" },
-        { label: "Pending", value: "pending" },
+        { label: "Pending", value: "pending", selected: true },
         { label: "Approved", value: "approved" },
         { label: "Rejected", value: "rejected" },
       ],
