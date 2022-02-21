@@ -83,6 +83,11 @@
             <span v-html="invoice.payment_terms"></span>
           </div>
           <div>
+            <label><b>Terms & Conditions :</b></label>
+
+            <span v-html="invoice.terms_and_conditions"></span>
+          </div>
+          <div>
             <label><b> Note : </b></label>
             {{ invoice.note }}
           </div>
@@ -140,6 +145,7 @@ export default {
         quotation_ref_no: "",
         invoice_ref_no: "",
         payment_terms: "",
+        terms_and_conditions: "",
         note: "",
         products: [],
       },
@@ -176,6 +182,7 @@ export default {
           this.invoice.grand_total = data.grand_total;
           this.invoice.note = data.note;
           this.invoice.payment_terms = data.payment_terms;
+          this.invoice.terms_and_conditions = data.terms_and_conditions;
 
           // customer
           this.customer.name = data.customer.full_name.en;

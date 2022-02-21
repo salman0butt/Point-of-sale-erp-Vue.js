@@ -177,7 +177,7 @@
   </div>
 </template>
 <script>
-import BillerService from "@/services/accounting/biller/BillerService";
+import RecurringBillService from "@/services/accounting/recurringbill/RecurringBillService";
 import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
@@ -248,7 +248,7 @@ export default {
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };
-        BillerService.create(formData, config)
+        RecurringBillService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.$swal.fire({
@@ -290,7 +290,7 @@ export default {
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };
-        BillerService.update(this.form.id, formData, config)
+        RecurringBillService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
@@ -326,7 +326,7 @@ export default {
       }
     },
     getBiller() {
-      BillerService.get(this.form.id)
+      RecurringBillService.get(this.form.id)
         .then(({ data }) => {
           if (data != null && data != "") {
             this.isEditing = true;
@@ -370,7 +370,7 @@ export default {
       return formData;
     },
     getBillerOptions() {
-      BillerService.getBillerOptions()
+      RecurringBillService.getBillerOptions()
         .then(({ data }) => {
           if (data != undefined && data != "") {
             const categories = this.options.categories;

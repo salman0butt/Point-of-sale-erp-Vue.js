@@ -1,11 +1,15 @@
 <template>
   <div>
-    <label class="typo__label">Customers</label>
+    <label class="typo__label" @click="quickAddCustomer()"
+      >Customer
+      <a v-if="$can('create groups')" href="#">
+        <CIcon :content="$options.cibAddthis" /></a
+    ></label>
     <multiselect
       v-model="form.customer"
       :options="options.customers"
-      :multiple="true"
-      :close-on-select="false"
+      :multiple="false"
+      :close-on-select="true"
       :clear-on-select="false"
       :preserve-search="true"
       :loading="loading"
@@ -22,18 +26,26 @@
         ></template
       >
     </multiselect>
+    <CustomerModel @update-table="newCustomerAdded" />
   </div>
 </template>
 
 <script>
 import Multiselect from "vue-multiselect";
 import CustomerServices from "@/services/contacts/customers/CustomerServices";
+import CustomerModel from "@/components/contacts/customers/CustomerModel";
+
+import { cibAddthis } from "@coreui/icons-pro";
+
 import store from "@/store";
 export default {
   name: "CustomerSearch",
   components: {
     Multiselect,
+    CustomerModel,
   },
+  cibAddthis,
+
   props: {
     previousValue: {
       type: Array,
@@ -56,8 +68,8 @@ export default {
       return this.$store.getters.loading;
     },
   },
-  created() {
-    this.getCustomers();
+  async created() {
+    await this.getCustomers();
   },
   watch: {
     customers: {
@@ -87,6 +99,15 @@ export default {
                 value: item.uuid,
                 label: item.full_name + " (serial: " + item.serial_no + ")",
               });
+              if (
+                item.full_name == "Walk In Customer" ||
+                item.full_name.en == "Walk In Customer"
+              ) {
+                // default_customer = {
+                //   label: item.full_name + " (serial: " + item.serial_no + ")",
+                //   value: item.uuid,
+                // };
+              }
             });
           }
           store.commit("close_loader");
@@ -118,6 +139,12 @@ export default {
             console.log(error);
           });
       }
+    },
+    quickAddCustomer() {
+      this.$store.commit("set_customer_model", true);
+    },
+    newCustomerAdded() {
+      // this.$emit("newCustomerAdded", this.customer);
     },
   },
 };
