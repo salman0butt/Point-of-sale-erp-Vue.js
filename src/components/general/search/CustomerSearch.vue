@@ -26,7 +26,7 @@
         ></template
       >
     </multiselect>
-    <CustomerModel @update-table="newCustomerAdded" />
+    <CustomerModel @update-table="newCustomerAdded" @new-data="newData($event)" />
   </div>
 </template>
 
@@ -47,14 +47,15 @@ export default {
   cibAddthis,
 
   props: {
-    previousValue: {
-      type: Array,
-      default: () => [],
+    previousValue: [Object, String, Function],
+    createOnly: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
     form: {
-      customer: [],
+      customer: "",
     },
     options: {
       customers: [],
@@ -88,34 +89,42 @@ export default {
     },
   },
   methods: {
-    getCustomers() {
+    async getCustomers() {
       store.commit("set_loader");
       let customers = this.options.customers;
-      CustomerServices.getAll(1, 10)
-        .then(function ({ data }) {
-          if (data && data.data) {
-            data.data.map(function (item) {
-              customers.push({
-                value: item.uuid,
-                label: item.full_name + " (serial: " + item.serial_no + ")",
+      let create_only = this.createOnly;
+      let default_data = null;
+      await new Promise((resolve, reject) => {
+        CustomerServices.getAll(1, 10)
+          .then(function ({ data }) {
+            if (data && data.data) {
+              data.data.map(function (item) {
+                customers.push({
+                  value: item.uuid,
+                  label: item.full_name + " (serial: " + item.serial_no + ")",
+                });
+                if (item.full_name == "Walk In Customer" && create_only) {
+                  // eslint-disable-next-line no-unused-vars
+
+                  default_data = {
+                    label: item.full_name + " (serial: " + item.serial_no + ")",
+                    value: item.uuid,
+                  };
+                  //assign object to default_data
+                }
               });
-              if (
-                item.full_name == "Walk In Customer" ||
-                item.full_name.en == "Walk In Customer"
-              ) {
-                // default_customer = {
-                //   label: item.full_name + " (serial: " + item.serial_no + ")",
-                //   value: item.uuid,
-                // };
-              }
-            });
-          }
-          store.commit("close_loader");
-        })
-        .catch((error) => {
-          store.commit("close_loader");
-          console.log(error);
-        });
+              resolve();
+            }
+            store.commit("close_loader");
+          })
+          .catch((error) => {
+            store.commit("close_loader");
+            console.log(error);
+          });
+      });
+      if (default_data) {
+        this.form.customer = default_data;
+      }
     },
     searchCustomers(searchQuery) {
       if (searchQuery && searchQuery.length > 0) {
@@ -139,6 +148,14 @@ export default {
             console.log(error);
           });
       }
+    },
+    newData(item) {
+      const obj = {
+        value: item.uuid,
+        label: item.full_name + " (serial: " + item.serial_no + ")",
+      };
+      this.options.customers.push(obj);
+      this.form.customer = obj;
     },
     quickAddCustomer() {
       this.$store.commit("set_customer_model", true);

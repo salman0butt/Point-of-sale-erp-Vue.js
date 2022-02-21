@@ -135,7 +135,7 @@ export default {
   },
   methods: {
     calculate() {
-      let total = parseFloat("0.00");
+      let total = parseFloat("0.000");
       if (this.form.input1) total += parseFloat(this.form.input1) * 0.005;
       if (this.form.input2) total += parseFloat(this.form.input2) * 0.01;
       if (this.form.input3) total += parseFloat(this.form.input3) * 0.025;
@@ -146,7 +146,7 @@ export default {
       if (this.form.input8) total += parseFloat(this.form.input8) * 5.0;
       if (this.form.input9) total += parseFloat(this.form.input9) * 10.0;
       if (this.form.input10) total += parseFloat(this.form.input10) * 20.0;
-      this.form.total = total.toFixed(2);
+      this.form.total = total.toFixed(3);
       this.$emit("total", this.form.total);
     },
     // getDependenices() {

@@ -13,6 +13,7 @@
                   <CustomerSearch
                     :previousValue="form.previousValue"
                     @customer-change="customerSelected($event)"
+                    :createOnly="isEditing ? false : true"
                   />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
@@ -79,10 +80,7 @@
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <SearchProduct
-                    searchType="quotation"
-                    :itemsData="form.items"
-                  />
+                  <SearchProduct searchType="quotation" :itemsData="form.items" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Sub Total" readonly :value="subTotal" />
@@ -91,11 +89,7 @@
                   <CInput label="Tax Total" readonly :value="taxTotal" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
-                  <CInput
-                    label="Total Discount"
-                    readonly
-                    :value="totalDiscount"
-                  />
+                  <CInput label="Total Discount" readonly :value="totalDiscount" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Total" readonly :value="allTotal" />
@@ -116,11 +110,7 @@
                   ></vue-editor>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <CTextarea
-                    label="Note"
-                    placeholder="Content..."
-                    v-model="form.note"
-                  />
+                  <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
@@ -137,11 +127,7 @@
                         class="display-attachment-row"
                       >
                         <CIcon :content="$options.cisFile" />
-                        <a
-                          v-bind:href="img.path"
-                          target="_blank"
-                          class="name-attachment"
-                        >
+                        <a v-bind:href="img.path" target="_blank" class="name-attachment">
                           {{ img.name }}</a
                         >
                         <a
@@ -190,7 +176,7 @@ import { VueEditor } from "vue2-editor";
 import SettingService from "@/services/settings/SettingService";
 
 export default {
-  name: "CreateBrand",
+  name: "CreateOrUpdateQuotations",
   mixins: [globalMixin],
   components: {
     CustomerSearch,
@@ -369,10 +355,7 @@ export default {
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
-        formData.append(
-          "total_discount",
-          this.$store.getters.getQuotationDiscount
-        );
+        formData.append("total_discount", this.$store.getters.getQuotationDiscount);
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
 
         if (this.form.images && this.form.images.length > 0) {
@@ -545,9 +528,7 @@ export default {
                   qty: item.qty,
                   description: item.description,
                   weight_unit: item.product.weight_unit,
-                  discount: item.discount_per
-                    ? item.discount + "%"
-                    : item.discount,
+                  discount: item.discount_per ? item.discount + "%" : item.discount,
                   total: total_each,
                 });
               });
@@ -556,10 +537,7 @@ export default {
 
             this.$store.commit("set_quotation_sub_total", res.data.sub_total);
             this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-            this.$store.commit(
-              "set_quotation_total_discount",
-              res.data.total_discount
-            );
+            this.$store.commit("set_quotation_total_discount", res.data.total_discount);
             this.$store.commit("set_quotation_total", res.data.grand_total);
 
             this.previousSalesPersons = res.data.salespersons;
