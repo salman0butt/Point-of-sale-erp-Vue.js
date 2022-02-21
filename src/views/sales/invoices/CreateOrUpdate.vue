@@ -20,19 +20,14 @@
           <form @submit.prevent="formSubmit()">
             <CCardBody>
               <CRow>
+                <Loader />
+
                 <CCol sm="6" md="4" class="pt-2">
-                  <CustomerSearchField
-                    @customerSelected="customerSelected($event)"
-                    v-model="form.customer"
-                    :class="{ error: $v.form.customer.$error }"
-                    @input="$v.form.customer.$touch()"
-                    :previousValueCustomer="previousValueCustomer"
+                  <CustomerSearch
+                    :previousValue="form.previousValue"
+                    @customer-change="customerSelected($event)"
+                    :createOnly="isEditing ? false : true"
                   />
-                  <div v-if="$v.form.customer.$error">
-                    <p v-if="!$v.form.customer.required" class="errorMsg">
-                      Customer is required
-                    </p>
-                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -98,10 +93,7 @@
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <SearchProduct
-                    searchType="quotation"
-                    :itemsData="form.items"
-                  />
+                  <SearchProduct searchType="quotation" :itemsData="form.items" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Sub Total" readonly :value="subTotal" />
@@ -110,11 +102,7 @@
                   <CInput label="Tax Total" readonly :value="taxTotal" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
-                  <CInput
-                    label="Total Discount"
-                    readonly
-                    :value="totalDiscount"
-                  />
+                  <CInput label="Total Discount" readonly :value="totalDiscount" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Total" readonly :value="allTotal" />
@@ -128,11 +116,7 @@
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
-                  <CTextarea
-                    label="Note"
-                    placeholder="Content..."
-                    v-model="form.note"
-                  />
+                  <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
@@ -149,11 +133,7 @@
                         class="display-attachment-row"
                       >
                         <CIcon :content="$options.cisFile" />
-                        <a
-                          v-bind:href="img.path"
-                          target="_blank"
-                          class="name-attachment"
-                        >
+                        <a v-bind:href="img.path" target="_blank" class="name-attachment">
                           {{ img.name }}</a
                         >
                         <a
@@ -188,7 +168,7 @@
 </template>
 
 <script>
-import CustomerSearchField from "@/components/general/CustomerSearchField";
+import CustomerSearch from "@/components/general/search/CustomerSearch";
 import SearchProduct from "@/components/layouts/SearchProduct";
 import SelectSalePerson from "@/components/general/SelectSalePerson";
 import { required } from "vuelidate/lib/validators";
@@ -198,16 +178,18 @@ import { cilTrash, cisFile } from "@coreui/icons-pro";
 import { globalMixin } from "@/mixins/globalMixin";
 import { VueEditor } from "vue2-editor";
 import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
+import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "CreateBrand",
   mixins: [globalMixin],
   components: {
-    CustomerSearchField,
+    CustomerSearch,
     SearchProduct,
     SelectSalePerson,
     AppUpload,
     VueEditor,
+    Loader,
   },
   cilTrash,
   cisFile,
@@ -249,7 +231,6 @@ export default {
     },
     sales_persons: [],
     display_images: [],
-    previousValueCustomer: Object,
     previousSalesPersons: Array,
     customToolbar: [
       ["bold", "italic", "underline"],
@@ -306,6 +287,9 @@ export default {
     },
   },
   methods: {
+    customerSelected(customer) {
+      this.form.customer = customer.value;
+    },
     quotationChange() {
       let uuid = this.form.id;
       this.resetForm();
@@ -359,10 +343,7 @@ export default {
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
-        formData.append(
-          "total_discount",
-          this.$store.getters.getQuotationDiscount
-        );
+        formData.append("total_discount", this.$store.getters.getQuotationDiscount);
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
 
         if (this.form.images && this.form.images.length > 0) {
@@ -431,9 +412,7 @@ export default {
         }
       }
     },
-    customerSelected(customer) {
-      this.form.customer = customer;
-    },
+
     salesPersonSelected(person) {
       this.form.sales_persons = person;
     },
@@ -481,6 +460,8 @@ export default {
     getEditData(uuid) {
       this.form.id = uuid;
       if (this.form.id !== "" && this.form.id !== undefined) {
+        this.$store.commit("set_loader");
+
         this.isEditing = true;
 
         InvoiceService.get(this.form.id)
@@ -522,8 +503,7 @@ export default {
                     total_each =
                       (parseFloat(item.selling_price) + parseFloat(item.tax)) *
                       parseInt(item.qty);
-                    total_each =
-                      total_each - total_each * (item.discount / 100);
+                    total_each = total_each - total_each * (item.discount / 100);
                   }
 
                   this.form.items.push({
@@ -535,9 +515,7 @@ export default {
                     qty: item.qty,
                     description: item.description,
                     weight_unit: item.product.weight_unit,
-                    discount: item.discount_per
-                      ? item.discount + "%"
-                      : item.discount,
+                    discount: item.discount_per ? item.discount + "%" : item.discount,
                     total: total_each,
                   });
                 });
@@ -546,19 +524,24 @@ export default {
 
               this.$store.commit("set_quotation_sub_total", res.data.sub_total);
               this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-              this.$store.commit(
-                "set_quotation_total_discount",
-                res.data.total_discount
-              );
+              this.$store.commit("set_quotation_total_discount", res.data.total_discount);
               this.$store.commit("set_quotation_total", res.data.grand_total);
 
-              this.previousValueCustomer = res.data.customer;
+              this.form.previousValue = {
+                value: res.data.customer.uuid,
+                label:
+                  res.data.customer.full_name.en +
+                  " (serial: " +
+                  res.data.customer.serial_no +
+                  ")",
+              };
               this.previousSalesPersons = res.data.salespersons;
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
-            // this.$store.commit("close_loader");
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",

@@ -1,11 +1,15 @@
 <template>
   <div>
-    <label class="typo__label">Customers</label>
+    <label class="typo__label" @click="quickAddCustomer()"
+      >Customer
+      <a v-if="$can('create groups')" href="#">
+        <CIcon :content="$options.cibAddthis" /></a
+    ></label>
     <multiselect
       v-model="form.customer"
       :options="options.customers"
-      :multiple="true"
-      :close-on-select="false"
+      :multiple="false"
+      :close-on-select="true"
       :clear-on-select="false"
       :preserve-search="true"
       :loading="loading"
@@ -22,27 +26,36 @@
         ></template
       >
     </multiselect>
+    <CustomerModel @update-table="newCustomerAdded" @new-data="newData($event)" />
   </div>
 </template>
 
 <script>
 import Multiselect from "vue-multiselect";
 import CustomerServices from "@/services/contacts/customers/CustomerServices";
+import CustomerModel from "@/components/contacts/customers/CustomerModel";
+
+import { cibAddthis } from "@coreui/icons-pro";
+
 import store from "@/store";
 export default {
   name: "CustomerSearch",
   components: {
     Multiselect,
+    CustomerModel,
   },
+  cibAddthis,
+
   props: {
-    previousValue: {
-      type: Array,
-      default: () => [],
+    previousValue: [Object, String, Function],
+    createOnly: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
     form: {
-      customer: [],
+      customer: "",
     },
     options: {
       customers: [],
@@ -56,8 +69,8 @@ export default {
       return this.$store.getters.loading;
     },
   },
-  created() {
-    this.getCustomers();
+  async created() {
+    await this.getCustomers();
   },
   watch: {
     customers: {
@@ -76,25 +89,42 @@ export default {
     },
   },
   methods: {
-    getCustomers() {
+    async getCustomers() {
       store.commit("set_loader");
       let customers = this.options.customers;
-      CustomerServices.getAll(1, 10)
-        .then(function ({ data }) {
-          if (data && data.data) {
-            data.data.map(function (item) {
-              customers.push({
-                value: item.uuid,
-                label: item.full_name + " (serial: " + item.serial_no + ")",
+      let create_only = this.createOnly;
+      let default_data = null;
+      await new Promise((resolve, reject) => {
+        CustomerServices.getAll(1, 10)
+          .then(function ({ data }) {
+            if (data && data.data) {
+              data.data.map(function (item) {
+                customers.push({
+                  value: item.uuid,
+                  label: item.full_name + " (serial: " + item.serial_no + ")",
+                });
+                if (item.full_name == "Walk In Customer" && create_only) {
+                  // eslint-disable-next-line no-unused-vars
+
+                  default_data = {
+                    label: item.full_name + " (serial: " + item.serial_no + ")",
+                    value: item.uuid,
+                  };
+                  //assign object to default_data
+                }
               });
-            });
-          }
-          store.commit("close_loader");
-        })
-        .catch((error) => {
-          store.commit("close_loader");
-          console.log(error);
-        });
+              resolve();
+            }
+            store.commit("close_loader");
+          })
+          .catch((error) => {
+            store.commit("close_loader");
+            console.log(error);
+          });
+      });
+      if (default_data) {
+        this.form.customer = default_data;
+      }
     },
     searchCustomers(searchQuery) {
       if (searchQuery && searchQuery.length > 0) {
@@ -118,6 +148,20 @@ export default {
             console.log(error);
           });
       }
+    },
+    newData(item) {
+      const obj = {
+        value: item.uuid,
+        label: item.full_name + " (serial: " + item.serial_no + ")",
+      };
+      this.options.customers.push(obj);
+      this.form.customer = obj;
+    },
+    quickAddCustomer() {
+      this.$store.commit("set_customer_model", true);
+    },
+    newCustomerAdded() {
+      // this.$emit("newCustomerAdded", this.customer);
     },
   },
 };

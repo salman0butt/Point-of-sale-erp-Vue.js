@@ -169,116 +169,16 @@
                   </CRow>
                   <CRow>
                     <CCol xs="12" md="12" class="pt-2">
-                      <table class="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th scope="col">Item Details</th>
-                            <th scope="col">Acount</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Rate</th>
-                            <th scope="col">Tax</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody v-if="form.items && form.items.length > 0">
-                          <tr v-for="(item, k) in form.items" :key="k">
-                            <th style="position: relative">
-                              <CInput
-                                placeholder="Products"
-                                v-model="item.name"
-                                @input="searchProduct(k)"
-                                required
-                              /><br />
-                              <ul
-                                v-if="
-                                  item.options.products &&
-                                  item.options.products.length > 0
-                                "
-                                class="search-content"
-                              >
-                                <li
-                                  v-for="(i, key) in item.options.products"
-                                  :key="key"
-                                  @click="addOptions(i, k)"
-                                >
-                                  {{ i.label }}
-                                </li>
-                              </ul>
-                            </th>
-                            <td>
-                              <CSelect
-                                :options="options.accounts"
-                                :value.sync="item.account"
-                                required
-                              />
-                            </td>
-                            <td>
-                              <CInput
-                                type="number"
-                                placeholder="0"
-                                v-model="item.qty"
-                                min="1"
-                                step="any"
-                                style="width: 100px"
-                                required
-                                @change="calculateAmount(k)"
-                              />
-                            </td>
-                            <td>
-                              <CInput
-                                type="number"
-                                placeholder="0.00"
-                                v-model="item.rate"
-                                step="any"
-                                style="width: 100px"
-                                required
-                                @change="calculateAmount(k)"
-                              />
-                            </td>
-                            <td>
-                              <CSelect
-                                :options="options.taxes"
-                                :value.sync="item.tax"
-                                @change="calculateAmount(k)"
-                              />
-                            </td>
-                            <td>
-                              <CInput
-                                type="number"
-                                placeholder="0.00"
-                                v-model="item.amount"
-                                step="any"
-                                style="width: 100px"
-                                required
-                                @change="calculateTotalAmount()"
-                              />
-                            </td>
-                            <td>
-                              <CButton @click="removeItem(k)">
-                                <CIcon :content="$options.cilTrash" style="color: red" />
-                              </CButton>
-                            </td>
-                          </tr>
-                        </tbody>
-                        <tfoot v-else>
-                          <tr>
-                            <td colspan="7">
-                              <p class="text-center">No items added</p>
-                            </td>
-                          </tr>
-                        </tfoot>
-                      </table>
+                      <CRow>
+                        <CCol xs="12" md="12" class="pt-2">
+                          <ProductSearch
+                            @update-items="updateItems($event)"
+                            :previousValue="form.items"
+                          />
+                        </CCol>
+                      </CRow>
                       <CRow>
                         <CCol xs="12" md="6" class="pt-2">
-                          <CButton
-                            progress
-                            timeout="2000"
-                            color="default"
-                            @click="addItem()"
-                            >Add another line
-                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
-                          /></CButton>
                           <CTextarea
                             class="mt-4"
                             label="Customer Notes"
@@ -409,16 +309,19 @@ import PurchaseService from "@/services/accounting/purchaseOrder/PurchaseOrderSe
 import { required } from "vuelidate/lib/validators";
 import { cilTrash, cisCaretBottom, cisFile } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
-import ReceivingService from "@/services/receivings/ReceivingService";
-import AccountServices from "@/services/accounting/accounts/AccountServices";
+// import ReceivingService from "@/services/receivings/ReceivingService";
+// import AccountServices from "@/services/accounting/accounts/AccountServices";
 import { attachmentMixin } from "@/mixins/attachmentMixin";
 import { globalMixin } from "@/mixins/globalMixin";
-
+import AccountDropdown from "@/components/general/AccountDropdown.vue";
+import ProductSearch from "@/components/general/search/ProductSearch.vue";
 export default {
   name: "CreateOrUpdatePurchase",
   mixins: [attachmentMixin, globalMixin],
   components: {
     Loader,
+    AccountDropdown,
+    ProductSearch,
   },
   cilTrash,
   cisCaretBottom,
@@ -452,7 +355,7 @@ export default {
           uuid: "",
           name: "",
           // type: "",
-          account: "",
+          account: Object,
           qty: "",
           rate: "",
           tax: "",
@@ -463,9 +366,9 @@ export default {
         },
       ],
     },
-    products_list: [],
+    // products_list: [],
     options: {
-      taxes: [{ value: "", label: "Choose Tax" }],
+      // taxes: [{ value: "", label: "Choose Tax" }],
       suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
       deliver_to: [
         { value: "", label: "Choose Deliver To", disabled: true, selected: "" },
@@ -480,14 +383,14 @@ export default {
         { value: "2", label: "Payment Term 2" },
         { value: "3", label: "Payment Term 3" },
       ],
-      accounts: [
-        {
-          value: "",
-          label: "Choose Account",
-          disabled: true,
-          selected: "",
-        },
-      ],
+      // accounts: [
+      //   {
+      //     value: "",
+      //     label: "Choose Account",
+      //     disabled: true,
+      //     selected: "",
+      //   },
+      // ],
     },
   }),
   validations() {
@@ -529,28 +432,26 @@ export default {
   },
   async created() {
     this.form.date = this.calculateTodayDate();
-    await this.getAccounts();
+    // await this.getAccounts();
     await this.getAllSuppliers();
     await this.getAllBranches();
     await this.getAllCustomers();
-    await this.getTaxes();
+    // await this.getTaxes();
     this.form.id = this.$route.params.id;
     if (this.form.id) {
       await this.getPurchaseOrder();
     }
   },
-  computed: {
-    taxData() {
-      return this.options.taxes;
-    },
-  },
   methods: {
+    // getAccountDropDown(val, key) {
+    //   this.form.items[key].account = val;
+    // },
     addItem() {
       this.form.items.push({
         uuid: "",
         name: "",
         // type: "",
-        account: "",
+        account: Object,
         qty: "",
         rate: "",
         tax: "",
@@ -560,149 +461,154 @@ export default {
         },
       });
     },
-    removeItem(index) {
-      this.form.items.splice(index, 1);
+    // removeItem(index) {
+    //   this.form.items.splice(index, 1);
+    //   this.calculateTotalAmount();
+    // },
+    // getAccounts() {
+    //   AccountServices.getActiveAccounts("active")
+    //     .then(({ data }) => {
+    //       let account = this.options.accounts;
+    //       data.map(function (val) {
+    //         account.push({
+    //           value: val.uuid,
+    //           label: val.name,
+    //         });
+    //       });
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
+    // searchProduct(k) {
+    //   if (!this.form.items[k].name) {
+    //     this.resetSearch();
+    //     return;
+    //   }
+    //   this.products_list = [];
+    //   this.unit_form = [];
+    //   ReceivingService.searchProduct(this.form.items[k].name)
+    //     .then(({ data }) => {
+    //       if (data !== undefined && data !== "") {
+    //         this.form.items[k].options.products = [];
+    //         data.map((product) => {
+    //           if (product) {
+    //             if (product.quantity_units && product.quantity_units.length > 0) {
+    //               product.quantity_units.map((unit) => {
+    //                 if (product.variations && product.variations.length > 0) {
+    //                   this.form.items[k].options.products.push({
+    //                     value: product.uuid,
+    //                     type: "variation",
+    //                     label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
+    //                     is_unit: true,
+    //                     unit_id: unit.uuid,
+    //                     unit_qty: unit.qty ?? 1,
+    //                     unit_cost_price: unit.price?.cost_price,
+    //                     unit_selling_price: unit.price?.selling_price_without_tax,
+    //                   });
+    //                 } else {
+    //                   this.form.items[k].options.products.push({
+    //                     value: product.uuid,
+    //                     type: "product",
+    //                     label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
+    //                     is_unit: true,
+    //                     unit_id: unit.uuid,
+    //                     unit_qty: unit.qty ?? 1,
+    //                     unit_cost_price: unit.price?.cost_price,
+    //                     unit_selling_price: unit.price?.selling_price_without_tax,
+    //                   });
+    //                 }
+    //               });
+    //             }
+    //             if (product.variations && product.variations.length > 0) {
+    //               product.variations.map((variation) => {
+    //                 this.form.items[k].options.products.push({
+    //                   value: variation.uuid,
+    //                   type: "variation",
+    //                   label: `${product.name} (Variation: ${
+    //                     JSON.parse(variation.name)?.en
+    //                   } | Stock:  ${
+    //                     variation.inventory && variation.inventory.length
+    //                       ? variation.inventory[0]?.current_quantity
+    //                       : 0
+    //                   })`,
+    //                 });
+    //               });
+    //             } else {
+    //               this.form.items[k].options.products.push({
+    //                 value: product.uuid,
+    //                 type: "product",
+    //                 label: `${product.name} (Stock:  ${
+    //                   product.inventory && product.inventory.length
+    //                     ? product.inventory[0]?.current_quantity
+    //                     : 0
+    //                 })`,
+    //               });
+    //             }
+
+    //             this.products_list.push({ ...product });
+    //           }
+    //         });
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
+    updateItems({ items, sub_total }) {
+      this.form.items = items;
+      this.form.subTotal = sub_total;
       this.calculateTotalAmount();
     },
-    getAccounts() {
-      AccountServices.getActiveAccounts("active")
-        .then(({ data }) => {
-          let account = this.options.accounts;
-          data.map(function (val) {
-            account.push({
-              value: val.uuid,
-              label: val.name,
-            });
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    searchProduct(k) {
-      if (!this.form.items[k].name) {
-        this.resetSearch();
-        return;
-      }
-      this.products_list = [];
-      this.unit_form = [];
-      ReceivingService.searchProduct(this.form.items[k].name)
-        .then(({ data }) => {
-          if (data !== undefined && data !== "") {
-            this.form.items[k].options.products = [];
-            data.map((product) => {
-              if (product) {
-                if (product.quantity_units && product.quantity_units.length > 0) {
-                  product.quantity_units.map((unit) => {
-                    if (product.variations && product.variations.length > 0) {
-                      this.form.items[k].options.products.push({
-                        value: product.uuid,
-                        type: "variation",
-                        label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                        is_unit: true,
-                        unit_id: unit.uuid,
-                        unit_qty: unit.qty ?? 1,
-                        unit_cost_price: unit.price?.cost_price,
-                        unit_selling_price: unit.price?.selling_price_without_tax,
-                      });
-                    } else {
-                      this.form.items[k].options.products.push({
-                        value: product.uuid,
-                        type: "product",
-                        label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                        is_unit: true,
-                        unit_id: unit.uuid,
-                        unit_qty: unit.qty ?? 1,
-                        unit_cost_price: unit.price?.cost_price,
-                        unit_selling_price: unit.price?.selling_price_without_tax,
-                      });
-                    }
-                  });
-                }
-                if (product.variations && product.variations.length > 0) {
-                  product.variations.map((variation) => {
-                    this.form.items[k].options.products.push({
-                      value: variation.uuid,
-                      type: "variation",
-                      label: `${product.name} (Variation: ${
-                        JSON.parse(variation.name)?.en
-                      } | Stock:  ${
-                        variation.inventory && variation.inventory.length
-                          ? variation.inventory[0]?.current_quantity
-                          : 0
-                      })`,
-                    });
-                  });
-                } else {
-                  this.form.items[k].options.products.push({
-                    value: product.uuid,
-                    type: "product",
-                    label: `${product.name} (Stock:  ${
-                      product.inventory && product.inventory.length
-                        ? product.inventory[0]?.current_quantity
-                        : 0
-                    })`,
-                  });
-                }
-
-                this.products_list.push({ ...product });
-              }
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    addOptions(item, k) {
-      this.form.product_id = item.value;
-      // this.unit_form = [];
-      let option = item;
-      if (
-        !["", undefined].includes(option.is_unit) &&
-        !["", undefined].includes(option.unit_id)
-      ) {
-        if (this.products_list && this.products_list.length > 0) {
-          this.products_list.find((product) => {
-            if (option.type === "product") {
-              this.pro_unit = true;
-              this.addProduct(option);
-            }
-            // else if (option.type === "variation") {
-            //   if (product.uuid === this.form.product_id) {
-            //     let parts = product.variations.length;
-            //     let num = option.unit_qty;
-            //     let half_qty = [...Array(parts)].map(
-            //       (_, i) => 0 | (num / parts + (i < num % parts))
-            //     );
-            //     product.variations.find((variation, index) => {
-            //       this.unit_form.push({
-            //         uuid: variation.uuid,
-            //         type: "variation",
-            //         name: `${JSON.parse(variation.name)?.en}`,
-            //         qty: half_qty[index] ?? 1,
-            //         rate: option.unit_cost_price,
-            //         account: "",
-            //         tax: "",
-            //         amount: "",
-            //       });
-            //     });
-            //   }
-            // }
-          });
-          // if (option.type === "variation") {
-          //   this.toggleModel = true;
-          // }
-        }
-      } else {
-        if (option.type === "product") {
-          this.addProduct({}, k);
-        }
-        // else if (option.type === "variation") {
-        //   this.addProductVariation();
-        // }
-      }
-    },
+    // addOptions(item, k) {
+    //   this.form.product_id = item.value;
+    //   // this.unit_form = [];
+    //   let option = item;
+    //   if (
+    //     !["", undefined].includes(option.is_unit) &&
+    //     !["", undefined].includes(option.unit_id)
+    //   ) {
+    //     if (this.products_list && this.products_list.length > 0) {
+    //       this.products_list.find((product) => {
+    //         if (option.type === "product") {
+    //           this.pro_unit = true;
+    //           this.addProduct(option);
+    //         }
+    //         // else if (option.type === "variation") {
+    //         //   if (product.uuid === this.form.product_id) {
+    //         //     let parts = product.variations.length;
+    //         //     let num = option.unit_qty;
+    //         //     let half_qty = [...Array(parts)].map(
+    //         //       (_, i) => 0 | (num / parts + (i < num % parts))
+    //         //     );
+    //         //     product.variations.find((variation, index) => {
+    //         //       this.unit_form.push({
+    //         //         uuid: variation.uuid,
+    //         //         type: "variation",
+    //         //         name: `${JSON.parse(variation.name)?.en}`,
+    //         //         qty: half_qty[index] ?? 1,
+    //         //         rate: option.unit_cost_price,
+    //         //         account: "",
+    //         //         tax: "",
+    //         //         amount: "",
+    //         //       });
+    //         //     });
+    //         //   }
+    //         // }
+    //       });
+    //       // if (option.type === "variation") {
+    //       //   this.toggleModel = true;
+    //       // }
+    //     }
+    //   } else {
+    //     if (option.type === "product") {
+    //       this.addProduct({}, k);
+    //     }
+    //     // else if (option.type === "variation") {
+    //     //   this.addProductVariation();
+    //     // }
+    //   }
+    // },
     // saveQuantityUnits() {
     //   this.toggleModel = false;
     //   this.addUnitVariation();
@@ -752,88 +658,88 @@ export default {
     //     // this.$store.commit("set_search_product_items", this.form.items);
     //   }
     // },
-    addProduct(option = {}, k = null) {
-      if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-        let product = this.products_list.find(
-          (product) => product.uuid === this.form.product_id
-        );
+    // addProduct(option = {}, k = null) {
+    //   if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+    //     let product = this.products_list.find(
+    //       (product) => product.uuid === this.form.product_id
+    //     );
 
-        if (Object.keys(option).length === 0 && option.constructor === Object) {
-          Object.assign(option, { unit_qty: 1 });
-          if (product.price) {
-            Object.assign(option, {
-              unit_cost_price: product.price.cost_price,
-            });
-            Object.assign(option, {
-              unit_selling_price: product.price.selling_price_without_tax,
-            });
-            Object.assign(option, {
-              tax_price:
-                parseFloat(product.price.selling_price_without_tax) *
-                (parseFloat(product.price.tax.percentage) / 100),
-            });
-          }
-        }
+    //     if (Object.keys(option).length === 0 && option.constructor === Object) {
+    //       Object.assign(option, { unit_qty: 1 });
+    //       if (product.price) {
+    //         Object.assign(option, {
+    //           unit_cost_price: product.price.cost_price,
+    //         });
+    //         Object.assign(option, {
+    //           unit_selling_price: product.price.selling_price_without_tax,
+    //         });
+    //         Object.assign(option, {
+    //           tax_price:
+    //             parseFloat(product.price.selling_price_without_tax) *
+    //             (parseFloat(product.price.tax.percentage) / 100),
+    //         });
+    //       }
+    //     }
 
-        // if (
-        //   product.uuid === this.form.product_id &&
-        //   this.form.items &&
-        //   this.form.items.length > 0 &&
-        //   this.form.items.some((item) => item.uuid === product.uuid)
-        // ) {
-        //   if (this.pro_unit) {
-        //     this.form.items.map((item, key) => {
-        //       if (item.uuid === product.uuid) {
-        //         this.form.items[key].qty =
-        //           parseFloat(this.form.items[key].qty) + option.unit_qty;
-        //         this.form.items[key].rate = option.cost_price;
-        //       }
-        //     });
-        //   } else {
-        //     this.form.items.map((item, key) => {
-        //       if (item.uuid === product.uuid) {
-        //         this.form.items[key].qty =
-        //           parseFloat(this.form.items[key].qty) + option.unit_qty;
-        //       }
-        //     });
-        //   }
-        // } else {
-        if (k !== null) {
-          let item = this.form.items[k];
-          // item.options.tax = [{ value: "", label: "Choose Tax" }];
-          item.uuid = product.uuid;
-          // item.type = "product";
-          item.name = product.name;
-          item.account = "";
-          item.rate = option.unit_cost_price;
-          // if (product.price && product.price.tax) {
-          //   item.options.tax.push({
-          //     // uuid: product.price.tax.uuid,
-          //     label: product.price.tax.name,
-          //     percentage: product.price.tax.percentage,
-          //     value: product.price.tax.uuid,
-          //   });
-          // }
-          item.qty = option.unit_qty;
-          item.amount = "";
-        }
+    //     // if (
+    //     //   product.uuid === this.form.product_id &&
+    //     //   this.form.items &&
+    //     //   this.form.items.length > 0 &&
+    //     //   this.form.items.some((item) => item.uuid === product.uuid)
+    //     // ) {
+    //     //   if (this.pro_unit) {
+    //     //     this.form.items.map((item, key) => {
+    //     //       if (item.uuid === product.uuid) {
+    //     //         this.form.items[key].qty =
+    //     //           parseFloat(this.form.items[key].qty) + option.unit_qty;
+    //     //         this.form.items[key].rate = option.cost_price;
+    //     //       }
+    //     //     });
+    //     //   } else {
+    //     //     this.form.items.map((item, key) => {
+    //     //       if (item.uuid === product.uuid) {
+    //     //         this.form.items[key].qty =
+    //     //           parseFloat(this.form.items[key].qty) + option.unit_qty;
+    //     //       }
+    //     //     });
+    //     //   }
+    //     // } else {
+    //     if (k !== null) {
+    //       let item = this.form.items[k];
+    //       // item.options.tax = [{ value: "", label: "Choose Tax" }];
+    //       item.uuid = product.uuid;
+    //       // item.type = "product";
+    //       item.name = product.name;
+    //       item.account = Object;
+    //       item.rate = option.unit_cost_price;
+    //       // if (product.price && product.price.tax) {
+    //       //   item.options.tax.push({
+    //       //     // uuid: product.price.tax.uuid,
+    //       //     label: product.price.tax.name,
+    //       //     percentage: product.price.tax.percentage,
+    //       //     value: product.price.tax.uuid,
+    //       //   });
+    //       // }
+    //       item.qty = option.unit_qty;
+    //       item.amount = "";
+    //     }
 
-        // this.form.items.push({
-        //   uuid: product.uuid,
-        //   type: "product",
-        //   name: product.name,
-        //   account: "",
-        //   rate: option.unit_cost_price ?? 0,
-        //   qty: option.unit_qty,
-        //   tax: "",
-        //   amount: "",
-        // });
-        // }
-        this.calculateAmount(k);
-        this.resetSearch();
-        // this.$store.commit("set_search_product_items", this.form.items);
-      }
-    },
+    //     // this.form.items.push({
+    //     //   uuid: product.uuid,
+    //     //   type: "product",
+    //     //   name: product.name,
+    //     //   account: "",
+    //     //   rate: option.unit_cost_price ?? 0,
+    //     //   qty: option.unit_qty,
+    //     //   tax: "",
+    //     //   amount: "",
+    //     // });
+    //     // }
+    //     this.calculateAmount(k);
+    //     this.resetSearch();
+    //     // this.$store.commit("set_search_product_items", this.form.items);
+    //   }
+    // },
     // addProductVariation() {
     //   let data = [];
     //   if (this.form.product_id !== "" && this.form.product_id !== undefined) {
@@ -871,28 +777,28 @@ export default {
     //     // this.$store.commit("set_search_product_items", this.form.items);
     //   }
     // },
-    calculateAllItems() {
-      this.form.items.map((item, key) => {
-        this.calculateAmount(key);
-      });
-    },
-    calculateAmount(k) {
-      let amount = 0;
-      if (this.form.items[k].qty && this.form.items[k].rate) {
-        amount = parseFloat(this.form.items[k].qty) * parseFloat(this.form.items[k].rate);
-        // calculate tax
-        if (this.form.items[k].tax) {
-          let tax = this.options.taxes.find(
-            (tax) => tax.value === this.form.items[k].tax
-          );
-          if (tax) {
-            amount = amount + amount * (parseFloat(tax.percentage) / 100);
-          }
-        }
-        this.form.items[k].amount = amount;
-      }
-      this.calculateTotalAmount();
-    },
+    // calculateAllItems() {
+    //   this.form.items.map((item, key) => {
+    //     this.calculateAmount(key);
+    //   });
+    // },
+    // calculateAmount(k) {
+    //   let amount = 0;
+    //   if (this.form.items[k].qty && this.form.items[k].rate) {
+    //     amount = parseFloat(this.form.items[k].qty) * parseFloat(this.form.items[k].rate);
+    //     // calculate tax
+    //     if (this.form.items[k].tax) {
+    //       let tax = this.options.taxes.find(
+    //         (tax) => tax.value === this.form.items[k].tax
+    //       );
+    //       if (tax) {
+    //         amount = amount + amount * (parseFloat(tax.percentage) / 100);
+    //       }
+    //     }
+    //     this.form.items[k].amount = amount;
+    //   }
+    //   this.calculateTotalAmount();
+    // },
     calculateTotalAmount() {
       let sub_total = 0;
       let discount = 0;
@@ -917,14 +823,14 @@ export default {
       this.form.total = total;
     },
 
-    resetSearch() {
-      this.form.product_id = "";
-      // this.search = "";
-      this.form.items.map((item) => {
-        item.options.products = [];
-      });
-      // this.options.products = [];
-    },
+    // resetSearch() {
+    //   this.form.product_id = "";
+    //   // this.search = "";
+    //   this.form.items.map((item) => {
+    //     item.options.products = [];
+    //   });
+    //   // this.options.products = [];
+    // },
     getAllSuppliers() {
       this.$store.commit("set_loader");
       PurchaseService.getAllSuppliers()
@@ -1155,7 +1061,11 @@ export default {
               uuid: item.product?.uuid,
               // type: "product",
               name: item.name,
-              account: item.account?.uuid,
+              account: item.account.uuid,
+              previousAccount: {
+                label: "-- " + item.account?.name,
+                value: item.account?.uuid,
+              },
               rate: parseFloat(item.rate) ?? 0,
               qty: parseFloat(item.qty),
               tax: item && item.tax ? item.tax.uuid : "",
@@ -1167,35 +1077,35 @@ export default {
             this.form.items.push(data);
           });
         }
-        this.calculateAllItems();
+        // this.calculateAllItems();
       }
     },
-    getTaxes() {
-      this.$store.commit("set_loader");
-      PurchaseService.getAllTaxes()
-        .then(({ data }) => {
-          if (data && data.data) {
-            let taxes = this.options.taxes;
-            data.data.forEach((tax) => {
-              taxes.push({
-                value: tax.uuid,
-                label: tax.name,
-                percentage: tax.percentage,
-              });
-            });
+    // getTaxes() {
+    //   this.$store.commit("set_loader");
+    //   PurchaseService.getAllTaxes()
+    //     .then(({ data }) => {
+    //       if (data && data.data) {
+    //         let taxes = this.options.taxes;
+    //         data.data.forEach((tax) => {
+    //           taxes.push({
+    //             value: tax.uuid,
+    //             label: tax.name,
+    //             percentage: tax.percentage,
+    //           });
+    //         });
 
-            this.$store.commit("close_loader");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$store.commit("close_loader");
-        });
-    },
+    //         this.$store.commit("close_loader");
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       this.$store.commit("close_loader");
+    //     });
+    // },
     resetForm() {
       for (let index in this.form) {
         if (index === "items" || index === "attachments") {
-          this.form.items[index] = [];
+          this.form[index] = [];
         } else {
           this.form[index] = "";
         }

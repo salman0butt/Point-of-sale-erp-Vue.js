@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label>Select Account</label>
+    <label v-if="showLabel">Select Account</label>
     <multiselect
       v-model="account"
       :options="options.account"
@@ -21,7 +21,11 @@ import AccountServices from "@/services/accounting/accounts/AccountServices";
 export default {
   name: "AccountDropdown",
   props: {
-    previousValue: [Object, String],
+    previousValue: [Object, String, Function],
+    showLabel: {
+      type: Boolean,
+      default: true,
+    },
   },
   components: {
     Multiselect,
@@ -36,10 +40,13 @@ export default {
     };
   },
   watch: {
-    previousValue: function (val) {
-      // this.setValue();
-      // console.log(val);
-      this.account = val;
+    previousValue: {
+      handler: function (val) {
+        if (val) {
+          this.account = val;
+        }
+      },
+      deep: true,
     },
     account: function () {
       this.updateValue();
@@ -52,6 +59,9 @@ export default {
     // setValue() {
     //   this.account = this.previousValue;
     // },
+    updater() {
+      this.$forceUpdate();
+    },
     getData() {
       AccountServices.getTreeStructure()
         .then(({ data }) => {
@@ -103,4 +113,3 @@ export default {
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
-

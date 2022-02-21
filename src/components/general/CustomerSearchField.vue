@@ -27,7 +27,6 @@
 </template>
 <script>
 import CustomerModel from "@/components/contacts/customers/CustomerModel";
-
 import { required } from "vuelidate/lib/validators";
 import CustomerServices from "@/services/contacts/customers/CustomerServices";
 import { cibAddthis } from "@coreui/icons-pro";

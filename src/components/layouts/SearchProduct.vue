@@ -106,13 +106,6 @@
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow class="display: flex;justify-content: space-between;">
-                <CButton
-                  @click="removeProduct(k)"
-                  class="btn-sm del-btn"
-                  style="background: transparent"
-                >
-                  <CIcon :content="$options.cilTrash" style="color: red" />
-                </CButton>
                 <CInput
                   label="Product"
                   class="col-md-3"
@@ -151,7 +144,7 @@
 
                 <CInput
                   label="Unit Tax"
-                  class="col-md-1 col-lg-2"
+                  class="col-md-2"
                   type="number"
                   placeholder="0.00."
                   :value.sync="input.tax_price"
@@ -159,7 +152,7 @@
                 />
                 <CInput
                   label="Disc %"
-                  class="col-md-2 col-lg-2"
+                  class="col-md-1"
                   type="text"
                   placeholder="0.00 OR %"
                   :value.sync="input.discount"
@@ -174,11 +167,18 @@
                 />
                 <CInput
                   label="Description of Product"
-                  class="col-md-10 col-lg-10"
+                  class="col-md-11 col-lg-10"
                   type="text"
                   placeholder="Description of produt"
                   :value.sync="input.description"
                 />
+                <CButton
+                  @click="removeProduct(k)"
+                  class="btn-sm del-btn"
+                  style="background: transparent"
+                >
+                  <CIcon :content="$options.cilTrash" style="color: red" />
+                </CButton>
               </CRow>
             </div>
           </CCol>

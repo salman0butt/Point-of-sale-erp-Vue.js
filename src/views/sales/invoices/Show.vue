@@ -83,6 +83,11 @@
             <span v-html="invoice.payment_terms"></span>
           </div>
           <div>
+            <label><b>Terms & Conditions :</b></label>
+
+            <span v-html="invoice.terms_and_conditions"></span>
+          </div>
+          <div>
             <label><b> Note : </b></label>
             {{ invoice.note }}
           </div>
@@ -140,6 +145,7 @@ export default {
         quotation_ref_no: "",
         invoice_ref_no: "",
         payment_terms: "",
+        terms_and_conditions: "",
         note: "",
         products: [],
       },
@@ -165,8 +171,6 @@ export default {
       this.uuid = this.$route.params.id;
       QuotationService.get(this.uuid)
         .then(({ data }) => {
-          console.log(data);
-          // invoice
           this.invoice.quotation_ref_no = data.quotation_ref_no;
           this.invoice.dated = data.dated;
           this.invoice.due_date = data.due_date;
@@ -176,6 +180,7 @@ export default {
           this.invoice.grand_total = data.grand_total;
           this.invoice.note = data.note;
           this.invoice.payment_terms = data.payment_terms;
+          this.invoice.terms_and_conditions = data.terms_and_conditions;
           this.invoice.invoice_ref_no = data.invoice_ref_no;
 
           // customer

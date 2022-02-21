@@ -1,10 +1,10 @@
 import http from "@/http-common";
 import Helper from "@/helpers/Helper";
 
-class BillerService extends Helper {
+class BillService extends Helper {
 
   getAll(page, per_page) {
-    let url = "/recurring/bill";
+    let url = "/bill";
 
     if (page !== '')
       url = super.updateQueryStringParameter(url, "page", page);
@@ -16,26 +16,26 @@ class BillerService extends Helper {
   }
 
   getBillerOptions() {
-    return http.get(`/recurring/bill-options`, super.selectedBranch());
+    return http.get(`/bill-options`, super.selectedBranch());
   }
 
   get(id) {
-    return http.get(`/recurring/bill/${id}`);
+    return http.get(`/bill/${id}`);
   }
 
   create(data, config) {
     config = Object.assign(config, super.selectedBranch());
-    return http.post("/recurring/bill", data, config);
+    return http.post("/bill", data, config);
   }
 
   update(id, data, config) {
-    return http.post(`/recurring/bill/${id}`, data, config);
+    return http.post(`/bill/${id}`, data, config);
   }
 
   delete(id) {
-    return http.delete(`/recurring/bill/${id}`);
+    return http.delete(`/bill/${id}`);
   }
 
 }
 
-export default new BillerService();
+export default new BillService();
