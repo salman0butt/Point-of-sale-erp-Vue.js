@@ -42,11 +42,13 @@ export default {
   watch: {
     previousValue: {
       handler: function (val) {
-        if (val) {
+        if (val && val.label) {
           this.account = val;
         }
+        this.$nextTick();
       },
       deep: true,
+      immediate: true,
     },
     account: function () {
       this.updateValue();
