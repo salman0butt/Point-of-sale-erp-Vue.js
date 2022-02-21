@@ -10,18 +10,10 @@
             <CCardBody>
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CustomerSearchField
-                    @customerSelected="customerSelected($event)"
-                    v-model="form.customer"
-                    :class="{ error: $v.form.customer.$error }"
-                    @input="$v.form.customer.$touch()"
-                    :previousValueCustomer="previousValueCustomer"
+                  <CustomerSearch
+                    :previousValue="form.previousValue"
+                    @customer-change="customerSelected($event)"
                   />
-                  <div v-if="$v.form.customer.$error">
-                    <p v-if="!$v.form.customer.required" class="errorMsg">
-                      Customer is required
-                    </p>
-                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -72,7 +64,7 @@
                     :value.sync="form.payment_terms"
                   />
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol sm="6" md="4" class="pt-2" v-if="isEditing">
                   <CSelect
                     label="Status"
                     :options="options.status"
@@ -113,6 +105,13 @@
                   <Label>Payment Terms </Label>
                   <vue-editor
                     v-model="form.payment_terms"
+                    :editor-toolbar="customToolbar"
+                  ></vue-editor>
+                </CCol>
+                <CCol sm="12" md="12" class="pt-2">
+                  <Label>Terms And Conditions </Label>
+                  <vue-editor
+                    v-model="form.terms_and_conditions"
                     :editor-toolbar="customToolbar"
                   ></vue-editor>
                 </CCol>
@@ -177,7 +176,8 @@
 </template>
 
 <script>
-import CustomerSearchField from "@/components/general/CustomerSearchField";
+// import CustomerSearchField from "@/components/general/CustomerSearchField";
+import CustomerSearch from "@/components/general/search/CustomerSearch";
 import SearchProduct from "@/components/layouts/SearchProduct";
 import SelectSalePerson from "@/components/general/SelectSalePerson";
 import { required } from "vuelidate/lib/validators";
@@ -187,12 +187,13 @@ import { cilTrash, cisFile } from "@coreui/icons-pro";
 import { globalMixin } from "@/mixins/globalMixin";
 import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
 import { VueEditor } from "vue2-editor";
+import SettingService from "@/services/settings/SettingService";
 
 export default {
   name: "CreateBrand",
   mixins: [globalMixin],
   components: {
-    CustomerSearchField,
+    CustomerSearch,
     SearchProduct,
     SelectSalePerson,
     AppUpload,
@@ -211,13 +212,14 @@ export default {
       note: "",
       items: [],
       images: [],
-      status: "",
+      status: "pending",
       payment_terms: "",
+      terms_and_conditions: "",
+      previousCustomer: "",
     },
     options: {
       status: [
-        { label: "Choose Status", value: "", selected: true, disabled: "" },
-        { label: "Pending", value: "pending" },
+        { label: "Pending", value: "pending", selected: true },
         { label: "Approved", value: "approved" },
         { label: "Rejected", value: "rejected" },
       ],
@@ -234,9 +236,25 @@ export default {
       ["bold", "italic", "underline"],
       [{ list: "ordered" }, { list: "bullet" }],
     ],
+    terms: [
+      {
+        key: "invoice_term_and_condition",
+        label: "Invoice",
+        data: "",
+      },
+      {
+        key: "quotation_term_and_condition",
+        label: "Quotation ",
+        data: "",
+      },
+      {
+        key: "purchase_order_term_and_condition",
+        label: "Purchase Orders",
+        data: "",
+      },
+    ],
     sales_persons: [],
     display_images: [],
-    previousValueCustomer: Object,
     previousSalesPersons: Array,
   }),
   validations() {
@@ -253,6 +271,7 @@ export default {
   created() {
     this.createMethod();
   },
+  watch: {},
   computed: {
     receivingItems() {
       return this.$store.getters.getSearchProductItems;
@@ -290,6 +309,7 @@ export default {
       this.form.id = this.$route.params.id;
       this.form.dated = this.calculateTodayDate();
       this.form.due_date = this.calculateDueDate();
+
       if (this.form.id !== "" && this.form.id !== undefined) {
         this.isEditing = true;
         this.getEditData();
@@ -304,6 +324,29 @@ export default {
           });
         })
         .catch((error) => {
+          console.log(error);
+        });
+      var terms_and_conditions = this.form.terms_and_conditions;
+
+      SettingService.getAll("accounting")
+        .then(({ data }) => {
+          if (data) {
+            data.map((item) => {
+              this.terms.map((term) => {
+                if (term.key === item.key) {
+                  if (item.key == "quotation_term_and_condition") {
+                    let testing = item.value;
+                    terms_and_conditions = testing;
+                  }
+                }
+              });
+            });
+          }
+          this.$store.commit("close_loader");
+          this.form.terms_and_conditions = terms_and_conditions;
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
         });
     },
@@ -322,6 +365,7 @@ export default {
         formData.append("note", this.form.note);
         formData.append("status", this.form.status);
         formData.append("payment_terms", this.form.payment_terms);
+        formData.append("terms_and_conditions", this.form.terms_and_conditions);
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
@@ -394,7 +438,7 @@ export default {
       }
     },
     customerSelected(customer) {
-      this.form.customer = customer;
+      this.form.customer = customer.value;
     },
     salesPersonSelected(person) {
       this.form.sales_persons = person;
@@ -445,12 +489,20 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             this.isEditing = true;
-            this.form.customer = res.data.customer.uuid;
+            this.form.previousValue = {
+              value: res.data.customer.uuid,
+              label:
+                res.data.customer.full_name.en +
+                " (serial: " +
+                res.data.customer.serial_no +
+                ")",
+            };
             this.form.dated = res.data.dated;
             this.form.due_date = res.data.due_date;
             this.form.note = res.data.note;
             this.form.status = res.data.status;
             this.form.payment_terms = res.data.payment_terms;
+            this.form.terms_and_conditions = res.data.terms_and_conditions;
 
             this.form.sales_persons = [];
             if (res.data.salespersons && res.data.salespersons.length > 0) {
@@ -510,7 +562,6 @@ export default {
             );
             this.$store.commit("set_quotation_total", res.data.grand_total);
 
-            this.previousValueCustomer = res.data.customer;
             this.previousSalesPersons = res.data.salespersons;
           }
         })

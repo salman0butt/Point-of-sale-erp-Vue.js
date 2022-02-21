@@ -4,7 +4,7 @@
     <multiselect
       v-model="form.supplier"
       :options="options.suppliers"
-      :multiple="true"
+      :multiple="false"
       :close-on-select="false"
       :clear-on-select="false"
       :preserve-search="true"

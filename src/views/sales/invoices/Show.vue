@@ -1,7 +1,7 @@
 <template>
   <CCard>
     <CCardHeader>
-      Quotation <strong># {{ invoice.quotation_ref_no }}</strong>
+      Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
       <div class="float-right">
         <a href="#" class="btn btn-sm btn-info">
           <CIcon name="cil-save" /> Save
@@ -171,8 +171,6 @@ export default {
       this.uuid = this.$route.params.id;
       QuotationService.get(this.uuid)
         .then(({ data }) => {
-          console.log(data);
-          // invoice
           this.invoice.quotation_ref_no = data.quotation_ref_no;
           this.invoice.dated = data.dated;
           this.invoice.due_date = data.due_date;
@@ -183,6 +181,7 @@ export default {
           this.invoice.note = data.note;
           this.invoice.payment_terms = data.payment_terms;
           this.invoice.terms_and_conditions = data.terms_and_conditions;
+          this.invoice.invoice_ref_no = data.invoice_ref_no;
 
           // customer
           this.customer.name = data.customer.full_name.en;

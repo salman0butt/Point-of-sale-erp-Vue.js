@@ -20,19 +20,13 @@
           <form @submit.prevent="formSubmit()">
             <CCardBody>
               <CRow>
+                <Loader />
+
                 <CCol sm="6" md="4" class="pt-2">
-                  <CustomerSearchField
-                    @customerSelected="customerSelected($event)"
-                    v-model="form.customer"
-                    :class="{ error: $v.form.customer.$error }"
-                    @input="$v.form.customer.$touch()"
-                    :previousValueCustomer="previousValueCustomer"
+                  <CustomerSearch
+                    :previousValue="form.previousValue"
+                    @customer-change="customerSelected($event)"
                   />
-                  <div v-if="$v.form.customer.$error">
-                    <p v-if="!$v.form.customer.required" class="errorMsg">
-                      Customer is required
-                    </p>
-                  </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -188,7 +182,7 @@
 </template>
 
 <script>
-import CustomerSearchField from "@/components/general/CustomerSearchField";
+import CustomerSearch from "@/components/general/search/CustomerSearch";
 import SearchProduct from "@/components/layouts/SearchProduct";
 import SelectSalePerson from "@/components/general/SelectSalePerson";
 import { required } from "vuelidate/lib/validators";
@@ -198,16 +192,18 @@ import { cilTrash, cisFile } from "@coreui/icons-pro";
 import { globalMixin } from "@/mixins/globalMixin";
 import { VueEditor } from "vue2-editor";
 import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
+import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "CreateBrand",
   mixins: [globalMixin],
   components: {
-    CustomerSearchField,
+    CustomerSearch,
     SearchProduct,
     SelectSalePerson,
     AppUpload,
     VueEditor,
+    Loader,
   },
   cilTrash,
   cisFile,
@@ -249,7 +245,6 @@ export default {
     },
     sales_persons: [],
     display_images: [],
-    previousValueCustomer: Object,
     previousSalesPersons: Array,
     customToolbar: [
       ["bold", "italic", "underline"],
@@ -306,6 +301,9 @@ export default {
     },
   },
   methods: {
+    customerSelected(customer) {
+      this.form.customer = customer.value;
+    },
     quotationChange() {
       let uuid = this.form.id;
       this.resetForm();
@@ -431,9 +429,7 @@ export default {
         }
       }
     },
-    customerSelected(customer) {
-      this.form.customer = customer;
-    },
+
     salesPersonSelected(person) {
       this.form.sales_persons = person;
     },
@@ -481,6 +477,8 @@ export default {
     getEditData(uuid) {
       this.form.id = uuid;
       if (this.form.id !== "" && this.form.id !== undefined) {
+        this.$store.commit("set_loader");
+
         this.isEditing = true;
 
         InvoiceService.get(this.form.id)
@@ -552,13 +550,21 @@ export default {
               );
               this.$store.commit("set_quotation_total", res.data.grand_total);
 
-              this.previousValueCustomer = res.data.customer;
+              this.form.previousValue = {
+                value: res.data.customer.uuid,
+                label:
+                  res.data.customer.full_name.en +
+                  " (serial: " +
+                  res.data.customer.serial_no +
+                  ")",
+              };
               this.previousSalesPersons = res.data.salespersons;
+              this.$store.commit("close_loader");
             }
           })
           .catch((error) => {
             console.log(error);
-            // this.$store.commit("close_loader");
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: "Error",

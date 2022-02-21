@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import BillerService from "@/services/accounting/biller/BillerService";
+import RecurringBillService from "@/services/accounting/recurringbill/RecurringBillService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 
 const fields = [
@@ -129,7 +129,7 @@ export default {
   methods: {
     getBiller(page = "", per_page = "") {
       this.empId = this.$route.params.id;
-      BillerService.getAll(page, per_page)
+      RecurringBillService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
             this.BillerData = [];
@@ -177,7 +177,7 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            BillerService.delete(this.deleteRows)
+            RecurringBillService.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({

@@ -24,6 +24,8 @@ export default {
     accounting: {
       name: "Accounting",
       chartOfAccount: "Chart of Accounts",
+      Bills: "Bills",
+
       RecurringBills: "Recurring Bills",
       paymentMethods: "Payment Methods",
       category: "Category",
