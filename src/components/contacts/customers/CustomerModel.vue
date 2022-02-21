@@ -11,7 +11,11 @@
       <template #header>
         <h6 class="modal-title">Quick Customer Add</h6>
       </template>
-      <QuickAddCustomer :submit="isSubmit" @reset-model="resetModel()" />
+      <QuickAddCustomer
+        :submit="isSubmit"
+        @reset-model="resetModel()"
+        @new-data="newData($event)"
+      />
       <template #footer>
         <CButton @click="closeModel()" color="danger">Close</CButton>
         <CButton @click="saveCustomer()" color="success">Save</CButton>
@@ -49,6 +53,9 @@ export default {
     closeModel() {
       this.isSubmit = false;
       this.$store.commit("set_customer_model", false);
+    },
+    newData(data) {
+      this.$emit("new-data", data);
     },
   },
 };

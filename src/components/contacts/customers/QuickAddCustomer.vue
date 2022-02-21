@@ -255,6 +255,7 @@ export default {
                 text: "Customer Created Successfully",
                 timer: 3600,
               });
+              this.$emit("new-data", res.data);
               this.$v.$reset();
               this.resetForm();
             }
