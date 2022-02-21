@@ -86,7 +86,48 @@
       <div>
         <CCard>
           <CCardHeader> <strong>Payment List</strong> </CCardHeader>
-          <CCardBody> </CCardBody>
+          <CCardBody>
+            <CDataTable
+              :items="payments"
+              :fields="fields"
+              table-filter
+              sorter
+              hover
+              ref="externalAgent"
+            >
+              <template #created_by="{ item }">
+                <td>
+                  {{ item.created_by.username }}
+                </td>
+              </template>
+              <template #actions="{ item }">
+                <td>
+                  <CButtonGroup>
+                    <CButton
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
+                      >View</CButton
+                    >
+                    <CButton
+                      @click="editRow(item.uuid)"
+                      class="btn-sm text-white"
+                      color="warning"
+                    >
+                      <CIcon :content="$options.cilPencil"
+                    /></CButton>
+                    <CButton
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
+                      <CIcon :content="$options.cilTrash" />
+                    </CButton>
+                  </CButtonGroup>
+                </td>
+              </template>
+            </CDataTable>
+          </CCardBody>
         </CCard>
       </div>
 
@@ -226,13 +267,29 @@ import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
 import { cisWallet } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader.vue";
+import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+
+const fields = [
+  { key: "created_by", label: "Created By", _style: "min-width:15%;" },
+  { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
+  { key: "dated", label: "Dated", _style: "min-width:40%" },
+  { key: "amount", label: "Amount", _style: "min-width:15%;" },
+  { key: "total_amount", label: "Total Amount", _style: "min-width:15%;" },
+  { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
+];
 
 export default {
   name: "Invoice",
   cisWallet,
-
+  cilPencil,
+  cilTrash,
+  cilEye,
+  components: {
+    Loader,
+  },
   data() {
     return {
+      fields,
       output: null,
       uuid: "",
       invoice: {
@@ -266,11 +323,10 @@ export default {
       options: {
         paymentMethods: [{ label: "Choose Payment Method", value: "" }],
       },
+      payments: [],
     };
   },
-  components: {
-    Loader,
-  },
+
   validations() {
     return {
       form: {
@@ -288,6 +344,8 @@ export default {
       await this.$htmlToPaper("printMe");
     },
     getServerData() {
+      this.$store.commit("set_loader");
+
       // Quotation Data
       this.uuid = this.$route.params.id;
       QuotationService.get(this.uuid)
@@ -313,11 +371,11 @@ export default {
             serverproducts.push(item);
           });
         })
-
         .catch((err) => {
           console.log(err);
         });
 
+      // Business logo
       let business_id = localStorage.getItem("business_id");
       this.$http
         .get("/business/" + business_id)
@@ -331,6 +389,7 @@ export default {
           console.log(err);
         });
 
+      // Payment Methods display
       let paymentMethods = this.options.paymentMethods;
       PaymentInvoiceService.create()
         .then(({ data }) => {
@@ -343,25 +402,97 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+
+      // All Payments of invoice
+      let payments = this.payments;
+      PaymentInvoiceService.getInvoicePayments(this.uuid)
+        .then(({ data }) => {
+          if (data) {
+            data.map((value, index) => {
+              payments.push(value);
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      this.$store.commit("close_loader");
     },
     paymentSubmit() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
+        let payments = this.payments;
         this.$store.commit("set_loader");
-
         this.form.customer = this.customer.uuid;
         this.form.invoice = this.uuid;
         PaymentInvoiceService.store(this.form)
           .then(({ data }) => {
-            console.log(data);
+            payments.unshift(data);
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Payment Added Successfully",
+              timer: 3600,
+            });
+            this.resetForm();
+
             this.$store.commit("close_loader");
           })
           .catch((err) => {
             this.$store.commit("close_loader");
-
             console.log(err);
           });
       }
+    },
+    resetForm() {
+      for (let index in this.form) {
+        this.form[index] = "";
+      }
+    },
+    viewRow(uuid) {
+      this.$router.push({ path: "/sales/invoices/show/" + uuid });
+    },
+    editRow(uuid) {
+      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    },
+    deleteRow(uuid) {
+      this.deleteRows = JSON.stringify([uuid]);
+      this.$swal
+        .fire({
+          title: "Do you want to delete this record",
+          text: "This will be record from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          // if (result.isConfirmed) {
+          //   InvoiceService.delete(this.deleteRows)
+          //     .then((res) => {
+          //       if (res.status == 200) {
+          //         this.$swal.fire({
+          //           icon: "success",
+          //           title: "Success",
+          //           text: "Quotation Deleted Successfully",
+          //           timer: 3600,
+          //         });
+          //         this.serverData = this.serverData.filter(
+          //           (item) => item.uuid != uuid
+          //         );
+          //       }
+          //     })
+          //     .catch((error) => {
+          //       this.$swal.fire({
+          //         icon: "error",
+          //         title: "Error",
+          //         text: "Something went Wrong",
+          //         timer: 3600,
+          //       });
+          //     });
+          //   this.deleteRows = [];
+          // }
+        });
     },
   },
 };

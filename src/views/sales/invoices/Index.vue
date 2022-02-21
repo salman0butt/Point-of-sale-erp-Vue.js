@@ -181,7 +181,6 @@ export default {
     editRow(uuid) {
       this.$router.push({ path: "/sales/invoices/edit/" + uuid });
     },
-
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
