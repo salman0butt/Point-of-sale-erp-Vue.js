@@ -7,9 +7,7 @@
         <CCard>
           <CCardHeader>
             Invoice
-            <strong style="text-align: center"
-              ># {{ invoice.invoice_ref_no }}</strong
-            >
+            <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
             <div class="float-center">
@@ -19,11 +17,9 @@
                   :to="`/customers/show/${customer.uuid}`"
                   v-if="$can('view customers')"
                 >
-                  <strong
-                    class="margin:auto"
-                    style="color: red; font-size: 22px"
-                    >{{ customer.name }}</strong
-                  ></router-link
+                  <strong class="margin:auto" style="color: red; font-size: 22px">{{
+                    customer.name
+                  }}</strong></router-link
                 >
               </div>
             </div>
@@ -37,8 +33,8 @@
             <form @submit.prevent="paymentSubmit()">
               <CCol sm="12" md="12" class="pt-2">
                 <Label
-                  ><CIcon style="color: green" :content="$options.cisWallet" />
-                  Payment Method</Label
+                  ><CIcon style="color: green" :content="$options.cisWallet" /> Payment
+                  Method</Label
                 >
                 <CSelect
                   :options="options.paymentMethods"
@@ -64,9 +60,7 @@
                 />
               </CCol>
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">
-                  Amount is required
-                </p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
               <CButton
                 progress
@@ -103,10 +97,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
@@ -116,11 +107,7 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -136,9 +123,7 @@
           <CCardHeader>
             Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
             <div class="float-right">
-              <a href="#" class="btn btn-sm btn-info">
-                <CIcon name="cil-save" /> Save
-              </a>
+              <a href="#" class="btn btn-sm btn-info"> <CIcon name="cil-save" /> Save </a>
               <a class="btn btn-sm btn-info ml-1" @click="print">
                 <CIcon name="cil-print" class="mr-1" /> Print Me
               </a>
@@ -147,12 +132,7 @@
           <CCardBody id="printMe">
             <CRow class="mb-4">
               <CCol sm="4">
-                <CImg
-                  v-bind:src="business.logo"
-                  block
-                  class="mb-2 imger"
-                  width="100%"
-                />
+                <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" />
                 <h6 class="mb-3">To:</h6>
                 <div>
                   <strong>{{ customer.name }}</strong>
@@ -186,10 +166,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    v-for="(product, index) in invoice.products"
-                    :key="product.uuid"
-                  >
+                  <tr v-for="(product, index) in invoice.products" :key="product.uuid">
                     <td class="center">{{ index + 1 }}</td>
                     <td class="left">{{ product.product.name.en }}</td>
                     <td class="left">{{ product.description }}</td>
@@ -198,9 +175,7 @@
                     <td class="right">{{ product.tax }}</td>
                     <td class="right">
                       {{
-                        product.discount_per
-                          ? product.discount + "%"
-                          : product.discount
+                        product.discount_per ? product.discount + "%" : product.discount
                       }}
                     </td>
                     <td class="right">{{ product.total }}</td>
@@ -386,7 +361,7 @@ export default {
       this.$http
         .get("/business/" + business_id)
         .then(({ data }) => {
-          if (data.logo.path) {
+          if (data.logo && data.logo.path) {
             this.business.logo = data.logo.path;
           }
         })
@@ -457,7 +432,7 @@ export default {
       }
     },
     viewRow(uuid) {
-      this.$router.push({ path: "/sales/invoices/show/" + uuid });
+      this.$router.push({ path: "/sales/invoices/reciept/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/sales/invoices/edit/" + uuid });
