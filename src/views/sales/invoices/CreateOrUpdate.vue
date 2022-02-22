@@ -468,13 +468,13 @@ export default {
           .then((res) => {
             if (res.status == 200) {
               this.isEditing = true;
+              this.form.sales_persons = [];
               this.form.customer = res.data.customer.uuid;
               this.form.dated = res.data.dated;
               this.form.due_date = res.data.due_date;
               this.form.note = res.data.note;
               this.form.payment_terms = res.data.payment_terms;
               this.form.status = res.data.status;
-              this.form.sales_persons = [];
               if (res.data.salespersons && res.data.salespersons.length > 0) {
                 let sales_persons = this.form.sales_persons;
                 res.data.salespersons.map(function (item) {
