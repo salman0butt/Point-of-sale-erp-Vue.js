@@ -35,7 +35,7 @@
             <thead>
               <tr>
                 <th class="center">#</th>
-                <th>Pyament No</th>
+                <th>Payment No</th>
                 <th>Payment Method</th>
                 <th class="center">Invoice ID</th>
                 <th class="right">Amount</th>
