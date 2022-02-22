@@ -98,8 +98,10 @@ export default {
         .then(({ data }) => {
           if (data) {
             data.map((item) => {
-              if (this.form[item.key]) {
-                this.form[item.key] = item.value;
+              if (item.key === "enable_tax") {
+                this.form.enable_tax = item.value;
+              } else if (item.key === "open_and_close") {
+                this.form.open_and_close = item.value;
               }
             });
           }

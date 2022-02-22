@@ -40,6 +40,7 @@ import AccountingSettingForm from "@/components/settings/AccountingSettingForm";
 import CustomerSettingForm from "@/components/settings/CustomerSettingForm";
 import DashboardSettingForm from "@/components/settings/DashboardSettingForm";
 import DeliverySettingForm from "@/components/settings/DeliverySettingForm";
+import CurrencySettingForm from "@/components/settings/CurrencySettingForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -53,6 +54,7 @@ export default {
     CustomerSettingForm,
     DashboardSettingForm,
     DeliverySettingForm,
+    CurrencySettingForm,
   },
   data() {
     return {
@@ -65,6 +67,7 @@ export default {
         { key: "AccountingSettingForm", name: "Accounting" },
         { key: "CustomerSettingForm", name: "Customer" },
         { key: "DeliverySettingForm", name: "Delivery" },
+        { key: "CurrencySettingForm", name: "Currency" },
       ],
     };
   },
