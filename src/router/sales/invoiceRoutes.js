@@ -7,6 +7,7 @@ const IndexInvoices = () => import('@/views/sales/invoices/Index')
 const CreateInvoices = () => import('@/views/sales/invoices/CreateOrUpdate')
 const ShowInvoices = () => import('@/views/sales/invoices/Show')
 const EditInvoices = () => import('@/views/sales/invoices/CreateOrUpdate')
+const Reciept = () => import('@/views/sales/invoices/Reciept')
 
 
 
@@ -38,6 +39,11 @@ const invoiceRoutes = {
             path: 'edit/:id',
             name: 'EditInvoices',
             component: EditInvoices
+        },
+        {
+            path: 'reciept/show/:id',
+            name: 'Reciept',
+            component: Reciept
         }
     ],
 

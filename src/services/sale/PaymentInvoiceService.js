@@ -7,9 +7,9 @@ class PaymentInvoiceService extends Helper {
         return http.get(url);
     }
 
-    // get(id) {
-    //     return http.get(`/invoice-payments/${id}`);
-    // }
+    get(id) {
+        return http.get(`/invoice-payments/${id}`);
+    }
 
     create() {
         return http.get(`/invoice-payments/create`);
