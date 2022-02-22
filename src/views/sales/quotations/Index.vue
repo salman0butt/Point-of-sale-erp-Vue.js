@@ -242,6 +242,7 @@ export default {
                     text: "Quotation Updated Successfully",
                     timer: 3600,
                   });
+                  this.$router.push({ path: "/sales/invoices/show/" + uuid });
                 }
               })
               .catch((error) => {

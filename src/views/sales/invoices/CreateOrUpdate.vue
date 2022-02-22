@@ -204,7 +204,7 @@ export default {
       note: "",
       items: [],
       images: [],
-      status: "",
+      status: "draft",
       payment_terms: "",
     },
     options: {
