@@ -48,7 +48,7 @@
                 <td class="center">1</td>
                 <td class="left">{{ reciept.payment_no }}</td>
                 <td class="left">{{ reciept.paymentMethod.paymentMethod }}</td>
-                <td class="left">{{ reciept.invoice.quotation_ref_no }}</td>
+                <td class="left">{{ reciept.invoice.invoice_ref_no }}</td>
                 <td class="right">{{ reciept.amount }}</td>
                 <td class="right">{{ reciept.amount }}</td>
                 <td class="right">{{ reciept.dated }}</td>
