@@ -79,13 +79,13 @@
               <br /><br />
               <CRow>
                 <CCol sm="12" md="12" class="pt-2">
-                  <h5>Currency Dominations</h5>
+                  <h5>Currency Denominations</h5>
                   <hr />
                 </CCol>
               </CRow>
               <CRow v-for="(item, index) in form.items2" :key="index">
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Domination" v-model="item.domnation" />
+                  <CInput label="Denomination" v-model="item.denomination" />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
@@ -96,13 +96,13 @@
                   />
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <i @click="removeDomination(k)" class="thumb"
+                  <i @click="removeDenomination(k)" class="thumb"
                     ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                   ><br />
                 </CCol>
               </CRow>
-              <i class="thumb" @click="addDomination()"
-                ><CIcon :content="$options.cibAddthis" /> Add Currency Domination</i
+              <i class="thumb" @click="addDenomination()"
+                ><CIcon :content="$options.cibAddthis" /> Add Currency Denomination</i
               >
 
               <!-- <CRow class="mt-4 d-block">
@@ -183,13 +183,13 @@ export default {
     removeCurrencyExhangeRate(index) {
       this.form.items.splice(index, 1);
     },
-    addDomination() {
+    addDenomination() {
       this.form.items2.push({
         dominnation: "",
         currency_value: "",
       });
     },
-    removeDomination(index) {
+    removeDenomination(index) {
       this.form.items2.splice(index, 1);
     },
 

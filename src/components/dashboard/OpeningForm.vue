@@ -5,7 +5,7 @@
         <form @submit.prevent="saveData()">
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
-              <CRow v-for="(value, index) in form.serverValues">
+              <CRow v-for="(value, index) in form.serverValues" :key="index">
                 <CCol sm="6" md="4" class="pt-2 bolder">
                   {{ value.denominations }}
                 </CCol>
