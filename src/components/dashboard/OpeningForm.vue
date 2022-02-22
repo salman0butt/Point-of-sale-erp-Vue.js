@@ -5,84 +5,27 @@
         <form @submit.prevent="saveData()">
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 0.005 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input1" @change="calculate()" />
+              <CRow v-for="(value, index) in form.serverValues">
+                <CCol sm="6" md="4" class="pt-2 bolder">
+                  {{ value.denominations }}
                 </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 0.010 </CCol>
                 <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input2" @change="calculate()" />
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 0.025 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input3" @change="calculate()" />
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 0.050 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input4" @change="calculate()" />
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 0.100 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input5" @change="calculate()" />
-                </CCol>
-              </CRow>
-            </CCol>
-            <CCol sm="6" md="6" class="pt-2">
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 0.500 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input6" @change="calculate()" />
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 1.000 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input7" @change="calculate()" />
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 5.000 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input8" @change="calculate()" />
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 10.000 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input9" @change="calculate()" />
-                </CCol>
-              </CRow>
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2 bolder"> 20.000 </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput type="number" v-model="form.input10" @change="calculate()" />
+                  <CInput
+                    type="number"
+                    v-model="form.formValues[index].input"
+                    @change="calculate()"
+                  />
                 </CCol>
               </CRow>
             </CCol>
           </CRow>
-          <!-- <CRow>
-            <CCol sm="12" md="12" class="pt-2"> <h3>Total 0 .000 BD</h3> </CCol>
-          </CRow> -->
-
-          <!-- <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p> -->
         </form>
       </CCol>
     </CRow>
   </div>
 </template>
 <script>
-// import SupplierServices from "@/services/contacts/supplier/SupplierServices";
-// import { required } from "vuelidate/lib/validators";
-
+import CurrencyDenominationService from "@/services/currency/CurrencyDenominationService";
 export default {
   name: "OpeningForm",
   props: {
@@ -92,38 +35,21 @@ export default {
     },
   },
   data: () => ({
-    form: {
-      input1: "",
-      input2: "",
-      input3: "",
-      input4: "",
-      input5: "",
-      input6: "",
-      input7: "",
-      input8: "",
-      input9: "",
-      input10: "",
-      total: 0,
-    },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
     },
+    form: {
+      serverValues: [],
+      formValues: [],
+    },
   }),
-  // validations() {
-  //   return {
-  //     form: {
-  //       name: { required },
-  //     },
-  //   };
-  // },
   created() {
-    // this.getDependenices();
+    this.createMethod();
   },
   watch: {
     submitForm() {
       this.$v.$touch();
       if (this.submit && !this.$v.$invalid) {
-        // this.saveData();
         this.$emit("reset-model");
       }
     },
@@ -136,41 +62,28 @@ export default {
   methods: {
     calculate() {
       let total = parseFloat("0.000");
-      if (this.form.input1) total += parseFloat(this.form.input1) * 0.005;
-      if (this.form.input2) total += parseFloat(this.form.input2) * 0.01;
-      if (this.form.input3) total += parseFloat(this.form.input3) * 0.025;
-      if (this.form.input4) total += parseFloat(this.form.input4) * 0.05;
-      if (this.form.input5) total += parseFloat(this.form.input5) * 0.1;
-      if (this.form.input6) total += parseFloat(this.form.input6) * 0.5;
-      if (this.form.input7) total += parseFloat(this.form.input7) * 1.0;
-      if (this.form.input8) total += parseFloat(this.form.input8) * 5.0;
-      if (this.form.input9) total += parseFloat(this.form.input9) * 10.0;
-      if (this.form.input10) total += parseFloat(this.form.input10) * 20.0;
-      this.form.total = total.toFixed(3);
-      this.$emit("total", this.form.total);
+      let formValues = this.form.formValues;
+      formValues.map((value) => {
+        total += parseFloat(value.input) * parseFloat(value.value);
+      });
+
+      this.$emit("total", total.toFixed(3));
     },
-    // getDependenices() {
-    //   // Customer Types
-    //   let type = "supplier";
-    //   CustomerSettingService.getAll(type)
-    //     .then(({ data }) => {
-    //       let type = this.options.type;
-    //       data.map(function (val) {
-    //         // Customer Types
-    //         if (val.key == "supplier_types") {
-    //           let supplier_types = JSON.parse(val.value);
-    //           supplier_types.forEach((element) => {
-    //             type.push({
-    //               value: element,
-    //             });
-    //           });
-    //         }
-    //       });
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // },
+    createMethod() {
+      let denominations = this.form.serverValues;
+      let formValues = this.form.formValues;
+      CurrencyDenominationService.getAll()
+        .then(({ data }) => {
+          data.map((value) => {
+            denominations.push(value);
+            formValues.push({ input: 0, value: value.value });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     // saveData() {
     //   this.$v.$touch();
     //   if (!this.$v.$invalid) {
