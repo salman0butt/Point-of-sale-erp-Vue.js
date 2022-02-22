@@ -52,14 +52,14 @@
                     placeholder="."
                   />
                 </CCol>
-                <CCol sm="6" md="3" class="pt-2">
+                <!-- <CCol sm="6" md="3" class="pt-2">
                   <CInput
                     label="Exchange Rate"
                     v-model="item.exchange_rate"
                     type="number"
                     step="any"
                   />
-                </CCol>
+                </CCol> -->
                 <CCol sm="12" md="12" class="pt-2">
                   <i @click="removeCurrencyExhangeRate(k)" class="thumb"
                     ><CIcon :content="$options.cisMinusSquare" /> Remove</i
@@ -105,7 +105,7 @@
                 ><CIcon :content="$options.cibAddthis" /> Add Currency Denomination</i
               >
 
-              <!-- <CRow class="mt-4 d-block">
+              <CRow class="mt-4 d-block">
                 <CButton
                   progress
                   timeout="2000"
@@ -115,7 +115,7 @@
                   type="submit"
                   >Save</CButton
                 >
-              </CRow> -->
+              </CRow>
             </form>
           </CCol>
         </CRow>
@@ -192,27 +192,13 @@ export default {
     removeDenomination(index) {
       this.form.items2.splice(index, 1);
     },
-
-    // CurrencySettingService() {
-    //   let type = "customer";
+    // getDem() {
     //   this.$store.commit("set_loader");
     //   CurrencySettingService.getAll(type)
     //     .then(({ data }) => {
     //       if (data != null && data != "") {
     //         let arr = this.form;
-    //         data.forEach(function (item) {
-    //           if (arr[item.key] !== undefined) {
-    //             const regx = /type/gm;
-    //             if (regx.test(item.key)) {
-    //               let data = JSON.parse(item.value).map((value) => {
-    //                 return { text: value, tiClasses: ["ti-valid"] };
-    //               });
-    //               arr[item.key].values = data;
-    //             } else {
-    //               arr[item.key] = item.value;
-    //             }
-    //           }
-    //         });
+    //         data.forEach(function (item) {});
     //       }
     //       this.$store.commit("close_loader");
     //     })
