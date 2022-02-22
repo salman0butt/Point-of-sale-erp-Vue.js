@@ -1,7 +1,8 @@
 <template>
   <div>
     <Loader />
-    <CCard>
+
+    <!-- <CCard>
       <CCardHeader> Accounting </CCardHeader>
       <CCardBody>
         <CRow>
@@ -90,7 +91,7 @@
           </CCol>
         </CRow>
       </CCardBody>
-    </CCard>
+    </CCard> -->
 
     <CCard>
       <CCardHeader> Terms & Conditions </CCardHeader>
@@ -111,9 +112,9 @@
   </div>
 </template>
 <script>
-import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
-import { required } from "vuelidate/lib/validators";
-import { VueTagsInput } from "@johmun/vue-tags-input";
+// import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
+// import { required } from "vuelidate/lib/validators";
+// import { VueTagsInput } from "@johmun/vue-tags-input";
 import Loader from "@/components/layouts/Loader";
 import TaxForm from "@/components/taxes/TaxForm";
 import TermAndCondition from "@/components/termsAndConditions/TermAndCondition";
@@ -121,111 +122,109 @@ import PaymentTermIndex from "@/components/paymentTerms/PaymentTermIndex";
 
 export default {
   name: "HrSettingForm",
-  components: { VueTagsInput, Loader, TaxForm, TermAndCondition, PaymentTermIndex },
+  components: { Loader, TaxForm, TermAndCondition, PaymentTermIndex },
   data: () => ({
     settingData: [],
-    form: {
-      account_types: {
-        tag: "",
-        values: [],
-      },
-      banks_types: {
-        tag: "",
-        values: [],
-      },
-      payment_methods_types: {
-        tag: "",
-        values: [],
-      },
-    },
+    // form: {
+    //   account_types: {
+    //     tag: "",
+    //     values: [],
+    //   },
+    //   banks_types: {
+    //     tag: "",
+    //     values: [],
+    //   },
+    //   payment_methods_types: {
+    //     tag: "",
+    //     values: [],
+    //   },
+    // },
   }),
-  validations() {
-    return {
-      form: {
-        account_types: { values: { required } },
-        banks_types: { values: { required } },
-        payment_methods_types: { values: { required } },
-      },
-    };
-  },
+  // validations() {
+  //   return {
+  //     form: {
+  //       account_types: { values: { required } },
+  //       banks_types: { values: { required } },
+  //       payment_methods_types: { values: { required } },
+  //     },
+  //   };
+  // },
   created() {
-    this.getAccountingSetting();
+    // this.getAccountingSetting();
   },
   methods: {
-    getAccountingSetting() {
-      let type = "accounting";
-      this.$store.commit("set_loader");
-      AccoutingSettingService.getAll(type)
-        .then(({ data }) => {
-          if (data != null && data != "") {
-            let arr = this.form;
-            data.forEach(function (item) {
-              if (arr[item.key] !== undefined) {
-                const regx = /type/gm;
-                if (regx.test(item.key)) {
-                  let data = JSON.parse(item.value).map((value) => {
-                    return { text: value, tiClasses: ["ti-valid"] };
-                  });
-                  arr[item.key].values = data;
-                } else {
-                  arr[item.key] = item.value;
-                }
-              }
-            });
-          }
-          this.$store.commit("close_loader");
-        })
-        .catch((error) => {
-          this.$store.commit("close_loader");
-          console.log(error);
-        });
-    },
-    updateAccountingSetting() {
-      this.settingData = [];
-      for (var key in this.form) {
-        const regx = /type/gm;
-        if (regx.test(key)) {
-          let data = JSON.stringify(
-            this.form[key].values.map(function (item) {
-              return item.text;
-            })
-          );
-          this.settingData.push({ key: key, value: data, type: "accounting" });
-        } else {
-          this.settingData.push({ key: key, value: this.form[key], type: "accounting" });
-        }
-      }
-
-      this.$v.form.$touch();
-      if (!this.$v.form.$invalid) {
-        this.$store.commit("set_loader");
-        let data = this.settingData;
-        AccoutingSettingService.update(data)
-          .then((res) => {
-            if (res.status == 200) {
-              this.$swal.fire({
-                icon: "success",
-                title: "Success",
-                text: "Settings Updated Successfully",
-                timer: 3600,
-              });
-
-              this.$v.$reset();
-              this.$store.commit("close_loader");
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
-          });
-      }
-    },
+    // getAccountingSetting() {
+    //   let type = "accounting";
+    //   this.$store.commit("set_loader");
+    //   AccoutingSettingService.getAll(type)
+    //     .then(({ data }) => {
+    //       if (data != null && data != "") {
+    //         let arr = this.form;
+    //         data.forEach(function (item) {
+    //           if (arr[item.key] !== undefined) {
+    //             const regx = /type/gm;
+    //             if (regx.test(item.key)) {
+    //               let data = JSON.parse(item.value).map((value) => {
+    //                 return { text: value, tiClasses: ["ti-valid"] };
+    //               });
+    //               arr[item.key].values = data;
+    //             } else {
+    //               arr[item.key] = item.value;
+    //             }
+    //           }
+    //         });
+    //       }
+    //       this.$store.commit("close_loader");
+    //     })
+    //     .catch((error) => {
+    //       this.$store.commit("close_loader");
+    //       console.log(error);
+    //     });
+    // },
+    // updateAccountingSetting() {
+    //   this.settingData = [];
+    //   for (var key in this.form) {
+    //     const regx = /type/gm;
+    //     if (regx.test(key)) {
+    //       let data = JSON.stringify(
+    //         this.form[key].values.map(function (item) {
+    //           return item.text;
+    //         })
+    //       );
+    //       this.settingData.push({ key: key, value: data, type: "accounting" });
+    //     } else {
+    //       this.settingData.push({ key: key, value: this.form[key], type: "accounting" });
+    //     }
+    //   }
+    //   this.$v.form.$touch();
+    //   if (!this.$v.form.$invalid) {
+    //     this.$store.commit("set_loader");
+    //     let data = this.settingData;
+    //     AccoutingSettingService.update(data)
+    //       .then((res) => {
+    //         if (res.status == 200) {
+    //           this.$swal.fire({
+    //             icon: "success",
+    //             title: "Success",
+    //             text: "Settings Updated Successfully",
+    //             timer: 3600,
+    //           });
+    //           this.$v.$reset();
+    //           this.$store.commit("close_loader");
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.log(error);
+    //         this.$store.commit("close_loader");
+    //         this.$swal.fire({
+    //           icon: "error",
+    //           title: "Error",
+    //           text: "Something Went Wrong.",
+    //           timer: 3600,
+    //         });
+    //       });
+    //   }
+    // },
   },
 };
 </script>
