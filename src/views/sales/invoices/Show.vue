@@ -16,7 +16,7 @@
               Customer
               <div>
                 <router-link
-                  to="/customers/show/"
+                  :to="`/customers/show/${customer.uuid}`"
                   v-if="$can('view customers')"
                 >
                   <strong
@@ -248,6 +248,12 @@
                         <strong>{{ invoice.grand_total }}</strong>
                       </td>
                     </tr>
+                    <!-- <tr>
+                      <td class="left"><strong>Payment </strong></td>
+                      <td class="right">
+                        <strong>{{ invoice.grand_total }}</strong>
+                      </td>
+                    </tr> -->
                   </tbody>
                 </table>
                 <!-- <a href="#" class="btn btn-success">
