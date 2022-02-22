@@ -7,7 +7,7 @@
           <Loader />
           <CCol xs="12" lg="12">
             <form @submit.prevent="updateCurrencySetting()">
-              <CRow>
+              <!-- <CRow>
                 <CCol sm="12" md="12" class="pt-2">
                   <h5>Exchange Rates</h5>
                   <hr />
@@ -52,60 +52,52 @@
                     placeholder="."
                   />
                 </CCol>
-                <CCol sm="6" md="3" class="pt-2">
-                  <CInput
-                    label="Exchange Rate"
-                    v-model="item.exchange_rate"
-                    type="number"
-                    step="any"
-                  />
-                </CCol>
+          
+                </CCol> 
                 <CCol sm="12" md="12" class="pt-2">
                   <i @click="removeCurrencyExhangeRate(k)" class="thumb"
                     ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                   ><br />
-                  <!-- <CButton
-                    @click="removeCurrencyExhangeRate(k)"
-                    class="btn-sm del-btn"
-                    style="background: transparent"
-                  >
-                    <CIcon :content="$options.cilTrash" style="color: red" />
-                  </CButton> -->
+            
                 </CCol>
               </CRow>
               <i class="thumb" @click="addCurrencyExchangeRate()"
                 ><CIcon :content="$options.cibAddthis" /> Add Currency Exchnage Rate</i
               >
-              <br /><br />
+              <br /><br /> -->
               <CRow>
                 <CCol sm="12" md="12" class="pt-2">
                   <h5>Currency Denominations</h5>
                   <hr />
                 </CCol>
               </CRow>
-              <CRow v-for="(item, index) in form.items2" :key="index">
+              <CRow
+                v-for="(item, index) in form.currency_denominations"
+                :key="index"
+              >
                 <CCol sm="6" md="4" class="pt-2">
-                  <CInput label="Denomination" v-model="item.denomination" />
+                  <CInput label="Denomination" v-model="item.denominations" />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Currency Vlaue"
-                    v-model="item.currency_value"
+                    v-model="item.value"
                     type="number"
                     step="any"
                   />
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <i @click="removeDenomination(k)" class="thumb"
+                  <i @click="removeDenomination(index)" class="thumb"
                     ><CIcon :content="$options.cisMinusSquare" /> Remove</i
                   ><br />
                 </CCol>
               </CRow>
               <i class="thumb" @click="addDenomination()"
-                ><CIcon :content="$options.cibAddthis" /> Add Currency Denomination</i
+                ><CIcon :content="$options.cibAddthis" /> Add Currency
+                Denomination</i
               >
 
-              <!-- <CRow class="mt-4 d-block">
+              <CRow class="mt-4 d-block">
                 <CButton
                   progress
                   timeout="2000"
@@ -115,7 +107,7 @@
                   type="submit"
                   >Save</CButton
                 >
-              </CRow> -->
+              </CRow>
             </form>
           </CCol>
         </CRow>
@@ -124,11 +116,9 @@
   </div>
 </template>
 <script>
-// import CurrencySettingService from "@/services/settings/CurrencySettingService";
-// import { required } from "vuelidate/lib/validators";
-// import { VueTagsInput } from "@johmun/vue-tags-input";
 import Loader from "@/components/layouts/Loader";
 import { cilTrash, cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
+import CurrencyDenominationService from "@/services/currency/CurrencyDenominationService";
 
 export default {
   name: "CurrencySettingForm",
@@ -150,25 +140,26 @@ export default {
           exchange_rate: "",
         },
       ],
-      items2: [
-        {
-          dominnation: "",
-          currency_value: "",
-        },
-      ],
+      currency_denominations: [],
     },
   }),
-  // validations() {
-  //   return {
-  //     form: {
 
-  //     },
-  //   };
-  // },
   created() {
-    // this.CurrencySettingService();
+    this.createMethod();
   },
   methods: {
+    createMethod() {
+      let denominations = this.form.currency_denominations;
+      CurrencyDenominationService.getAll()
+        .then(({ data }) => {
+          data.map((value) => {
+            denominations.push(value);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     addCurrencyExchangeRate() {
       this.form.items.push({
         payment_currency: "",
@@ -184,87 +175,35 @@ export default {
       this.form.items.splice(index, 1);
     },
     addDenomination() {
-      this.form.items2.push({
-        dominnation: "",
-        currency_value: "",
+      this.form.currency_denominations.push({
+        denominations: "",
+        value: "",
       });
     },
     removeDenomination(index) {
-      this.form.items2.splice(index, 1);
+      this.form.currency_denominations.splice(index, 1);
     },
-
-    // CurrencySettingService() {
-    //   let type = "customer";
-    //   this.$store.commit("set_loader");
-    //   CurrencySettingService.getAll(type)
-    //     .then(({ data }) => {
-    //       if (data != null && data != "") {
-    //         let arr = this.form;
-    //         data.forEach(function (item) {
-    //           if (arr[item.key] !== undefined) {
-    //             const regx = /type/gm;
-    //             if (regx.test(item.key)) {
-    //               let data = JSON.parse(item.value).map((value) => {
-    //                 return { text: value, tiClasses: ["ti-valid"] };
-    //               });
-    //               arr[item.key].values = data;
-    //             } else {
-    //               arr[item.key] = item.value;
-    //             }
-    //           }
-    //         });
-    //       }
-    //       this.$store.commit("close_loader");
-    //     })
-    //     .catch((error) => {
-    //       this.$store.commit("close_loader");
-    //       console.log(error);
-    //     });
-    // },
-    // updateCurrencySetting() {
-    //   this.settingData = [];
-    //   for (var key in this.form) {
-    //     const regx = /type/gm;
-    //     if (regx.test(key)) {
-    //       let data = JSON.stringify(
-    //         this.form[key].values.map(function (item) {
-    //           return item.text;
-    //         })
-    //       );
-    //       this.settingData.push({ key: key, value: data });
-    //     } else {
-    //       this.settingData.push({ key: key, value: this.form[key] });
-    //     }
-    //   }
-    //   this.$v.$touch();
-    //   if (!this.$v.$invalid) {
-    //     this.$store.commit("set_loader");
-    //     let data = this.settingData;
-    //     CurrencySettingService.update(data)
-    //       .then((res) => {
-    //         if (res.status == 200) {
-    //           this.$swal.fire({
-    //             icon: "success",
-    //             title: "Success",
-    //             text: "Settings Updated Successfully",
-    //             timer: 3600,
-    //           });
-    //           this.$v.$reset();
-    //           this.$store.commit("close_loader");
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //         this.$store.commit("close_loader");
-    //         this.$swal.fire({
-    //           icon: "error",
-    //           title: "Error",
-    //           text: "Something Went Wrong.",
-    //           timer: 3600,
-    //         });
-    //       });
-    //   }
-    // },
+    updateCurrencySetting() {
+      let data = this.form.currency_denominations;
+      CurrencyDenominationService.store(data)
+        .then(({ data }) => {
+          this.$swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Currency Denomination Updated Successfully",
+            timer: 3600,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
+          });
+        });
+    },
   },
 };
 </script>
