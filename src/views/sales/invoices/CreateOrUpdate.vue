@@ -523,6 +523,7 @@ export default {
           .then((res) => {
             if (res.status == 200) {
               this.isEditing = true;
+              this.form.sales_persons = [];
               this.form.customer = res.data.customer.uuid;
               this.form.dated = res.data.dated;
               this.form.due_date = res.data.due_date;

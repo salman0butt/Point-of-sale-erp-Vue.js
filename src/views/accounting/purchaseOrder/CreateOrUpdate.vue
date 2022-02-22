@@ -313,14 +313,14 @@ import Loader from "@/components/layouts/Loader.vue";
 // import AccountServices from "@/services/accounting/accounts/AccountServices";
 import { attachmentMixin } from "@/mixins/attachmentMixin";
 import { globalMixin } from "@/mixins/globalMixin";
-import AccountDropdown from "@/components/general/AccountDropdown.vue";
+// import AccountDropdown from "@/components/general/AccountDropdown.vue";
 import ProductSearch from "@/components/general/search/ProductSearch.vue";
 export default {
   name: "CreateOrUpdatePurchase",
   mixins: [attachmentMixin, globalMixin],
   components: {
     Loader,
-    AccountDropdown,
+    // AccountDropdown,
     ProductSearch,
   },
   cilTrash,

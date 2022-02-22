@@ -43,7 +43,7 @@
             <AccountDropdown
               :showLabel="false"
               @getAccountDropdown="getAccountDropDown($event, k)"
-              :previousValue="item.previousAccount"
+              :previousValue.sync="item.previousAccount"
               :key="k"
             />
           </td>
