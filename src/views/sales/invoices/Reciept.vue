@@ -14,7 +14,12 @@
       <CCardBody id="printMe">
         <CRow class="mb-4">
           <CCol sm="12" md="12">
-            <!-- <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" /> -->
+            <CImg
+              v-bind:src="business.logo"
+              block
+              class="mb-2"
+              style="max-width: 250px"
+            />
             <h6 class="mb-3">
               Recieved From: <strong>{{ reciept.customer.name }}</strong>
             </h6>
@@ -111,6 +116,7 @@ export default {
         name: "",
         email: "",
         mobile: "",
+        logo: "",
       },
       reciept: {
         customer: {
@@ -173,6 +179,9 @@ export default {
             this.business.name = JSON.parse(data.business_name).en;
             this.business.email = data.business_email;
             this.business.mobile = data.business_mobile_no;
+            if (data.logo && data.logo.path) {
+              this.business.logo = data.logo.path;
+            }
           }
         })
         .catch((err) => {
