@@ -14,7 +14,12 @@
       <CCardBody id="printMe">
         <CRow class="mb-4">
           <CCol sm="12" md="12">
-            <!-- <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" /> -->
+            <CImg
+              v-bind:src="business.logo"
+              block
+              class="mb-2"
+              style="max-width: 250px"
+            />
             <h6 class="mb-3">
               Recieved From: <strong>{{ reciept.customer.name }}</strong>
             </h6>
@@ -35,7 +40,7 @@
             <thead>
               <tr>
                 <th class="center">#</th>
-                <th>Pyament No</th>
+                <th>Payment No</th>
                 <th>Payment Method</th>
                 <th class="center">Invoice ID</th>
                 <th class="right">Amount</th>
@@ -48,7 +53,7 @@
                 <td class="center">1</td>
                 <td class="left">{{ reciept.payment_no }}</td>
                 <td class="left">{{ reciept.paymentMethod.paymentMethod }}</td>
-                <td class="left">{{ reciept.invoice.quotation_ref_no }}</td>
+                <td class="left">{{ reciept.invoice.invoice_ref_no }}</td>
                 <td class="right">{{ reciept.amount }}</td>
                 <td class="right">{{ reciept.amount }}</td>
                 <td class="right">{{ reciept.dated }}</td>
@@ -111,6 +116,7 @@ export default {
         name: "",
         email: "",
         mobile: "",
+        logo: "",
       },
       reciept: {
         customer: {
@@ -173,6 +179,9 @@ export default {
             this.business.name = JSON.parse(data.business_name).en;
             this.business.email = data.business_email;
             this.business.mobile = data.business_mobile_no;
+            if (data.logo && data.logo.path) {
+              this.business.logo = data.logo.path;
+            }
           }
         })
         .catch((err) => {
