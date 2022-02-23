@@ -1,8 +1,8 @@
-import http from "../../http-common";
+import http from "@/http-common";
 
 class BranchServices {
     getAll() {
-        return http.get("/employees");
+        return http.get("/branches");
     }
 
     getCreateDetail() {
@@ -10,7 +10,7 @@ class BranchServices {
     }
 
     get(id) {
-        return http.get(`/employees/${id}`);
+        return http.get(`/branches/${id}`);
     }
 
     create(data) {
@@ -22,11 +22,11 @@ class BranchServices {
     }
 
     delete(id) {
-        return http.delete(`/employees/${id}`);
+        return http.delete(`/branches/${id}`);
     }
 
     deleteAll() {
-        return http.delete(`/employees`);
+        return http.delete(`/branches`);
     }
 }
 
