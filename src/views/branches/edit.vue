@@ -5,7 +5,7 @@
         <CCard>
           <CCardHeader> Branch : {{ form.name }}</CCardHeader>
           <CCardBody>
-            <CTabs add-tab-classes="mt-1" :active-tab="activeTab">
+            <CTabs add-tab-classes="mt-1" active>
               <CTab>
                 <template slot="title">
                   {{ tabs[0] }}
@@ -17,20 +17,27 @@
                   {{ tabs[1] }}
                 </template>
 
+                <CCardBody> <Terminal /></CCardBody>
+              </CTab>
+              <CTab>
+                <template slot="title">
+                  {{ tabs[2] }}
+                </template>
+
                 <TimingBranch></TimingBranch>
               </CTab>
 
               <!-- Targets -->
               <CTab>
                 <template slot="title">
-                  {{ tabs[2] }}
+                  {{ tabs[3] }}
                 </template>
                 <TargetBranch></TargetBranch>
               </CTab>
               <!-- Social Media -->
               <CTab>
                 <template slot="title">
-                  {{ tabs[3] }}
+                  {{ tabs[4] }}
                 </template>
                 <SocialMediaBranch></SocialMediaBranch>
               </CTab>
@@ -48,7 +55,7 @@ import GeneralBranch from "@/components/branches/General";
 import TimingBranch from "@/components/branches/Timing";
 import TargetBranch from "@/components/branches/Target";
 import SocialMediaBranch from "@/components/branches/SocialMedia";
-
+import Terminal from "@/components/branches/Terminal";
 import { required, minLength, numeric } from "vuelidate/lib/validators";
 const fields = [
   {
@@ -84,6 +91,7 @@ export default {
     TimingBranch: TimingBranch,
     TargetBranch: TargetBranch,
     SocialMediaBranch: SocialMediaBranch,
+    Terminal,
   },
 
   data() {
@@ -91,7 +99,8 @@ export default {
       //All
       tabs: [
         "General",
-        //  "Timing",
+        "Terminal",
+        "Timing",
         //   "Target",
         //    "Social media"
       ],

@@ -140,13 +140,10 @@
                   </CCardBody>
                 </form>
               </CTab>
-              <CTab>
+              <CTab disabled>
                 <template slot="title">
                   {{ tabs[1] }}
                 </template>
-                <CCardBody>
-                  <Terminal />
-                </CCardBody>
               </CTab>
               <CTab disabled>
                 <template slot="title">
@@ -200,11 +197,11 @@
 
 <script>
 import BranchServices from "@/services/branches/BranchServices";
-import Terminal from "@/components/branches/Terminal";
+
 import { required, minLength, numeric } from "vuelidate/lib/validators";
 export default {
   name: "createBranch",
-  components: { Terminal },
+
   data() {
     return {
       form: {

@@ -2,26 +2,47 @@
   <div>
     <CRow v-for="(terminal, k) in terminals" :key="k">
       <CCol sm="6" md="6" class="pt-2">
-        <CInput label="Name" v-model="terminal.name" disabled />
+        <CInput label="Name" v-model="terminal.name" :disabled="terminal.isDisabled" />
       </CCol>
       <CCol sm="2" md="2" class="pt-2">
         <span class="midler"
-          >((<a href="#" class="del-record">Delete</a>
+          >((<a @click="removeRow(k)" class="del-record">Delete</a>
           -
-          <a href="#" class="edit-record">Edit</a>))</span
+          <a class="edit-record" @click="editRow(k)">Edit</a>))</span
         >
       </CCol>
     </CRow>
+    <i class="thumb" @click="addTerminal()"
+      ><CIcon :content="$options.cibAddthis" /> Add Terminal</i
+    >
   </div>
 </template>
 
 <script>
+import { cilTrash, cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 export default {
   name: "Terminal",
+  cilTrash,
+  cibAddthis,
+  cisMinusSquare,
   data() {
     return {
-      terminals: [{ name: "Terminal1" }, { name: "Terminal2" }],
+      terminals: [
+        { name: "Terminal1", isDisabled: true },
+        { name: "Terminal2", isDisabled: true },
+      ],
     };
+  },
+  methods: {
+    addTerminal() {
+      this.terminals.push({ name: "", isDisabled: true });
+    },
+    editRow(k) {
+      this.terminals[k].isDisabled = !this.terminals[k].isDisabled;
+    },
+    removeRow(index) {
+      this.terminals.splice(index, 1);
+    },
   },
 };
 </script>
@@ -37,5 +58,13 @@ export default {
 .midler {
   position: relative;
   top: 2rem;
+}
+.del-btn {
+  background: transparent;
+  height: fit-content;
+  margin-top: 2rem;
+}
+.thumb {
+  cursor: pointer;
 }
 </style>
