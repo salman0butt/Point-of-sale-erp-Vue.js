@@ -25,11 +25,7 @@
       </template>
       <ClosingForm :submit="isSubmit" @reset-model="resetModel()" />
 
-      <template #footer>
-        <!-- <CButton color="success">Closing</CButton> -->
-
-        <!-- <CButton @click="closeModel" color="danger">Close</CButton> -->
-      </template>
+      <template #footer> </template>
     </CModal>
   </div>
 </template>
