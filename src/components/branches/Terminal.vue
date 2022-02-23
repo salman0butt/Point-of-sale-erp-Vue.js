@@ -7,8 +7,9 @@
       <CCol sm="2" md="2" class="pt-2">
         <span class="midler"
           >((<a @click="removeRow(k)" class="del-record">Delete</a>
-          -
-          <a class="edit-record" @click="editRow(k)">Edit</a>))</span
+          <span v-if="terminal.uuid"
+            >- <a class="edit-record" @click="editRow(k)">Edit</a></span
+          >))</span
         >
       </CCol>
     </CRow>
@@ -28,14 +29,14 @@ export default {
   data() {
     return {
       terminals: [
-        { name: "Terminal1", isDisabled: true },
-        { name: "Terminal2", isDisabled: true },
+        { uuid: "asdasdasdasassdfsdf", name: "Terminal1", isDisabled: true },
+        { uuid: "werwerdasdasdasdwer", name: "Terminal2", isDisabled: true },
       ],
     };
   },
   methods: {
     addTerminal() {
-      this.terminals.push({ name: "", isDisabled: true });
+      this.terminals.push({ uuid: "", name: "", isDisabled: false });
     },
     editRow(k) {
       this.terminals[k].isDisabled = !this.terminals[k].isDisabled;
