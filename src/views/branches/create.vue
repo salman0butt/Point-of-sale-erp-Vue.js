@@ -201,6 +201,7 @@ import BranchServices from "@/services/branches/BranchServices";
 import { required, minLength, numeric } from "vuelidate/lib/validators";
 export default {
   name: "createBranch",
+
   data() {
     return {
       form: {
@@ -214,9 +215,9 @@ export default {
       },
       dates: "",
       saveAndExit: "",
-
       tabs: [
         "General",
+        "Terminal",
         //  "Timing",
         //   "Traget",
         //    "Social media"
@@ -294,5 +295,18 @@ export default {
 <style scoped>
 .errorMsg {
   color: red;
+}
+
+.edit-record {
+  color: green !important;
+  cursor: pointer;
+}
+.del-record {
+  color: red !important;
+  cursor: pointer;
+}
+.midler {
+  position: relative;
+  top: 2rem;
 }
 </style>
