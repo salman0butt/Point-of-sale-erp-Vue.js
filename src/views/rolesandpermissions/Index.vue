@@ -6,7 +6,7 @@
           <CCardHeader> Roles </CCardHeader>
           <CCardBody>
             <router-link
-              v-if="$can('create roles')"
+              v-if="$can('create roles-and-permissions')"
               class="btn btn-success"
               :to="{ name: 'Create Role' }"
               style="float: right"
@@ -39,24 +39,29 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      v-if="$can('show roles-and-permissions')"
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
                     >
                     <CButton
-                      v-if="$can('edit roles')"
+                      v-if="$can('edit roles-and-permissions')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <!-- <CButton
+                    <CButton
+                      v-if="$can('delete roles-and-permissions')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
                     >
                       <CIcon :content="$options.cilTrash" />
-                    </CButton> -->
+                    </CButton>
                   </CButtonGroup>
                 </td>
               </template>
@@ -162,7 +167,9 @@ export default {
                     text: "Employee Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter((item) => item.uuid != uuid);
+                  this.usersData = this.usersData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.getTotalCardData();
                 }
               })

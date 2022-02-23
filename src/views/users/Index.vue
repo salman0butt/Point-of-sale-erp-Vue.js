@@ -6,7 +6,7 @@
           <CCardHeader> Users </CCardHeader>
           <CCardBody>
             <router-link
-              v-if="$can('read roles')"
+              v-if="$can('create roles-and-permissions')"
               class="btn btn-success"
               to="/rolesandpermissions/roles/index"
               style="float: right"
