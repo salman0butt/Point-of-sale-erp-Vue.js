@@ -102,9 +102,34 @@ export default {
       this.$emit("total", total.toFixed(3));
     },
     saveOpening() {
+      let formValues = this.form.formValues;
+      let storeValue = [];
+      if (formValues && formValues.length > 0) {
+        formValues.map((item) => {
+          if (
+            item &&
+            item.input &&
+            parseFloat(item.input) > 0 &&
+            item.value &&
+            item.denominations
+          ) {
+            storeValue.push({
+              denomination: item.denominations,
+              value: parseFloat(item.input),
+              total_number: parseFloat(item.input) * parseFloat(item.value),
+            });
+          }
+        });
+      }
+
       const terminal_id = localStorage.getItem("terminal_id");
       if (!terminal_id) return;
-      const data = { terminal_id: terminal_id, type: "open", total: this.form.total };
+      const data = {
+        terminal_id: terminal_id,
+        type: "open",
+        total: this.form.total,
+        details: storeValue,
+      };
       TerminalRecordService.create(data)
         .then((res) => {
           if (res.status === 201) {
@@ -245,7 +270,11 @@ export default {
         .then(({ data }) => {
           data.map((value) => {
             denominations.push(value);
-            formValues.push({ input: 0, value: value.value });
+            formValues.push({
+              input: 0,
+              value: value.value,
+              denominations: value.denominations,
+            });
           });
         })
         .catch((error) => {
