@@ -78,6 +78,9 @@ export default {
       this.$emit("hide-total");
       // }
     },
+    branchChnaged(val) {
+      this.getDependencies();
+    },
   },
   computed: {
     submitForm() {
@@ -85,6 +88,9 @@ export default {
     },
     continue() {
       return this.isContinue;
+    },
+    branchChnaged() {
+      return this.$store.getters.getBranches;
     },
   },
   methods: {
@@ -122,18 +128,24 @@ export default {
           this.form.terminal = "";
         });
     },
+    getSelectedBranch() {
+      const terminal_id = localStorage.getItem("selected_branches");
+      if (terminal_id) {
+        return JSON.parse(terminal_id);
+      }
+    },
     getDependencies() {
       const terminal_id = localStorage.getItem("terminal_id");
       if (!terminal_id) {
         let type = JSON.stringify(["open_and_close"]);
         SettingService.get(type)
-          .then(({ data }) => {
+          .then(async ({ data }) => {
             if (data && data.open_and_close) {
               if (data.open_and_close === "on") {
                 // check branch exist
-                let selected_branch = JSON.parse(
-                  localStorage.getItem("selected_branches")
-                );
+                const selected_branch = this.getSelectedBranch();
+                if (!selected_branch) return;
+
                 BranchServices.get(selected_branch[0])
                   .then(({ data }) => {
                     if (data && data.uuid) {
@@ -145,18 +157,25 @@ export default {
                               list_terminal.push({ ...item, id });
                             });
                             if (data.length === 1) {
-                              if (data[0] && data[0].records) {
+                              if (
+                                data[0] &&
+                                data[0].records &&
+                                data[0].records[0] &&
+                                data[0].records[0].type
+                              ) {
                                 const records = data[0].records;
                                 const type = records[0].type;
                                 if (type === "open") {
                                   this.isContinue = true;
                                 } else {
-                                  // localStorage.setItem("terminal_id", data[0].uuid);
+                                  localStorage.setItem("terminal_id", data[0].uuid);
                                   this.isContinue = false;
                                   this.form.terminal = data[0].uuid;
                                 }
                               } else {
+                                // console.log(data[0]);
                                 this.isContinue = false;
+                                this.form.terminal = data[0].uuid;
                               }
                             } else {
                               let terminals = this.options.terminals;
@@ -207,6 +226,7 @@ export default {
       ) {
         let type = terminal.records[0].type;
         if (type === "open") {
+          localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = true;
         } else {
           localStorage.setItem("terminal_id", terminal.uuid);
