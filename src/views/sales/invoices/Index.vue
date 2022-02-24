@@ -5,12 +5,21 @@
         <CCard>
           <CCardHeader> Invoices </CCardHeader>
           <CCardBody>
-            <router-link
+            <!-- <router-link
               v-if="$can('create invoices')"
               class="btn btn-success"
               to="/sales/invoices/create"
               style="float: right"
               >Create Invoice</router-link
+            > -->
+
+            <CButton
+              v-if="$can('create invoices')"
+              color="success"
+              style="float: right"
+              @click="opening()"
+            >
+              Create Invoice</CButton
             >
 
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -77,13 +86,14 @@
         </CCard>
       </CCol>
     </CRow>
+    <OpeningModel />
   </div>
 </template>
 
 <script>
 import InvoiceService from "@/services/sale/InvoiceService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-
+import OpeningModel from "@/components/dashboard/OpeningModel";
 const fields = [
   { key: "invoice_ref_no", label: "Ref No", _style: "min-width:15%;" },
   { key: "customer", label: "Customer", _style: "min-width:40%" },
@@ -95,6 +105,7 @@ const fields = [
 
 export default {
   name: "IndexQuotations",
+  components: { OpeningModel },
   cilPencil,
   cilTrash,
   cilEye,
@@ -202,9 +213,7 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {
@@ -218,6 +227,14 @@ export default {
             this.deleteRows = [];
           }
         });
+    },
+    opening() {
+      // check terminal id exist in localstorage
+      if (localStorage.getItem("terminal_id")) {
+        this.$router.push({ path: "/sales/invoices/create" });
+      } else {
+        this.$store.commit("set_opening_model", true);
+      }
     },
     setPagination(meta) {
       this.activePage = parseInt(meta.current_page);
