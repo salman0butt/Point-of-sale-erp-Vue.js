@@ -49,7 +49,7 @@
                   >
                   <CButtonGroup>
                     <CButton
-                      v-if="$can('view quotations')"
+                      v-if="$can('show quotations')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
