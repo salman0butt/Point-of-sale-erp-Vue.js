@@ -226,6 +226,7 @@ export default {
       dated: "",
       due_date: "",
       sales_persons: "",
+      terminal_id: localStorage.getItem("terminal_id"),
       note: "",
       items: [],
       images: [],
@@ -384,6 +385,7 @@ export default {
         let formData = new FormData();
         formData.append("dated", this.form.dated);
         formData.append("status", "approved");
+        formData.append("terminal_id", this.form.terminal_id);
         formData.append("due_date", this.form.due_date);
         formData.append("customer", this.form.customer);
         formData.append("sales_persons", this.form.sales_persons);
