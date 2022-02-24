@@ -157,9 +157,15 @@
                 <div>
                   <strong>{{ customer.name }}</strong>
                 </div>
-                <div>Address : {{ customer.address.street.en }}</div>
-                <div>Email: {{ customer.email.email }}</div>
-                <div>Phone:{{ customer.contact_number.number.en }}</div>
+                <div v-if="customer.address">
+                  Address : {{ customer.address.street.en }}
+                </div>
+                <div v-if="customer.email">
+                  Email: {{ customer.email.email }}
+                </div>
+                <div v-if="customer.contact_number">
+                  Phone: {{ customer.contact_number.number.en }}
+                </div>
               </CCol>
               <CCol sm="8" class="mt-5" style="text-align: right">
                 <div>

@@ -106,7 +106,6 @@ export default {
       let storeValue = [];
       if (formValues && formValues.length > 0) {
         formValues.map((item) => {
-          console.log("🚀 ~ item", item);
           if (item && item.input && item.value && item.denominations) {
             storeValue.push({
               denomination: item.denominations,
@@ -186,6 +185,7 @@ export default {
                                 const type = records[0].type;
                                 if (type === "open") {
                                   this.isContinue = true;
+                                  localStorage.setItem("terminal_id", data[0].uuid);
                                 } else {
                                   localStorage.setItem("terminal_id", data[0].uuid);
                                   this.isContinue = false;
@@ -195,6 +195,7 @@ export default {
                                 // console.log(data[0]);
                                 this.isContinue = false;
                                 this.form.terminal = data[0].uuid;
+                                localStorage.setItem("terminal_id", data[0].uuid);
                               }
                             } else {
                               let terminals = this.options.terminals;
