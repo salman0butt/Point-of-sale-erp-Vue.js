@@ -50,7 +50,9 @@ export default {
   data: () => ({
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
-      terminals: [{ value: "", label: "Choose Terminal", disabled: true, selected: "" }],
+      terminals: [
+        { value: "", label: "Choose Terminal", disabled: true, selected: "" },
+      ],
     },
     isContinue: false,
     showTerminalOptions: false,
@@ -106,7 +108,11 @@ export default {
     saveOpening() {
       const terminal_id = localStorage.getItem("terminal_id");
       if (!terminal_id) return;
-      const data = { terminal_id: terminal_id, type: "open", total: this.form.total };
+      const data = {
+        terminal_id: terminal_id,
+        type: "open",
+        total: this.form.total,
+      };
       TerminalRecordService.create(data)
         .then((res) => {
           if (res.status === 201) {
@@ -168,7 +174,10 @@ export default {
                                 if (type === "open") {
                                   this.isContinue = true;
                                 } else {
-                                  localStorage.setItem("terminal_id", data[0].uuid);
+                                  localStorage.setItem(
+                                    "terminal_id",
+                                    data[0].uuid
+                                  );
                                   this.isContinue = false;
                                   this.form.terminal = data[0].uuid;
                                 }
