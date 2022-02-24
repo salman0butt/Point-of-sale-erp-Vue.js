@@ -153,6 +153,7 @@ export default {
       }
     },
     getDependencies() {
+      this.$store.commit("set_loader");
       const terminal_id = localStorage.getItem("terminal_id");
       if (!terminal_id) {
         let type = JSON.stringify(["open_and_close"]);
@@ -221,7 +222,10 @@ export default {
                     this.isContinue = false;
                   });
               } else {
+                console.log("workig");
                 this.isContinue = true;
+                this.$store.commit("set_opening_model", false);
+                this.$router.push({ path: "/sales/invoices/create" });
               }
             }
           })
@@ -231,6 +235,7 @@ export default {
       } else {
         this.isContinue = true;
       }
+      this.$store.commit("close_loader");
     },
     selectTerminal() {
       let uuid = this.form.terminal;

@@ -124,7 +124,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <OpeningModel />
+    <!-- <OpeningModel /> -->
     <ClosingModel />
   </div>
 </template>
@@ -297,7 +297,8 @@ export default {
   },
   methods: {
     opening() {
-      this.$store.commit("set_opening_model", true);
+      alert("check inside invoices");
+      // this.$store.commit("set_opening_model", true);
     },
     closing() {
       this.$store.commit("set_closing_model", true);
