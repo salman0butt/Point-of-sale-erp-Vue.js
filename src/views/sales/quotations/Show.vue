@@ -24,10 +24,9 @@
           <div>
             <strong>{{ customer.name }}</strong>
           </div>
-          <div>Customer address</div>
-          <div>43-190 Mikolow, Poland</div>
-          <div>Email: lukasz@bootstrapmaster.com</div>
-          <div>Phone: +48 123 456 789</div>
+          <div>Address : {{ customer.address.street.en }}</div>
+          <div>Email: {{ customer.email.email }}</div>
+          <div>Phone:{{ customer.contact_number.number.en }}</div>
         </CCol>
         <CCol sm="8" class="mt-5" style="text-align: right">
           <div>
@@ -155,6 +154,8 @@ export default {
       customer: {
         name: "",
         address: "",
+        contact_number: "",
+        email: "",
       },
     };
   },
@@ -187,6 +188,8 @@ export default {
           // customer
           this.customer.name = data.customer.full_name.en;
           this.customer.address = data.customer.default_address;
+          this.customer.contact_number = data.customer.default_contact;
+          this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
           data.products.map((item, id) => {
             serverproducts.push(item);

@@ -66,7 +66,7 @@ export default {
             },
           ]);
         }
-        if (this.$can("read quotations")) {
+        if (this.$can("read invoices")) {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",
@@ -243,7 +243,7 @@ export default {
         //   ]);
         // }
 
-        if (this.$can("read category")) {
+        if (this.$can("read bills")) {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
@@ -254,7 +254,7 @@ export default {
           ]);
         }
 
-        if (this.$can("read category")) {
+        if (this.$can("read recurring-bills")) {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
@@ -285,7 +285,7 @@ export default {
             },
           ]);
         }
-        if (this.$can("read transfer")) {
+        if (this.$can("read journal-entry")) {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
@@ -295,7 +295,7 @@ export default {
             },
           ]);
         }
-        if (this.$can("read transfer")) {
+        if (this.$can("read purchase-order")) {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
@@ -345,7 +345,7 @@ export default {
       }
 
       // users
-      if (this.$can("read Settings")) {
+      if (this.$can("read users")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
           name: this.$t("menu.users"),
@@ -354,7 +354,7 @@ export default {
         });
       }
       // merchant
-      if (this.$can("read business")) {
+      if (this.$can("read merchant")) {
         this.sideBarItems.push({
           _name: "CSidebarNavItem",
           name: this.$t("menu.merchant"),
