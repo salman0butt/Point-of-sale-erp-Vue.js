@@ -28,7 +28,7 @@
             </CCol>
           </CRow>
         </form>
-        <p v-else-if="isContinue">Please Continue</p>
+        <p v-else-if="isContinue">Please Continue..</p>
       </CCol>
     </CRow>
   </div>
@@ -74,9 +74,10 @@ export default {
       }
     },
     continue(val) {
-      // if (this.continue) {
+      if (val) {
+        this.$router.push({ path: "/sales/invoices/create" });
+      }
       this.$emit("hide-total");
-      // }
     },
     branchChnaged(val) {
       this.getDependencies();
