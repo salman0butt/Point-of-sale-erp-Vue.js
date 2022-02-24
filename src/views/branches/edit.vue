@@ -100,7 +100,7 @@ export default {
       tabs: [
         "General",
         "Terminal",
-        "Timing",
+        // "Timing",
         //   "Target",
         //    "Social media"
       ],

@@ -220,6 +220,7 @@ export default {
                 });
               }
               this.resetForm();
+              this.getTerminalsData();
               this.$store.commit("close_loader");
             }
           })

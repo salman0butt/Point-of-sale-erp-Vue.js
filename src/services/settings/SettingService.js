@@ -10,6 +10,10 @@ class SettingService {
         });
     }
 
+    get(key) {
+        return http.get(`/hr-settings/${key}`);
+    }
+
     update(data) {
         return http.patch(`/settings`, data);
     }
