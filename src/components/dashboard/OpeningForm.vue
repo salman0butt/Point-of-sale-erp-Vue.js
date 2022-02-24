@@ -28,7 +28,7 @@
             </CCol>
           </CRow>
         </form>
-        <p v-else-if="isContinue">Please Continue</p>
+        <p v-else-if="isContinue">Please Continue..</p>
       </CCol>
     </CRow>
   </div>
@@ -74,9 +74,7 @@ export default {
       }
     },
     continue(val) {
-      // if (this.continue) {
       this.$emit("hide-total");
-      // }
     },
     branchChnaged(val) {
       this.getDependencies();
@@ -104,9 +102,28 @@ export default {
       this.$emit("total", total.toFixed(3));
     },
     saveOpening() {
+      let formValues = this.form.formValues;
+      let storeValue = [];
+      if (formValues && formValues.length > 0) {
+        formValues.map((item) => {
+          if (item && item.input && item.value && item.denominations) {
+            storeValue.push({
+              denomination: item.denominations,
+              value: parseFloat(item.value),
+              total_number: parseInt(item.input),
+            });
+          }
+        });
+      }
+
       const terminal_id = localStorage.getItem("terminal_id");
       if (!terminal_id) return;
-      const data = { terminal_id: terminal_id, type: "open", total: this.form.total };
+      const data = {
+        terminal_id: terminal_id,
+        type: "open",
+        total: this.form.total,
+        details: storeValue,
+      };
       TerminalRecordService.create(data)
         .then((res) => {
           if (res.status === 201) {
@@ -119,6 +136,7 @@ export default {
             this.getDependencies();
             this.$emit("hide-total");
             this.$store.commit("set_opening_model", false);
+            this.$router.push({ path: "/sales/invoices/create" });
           }
         })
         .catch((error) => {
@@ -167,6 +185,7 @@ export default {
                                 const type = records[0].type;
                                 if (type === "open") {
                                   this.isContinue = true;
+                                  localStorage.setItem("terminal_id", data[0].uuid);
                                 } else {
                                   localStorage.setItem("terminal_id", data[0].uuid);
                                   this.isContinue = false;
@@ -176,6 +195,7 @@ export default {
                                 // console.log(data[0]);
                                 this.isContinue = false;
                                 this.form.terminal = data[0].uuid;
+                                localStorage.setItem("terminal_id", data[0].uuid);
                               }
                             } else {
                               let terminals = this.options.terminals;
@@ -228,6 +248,8 @@ export default {
         if (type === "open") {
           localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = true;
+          this.$store.commit("set_opening_model", false);
+          this.$router.push({ path: "/sales/invoices/create" });
         } else {
           localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = false;
@@ -244,7 +266,11 @@ export default {
         .then(({ data }) => {
           data.map((value) => {
             denominations.push(value);
-            formValues.push({ input: 0, value: value.value });
+            formValues.push({
+              input: 0,
+              value: value.value,
+              denominations: value.denominations,
+            });
           });
         })
         .catch((error) => {
