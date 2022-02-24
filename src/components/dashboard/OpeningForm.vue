@@ -7,10 +7,10 @@
           :options="options.terminals"
           :value.sync="form.terminal"
           @change="selectTerminal()"
-          v-if="showTerminalOptions"
+          v-if="showTerminalOptions && !isContinue"
         />
 
-        <form @submit.prevent="saveData()" v-if="!isContinue">
+        <form @submit.prevent="saveData()" v-if="!isContinue && form.terminal">
           <CRow>
             <CCol sm="6" md="6" class="pt-2">
               <CRow v-for="(value, index) in form.serverValues" :key="index">
@@ -28,7 +28,7 @@
             </CCol>
           </CRow>
         </form>
-        <p v-else>Please Continue</p>
+        <p v-else-if="isContinue">Please Continue</p>
       </CCol>
     </CRow>
   </div>
@@ -38,7 +38,7 @@ import CurrencyDenominationService from "@/services/currency/CurrencyDenominatio
 import SettingService from "@/services/settings/SettingService";
 import BranchServices from "@/services/branches/BranchServices";
 import BranchTerminalServices from "@/services/branches/BranchTerminalServices";
-
+import TerminalRecordService from "@/services/general/TerminalRecordService";
 export default {
   name: "OpeningForm",
   props: {
@@ -59,6 +59,7 @@ export default {
       serverValues: [],
       formValues: [],
       terminal: "",
+      total: 0.0,
     },
   }),
   created() {
@@ -67,15 +68,23 @@ export default {
   },
   watch: {
     submitForm() {
-      this.$v.$touch();
-      if (this.submit && !this.$v.$invalid) {
+      if (this.submit) {
+        this.saveOpening();
         this.$emit("reset-model");
       }
+    },
+    continue(val) {
+      // if (this.continue) {
+      this.$emit("hide-total");
+      // }
     },
   },
   computed: {
     submitForm() {
       return this.submit;
+    },
+    continue() {
+      return this.isContinue;
     },
   },
   methods: {
@@ -85,8 +94,33 @@ export default {
       formValues.map((value) => {
         total += parseFloat(value.input) * parseFloat(value.value);
       });
-
+      this.form.total = total;
       this.$emit("total", total.toFixed(3));
+    },
+    saveOpening() {
+      const terminal_id = localStorage.getItem("terminal_id");
+      if (!terminal_id) return;
+      const data = { terminal_id: terminal_id, type: "open", total: this.form.total };
+      TerminalRecordService.create(data)
+        .then((res) => {
+          if (res.status === 201) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Opening Created Successfully",
+              timer: 3600,
+            });
+            this.getDependencies();
+            this.$emit("hide-total");
+            this.$store.commit("set_opening_model", false);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          localStorage.removeItem("terminal_id");
+          this.isContinue = false;
+          this.form.terminal = "";
+        });
     },
     getDependencies() {
       const terminal_id = localStorage.getItem("terminal_id");
@@ -111,12 +145,17 @@ export default {
                               list_terminal.push({ ...item, id });
                             });
                             if (data.length === 1) {
-                              const records = data[0].records;
-                              const type = records[0].type;
-                              if (type === "open") {
-                                this.isContinue = true;
+                              if (data[0] && data[0].records) {
+                                const records = data[0].records;
+                                const type = records[0].type;
+                                if (type === "open") {
+                                  this.isContinue = true;
+                                } else {
+                                  // localStorage.setItem("terminal_id", data[0].uuid);
+                                  this.isContinue = false;
+                                  this.form.terminal = data[0].uuid;
+                                }
                               } else {
-                                localStorage.setItem("terminal_id", data[0].uuid);
                                 this.isContinue = false;
                               }
                             } else {
@@ -156,11 +195,16 @@ export default {
     },
     selectTerminal() {
       let uuid = this.form.terminal;
-      let terminal = this.list_terminals.find(function (item, id) {
+      let terminal = this.list_terminals.find(function (item) {
         return item.uuid === uuid;
       });
 
-      if (terminal) {
+      if (
+        terminal &&
+        terminal.records &&
+        terminal.records[0] &&
+        terminal.records[0].type
+      ) {
         let type = terminal.records[0].type;
         if (type === "open") {
           this.isContinue = true;
@@ -168,6 +212,9 @@ export default {
           localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = false;
         }
+      } else {
+        localStorage.setItem("terminal_id", terminal.uuid);
+        this.isContinue = false;
       }
     },
     createMethod() {
@@ -184,55 +231,6 @@ export default {
           console.log(error);
         });
     },
-
-    // saveData() {
-    //   this.$v.$touch();
-    //   if (!this.$v.$invalid) {
-    //     let data = this.form;
-    //     SupplierServices.quickAdd(data)
-    //       .then((res) => {
-    //         if (res.status === 201 || res.status === 200) {
-    //           this.$swal.fire({
-    //             icon: "success",
-    //             title: "Success",
-    //             text: "Supplier Created Successfully",
-    //             timer: 3600,
-    //           });
-    //           this.$v.$reset();
-    //           this.resetForm();
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         if (error.response.status == 422) {
-    //           let errors = error.response.data.errors;
-    //           this.$swal.fire({
-    //             icon: "error",
-    //             title: "Serial No",
-    //             text: errors.serial_no,
-    //             timer: 3600,
-    //           });
-    //         } else {
-    //           this.$swal.fire({
-    //             icon: "error",
-    //             title: "Error",
-    //             text: "Something Went Wrong",
-    //             timer: 3600,
-    //           });
-    //         }
-    //       });
-    //   }
-    // },
-    // resetForm() {
-    //   for (let key in this.form) {
-    //     this.form[key] = "";
-    //   }
-    // },
   },
 };
 </script>
-
-<style scoped>
-.bolder {
-  font-weight: bold;
-}
-</style>
