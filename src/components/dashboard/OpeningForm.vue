@@ -106,17 +106,12 @@ export default {
       let storeValue = [];
       if (formValues && formValues.length > 0) {
         formValues.map((item) => {
-          if (
-            item &&
-            item.input &&
-            parseFloat(item.input) > 0 &&
-            item.value &&
-            item.denominations
-          ) {
+          console.log("🚀 ~ item", item);
+          if (item && item.input && item.value && item.denominations) {
             storeValue.push({
               denomination: item.denominations,
-              value: parseFloat(item.input),
-              total_number: parseFloat(item.input) * parseFloat(item.value),
+              value: parseFloat(item.value),
+              total_number: parseInt(item.input),
             });
           }
         });
