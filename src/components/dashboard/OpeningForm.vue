@@ -76,9 +76,6 @@ export default {
       }
     },
     continue(val) {
-      if (val) {
-        this.$router.push({ path: "/sales/invoices/create" });
-      }
       this.$emit("hide-total");
     },
     branchChnaged(val) {
@@ -126,6 +123,7 @@ export default {
             this.getDependencies();
             this.$emit("hide-total");
             this.$store.commit("set_opening_model", false);
+            this.$router.push({ path: "/sales/invoices/create" });
           }
         })
         .catch((error) => {
@@ -238,6 +236,8 @@ export default {
         if (type === "open") {
           localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = true;
+          this.$store.commit("set_opening_model", false);
+          this.$router.push({ path: "/sales/invoices/create" });
         } else {
           localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = false;
