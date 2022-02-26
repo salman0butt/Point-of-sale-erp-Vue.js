@@ -25,13 +25,13 @@ export default {
       name: "Accounting",
       chartOfAccount: "Chart of Accounts",
       Bills: "Bills",
-
       RecurringBills: "Recurring Bills",
       paymentMethods: "Payment Methods",
       category: "Category",
       income: "Income",
       expense: "Expense",
-      transfer: "Journal Entry"
+      transfer: "Journal Entry",
+      purchaseOrder: "Purchase Order"
     },
     branches: "Branches",
     users: "Users",

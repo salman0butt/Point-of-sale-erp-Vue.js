@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-view></router-view>
+    <router-view :key="componentKey"></router-view>
     <BranchModel />
   </div>
 </template>
@@ -9,8 +9,28 @@
 import BranchModel from "@/components/model/BranchModel";
 export default {
   name: "App",
+  data() {
+    return {
+      componentKey: 0,
+    };
+  },
   components: {
     BranchModel,
+  },
+  computed: {
+    languageChanged() {
+      return this.$store.getters.getLanguage;
+    },
+  },
+  watch: {
+    async languageChanged() {
+      this.forceRerender();
+    },
+  },
+  methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
   },
 };
 </script>

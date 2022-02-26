@@ -1,0 +1,37 @@
+export default {
+  brands: {
+    index: {
+      title: "العلامات التجارية",
+      add: "إضافة العلامة التجارية",
+      search: "بحث",
+      table: {
+        name: "اسم",
+        status: "حالة",
+        actions: "أجراءات",
+      },
+      actions: {
+        edit: "يحرر",
+        delete: "حذف",
+      },
+    },
+    form:{
+      modelTitle: "إنشاء العلامة التجارية",
+      name: "اسم",
+      status: "حالة",
+      logo: "شعار العلامة التجارية",
+      save: "يحفظ",
+      close: "يغلق",
+      editBrand: "تحرير العلامة التجارية",
+      newBrand: "إنشاء العلامة التجارية",
+      saveAndExit: "حفظ وخروج",
+      saveAndContinue: "حفظ واستمرار",
+      successMsg: "تم حفظ العلامة التجارية بنجاح",
+      updateMsg: "تم تحديث العلامة التجارية بنجاح",
+      validations: {
+        name:{
+          required: "مطلوب اسم",
+        }
+      }
+    },
+  },
+};

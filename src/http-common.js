@@ -9,6 +9,5 @@ export default axios.create({
     // "X-Tenant": window.location.hostname,
     "X-Tenant": "demo1.sw-backend.test",
     "Cache-Control": "no-cache",
-
   }
 });

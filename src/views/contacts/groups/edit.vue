@@ -93,6 +93,10 @@ export default {
           value: "Customer",
           label: "Customer",
         },
+        {
+          value: "Supplier",
+          label: "Supplier",
+        },
       ],
       status: [
         { value: "active", label: "Active" },
