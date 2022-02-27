@@ -88,7 +88,7 @@ export default {
           key: "CreditAccountPayment",
           name: "Credit Account Payment",
         },
-        { key: "Discounts", name: "Discounts" },
+        // { key: "Discounts", name: "Discounts" },
       ],
     };
   },
