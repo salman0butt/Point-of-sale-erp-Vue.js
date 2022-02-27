@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Brands </CCardHeader>
+          <CCardHeader> {{ $t("brands.index.title") }} </CCardHeader>
           <CCardBody>
             <div>
               <!-- <router-link
@@ -19,7 +19,7 @@
                 style="float: right; margin-right: 10px"
                 @click="addBrand()"
               >
-                Quick Add</CButton
+                {{ $t("brands.index.add") }}</CButton
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -36,9 +36,26 @@
               :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
+              :noItemsView="{
+                noResults: this.$t('table.noResults'),
+                noItems: this.$t('table.noItems'),
+              }"
+              :itemsPerPageSelect="{
+                label: this.$t('table.itemsPerPageSelect.label'),
+              }"
+              :tableFilter="{
+                label: this.$t('table.tableFilter.label'),
+                placeholder: this.$t('table.tableFilter.placeholder'),
+              }"
             >
               <template #status="{ item }">
-                <td>{{ item.status ? item.status : "" }}</td>
+                <td>
+                  <CBadge
+                    v-if="item.status"
+                    :color="item.status.toLowerCase() === 'active' ? 'success' : 'danger'"
+                    >{{ item.status ? item.status : "" }}</CBadge
+                  >
+                </td>
               </template>
 
               <template #actions="{ item }">
@@ -52,7 +69,8 @@
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      >Edit <CIcon :content="$options.cilPencil"
+                    >
+                      <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
                       v-if="$can('delete brands')"
@@ -84,11 +102,6 @@ import BrandService from "@/services/catalogs/brands/BrandService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import BrandModel from "@/components/catalogs/brands/BrandModel";
 import { tableMixin } from "@/mixins/tableMixin";
-const fields = [
-  { key: "name", label: "NAME", _style: "width:50%" },
-  { key: "status", label: "STATUS", _style: "width:30%;" },
-  { key: "actions", label: "ACTION", _style: "width:25%;" },
-];
 
 export default {
   name: "IndexBrand",
@@ -102,7 +115,19 @@ export default {
   data() {
     return {
       data: [],
-      fields,
+      fields: [
+        { key: "name", label: this.$t("brands.index.table.name"), _style: "width:50%" },
+        {
+          key: "status",
+          label: this.$t("brands.index.table.status"),
+          _style: "width:30%;",
+        },
+        {
+          key: "actions",
+          label: this.$t("brands.index.table.actions"),
+          _style: "width:25%;",
+        },
+      ],
     };
   },
   created() {

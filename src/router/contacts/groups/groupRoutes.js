@@ -21,7 +21,7 @@ const groupRoutes =
             component: IndexGroups
         },
         {
-            path: 'create',
+            path: 'create/:type?',
             name: 'Create Groups',
             component: CreateGroups
         },

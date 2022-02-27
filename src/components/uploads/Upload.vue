@@ -278,7 +278,7 @@ export default {
       <img src="/img/images/attachment.png" alt="attachment" />
 
       <p class="mainMessage">
-        {{ uploadMsg ? uploadMsg : "Click to upload or drop your attachments here" }}
+        {{ uploadMsg ? uploadMsg : $t("general.uploadMsg") }}
       </p>
     </div>
     <div class="imgsPreview" v-show="Imgs.length > 0">

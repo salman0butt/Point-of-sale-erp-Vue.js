@@ -239,6 +239,16 @@ const actions = {
   setLanguage({ commit }, language) {
     commit('set_language', language);
     localStorage.setItem("language", language);
+    http.defaults.headers.common['lang'] = language;
+    const htmlEl=document.querySelector("html");
+    if(language === 'ar') {
+      htmlEl.setAttribute('dir', 'rtl');
+      htmlEl.setAttribute('lang', language);
+    }else if(language === 'en') {
+      htmlEl.setAttribute('dir', 'ltr');
+      htmlEl.setAttribute('lang', language);
+    }
+
   },
   setPorfileImage({ commit }, img) {
     commit('set_profile_img', img);

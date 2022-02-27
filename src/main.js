@@ -46,7 +46,6 @@ Vue.use(ColorPicker)
 // Vue.use(abilitiesPlugin, defineAbilityFor());
 
 Vue.use(Skeleton)
-
 Vue.use(Vuelidate);
 Vue.use(CoreuiVuePro);
 Vue.prototype.$log = console.log.bind(console);
@@ -88,3 +87,4 @@ new Vue({
     App
   }
 })
+

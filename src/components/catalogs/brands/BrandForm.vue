@@ -13,13 +13,15 @@
                   class="pt-2"
                 >
                   <CInput
-                    label="Name"
+                    :label="$t('brands.form.name')"
                     v-model="form.name"
                     :class="{ error: $v.form.name.$error }"
                     @input="$v.form.name.$touch()"
                   />
                   <div v-if="$v.form.name.$error">
-                    <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                    <p v-if="!$v.form.name.required" class="errorMsg">
+                      {{ $t("brands.form.validations.name.required") }}
+                    </p>
                   </div>
                 </CCol>
 
@@ -30,7 +32,7 @@
                   class="pt-2"
                 >
                   <CSelect
-                    label="Status"
+                    :label="$t('brands.form.status')"
                     :options="options.status"
                     :value.sync="form.status"
                   />
@@ -38,7 +40,7 @@
               </CRow>
               <CRow>
                 <CCol sm="12" md="12" class="pt-2">
-                  <label for="brand_logo">Brand Logo</label>
+                  <label for="brand_logo">{{ $t("brands.form.logo") }}</label>
                   <app-upload
                     ref="fileUpload"
                     class="col-md-12"
@@ -72,7 +74,9 @@
                   </div>
                 </CCol>
               </CRow>
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                {{ $t("general.validationError") }}
+              </p>
               <!-- <CRow class="mt-4">
                 <CButton
                   progress
@@ -193,9 +197,11 @@ export default {
               // this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
-                title: "Success",
-                text: "Brand Added Successfully",
+                title: this.$t("general.swal.success"),
+                text: this.$t("brands.form.successMsg"),
                 timer: 3600,
+                timerProgressBar: true,
+                confirmButtonText: this.$t("general.swal.ok"),
               });
               this.$v.$reset();
               this.resetForm();
@@ -214,8 +220,9 @@ export default {
             this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
+              timerProgressBar: true,
+              title: this.$t("general.swal.error"),
+              text: this.$t("general.swal.errorMsg"),
               timer: 3600,
             });
           });

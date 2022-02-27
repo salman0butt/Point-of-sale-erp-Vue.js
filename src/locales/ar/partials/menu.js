@@ -31,6 +31,7 @@ export default {
       income: "دخل",
       expense: "مصروف",
       transfer: "تحويل",
+      purchaseOrder: "أمر شراء"
     },
     branches: "الفروع",
     users: "المستخدمين",
