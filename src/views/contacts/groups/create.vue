@@ -23,7 +23,7 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="6" class="pt-2">
+                <CCol v-if="showType" sm="6" md="6" class="pt-2">
                   <CSelect
                     label="Type"
                     :options="options.type"
@@ -66,6 +66,7 @@ import { required, minLength } from "vuelidate/lib/validators";
 export default {
   name: "CreateGroup",
   data: () => ({
+    showType: true,
     form: {
       name: "",
       type: "",
@@ -98,7 +99,14 @@ export default {
       },
     };
   },
-  created() {},
+  created() {
+    const type = this.$route.params.type;
+    console.log("🚀 ~ type", type);
+    if (type) {
+      this.showType = false;
+      this.form.type = type;
+    }
+  },
   methods: {
     saveData() {
       this.$v.$touch();
@@ -133,8 +141,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.errorMsg {
-  color: red;
-}
-</style>

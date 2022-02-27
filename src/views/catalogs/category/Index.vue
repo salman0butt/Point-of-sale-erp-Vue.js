@@ -19,7 +19,7 @@
                 style="float: right; margin-right: 10px"
                 @click="addCategory()"
               >
-                Quick Add</CButton
+                Add Category</CButton
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -37,6 +37,15 @@
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
+              <template #image="{ item }">
+                <td>
+                  <img
+                    :src="item.image ? item.image : '/img/images/no-logo.png'"
+                    alt="photo"
+                    style="width: 50px; height: auto"
+                  />
+                </td>
+              </template>
               <template #parent="{ item }">
                 <td v-if="item.parent && item.parent.name">
                   {{ item.parent.name }}
@@ -60,7 +69,8 @@
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      >Edit <CIcon :content="$options.cilPencil"
+                    >
+                      <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
                       v-if="$can('delete product-categories')"
@@ -94,8 +104,10 @@ import CategoryModel from "@/components/catalogs/category/CategoryModel";
 import { tableMixin } from "@/mixins/tableMixin";
 
 const fields = [
-  { key: "name", label: "NAME", _style: "width:40%" },
+  { key: "image", label: "PHOTO", _style: "width:15%" },
+  { key: "name", label: "NAME", _style: "width:20%" },
   { key: "parent", label: "PARENT", _style: "width:25%;" },
+  { key: "color", label: "COLOR", _style: "width:25%;" },
   { key: "status", label: "STATUS", _style: "width:20%;" },
   { key: "actions", label: "ACTION", _style: "min-width:15%;" },
 ];

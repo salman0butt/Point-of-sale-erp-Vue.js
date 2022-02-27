@@ -299,7 +299,7 @@ export default {
           this.sideBarItems_accounting.push([
             {
               _name: "CSidebarNavItem",
-              name: "- " + "Purchase Order",
+              name: "- " + this.$t("menu.accounting.purchaseOrder"),
               to: "/purchases/index",
               // icon: "cil-lan",
             },

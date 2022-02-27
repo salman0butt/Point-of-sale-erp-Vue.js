@@ -3,7 +3,9 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>{{ isEditing ? "Edit" : "New" }} Brand </CCardHeader>
+          <CCardHeader
+            >{{ isEditing ? $t("brands.form.editBrand") : $t("brands.form.newBrand") }}
+          </CCardHeader>
           <CCardBody>
             <CRow>
               <Loader />
@@ -16,14 +18,14 @@
                       class="pt-2"
                     >
                       <CInput
-                        label="Name"
+                        :label="$t('brands.form.name')"
                         v-model="form.name"
                         :class="{ error: $v.form.name.$error }"
                         @input="$v.form.name.$touch()"
                       />
                       <div v-if="$v.form.name.$error">
                         <p v-if="!$v.form.name.required" class="errorMsg">
-                          Name is required
+                          {{ $t("brands.form.validations.name.required") }}
                         </p>
                       </div>
                     </CCol>
@@ -35,7 +37,7 @@
                       class="pt-2"
                     >
                       <CSelect
-                        label="Status"
+                        :label="$t('brands.form.status')"
                         :options="options.status"
                         :value.sync="form.status"
                       />
@@ -43,7 +45,7 @@
                   </CRow>
                   <CRow>
                     <CCol sm="12" md="12" class="pt-2">
-                      <label for="brand_logo">Brand Logo</label>
+                      <label for="brand_logo">{{ $t("brands.form.logo") }}</label>
                       <app-upload
                         ref="fileUpload"
                         class="col-md-12"
@@ -78,7 +80,7 @@
                     </CCol>
                   </CRow>
                   <p v-if="$v.$anyError" class="errorMsg">
-                    Please Fill the required data
+                    {{ $t("general.validationError") }}
                   </p>
                   <CRow class="mt-4">
                     <CButton
@@ -89,7 +91,7 @@
                       style="float: right; width: 200px; margin-left: 20px"
                       type="submit"
                       @click="saveAndExit = false"
-                      >Save & Continue</CButton
+                      >{{ $t("brands.form.saveAndContinue") }}</CButton
                     >
                     <CButton
                       timeout="2000"
@@ -98,7 +100,7 @@
                       style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       @click="saveAndExit = true"
                       type="submit"
-                      >Save & Exit</CButton
+                      >{{ $t("brands.form.saveAndExit") }}</CButton
                     >
                   </CRow>
                 </form>
@@ -136,11 +138,7 @@ export default {
     },
     display_images: null,
     options: {
-      status: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "InActive" },
-      ],
+      status: [],
     },
   }),
   validations() {
@@ -152,6 +150,7 @@ export default {
     };
   },
   created() {
+    this.getStatus();
     this.form.id = this.$route.params.id;
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
@@ -159,6 +158,18 @@ export default {
     }
   },
   methods: {
+    getStatus() {
+      this.options.status = [
+        {
+          value: "",
+          label: this.$t("general.status.choose"),
+          disabled: true,
+          selected: "",
+        },
+        { value: "active", label: this.$t("general.status.active") },
+        { value: "inactive", label: this.$t("general.status.inactive") },
+      ];
+    },
     saveBrand() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -179,9 +190,11 @@ export default {
               this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
-                title: "Success",
-                text: "Brand Added Successfully",
+                title: this.$t("general.swal.success"),
+                text: this.$t("brands.form.successMsg"),
                 timer: 3600,
+                timerProgressBar: true,
+                confirmButtonText: this.$t("general.swal.ok"),
               });
               this.$v.$reset();
               this.resetForm();
@@ -200,8 +213,8 @@ export default {
             this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
+              title: this.$t("general.swal.error"),
+              text: this.$t("general.swal.errorMsg"),
               timer: 3600,
             });
           });
@@ -227,9 +240,11 @@ export default {
               this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
-                title: "Success",
-                text: "Brand Updated Successfully",
+                title: this.$t("general.swal.success"),
+                text: this.$t("brands.form.updateMsg"),
                 timer: 3600,
+                timerProgressBar: true,
+                confirmButtonText: this.$t("general.swal.ok"),
               });
               this.$v.$reset();
               this.$store.commit("close_loader");
