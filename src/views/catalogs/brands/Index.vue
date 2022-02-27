@@ -49,7 +49,13 @@
               }"
             >
               <template #status="{ item }">
-                <td>{{ item.status ? item.status : "" }}</td>
+                <td>
+                  <CBadge
+                    v-if="item.status"
+                    :color="item.status.toLowerCase() === 'active' ? 'success' : 'danger'"
+                    >{{ item.status ? item.status : "" }}</CBadge
+                  >
+                </td>
               </template>
 
               <template #actions="{ item }">

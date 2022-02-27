@@ -149,6 +149,6 @@ export const tableMixin = {
       label: this.$t("table.tableFilter.label"),
       placeholder: this.$t("table.tableFilter.placeholder"),
     };
-  }
+  },
 
 };

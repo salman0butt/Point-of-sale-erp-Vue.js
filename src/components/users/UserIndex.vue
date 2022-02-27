@@ -32,7 +32,7 @@
               @click="editRow(item.uuid)"
               class="btn-sm text-white"
               color="warning"
-              >Edit <CIcon :content="$options.cilPencil"
+              ><CIcon :content="$options.cilPencil"
             /></CButton>
             <CButton
               v-if="$can('delete users')"
