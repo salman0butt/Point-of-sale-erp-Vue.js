@@ -26,7 +26,10 @@
         ></template
       >
     </multiselect>
-    <CustomerModel @update-table="newCustomerAdded" @new-data="newData($event)" />
+    <CustomerModel
+      @update-table="newCustomerAdded"
+      @new-data="newData($event)"
+    />
   </div>
 </template>
 
@@ -102,13 +105,14 @@ export default {
                 customers.push({
                   value: item.uuid,
                   label: item.full_name + " (serial: " + item.serial_no + ")",
+                  defaultAddress: item.defaultAddress,
                 });
                 if (item.full_name == "Walk In Customer" && create_only) {
                   // eslint-disable-next-line no-unused-vars
-
                   default_data = {
                     label: item.full_name + " (serial: " + item.serial_no + ")",
                     value: item.uuid,
+                    defaultAddress: item.defaultAddress,
                   };
                   //assign object to default_data
                 }
@@ -138,6 +142,7 @@ export default {
                 customers.push({
                   value: item.uuid,
                   label: item.full_name + " (serial: " + item.serial_no + ")",
+                  defaultAddress: item.defaultAddress,
                 });
               });
             }
@@ -153,6 +158,7 @@ export default {
       const obj = {
         value: item.uuid,
         label: item.full_name + " (serial: " + item.serial_no + ")",
+        defaultAddress: item.defaultAddress,
       };
       this.options.customers.push(obj);
       this.form.customer = obj;
