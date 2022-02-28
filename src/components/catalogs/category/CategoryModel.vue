@@ -1,7 +1,7 @@
 <template>
   <div>
     <CModal
-      title="Create Category"
+      :title="$t('categories.form.modelTitle')"
       :fade="true"
       :centered="true"
       :closeOnBackdrop="false"
@@ -9,12 +9,16 @@
       :show.sync="showCategoryModel"
     >
       <template #header>
-        <h6 class="modal-title">Create Category</h6>
+        <h6 class="modal-title">{{ $t("categories.form.modelTitle") }}</h6>
       </template>
       <CategoryForm :submit="isSubmit" @reset-model="resetModel()" />
       <template #footer>
-        <CButton @click="closeModel()" color="danger">Close</CButton>
-        <CButton @click="saveCategory()" color="success">Save</CButton>
+        <CButton @click="closeModel()" color="danger">{{
+          $t("categories.form.close")
+        }}</CButton>
+        <CButton @click="saveCategory()" color="success">{{
+          $t("categories.form.save")
+        }}</CButton>
       </template>
     </CModal>
   </div>

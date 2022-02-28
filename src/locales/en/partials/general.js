@@ -17,6 +17,13 @@ export default {
       deleteSuccessMsg: "Record Deleted Successfully",
       confirmDelButtonText: "Yes, remove it!",
       cancelButtonText: "Cancel",
+    },
+    attachment:{
+      delete: {
+        title: "Do you want to delete this Attachment?",
+        msg: "This will be Deleted from Database",
+        successMsg: "Attachment Deleted Successfully",
+      }
     }
   }
 };

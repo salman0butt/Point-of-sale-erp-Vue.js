@@ -9,13 +9,15 @@
               <CRow>
                 <CCol sm="6" md="6" class="pt-2">
                   <CInput
-                    label="Name"
+                    :label="$t('categories.form.name')"
                     v-model="form.name"
                     :class="{ error: $v.form.name.$error }"
                     @input="$v.form.name.$touch()"
                   />
                   <div v-if="$v.form.name.$error">
-                    <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                    <p v-if="!$v.form.name.required" class="errorMsg">
+                      {{ $t("categories.form.validations.name.required") }}
+                    </p>
                   </div>
                 </CCol>
                 <CCol
@@ -25,7 +27,7 @@
                   class="pt-2"
                 >
                   <CSelect
-                    label="Parent"
+                    :label="$t('categories.form.parent')"
                     :options="options.parent_categories"
                     :value.sync="form.parent_id"
                   />
@@ -33,7 +35,7 @@
 
                 <CCol v-if="isEditing" sm="12" md="12" class="pt-2">
                   <CSelect
-                    label="Status"
+                    :label="$t('categories.form.status')"
                     :options="options.status"
                     :value.sync="form.status"
                   />
@@ -77,7 +79,9 @@
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                {{ $t("general.validationError") }}
+              </p>
               <!-- <CRow class="mt-4">
                 <CButton
                   progress
@@ -173,6 +177,7 @@ export default {
   },
   created() {
     this.form.id = this.$route.params.id;
+    this.setCatgoryOptions();
     this.getProductCategoryOptions();
     // if (this.form.id !== "" && this.form.id !== undefined) {
     //   this.isEditing = true;
@@ -180,6 +185,16 @@ export default {
     // }
   },
   methods: {
+    setCatgoryOptions() {
+      this.options.parent_categories = [
+        {
+          value: "",
+          label: this.$t("categories.form.parent_category_options"),
+          disabled: true,
+          selected: "",
+        },
+      ];
+    },
     saveProductCategory() {
       this.$v.$touch();
       if (!this.$v.$invalid) {

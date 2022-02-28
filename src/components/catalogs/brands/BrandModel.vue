@@ -1,7 +1,7 @@
 <template>
   <div>
     <CModal
-      title="Create Brand"
+      :title="$t('brands.form.modelTitle')"
       :fade="true"
       :centered="true"
       :closeOnBackdrop="false"

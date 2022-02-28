@@ -52,7 +52,11 @@
                 <td>
                   <CBadge
                     v-if="item.status"
-                    :color="item.status.toLowerCase() === 'active' ? 'success' : 'danger'"
+                    :color="
+                      ['active', 'مفعل'].includes(item.status.toLowerCase())
+                        ? 'success'
+                        : 'danger'
+                    "
                     >{{ item.status ? item.status : "" }}</CBadge
                   >
                 </td>

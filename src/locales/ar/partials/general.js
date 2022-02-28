@@ -17,6 +17,13 @@ export default {
       deleteSuccessMsg: "سجل محذوف بنجاح",
       confirmDelButtonText: "نعم، إزالته!",
       cancelButtonText: "يلغي",
+    },
+    attachment:{
+      delete: {
+        title: "هل ترغب في حذف هذا المرفق؟",
+        msg: "سيتم حذف هذا من قاعدة البيانات",
+        successMsg: "حذف المرفق بنجاح",
+      }
     }
   }
 };

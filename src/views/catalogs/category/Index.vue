@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Categories </CCardHeader>
+          <CCardHeader> {{ $t("categories.index.title") }} </CCardHeader>
           <CCardBody>
             <div>
               <!-- <router-link
@@ -19,7 +19,7 @@
                 style="float: right; margin-right: 10px"
                 @click="addCategory()"
               >
-                Add Category</CButton
+                {{ $t("categories.index.add") }}</CButton
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -36,11 +36,26 @@
               :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
+              :noItemsView="{
+                noResults: this.$t('table.noResults'),
+                noItems: this.$t('table.noItems'),
+              }"
+              :itemsPerPageSelect="{
+                label: this.$t('table.itemsPerPageSelect.label'),
+              }"
+              :tableFilter="{
+                label: this.$t('table.tableFilter.label'),
+                placeholder: this.$t('table.tableFilter.placeholder'),
+              }"
             >
               <template #image="{ item }">
                 <td>
                   <img
-                    :src="item.image ? item.image : '/img/images/no-logo.png'"
+                    :src="
+                      item.image && item.image.path
+                        ? item.image.path
+                        : '/img/images/no-logo.png'
+                    "
                     alt="photo"
                     style="width: 50px; height: auto"
                   />
@@ -52,6 +67,11 @@
                 </td>
 
                 <td v-else>-</td>
+              </template>
+              <template #color="{ item }">
+                <td>
+                  {{ item.color ? item.color : "" }}
+                </td>
               </template>
               <template #status="{ item }">
                 <td>
@@ -103,15 +123,6 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import CategoryModel from "@/components/catalogs/category/CategoryModel";
 import { tableMixin } from "@/mixins/tableMixin";
 
-const fields = [
-  { key: "image", label: "PHOTO", _style: "width:15%" },
-  { key: "name", label: "NAME", _style: "width:20%" },
-  { key: "parent", label: "PARENT", _style: "width:25%;" },
-  { key: "color", label: "COLOR", _style: "width:25%;" },
-  { key: "status", label: "STATUS", _style: "width:20%;" },
-  { key: "actions", label: "ACTION", _style: "min-width:15%;" },
-];
-
 export default {
   name: "IndexProductCategory",
   mixins: [tableMixin],
@@ -124,7 +135,38 @@ export default {
   data() {
     return {
       data: [],
-      fields,
+      fields: [
+        {
+          key: "image",
+          label: this.$t("categories.index.table.photo"),
+          _style: "width:15%",
+        },
+        {
+          key: "name",
+          label: this.$t("categories.index.table.name"),
+          _style: "width:20%",
+        },
+        {
+          key: "parent",
+          label: this.$t("categories.index.table.parent"),
+          _style: "width:25%;",
+        },
+        {
+          key: "color",
+          label: this.$t("categories.index.table.color"),
+          _style: "width:25%;",
+        },
+        {
+          key: "status",
+          label: this.$t("categories.index.table.status"),
+          _style: "width:20%;",
+        },
+        {
+          key: "actions",
+          label: this.$t("categories.index.table.actions"),
+          _style: "min-width:15%;",
+        },
+      ],
     };
   },
   created() {
