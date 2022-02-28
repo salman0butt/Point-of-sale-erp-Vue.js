@@ -187,6 +187,8 @@ export default {
       if (this.submit && !this.$v.$invalid) {
         this.saveData();
         this.$emit("reset-model");
+      } else {
+        this.$emit("reset-submit");
       }
     },
   },

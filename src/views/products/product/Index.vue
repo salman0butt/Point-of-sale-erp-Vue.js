@@ -3,25 +3,25 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Products </CCardHeader>
+          <CCardHeader> {{ $t("products.index.title") }} </CCardHeader>
           <CCardBody>
             <router-link
               v-if="$can('importProduct products')"
               class="btn btn-success"
               style="float: right"
               to="/products/import"
-              >Import Products</router-link
+              >{{ $t("products.index.import") }}</router-link
             >
             <router-link
               v-if="$can('create products')"
               class="btn btn-success"
               to="/products/create"
               style="float: right; margin-right: 10px"
-              >Create Product</router-link
+              >{{ $t("products.index.add") }}</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable
-              :items="Product"
+              :items="items"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -34,6 +34,17 @@
               :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
+              :noItemsView="{
+                noResults: this.$t('table.noResults'),
+                noItems: this.$t('table.noItems'),
+              }"
+              :itemsPerPageSelect="{
+                label: this.$t('table.itemsPerPageSelect.label'),
+              }"
+              :tableFilter="{
+                label: this.$t('table.tableFilter.label'),
+                placeholder: this.$t('table.tableFilter.placeholder'),
+              }"
             >
               <!-- <template #select="{ item }">
                 <td>
@@ -84,8 +95,8 @@
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
-                      >View</CButton
-                    >
+                      ><CIcon :content="$options.cilEye"
+                    /></CButton>
                     <CButton
                       v-if="$can('edit products')"
                       @click="editRow(item.uuid)"
@@ -121,89 +132,74 @@
 <script>
 import ProductService from "@/services/products/ProductService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-
-const fields = [
-  // {
-  //   key: "select",
-  //   label: "",
-  //   _style: "min-width:1%",
-  //   sorter: false,
-  //   filter: false,
-  // },
-  { key: "name", label: "NAME", _style: "min-width:40%" },
-  { key: "type", label: "TYPE", _style: "min-width:15%;" },
-  // { key: "supplier", label: "SUPPLER", _style: "min-width:15%;" },
-  { key: "brand", label: "BRAND", _style: "min-width:15%;" },
-  { key: "serial_number", label: "SERIAL NUMBER", _style: "min-width:15%;" },
-  { key: "categories", label: "CATEGORY", _style: "min-width:15%;" },
-  { key: "branches", label: "BRANCH", _style: "min-width:15%;" },
-  { key: "status", label: "STATUS", _style: "min-width:15%;" },
-  { key: "actions", label: "ACTION", _style: "min-width:15%;" },
-];
+import { tableMixin } from "@/mixins/tableMixin";
 
 export default {
   name: "IndexProduct",
+  mixins: [tableMixin],
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
-      ProductData: [],
-      fields,
-      loading: false,
-      deleteRows: [],
-      activePage: 1,
-      pages: 0,
-      perPage: 10,
+      data: [],
+      fields: [
+        {
+          key: "name",
+          label: this.$t("products.index.table.name"),
+          _style: "min-width:40%",
+        },
+        {
+          key: "type",
+          label: this.$t("products.index.table.type"),
+          _style: "min-width:15%;",
+        },
+        // { key: "supplier", label: "SUPPLER", _style: "min-width:15%;" },
+        {
+          key: "brand",
+          label: this.$t("products.index.table.brand"),
+          _style: "min-width:15%;",
+        },
+        {
+          key: "serial_number",
+          label: this.$t("products.index.table.serial_number"),
+          _style: "min-width:15%;",
+        },
+        {
+          key: "categories",
+          label: this.$t("products.index.table.category"),
+          _style: "min-width:15%;",
+        },
+        {
+          key: "branches",
+          label: this.$t("products.index.table.branch"),
+          _style: "min-width:15%;",
+        },
+        {
+          key: "status",
+          label: this.$t("products.index.table.status"),
+          _style: "min-width:15%;",
+        },
+        {
+          key: "actions",
+          label: this.$t("products.index.table.actions"),
+          _style: "min-width:15%;",
+        },
+      ],
     };
   },
   created() {
-    this.loading = true;
-    this.getProductData();
+    this.getData();
   },
-  watch: {
-    reloadParams() {
-      this.onTableChange();
-    },
-    activePage() {
-      this.getProductData(this.activePage, this.perPage);
-    },
-  },
+
   computed: {
-    Product() {
-      return this.ProductData;
+    items() {
+      return this.data;
     },
   },
   methods: {
-    getProductData(page = "", per_page = "") {
-      ProductService.getAll(page, per_page)
-        .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
-            this.designationsData = [];
-            this.loading = true;
-            if (data.data) {
-              data.data.map((item, id) => {
-                this.ProductData.push({ ...item, id });
-              });
-            }
-            if (data.meta) {
-              this.setPagination(data.meta);
-            }
-            this.loading = false;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    rowClicked(item, index, column, e) {
-      if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
-        this.check(item);
-      }
-    },
-    check(item) {
-      const val = Boolean(this.ProductData[item.id]._selected);
-      this.$set(this.ProductData[item.id], "_selected", !val);
+    getData(page = "", per_page = "") {
+      this.getServerData(ProductService, page, per_page);
     },
     viewRow(uuid) {
       this.$router.push({ path: "/products/show/" + uuid });
@@ -211,65 +207,9 @@ export default {
     editRow(uuid) {
       this.$router.push({ path: "/products/edit/" + uuid });
     },
-
     deleteRow(uuid) {
-      this.deleteRows = JSON.stringify([uuid]);
-      this.$swal
-        .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            ProductService.delete(this.deleteRows)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Product Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.ProductData = this.ProductData.filter((item) => item.uuid != uuid);
-                }
-              })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-              });
-            this.deleteRows = [];
-          }
-        });
-    },
-    setPagination(meta) {
-      this.activePage = parseInt(meta.current_page);
-      this.pages = parseInt(meta.last_page);
-      this.perPage = parseInt(meta.per_page);
-    },
-    onTableChange() {
-      setTimeout(() => {
-        this.loading = false;
-        const agent = this.$refs.externalAgent;
-        this.designationsData = agent.currentItems;
-        this.pages = Math.ceil(agent.sortedItems.length / 5);
-      }, 1000);
-    },
-    changePagination(value) {
-      this.perPage = parseInt(value);
-      this.getProductData("", this.perPage);
+      this.deleteData(ProductService, uuid);
     },
   },
 };
 </script>
-<style scoped>
-.bolder {
-  font-weight: 600;
-}
-</style>

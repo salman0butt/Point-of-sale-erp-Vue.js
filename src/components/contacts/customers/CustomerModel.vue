@@ -15,6 +15,7 @@
         :submit="isSubmit"
         @reset-model="resetModel()"
         @new-data="newData($event)"
+        @reset-submit="resetSubmit()"
       />
       <template #footer>
         <CButton @click="closeModel()" color="danger">Close</CButton>
@@ -45,6 +46,9 @@ export default {
     resetModel() {
       this.isSubmit = false;
       this.$store.commit("set_customer_model", false);
+    },
+    resetSubmit() {
+      this.isSubmit = false;
     },
     saveCustomer() {
       this.isSubmit = true;

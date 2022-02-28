@@ -1,0 +1,40 @@
+{
+  "categories": {
+    "index": {
+      "title": "فئات",
+      "add": "إضافة فئة",
+      "table": {
+        "name": "اسم",
+        "parent": "الأبوين",
+        "color": "اللون",
+        "status": "حالة",
+        "photo": "صورة",
+        "actions": "أجراءات"
+      },
+      "actions": {
+        "edit": "يحرر",
+        "delete": "حذف"
+      }
+    },
+    "form": {
+      "modelTitle": "إنشاء العلامة التجارية",
+      "name": "اسم",
+      "parent": "الأبوين",
+      "status": "حالة",
+      "save": "يحفظ",
+      "close": "يغلق",
+      "parent_category_options": "اختيار الوالد",
+      "editTitle": "تحرير الفئة",
+      "newTitle": "إنشاء الفئة",
+      "saveAndExit": "حفظ وخروج",
+      "saveAndContinue": "حفظ واستمرار",
+      "successMsg": "تم حفظ الفئة بنجاح",
+      "updateMsg": "تم تحديث الفئة بنجاح",
+      "validations": {
+        "name": {
+          "required": "مطلوب اسم"
+        }
+      }
+    }
+  }
+}
