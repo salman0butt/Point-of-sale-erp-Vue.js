@@ -3,10 +3,18 @@
     <CRow>
       <CCol sm="12" md="12">
         <CCardGroup class="mb-4 remove-progress">
-          <CWidgetProgressIcon header="87.500" text="Visitors" color="gradient-info">
+          <CWidgetProgressIcon
+            header="87.500"
+            text="Visitors"
+            color="gradient-info"
+          >
             <CIcon name="cil-people" height="36" />
           </CWidgetProgressIcon>
-          <CWidgetProgressIcon header="385" text="New Clients" color="gradient-success">
+          <CWidgetProgressIcon
+            header="385"
+            text="New Clients"
+            color="gradient-success"
+          >
             <CIcon name="cil-userFollow" height="36" />
           </CWidgetProgressIcon>
           <CWidgetProgressIcon
@@ -22,7 +30,7 @@
         </CCardGroup>
       </CCol>
     </CRow>
-    <CRow>
+    <!-- <CRow>
       <CCol sm="2" md="2">
         <CButton color="primary" class="btn-block" @click="opening()">
           <CIcon class="headerFont" name="cil-bell" />
@@ -55,13 +63,17 @@
           <CIcon class="headerFont" name="cil-bell" /> Warning</CButton
         >
       </CCol>
-    </CRow>
+    </CRow> -->
     <br />
     <CCard>
       <CCardHeader class="py-0">
         <span style="position: relative; top: 15px">BarChart</span>
         <CCol sm="2" md="2" class="pt-2" style="float: right; height: 3.2rem">
-          <CSelect placeholder="By Month" :options="options.chart" :value.sync="chart1" />
+          <CSelect
+            placeholder="By Month"
+            :options="options.chart"
+            :value.sync="chart1"
+          />
         </CCol>
       </CCardHeader>
       <CCardBody>
@@ -99,7 +111,11 @@
         <CCard>
           <CCardHeader> Product Alert </CCardHeader>
           <CCardBody>
-            <CDataTable :items="productAlertData" :fields="productAlertFields" hover>
+            <CDataTable
+              :items="productAlertData"
+              :fields="productAlertFields"
+              hover
+            >
               <template slot="alert" slot-scope="{ item }">
                 <td>
                   <CBadge color="danger" shape="pill">{{ item.alert }}</CBadge>

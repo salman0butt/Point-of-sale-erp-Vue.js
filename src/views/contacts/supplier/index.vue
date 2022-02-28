@@ -25,7 +25,7 @@
               style="float: right; margin-right: 10px"
               @click="quickAddSupplier()"
             >
-              Quick Add</CButton
+              Add Supplier</CButton
             >
             <div style="clear: both; margin-bottom: 20px"></div>
             <CDataTable

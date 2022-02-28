@@ -65,6 +65,14 @@
                     :value.sync="form.payment_terms"
                   />
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    @change="changeDelivery($event)"
+                    label="Delivery"
+                    :options="options.delivery_methods"
+                    :value.sync="form.delivery_method"
+                  />
+                </CCol>
                 <CCol sm="6" md="4" class="pt-2" v-if="isEditing">
                   <CSelect
                     label="Status"
@@ -78,6 +86,9 @@
                       Status is required
                     </p>
                   </div>
+                </CCol>
+                <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                  <CInput label="Address" v-model="form.address_for_delivery" />
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <SearchProduct
@@ -100,6 +111,21 @@
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Total" readonly :value="allTotal" />
+                </CCol>
+
+                <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
+                  <CInput
+                    label="Delivery"
+                    readonly
+                    :value="form.delivery_method_price"
+                  />
+                </CCol>
+                <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
+                  <CInput
+                    label="Total Price With Delivery"
+                    readonly
+                    :value="form.total_price_with_delivery"
+                  />
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
@@ -179,7 +205,6 @@
 </template>
 
 <script>
-// import CustomerSearchField from "@/components/general/CustomerSearchField";
 import CustomerSearch from "@/components/general/search/CustomerSearch";
 import SearchProduct from "@/components/layouts/SearchProduct";
 import SelectSalePerson from "@/components/general/SelectSalePerson";
@@ -191,6 +216,7 @@ import { globalMixin } from "@/mixins/globalMixin";
 import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
 import { VueEditor } from "vue2-editor";
 import SettingService from "@/services/settings/SettingService";
+import DeliveryService from "@/services/delivery/DeliveryService";
 
 export default {
   name: "CreateOrUpdateQuotations",
@@ -219,6 +245,10 @@ export default {
       payment_terms: "",
       terms_and_conditions: "",
       previousCustomer: "",
+      delivery_method: "",
+      delivery_method_price: 0,
+      total_price_with_delivery: 0,
+      address_for_delivery: "",
     },
     options: {
       status: [
@@ -232,6 +262,13 @@ export default {
           value: "",
           selected: true,
           disabled: "",
+        },
+      ],
+      delivery_methods: [
+        {
+          label: "Choose Delivery Method",
+          value: "",
+          selected: true,
         },
       ],
     },
@@ -259,6 +296,7 @@ export default {
     sales_persons: [],
     display_images: [],
     previousSalesPersons: Array,
+    delivery_check: false,
   }),
   validations() {
     return {
@@ -274,7 +312,6 @@ export default {
   created() {
     this.createMethod();
   },
-  watch: {},
   computed: {
     receivingItems() {
       return this.$store.getters.getSearchProductItems;
@@ -300,14 +337,29 @@ export default {
     this.$store.commit("set_quotation_total", 0);
   },
   watch: {
-    // total_cost(val) {
-    //   this.form.total_cost = val;
-    // },
     receivingItems(val) {
       this.form.items = val;
     },
   },
   methods: {
+    changeDelivery(e) {
+      let rate_on_customer =
+        e.target.selectedOptions[0].getAttribute("rate_on_customer");
+      if (rate_on_customer == null) {
+        rate_on_customer = 0;
+      }
+      this.delivery_check = true;
+      this.form.delivery_method_price = rate_on_customer;
+      let quotation_total = this.$store.getters.getQuotationTotal;
+      let total_price_with_delivery =
+        parseFloat(quotation_total) + parseFloat(rate_on_customer);
+      this.form.total_price_with_delivery =
+        total_price_with_delivery.toFixed(3);
+
+      if (!e.target.selectedOptions[0].value) {
+        this.delivery_check = false;
+      }
+    },
     createMethod() {
       this.form.id = this.$route.params.id;
       this.form.dated = this.calculateTodayDate();
@@ -352,6 +404,30 @@ export default {
           this.$store.commit("close_loader");
           console.log(error);
         });
+
+      let delivery_methods = this.options.delivery_methods;
+      this.$store.commit("set_loader");
+      DeliveryService.getAll(1, 50)
+        .then(({ data }) => {
+          if (data && data.data && data.data.length > 0) {
+            data.data.map((item, id) => {
+              delivery_methods.push({
+                label: item.name,
+                value: item.uuid,
+                attrs: {
+                  rate_on_customer: item.rate_on_customer,
+                  id: item.uuid,
+                },
+              });
+            });
+          }
+
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$store.commit("close_loader");
+        });
     },
     formSubmit() {
       this.$v.$touch();
@@ -370,6 +446,7 @@ export default {
         formData.append("payment_terms", this.form.payment_terms);
         formData.append("terms_and_conditions", this.form.terms_and_conditions);
         formData.append("items", JSON.stringify(this.form.items));
+        formData.append("address_for_delivery", this.form.address_for_delivery);
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
         formData.append(
@@ -377,6 +454,15 @@ export default {
           this.$store.getters.getQuotationDiscount
         );
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
+        formData.append("delivery_method", this.form.delivery_method);
+        formData.append(
+          "delivery_method_price",
+          this.form.delivery_method_price
+        );
+        formData.append(
+          "total_price_with_delivery",
+          this.form.total_price_with_delivery
+        );
 
         if (this.form.images && this.form.images.length > 0) {
           this.form.images.map((image) => {
@@ -442,6 +528,14 @@ export default {
     },
     customerSelected(customer) {
       this.form.customer = customer.value;
+      if (
+        customer &&
+        customer.defaultAddress &&
+        customer.defaultAddress.street &&
+        customer.defaultAddress.street.en
+      ) {
+        this.form.address_for_delivery = customer.defaultAddress.street.en;
+      }
     },
     salesPersonSelected(person) {
       this.form.sales_persons = person;
@@ -506,7 +600,14 @@ export default {
             this.form.status = res.data.status;
             this.form.payment_terms = res.data.payment_terms;
             this.form.terms_and_conditions = res.data.terms_and_conditions;
-
+            if (res.data.delivery && res.data.delivery.uuid) {
+              this.form.delivery_method = res.data.delivery.uuid;
+              this.form.delivery_method_price = res.data.delivery_method_price;
+              this.form.total_price_with_delivery =
+                res.data.total_price_with_delivery;
+              this.delivery_check = true;
+              this.form.address_for_delivery = res.data.address_for_delivery;
+            }
             this.form.sales_persons = [];
             if (res.data.salespersons && res.data.salespersons.length > 0) {
               let sales_persons = this.form.sales_persons;
@@ -514,8 +615,6 @@ export default {
                 sales_persons.push(item.uuid);
               });
             }
-
-            // this.form.sales_persons
             this.display_images = [];
             if (res.data.attachments && res.data.attachments.length > 0) {
               let display_images = this.display_images;
@@ -523,7 +622,6 @@ export default {
                 display_images.push(item);
               });
             }
-
             if (res.data.products && res.data.products.length > 0) {
               res.data.products.map((item) => {
                 let total_each = 0;
@@ -556,7 +654,6 @@ export default {
               });
               // this.$store.commit("set_search_product_items", itemsData);
             }
-
             this.$store.commit("set_quotation_sub_total", res.data.sub_total);
             this.$store.commit("set_quotation_tax_total", res.data.total_tax);
             this.$store.commit(
@@ -564,13 +661,12 @@ export default {
               res.data.total_discount
             );
             this.$store.commit("set_quotation_total", res.data.grand_total);
-
             this.previousSalesPersons = res.data.salespersons;
           }
         })
         .catch((error) => {
           console.log(error);
-          // this.$store.commit("close_loader");
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",

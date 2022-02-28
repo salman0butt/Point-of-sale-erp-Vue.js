@@ -83,7 +83,7 @@ export default {
           name: "Credit Account Payment",
           disabled: true,
         },
-        { key: "Discounts", name: "Discounts", disabled: true },
+        // { key: "Discounts", name: "Discounts", disabled: true },
       ],
     };
   },

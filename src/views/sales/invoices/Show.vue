@@ -17,7 +17,7 @@
               <div>
                 <router-link
                   :to="`/customers/show/${customer.uuid}`"
-                  v-if="$can('view customers')"
+                  v-if="$can('show customers')"
                 >
                   <strong
                     class="margin:auto"

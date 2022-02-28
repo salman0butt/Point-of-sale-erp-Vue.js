@@ -36,7 +36,11 @@
         </CCard>
       </CCol>
       <CCol xs="12" lg="9">
-        <component v-bind:is="activeTab" module="customer" :readOnly="true"></component>
+        <component
+          v-bind:is="activeTab"
+          module="customer"
+          :readOnly="true"
+        ></component>
       </CCol>
     </CRow>
   </div>
@@ -88,7 +92,7 @@ export default {
           key: "CreditAccountPayment",
           name: "Credit Account Payment",
         },
-        { key: "Discounts", name: "Discounts" },
+        // { key: "Discounts", name: "Discounts" },
       ],
     };
   },
