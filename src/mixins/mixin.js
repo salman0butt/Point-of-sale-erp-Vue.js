@@ -10,9 +10,9 @@ export const mixin = {
           store.dispatch('auto_logout');
           path = '/login';
           break;
-        case 404:
-          path = '/not-found';
-          break;
+        // case 404:
+        //   path = '/not-found';
+        //   break;
         // case 500:
         //   path = '/something-wrong';
         //   break;

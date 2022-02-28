@@ -29,3 +29,5 @@ yarn-error.log*
 
 # release
 /coreui-pro-vue-admin-template*.zip
+
+/src/http-common.js
