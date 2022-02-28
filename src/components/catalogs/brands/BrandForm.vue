@@ -165,6 +165,8 @@ export default {
       if (this.submit && !this.$v.$invalid) {
         this.saveBrand();
         this.$emit("reset-model");
+      } else {
+        this.$emit("reset-submit");
       }
     },
   },

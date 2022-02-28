@@ -1,0 +1,66 @@
+{
+  "products": {
+    "index": {
+      "title": "Products",
+      "add": "Add Product",
+      "import": "Import Product",
+      "table": {
+        "name": "Name",
+        "type": "Type",
+        "brand": "Brand",
+        "serial_number": "Serial Number",
+        "category": "Category",
+        "branch": "Branch",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "tabs":{
+      "general": "General",
+      "attributes": "Attributes",
+      "variations": "Variations",
+      "prices": "Prices",
+      "inventory": "Inventory",
+      "images": "Images",
+      "modifiers": "Modifiers",
+      "units": "Units"
+    },
+    "form": {
+      "editTitle": "Edit Product",
+      "newTitle": "New Product",
+      "name": "Name",
+      "short_name": "Product Short Name",
+      "suppliers": "Suppliers",
+      "brand": "Brand",
+      "category": "Categories",
+      "branches": "Branches",
+      "barcode": "Barcode",
+      "serial_number": "Serial Number",
+      "alert_qty": "Alert Qty",
+      "weight_unit": "Weight Unit",
+      "description": "Description",
+      "is_favorite": "Is Favorite",
+      "is_expiry": "Is Expiry",
+      "tags": "Tags",
+      "status": "Status",
+      "save": "Save",
+      "close": "Close",
+      "saveAndExit": "Save and Exit",
+      "saveAndContinue": "Save and Continue",
+      "successMsg": "Product has been saved successfully",
+      "updateMsg": "Product has been updated successfully",
+      "validations": {
+        "name": {
+          "required": "Name is required"
+        },
+        "brand": {
+          "required": "Brand is required"
+        }
+      }
+    }
+  }
+}

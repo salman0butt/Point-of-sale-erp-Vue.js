@@ -11,7 +11,11 @@
       <template #header>
         <h6 class="modal-title">Quick Supplier Add</h6>
       </template>
-      <QuickAddSupplier :submit="isSubmit" @reset-model="resetModel()" />
+      <QuickAddSupplier
+        :submit="isSubmit"
+        @reset-model="resetModel()"
+        @reset-submit="resetSubmit()"
+      />
       <template #footer>
         <CButton @click="closeModel()" color="danger">Close</CButton>
         <CButton @click="saveSupplier()" color="success">Save</CButton>
@@ -45,6 +49,9 @@ export default {
     saveSupplier() {
       this.isSubmit = true;
       this.$emit("update-table");
+    },
+    resetSubmit() {
+      this.isSubmit = false;
     },
     closeModel() {
       this.isSubmit = false;

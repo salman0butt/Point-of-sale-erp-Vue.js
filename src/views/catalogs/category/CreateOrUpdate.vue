@@ -3,7 +3,11 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>{{ isEditing ? "Edit" : "Create" }} Category </CCardHeader>
+          <CCardHeader
+            >{{
+              isEditing ? $t("categories.form.editTitle") : $t("categories.form.newTitle")
+            }}
+          </CCardHeader>
           <CCardBody>
             <CRow>
               <Loader />
@@ -16,7 +20,7 @@
                   <CRow>
                     <CCol sm="6" md="4" class="pt-2">
                       <CInput
-                        label="Name"
+                        :label="$t('categories.form.name')"
                         v-model="form.name"
                         :class="{ error: $v.form.name.$error }"
                         @input="$v.form.name.$touch()"
@@ -34,7 +38,7 @@
                       class="pt-2"
                     >
                       <CSelect
-                        label="Parent"
+                        :label="$t('categories.form.parent')"
                         :options="options.parent_categories"
                         :value.sync="form.parent_id"
                       />
@@ -42,7 +46,7 @@
 
                     <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
                       <CSelect
-                        label="Status"
+                        :label="$t('categories.form.status')"
                         :options="options.status"
                         :value.sync="form.status"
                       />
@@ -87,7 +91,7 @@
                   </CRow>
 
                   <p v-if="$v.$anyError" class="errorMsg">
-                    Please Fill the required data
+                    {{ $t("general.validationError") }}
                   </p>
                   <CRow class="mt-4">
                     <CButton
@@ -98,7 +102,7 @@
                       style="float: right; width: 200px; margin-left: 20px"
                       type="submit"
                       @click="saveAndExit = false"
-                      >Save & Continue</CButton
+                      >{{ $t("categories.form.saveAndContinue") }}</CButton
                     >
                     <CButton
                       timeout="2000"
@@ -107,7 +111,7 @@
                       style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       @click="saveAndExit = true"
                       type="submit"
-                      >Save & Exit</CButton
+                      >{{ $t("categories.form.saveAndExit") }}</CButton
                     >
                   </CRow>
                 </form>
@@ -146,14 +150,8 @@ export default {
     },
     display_images: null,
     options: {
-      parent_categories: [
-        { value: "", label: "Choose Parent", disabled: true, selected: "" },
-      ],
-      status: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "InActive" },
-      ],
+      parent_categories: [],
+      status: [],
     },
   }),
   validations() {
@@ -166,6 +164,8 @@ export default {
   },
   created() {
     this.form.id = this.$route.params.id;
+    this.setCatgoryOptions();
+    this.setStatus();
     this.getProductCategoryOptions();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
@@ -173,6 +173,28 @@ export default {
     }
   },
   methods: {
+    setCatgoryOptions() {
+      this.options.parent_categories = [
+        {
+          value: "",
+          label: this.$t("categories.form.parent_category_options"),
+          disabled: true,
+          selected: "",
+        },
+      ];
+    },
+    setStatus() {
+      this.options.status = [
+        {
+          value: "",
+          label: this.$t("general.status.choose"),
+          disabled: true,
+          selected: "",
+        },
+        { value: "active", label: this.$t("general.status.active") },
+        { value: "inactive", label: this.$t("general.status.inactive") },
+      ];
+    },
     saveProductCategory() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -192,9 +214,11 @@ export default {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
-                title: "Success",
-                text: "Product Category Added Successfully",
+                title: this.$t("general.swal.success"),
+                text: this.$t("categories.form.successMsg"),
                 timer: 3600,
+                timerProgressBar: true,
+                confirmButtonText: this.$t("general.swal.ok"),
               });
               this.$v.$reset();
               this.resetForm();
@@ -215,8 +239,8 @@ export default {
             this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
+              title: this.$t("general.swal.error"),
+              text: this.$t("general.swal.errorMsg"),
               timer: 3600,
             });
           });
@@ -242,9 +266,11 @@ export default {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
-                title: "Success",
-                text: "Product Category Updated Successfully",
+                title: this.$t("general.swal.success"),
+                text: this.$t("categories.form.successMsg"),
                 timer: 3600,
+                timerProgressBar: true,
+                confirmButtonText: this.$t("general.swal.ok"),
               });
               this.resetForm();
               this.$v.$reset();
@@ -265,8 +291,8 @@ export default {
             this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
+              title: this.$t("general.swal.error"),
+              text: this.$t("general.swal.errorMsg"),
               timer: 3600,
             });
           });
@@ -321,11 +347,12 @@ export default {
     deleteAttachment(uuid) {
       this.$swal
         .fire({
-          title: "Do you want to delete this Attachment",
-          text: "This will be Deleted from Database",
+          title: this.$t("general.attachment.delete.title"),
+          text: this.$t("general.attachment.delete.msg"),
           showCancelButton: true,
           confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
+          confirmButtonText: this.$t("general.swal.confirmDelButtonText"),
+          cancelButtonText: this.$t("general.swal.cancelButtonText"),
         })
         .then((result) => {
           if (result.isConfirmed) {
@@ -336,9 +363,11 @@ export default {
                   this.$store.commit("set_loader");
                   this.$swal.fire({
                     icon: "success",
-                    title: "Success",
-                    text: "Attachment Deleted Successfully",
+                    title: this.$t("general.swal.success"),
+                    text: this.$t("general.attachment.delete.successMsg"),
                     timer: 3600,
+                    timerProgressBar: true,
+                    confirmButtonText: this.$t("general.swal.ok"),
                   });
                   this.display_images = null;
                   this.$store.commit("close_loader");
@@ -348,8 +377,8 @@ export default {
                 console.log(err);
                 this.$swal.fire({
                   icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
+                  title: this.$t("general.swal.error"),
+                  text: this.$t("general.attachment.delete.errorMsg"),
                   timer: 3600,
                 });
                 this.$store.commit("close_loader");
