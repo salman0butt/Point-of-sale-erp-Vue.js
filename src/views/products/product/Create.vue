@@ -34,7 +34,7 @@
       </CCol>
       <CCol xs="12" lg="9">
         <CCard>
-          <CCardHeader>New Product </CCardHeader>
+          <CCardHeader>{{ $t("products.form.newTitle") }} </CCardHeader>
           <CCardBody>
             <CTabs add-tab-classes="mt-1">
               <CTab active>
@@ -65,33 +65,41 @@ export default {
   data: () => ({
     isEditing: false,
     saveAndExit: false,
-    pills: {
-      general: "General",
-    },
+    pills: {},
     permissions: localStorage.getItem("permissions"),
     activeTab: "ProductTab",
-    tabs: [
-      { key: "ProductTab", name: "General" },
-      { key: "", name: "Prices" },
-      { key: "", name: "Images" },
-    ],
+    tabs: [],
   }),
 
   created() {
+    this.setTabs();
+    this.setPill();
     this.permissionsMethods();
   },
   methods: {
+    setPill() {
+      this.pills = {
+        general: this.$t("products.tabs.general"),
+      };
+    },
+    setTabs() {
+      this.tabs = [
+        { key: "ProductTab", name: this.$t("products.tabs.general") },
+        { key: "", name: this.$t("products.tabs.prices") },
+        { key: "", name: this.$t("products.tabs.images") },
+      ];
+    },
     permissionsMethods() {
       if (this.permissions.includes("module1 permissions")) {
         this.tabs = [];
         this.tabs.push({ key: "ProductTab", name: "General" });
-        this.tabs.push({ key: "", name: "Attributes" });
-        this.tabs.push({ key: "", name: "Variations" });
-        this.tabs.push({ key: "", name: "Prices" });
-        this.tabs.push({ key: "", name: "Inventory" });
-        this.tabs.push({ key: "", name: "Images" });
-        this.tabs.push({ key: "", name: "Modifiers" });
-        this.tabs.push({ key: "", name: "Units" });
+        this.tabs.push({ key: "", name: this.$t("products.tabs.general") });
+        this.tabs.push({ key: "", name: this.$t("products.tabs.variations") });
+        this.tabs.push({ key: "", name: this.$t("products.tabs.prices") });
+        this.tabs.push({ key: "", name: this.$t("products.tabs.inventory") });
+        this.tabs.push({ key: "", name: this.$t("products.tabs.images") });
+        this.tabs.push({ key: "", name: this.$t("products.tabs.modifiers") });
+        this.tabs.push({ key: "", name: this.$t("products.tabs.units") });
       }
     },
   },

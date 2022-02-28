@@ -1,8 +1,9 @@
-import menu from './partials/menu';
-import table from './partials/table';
-import general from './partials/general';
-import brands from './partials/catalogs/brands/index';
-import categories from './partials/catalogs/category/index';
+import menu from './partials/menu.json';
+import table from './partials/table.json';
+import general from './partials/general.json';
+import brands from './partials/catalogs/brands.json';
+import categories from './partials/catalogs/category.json';
+import products from './partials/catalogs/products.json';
 
 export default {
   ...menu,
@@ -10,4 +11,5 @@ export default {
   ...table,
   ...general,
   ...categories,
+  ...products,
 }

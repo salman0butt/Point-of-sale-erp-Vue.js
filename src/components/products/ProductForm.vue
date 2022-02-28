@@ -7,17 +7,19 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Name"
+                :label="$t('products.form.name')"
                 v-model="form.name"
                 :class="{ error: $v.form.name.$error }"
                 @input="$v.form.name.$touch()"
               />
               <div v-if="$v.form.name.$error">
-                <p v-if="!$v.form.name.required" class="errorMsg">Name is required</p>
+                <p v-if="!$v.form.name.required" class="errorMsg">
+                  {{ $t("products.form.validations.name.required") }}
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Product Short Name" v-model="form.short_name" />
+              <CInput :label="$t('products.form.short_name')" v-model="form.short_name" />
             </CCol>
             <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -33,7 +35,7 @@
             </CCol> -->
 
             <CCol sm="6" md="4" class="pt-2">
-              <label class="typo__label">Suppliers</label>
+              <label class="typo__label">{{ $t("products.form.suppliers") }}</label>
               <multiselect
                 v-model="form.suppliers"
                 :options="options.suppliers"
@@ -41,14 +43,14 @@
                 :close-on-select="false"
                 :clear-on-select="false"
                 :preserve-search="true"
-                placeholder="Select Supplier"
+                :placeholder="$t('products.form.select_supplier')"
                 label="label"
                 track-by="label"
                 :preselect-first="true"
               >
                 <template slot="selection" slot-scope="{ values, search, isOpen }">
                   <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }} options selected</span
+                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
@@ -57,7 +59,7 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Brand"
+                :label="$t('products.form.brand')"
                 :options="options.brands"
                 :value.sync="form.brand_id"
                 :class="{ error: $v.form.brand_id.$error }"
@@ -65,13 +67,13 @@
               />
               <div v-if="$v.form.brand_id.$error">
                 <p v-if="!$v.form.brand_id.required" class="errorMsg">
-                  Brand is required
+                  {{ $t("products.form.validations.brand.required") }}
                 </p>
               </div>
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2" id="categories">
-              <label class="typo__label">Categories</label>
+              <label class="typo__label"> {{ $t("products.form.category") }}</label>
               <multiselect
                 v-model="form.categories"
                 :options="options.categories"
@@ -79,20 +81,20 @@
                 :close-on-select="false"
                 :clear-on-select="false"
                 :preserve-search="true"
-                placeholder="Select Categories"
+                :placeholder="$t('products.form.select_category')"
                 label="label"
                 track-by="label"
                 :preselect-first="true"
               >
                 <template slot="selection" slot-scope="{ values, search, isOpen }">
                   <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }} options selected</span
+                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <label class="typo__label">Branches</label>
+              <label class="typo__label">{{ $t("products.form.branches") }}</label>
               <multiselect
                 v-model="form.branches"
                 :options="options.branches"
@@ -100,27 +102,30 @@
                 :close-on-select="false"
                 :clear-on-select="false"
                 :preserve-search="true"
-                placeholder="Select Branches"
+                :placeholder="$t('products.form.select_branch')"
                 label="label"
                 track-by="label"
                 :preselect-first="true"
               >
                 <template slot="selection" slot-scope="{ values, search, isOpen }">
                   <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }} options selected</span
+                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Barcode" :value.sync="form.barcode" />
-            </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput label="Serial Number" :value.sync="form.serial_number" />
+              <CInput :label="$t('products.form.barcode')" :value.sync="form.barcode" />
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Alert Qty"
+                :label="$t('products.form.serial_number')"
+                :value.sync="form.serial_number"
+              />
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                :label="$t('products.form.alert_qty')"
                 type="number"
                 placeholder="0"
                 :value.sync="form.alert_qty"
@@ -130,14 +135,14 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Weight Unit"
+                :label="$t('products.form.weight_unit')"
                 :options="options.weight_units"
                 :value.sync="form.weight_unit"
               />
             </CCol>
             <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
               <CSelect
-                label="Status"
+                :label="$t('products.form.status')"
                 :options="options.status"
                 :value.sync="form.status"
               />
@@ -145,7 +150,7 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2 short_desc">
-              <label class="typo__label"> Description</label>
+              <label class="typo__label"> {{ $t("products.form.description") }}</label>
               <vue-editor v-model="form.short_description"></vue-editor>
             </CCol>
             <!-- <CCol sm="12" md="12" class="pt-2">
@@ -159,7 +164,7 @@
               <CInputCheckbox
                 custom
                 :checked="form.is_favorite"
-                label="Is Favorite"
+                :label="$t('products.form.is_favorite')"
                 @change="toggleIsFavruite"
               />
             </CCol>
@@ -167,7 +172,7 @@
               <CInputCheckbox
                 custom
                 :checked="form.is_expiry"
-                label="Is Expiry"
+                :label="$t('products.form.is_expiry')"
                 @change="toggleIsExpiry"
               />
             </CCol>
@@ -177,13 +182,13 @@
             <vue-tags-input
               v-model="form.tag"
               class="col-md-12"
-              placeholder="Tags"
+              :placeholder="$t('products.form.tags')"
               :tags="form.tags"
               @tags-changed="(newTags) => (form.tags = newTags)"
             />
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">{{ $t("general.validationError") }}</p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -193,7 +198,7 @@
               style="float: right; width: 200px; margin-left: 20px"
               type="submit"
               @click="saveAndExit = false"
-              >Save & Continue</CButton
+              >{{ $t("products.form.saveAndContinue") }}</CButton
             >
             <CButton
               timeout="2000"
@@ -202,7 +207,7 @@
               style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
               @click="saveAndExit = true"
               type="submit"
-              >Save & Exit</CButton
+              >{{ $t("products.form.saveAndExit") }}</CButton
             >
           </CRow>
         </form>
@@ -250,34 +255,8 @@ export default {
     productId: null,
     options: {
       suppliers: [],
-      brands: [
-        {
-          value: "",
-          label: "Choose Brand",
-          disabled: true,
-          selected: "",
-        },
-      ],
-      weight_units: [
-        {
-          value: "",
-          label: "Choose Weight Unit",
-          disabled: true,
-          selected: "",
-        },
-        {
-          value: "g",
-          label: "Gram",
-        },
-        {
-          value: "kg",
-          label: "Kilogram",
-        },
-        {
-          value: "ouance",
-          label: "Ouance",
-        },
-      ],
+      brands: [],
+      weight_units: [],
       categories: [],
       branches: [],
       types: [
@@ -318,12 +297,46 @@ export default {
   created() {
     this.productId = this.$route.params.id;
     this.getProductOptions();
+    this.setBrandOption();
+    this.setWeightUnits();
     if (this.productId) {
       this.getProduct();
       this.isEditing = true;
     }
   },
   methods: {
+    setBrandOption() {
+      this.options.brands = [
+        {
+          value: "",
+          label: this.$t("products.form.choose_brand"),
+          disabled: true,
+          selected: "",
+        },
+      ];
+    },
+    setWeightUnits() {
+      this.options.weight_units = [
+        {
+          value: "",
+          label: this.$t("products.form.choose_weight_unit"),
+          disabled: true,
+          selected: "",
+        },
+        {
+          value: "g",
+          label: "Gram",
+        },
+        {
+          value: "kg",
+          label: "Kilogram",
+        },
+        {
+          value: "ouance",
+          label: "Ouance",
+        },
+      ];
+    },
     getProductOptions() {
       ProductService.getProductOptions()
         .then(({ data }) => {
@@ -426,9 +439,11 @@ export default {
             if (res.status == 201) {
               this.$swal.fire({
                 icon: "success",
-                title: "Success",
-                text: "Product Created Successfully",
+                title: this.$t("general.swal.success"),
+                text: this.$t("products.form.successMsg"),
                 timer: 3600,
+                timerProgressBar: true,
+                confirmButtonText: this.$t("general.swal.ok"),
               });
               this.$v.$reset();
               if (this.saveAndExit) {
@@ -442,8 +457,8 @@ export default {
             console.log(error);
             this.$swal.fire({
               icon: "error",
-              title: "Error",
-              text: "Something Went wrong.",
+              title: this.$t("general.swal.error"),
+              text: this.$t("general.swal.errorMsg"),
               timer: 3600,
             });
           });
@@ -461,9 +476,11 @@ export default {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
-                title: "Success",
-                text: "Product Updated Successfully",
+                title: this.$t("general.swal.success"),
+                text: this.$t("products.form.updateMsg"),
                 timer: 3600,
+                timerProgressBar: true,
+                confirmButtonText: this.$t("general.swal.ok"),
               });
 
               this.$v.$reset();
@@ -479,8 +496,8 @@ export default {
             console.log(error);
             this.$swal.fire({
               icon: "error",
-              title: "Error",
-              text: "Something went Wrong",
+              title: this.$t("general.swal.error"),
+              text: this.$t("general.swal.errorMsg"),
               timer: 3600,
             });
           });
