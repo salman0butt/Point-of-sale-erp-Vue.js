@@ -43,13 +43,14 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton
-                      v-if="$can('view paymentMethod')"
+                    <CButton
+                      v-if="$can('show paymentMethod')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
-                    > -->
+                    >
+                    -->
                     <CButton
                       v-if="$can('edit paymentMethod')"
                       @click="editRow(item.uuid)"

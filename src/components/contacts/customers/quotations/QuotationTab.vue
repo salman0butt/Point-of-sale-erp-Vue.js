@@ -6,7 +6,7 @@
           <CCardHeader>Quotations</CCardHeader>
           <CCardBody>
             <CRow v-if="!readOnly">
-              <CCol xs="12" lg="12">
+              <!-- <CCol xs="12" lg="12">
                 <CButton
                   @click="ToggleQuotation()"
                   color="primary"
@@ -15,7 +15,7 @@
                 >
                   {{ toggleName }}
                 </CButton>
-              </CCol>
+              </CCol> -->
             </CRow>
 
             <CRow>

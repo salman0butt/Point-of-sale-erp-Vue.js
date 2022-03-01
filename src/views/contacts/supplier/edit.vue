@@ -84,6 +84,8 @@ export default {
         //   name: "Credit Account Payment",
         // },
         // { key: "Discounts", name: "Discounts", disabled: true },
+        // { key: "Returns", name: "Returns" },
+        // { key: "Payments", name: "Payments" },
       ],
     };
   },
