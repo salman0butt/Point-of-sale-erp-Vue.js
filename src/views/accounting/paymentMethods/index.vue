@@ -50,6 +50,7 @@
                       color="success"
                       >View</CButton
                     >
+                    -->
                     <CButton
                       v-if="$can('edit paymentMethod')"
                       @click="editRow(item.uuid)"

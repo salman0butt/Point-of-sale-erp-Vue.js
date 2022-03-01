@@ -74,7 +74,7 @@
                 </p>
                </div>
                         <CButton
-                        v-if="$can('edit business')"
+
                           block
                           color="success"
                           @click.prevent="updateDetail"

@@ -66,13 +66,14 @@ import { required } from "vuelidate/lib/validators";
 import { cilTrash } from "@coreui/icons-pro";
 import SearchProduct from "@/components/layouts/SearchProduct";
 import { formMixin } from "@/mixins/formMixin";
+import { globalMixin } from "@/mixins/globalMixin";
 
 export default {
   name: "CreateOrUpdateDamage",
   components: {
     SearchProduct,
   },
-  mixins: [formMixin],
+  mixins: [formMixin, globalMixin],
   cilTrash,
   data: () => ({
     form: {
@@ -99,6 +100,7 @@ export default {
   },
   created() {
     this.form.id = this.$route.params.id;
+    this.form.date = this.calculateTodayDate();
     if (this.form.id !== "" && this.form.id !== undefined) {
       this.isEditing = true;
       this.getDamage();
