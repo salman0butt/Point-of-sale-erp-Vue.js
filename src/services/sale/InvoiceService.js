@@ -2,7 +2,7 @@ import http from "@/http-common";
 import Helper from "@/helpers/Helper";
 
 class InvoiceService extends Helper {
-    getAll(page, per_page) {
+    getAll(page, per_page, customer_id = null) {
         let url = "/invoices";
 
         if (page !== '' && page !== undefined && page !== null)
@@ -10,6 +10,9 @@ class InvoiceService extends Helper {
 
         if (per_page !== '' && per_page !== undefined && per_page !== null)
             url = super.updateQueryStringParameter(url, "per_page", per_page);
+
+        if (customer_id !== '' && customer_id !== undefined && customer_id !== null)
+            url = super.updateQueryStringParameter(url, "customer_id", customer_id);
 
         url = super.updateQueryStringParameter(url, "status", "approved");
 

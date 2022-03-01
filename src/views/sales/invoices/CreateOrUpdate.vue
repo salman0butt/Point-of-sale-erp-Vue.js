@@ -112,13 +112,13 @@
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Status"
-                    :options="options.status"
-                    :value.sync="form.status"
-                    @change="$v.form.status.$touch()"
-                    :class="{ error: $v.form.status.$error }"
+                    :options="options.invoice_status"
+                    :value.sync="form.invoice_status"
+                    @change="$v.form.invoice_status.$touch()"
+                    :class="{ error: $v.form.invoice_status.$error }"
                   />
-                  <div v-if="$v.form.status.$error">
-                    <p v-if="!$v.form.status.required" class="errorMsg">
+                  <div v-if="$v.form.invoice_status.$error">
+                    <p v-if="!$v.form.invoice_status.required" class="errorMsg">
                       Status is required
                     </p>
                   </div>
@@ -281,7 +281,7 @@ export default {
       note: "",
       items: [],
       images: [],
-      status: "draft",
+      invoice_status: "draft",
       payment_terms: "",
       terms_and_conditions: "",
       delivery_method: "",
@@ -290,7 +290,7 @@ export default {
       address_for_delivery: "",
     },
     options: {
-      status: [
+      invoice_status: [
         { label: "Draft", value: "draft" },
         { label: "Approved", value: "approved" },
         { label: "Rejected", value: "rejected" },
@@ -334,7 +334,7 @@ export default {
         dated: { required },
         due_date: { required },
         sales_persons: { required },
-        status: { required },
+        invoice_status: { required },
       },
     };
   },
@@ -492,14 +492,13 @@ export default {
         };
         let formData = new FormData();
         formData.append("dated", this.form.dated);
-        formData.append("status", "approved");
         formData.append("terminal_id", this.form.terminal_id);
         formData.append("due_date", this.form.due_date);
         formData.append("customer", this.form.customer);
         formData.append("sales_persons", this.form.sales_persons);
         formData.append("note", this.form.note);
         formData.append("payment_terms", this.form.payment_terms);
-        formData.append("status", this.form.status);
+        formData.append("invoice_status", this.form.invoice_status);
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
@@ -649,7 +648,7 @@ export default {
               this.form.due_date = res.data.due_date;
               this.form.note = res.data.note;
               this.form.payment_terms = res.data.payment_terms;
-              this.form.status = res.data.status;
+              this.form.invoice_status = res.data.invoice_status;
               this.form.terms_and_conditions = res.data.terms_and_conditions;
 
               if (res.data.delivery && res.data.delivery.uuid) {

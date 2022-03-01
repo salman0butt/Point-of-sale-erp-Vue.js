@@ -29,7 +29,10 @@
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
-                <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                <CButton
+                  @click="viewRow(item.uuid)"
+                  class="btn-sm"
+                  color="success"
                   >View</CButton
                 >
                 <CButton
@@ -39,14 +42,22 @@
                 >
                   <CIcon :content="$options.cilPencil"
                 /></CButton>
-                <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                <CButton
+                  @click="deleteRow(item.uuid)"
+                  class="btn-sm"
+                  color="danger"
+                >
                   <CIcon :content="$options.cilTrash" />
                 </CButton>
               </CButtonGroup>
             </td>
           </template>
         </CDataTable>
-        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
       </CCol>
     </CRow>
   </div>
@@ -140,13 +151,11 @@ export default {
       this.$set(this.usersData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/sales/invoices/show/" + uuid });
     },
     editRow(uuid) {
-      this.$emit("invoice-edit", uuid);
-      // this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
     },
-
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
@@ -165,10 +174,12 @@ export default {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Invoice Deleted Successfully",
+                    text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
+                  this.serverData = this.serverData.filter(
+                    (item) => item.uuid != uuid
+                  );
                 }
               })
               .catch((error) => {

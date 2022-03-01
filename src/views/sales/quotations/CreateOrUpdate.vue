@@ -76,13 +76,16 @@
                 <CCol sm="6" md="4" class="pt-2" v-if="isEditing">
                   <CSelect
                     label="Status"
-                    :options="options.status"
-                    :value.sync="form.status"
-                    @change="$v.form.status.$touch()"
-                    :class="{ error: $v.form.status.$error }"
+                    :options="options.quotation_status"
+                    :value.sync="form.quotation_status"
+                    @change="$v.form.quotation_status.$touch()"
+                    :class="{ error: $v.form.quotation_status.$error }"
                   />
-                  <div v-if="$v.form.status.$error">
-                    <p v-if="!$v.form.status.required" class="errorMsg">
+                  <div v-if="$v.form.quotation_status.$error">
+                    <p
+                      v-if="!$v.form.quotation_status.required"
+                      class="errorMsg"
+                    >
                       Status is required
                     </p>
                   </div>
@@ -241,7 +244,6 @@ export default {
       note: "",
       items: [],
       images: [],
-      status: "pending",
       payment_terms: "",
       terms_and_conditions: "",
       previousCustomer: "",
@@ -249,9 +251,10 @@ export default {
       delivery_method_price: 0,
       total_price_with_delivery: 0,
       address_for_delivery: "",
+      quotation_status: "pending",
     },
     options: {
-      status: [
+      quotation_status: [
         { label: "Pending", value: "pending", selected: true },
         { label: "Approved", value: "approved" },
         { label: "Rejected", value: "rejected" },
@@ -305,7 +308,7 @@ export default {
         dated: { required },
         due_date: { required },
         sales_persons: { required },
-        status: { required },
+        quotation_status: { required },
       },
     };
   },
@@ -442,7 +445,7 @@ export default {
         formData.append("customer", this.form.customer);
         formData.append("sales_persons", this.form.sales_persons);
         formData.append("note", this.form.note);
-        formData.append("status", this.form.status);
+        formData.append("quotation_status", this.form.quotation_status);
         formData.append("payment_terms", this.form.payment_terms);
         formData.append("terms_and_conditions", this.form.terms_and_conditions);
         formData.append("items", JSON.stringify(this.form.items));
@@ -599,7 +602,7 @@ export default {
             this.form.dated = res.data.dated;
             this.form.due_date = res.data.due_date;
             this.form.note = res.data.note;
-            this.form.status = res.data.status;
+            this.form.quotation_status = res.data.quotation_status;
             this.form.payment_terms = res.data.payment_terms;
             this.form.terms_and_conditions = res.data.terms_and_conditions;
             if (res.data.delivery && res.data.delivery.uuid) {

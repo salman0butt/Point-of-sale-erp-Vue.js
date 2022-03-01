@@ -29,7 +29,7 @@
           <template #actions="{ item }">
             <td>
               <CButton
-                v-if="item.status == 'pending'"
+                v-if="item.quotation_status == 'pending'"
                 @click="approveQuotation(item.uuid)"
                 class="btn-sm mr-3"
                 color="success"
@@ -79,7 +79,7 @@ let fields = [
   { key: "customer", label: "Customer", _style: "min-width:40%" },
   { key: "dated", label: "Dated", _style: "min-width:40%" },
   { key: "due_date", label: "Due Date", _style: "min-width:15%;" },
-  { key: "status", label: "Status", _style: "min-width:15%;" },
+  { key: "quotation_status", label: "Status", _style: "min-width:15%;" },
   { key: "grand_total", label: "Grand Total", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
