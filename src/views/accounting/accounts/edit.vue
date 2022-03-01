@@ -39,6 +39,20 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Type"
+                    :options="options.type"
+                    :value.sync="form.type"
+                    :class="{ error: $v.form.type.$error }"
+                    @input="$v.form.type.$touch()"
+                  />
+                  <div v-if="$v.form.type.$error">
+                    <p v-if="!$v.form.type.required" class="errorMsg">
+                      Account Type is required
+                    </p>
+                  </div>
+                </CCol>
 
                 <CCol sm="6" md="4" class="pt-2">
                   <AccountTypeDropdown
@@ -96,11 +110,22 @@ export default {
       status: "",
       description: "",
       parent: "",
+      type: "",
     },
     options: {
       status: [
         { value: "active", label: "Active" },
         { value: "inactive", label: "Inactive" },
+      ],
+      type: [
+        {
+          value: "",
+          label: "Select Account Type",
+          selected: true,
+          disabled: true,
+        },
+        { value: "debited", label: "Debited" },
+        { value: "credited", label: "Credited" },
       ],
     },
   }),
@@ -109,6 +134,7 @@ export default {
       form: {
         code: { required, minLength: minLength(4) },
         name: { required, minLength: minLength(4) },
+        type: { required },
       },
     };
   },
@@ -122,6 +148,7 @@ export default {
         if (res.status == 200) {
           this.form.code = res.data.code;
           this.form.name = res.data.name;
+          this.form.type = res.data.type;
           this.form.description = res.data.description;
           this.form.status = res.data.status;
           this.form.parent = res.data.accountType.uuid;

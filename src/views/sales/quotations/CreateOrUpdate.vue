@@ -446,7 +446,6 @@ export default {
         formData.append("payment_terms", this.form.payment_terms);
         formData.append("terms_and_conditions", this.form.terms_and_conditions);
         formData.append("items", JSON.stringify(this.form.items));
-        formData.append("address_for_delivery", this.form.address_for_delivery);
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
         formData.append(
@@ -454,6 +453,7 @@ export default {
           this.$store.getters.getQuotationDiscount
         );
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
+        formData.append("address_for_delivery", this.form.address_for_delivery);
         formData.append("delivery_method", this.form.delivery_method);
         formData.append(
           "delivery_method_price",
@@ -535,6 +535,8 @@ export default {
         customer.defaultAddress.street.en
       ) {
         this.form.address_for_delivery = customer.defaultAddress.street.en;
+      } else {
+        this.form.address_for_delivery = "";
       }
     },
     salesPersonSelected(person) {
