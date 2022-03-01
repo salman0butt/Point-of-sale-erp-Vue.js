@@ -44,7 +44,7 @@
                 <td>
                   <CButtonGroup>
                     <CButton
-                      v-if="$can('view paymentMethod')"
+                      v-if="$can('show paymentMethod')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"

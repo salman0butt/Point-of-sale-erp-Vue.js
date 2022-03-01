@@ -29,14 +29,17 @@
           <template #actions="{ item }">
             <td>
               <CButton
-                v-if="item.status == 'pending'"
+                v-if="item.quotation_status == 'pending'"
                 @click="approveQuotation(item.uuid)"
                 class="btn-sm mr-3"
                 color="success"
                 >Approve</CButton
               >
               <CButtonGroup>
-                <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                <CButton
+                  @click="viewRow(item.uuid)"
+                  class="btn-sm"
+                  color="success"
                   >View</CButton
                 >
                 <CButton
@@ -46,14 +49,22 @@
                 >
                   <CIcon :content="$options.cilPencil"
                 /></CButton>
-                <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                <CButton
+                  @click="deleteRow(item.uuid)"
+                  class="btn-sm"
+                  color="danger"
+                >
                   <CIcon :content="$options.cilTrash" />
                 </CButton>
               </CButtonGroup>
             </td>
           </template>
         </CDataTable>
-        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
       </CCol>
     </CRow>
   </div>
@@ -68,7 +79,7 @@ let fields = [
   { key: "customer", label: "Customer", _style: "min-width:40%" },
   { key: "dated", label: "Dated", _style: "min-width:40%" },
   { key: "due_date", label: "Due Date", _style: "min-width:15%;" },
-  { key: "status", label: "Status", _style: "min-width:15%;" },
+  { key: "quotation_status", label: "Status", _style: "min-width:15%;" },
   { key: "grand_total", label: "Grand Total", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
@@ -149,7 +160,8 @@ export default {
       this.$router.push({ path: "/sales/quotations/show/" + uuid });
     },
     editRow(uuid) {
-      this.$emit("quotation-edit", uuid);
+      // this.$emit("quotation-edit", uuid);
+      this.$router.push({ path: "/sales/quotations/edit/" + uuid });
     },
 
     deleteRow(uuid) {
@@ -173,7 +185,9 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
+                  this.serverData = this.serverData.filter(
+                    (item) => item.uuid != uuid
+                  );
                 }
               })
               .catch((error) => {
@@ -209,6 +223,7 @@ export default {
                     text: "Quotation Updated Successfully",
                     timer: 3600,
                   });
+                  this.$router.push({ path: "/sales/invoices/show/" + uuid });
                 }
               })
               .catch((error) => {
