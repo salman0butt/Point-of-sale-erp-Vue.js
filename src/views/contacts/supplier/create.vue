@@ -74,11 +74,11 @@ export default {
         { key: "Sales", name: "Sales", disabled: true },
         { key: "Payments", name: "Payments", disabled: true },
         { key: "Returns", name: "Returns", disabled: true },
-        {
-          key: "Credit Account Payment",
-          name: "Credit Account Payment",
-          disabled: true,
-        },
+        // {
+        //   key: "Credit Account Payment",
+        //   name: "Credit Account Payment",
+        //   disabled: true,
+        // },
         { key: "Discounts", name: "Discounts", disabled: true },
       ],
     };

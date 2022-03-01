@@ -109,6 +109,8 @@ export default {
        if(data) {
          if(data.logo && data.logo.path){
             this.$store.commit("set_business_logo", data.logo.path);
+          }else {
+            localStorage.removeItem("business_logo");
           }
        }
         this.$store.commit("close_loader");

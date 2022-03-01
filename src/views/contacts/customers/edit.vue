@@ -50,7 +50,7 @@ import Email from "@/components/general/Email/Email";
 import NoteTab from "@/components/contacts/customers/notes/NoteTab";
 import QuotationTab from "@/components/contacts/customers/quotations/QuotationTab";
 import InvoiceTab from "@/components/contacts/customers/invoices/InvoiceTab";
-
+// import CreditPaymentAccount from "@/components/contacts/customers/CreditPaymentAccount";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -65,6 +65,7 @@ export default {
     NoteTab,
     QuotationTab,
     InvoiceTab,
+    // CreditPaymentAccount,
   },
   data() {
     return {
@@ -84,10 +85,10 @@ export default {
         // { key: "Sales", name: "Sales" },
         // { key: "Payments", name: "Payments" },
         { key: "Returns", name: "Returns" },
-        {
-          key: "CreditAccountPayment",
-          name: "Credit Account Payment",
-        },
+        // {
+        //   key: "CreditPaymentAccount",
+        //   name: "Credit Account Payment",
+        // },
         // { key: "Discounts", name: "Discounts" },
       ],
     };

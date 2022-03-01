@@ -47,7 +47,7 @@ import General from "@/components/contacts/supplier/General";
 import Address from "@/components/contacts/supplier/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 import Email from "@/components/general/Email/Email";
-
+// import CreditPaymentAccount from "@/components/contacts/customers/CreditPaymentAccount";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -59,6 +59,7 @@ export default {
     Address,
     Contact,
     Email,
+    // CreditPaymentAccount,
   },
   data() {
     return {
@@ -78,11 +79,10 @@ export default {
         { key: "Sales", name: "Sales", disabled: true },
         { key: "Payments", name: "Payments", disabled: true },
         { key: "Returns", name: "Returns", disabled: true },
-        {
-          key: "Credit Account Payment",
-          name: "Credit Account Payment",
-          disabled: true,
-        },
+        // {
+        //   key: "CreditPaymentAccount",
+        //   name: "Credit Account Payment",
+        // },
         // { key: "Discounts", name: "Discounts", disabled: true },
       ],
     };
