@@ -15,6 +15,7 @@
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="Damage"
               :fields="fields"
@@ -25,7 +26,6 @@
               sorter
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -75,7 +75,7 @@
 import DamageService from "@/services/catalogs/damages/DamageService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { tableMixin } from "@/mixins/tableMixin";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   // { key: "reason", label: "REASON", _style: "min-width:40%;" },
   { key: "date", label: "DATE", _style: "min-width:15%" },
@@ -85,6 +85,7 @@ const fields = [
 export default {
   name: "IndexDamage",
   mixins: [tableMixin],
+  components: { Loader },
   cilPencil,
   cilTrash,
   cilEye,

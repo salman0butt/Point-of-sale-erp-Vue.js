@@ -2,6 +2,7 @@
   <CRow>
     <CCol xs="12" lg="12">
       <CRow>
+        <Loader />
         <CCol sm="12" md="12" class="pt-2">
           <CButton
             color="success"
@@ -22,7 +23,6 @@
             sorter
             clickable-rows
             hover
-            :loading="loading"
             ref="externalAgent"
           >
             <template #description="{ item }">
@@ -56,6 +56,8 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import PaymetTermService from "@/services/paymentTerms/PaymentTermService";
 import { tableMixin } from "@/mixins/tableMixin";
 import PaymentTermModel from "@/components/paymentTerms/PaymentTermModel";
+import Loader from "@/components/layouts/Loader";
+
 const fields = [
   { key: "name", label: "Name", _style: "min-width:40%" },
   { key: "description", label: "DESCRIPTION", _style: "min-width:15%;" },
@@ -67,6 +69,7 @@ export default {
   mixins: [tableMixin],
   components: {
     PaymentTermModel,
+    Loader,
   },
   cilPencil,
   cilTrash,

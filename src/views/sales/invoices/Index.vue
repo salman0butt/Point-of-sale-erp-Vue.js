@@ -23,6 +23,7 @@
             >
 
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -34,7 +35,6 @@
               pagination
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -94,6 +94,7 @@
 import InvoiceService from "@/services/sale/InvoiceService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import OpeningModel from "@/components/dashboard/OpeningModel";
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "invoice_ref_no", label: "Ref No", _style: "min-width:15%;" },
   { key: "customer", label: "Customer", _style: "min-width:40%" },
@@ -105,7 +106,7 @@ const fields = [
 
 export default {
   name: "IndexQuotations",
-  components: { OpeningModel },
+  components: { OpeningModel, Loader },
   cilPencil,
   cilTrash,
   cilEye,
@@ -113,7 +114,6 @@ export default {
     return {
       serverData: [],
       fields,
-      loading: false,
       // cards: {
       //   employees_count: 0,
       //   female_count: 0,
@@ -128,7 +128,6 @@ export default {
     };
   },
   created() {
-    this.loading = true;
     this.getServerData();
   },
   watch: {
@@ -143,40 +142,26 @@ export default {
   },
   methods: {
     getServerData() {
+      this.$store.commit("set_loader");
       InvoiceService.getAll(this.activePage, this.perPage)
         .then(({ data }) => {
-          this.loading = true;
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
               item.customer = item.customer.full_name.en;
               this.serverData.push({ ...item, id });
             });
-            this.loading = false;
           }
           if (data.meta) {
             this.setPagination(data.meta);
           }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },
-    // getTotalCardData() {
-    //   EmployeeService.getTotalCount()
-    //     .then(({ data }) => {
-    //       if (data != null && data != "") {
-    //         this.cards.employees_count = data.employees_count;
-    //         this.cards.female_count = data.female_count;
-    //         this.cards.male_count = data.male_count;
-    //         this.cards.departments_count = data.departments_count;
-    //         this.cards.manager_count = data.manager_count;
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);

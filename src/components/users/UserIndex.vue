@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loader />
     <CDataTable
       :items="User"
       :fields="fields"
@@ -10,7 +11,6 @@
       sorter
       clickable-rows
       hover
-      :loading="loading"
       @row-clicked="rowClicked"
       ref="externalAgent"
     >
@@ -53,7 +53,7 @@
 <script>
 import UserService from "@/services/users/UserService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "full_name", label: "NAME", _style: "min-width:40%" },
   { key: "username", label: "USERNAME", _style: "min-width:15%;" },
@@ -64,6 +64,7 @@ const fields = [
 
 export default {
   name: "IndexUser",
+  components: { Loader },
   cilPencil,
   cilTrash,
   cilEye,
@@ -71,7 +72,6 @@ export default {
     return {
       UserData: [],
       fields,
-      loading: false,
       deleteRows: [],
       activePage: 1,
       pages: 0,
@@ -79,7 +79,6 @@ export default {
     };
   },
   created() {
-    this.loading = true;
     this.getUserData();
   },
   watch: {
@@ -97,11 +96,12 @@ export default {
   },
   methods: {
     getUserData(page = "", per_page = "") {
+      this.$store.commit("set_loader");
       UserService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
             this.UserData = [];
-            this.loading = true;
+
             if (data.data) {
               data.data.map((item, id) => {
                 this.UserData.push({ ...item, id });
@@ -111,10 +111,11 @@ export default {
               this.setPagination(data.meta);
             }
 
-            this.loading = false;
+            this.$store.commit("close_loader");
           }
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },

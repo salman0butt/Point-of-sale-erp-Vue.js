@@ -15,6 +15,7 @@
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="Receiving"
               :fields="fields"
@@ -25,7 +26,6 @@
               sorter
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -74,6 +74,7 @@
 <script>
 import ReceivingService from "@/services/receivings/ReceivingService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader";
 
 const fields = [
   { key: "supplier", label: "SUPPLIER", _style: "min-width:40%" },
@@ -85,6 +86,7 @@ const fields = [
 
 export default {
   name: "IndexReceiving",
+  components: { Loader },
   cilPencil,
   cilTrash,
   cilEye,
@@ -92,7 +94,6 @@ export default {
     return {
       ReceivingData: [],
       fields,
-      loading: false,
       deleteRows: [],
       activePage: 1,
       pages: 0,
@@ -100,9 +101,7 @@ export default {
     };
   },
   created() {
-    this.loading = true;
     this.getReceivingData();
-    console.log();
   },
   watch: {
     reloadParams() {
@@ -119,11 +118,11 @@ export default {
   },
   methods: {
     getReceivingData(page = "", per_page = "") {
+      this.$store.commit("set_loader");
       ReceivingService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
             this.ReceivingData = [];
-            this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
                 this.ReceivingData.push({ ...item, id });
@@ -132,12 +131,12 @@ export default {
             if (data.meta) {
               this.setPagination(data.meta);
             }
-
-            this.loading = false;
           }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
           console.log(err);
+          this.$store.commit("close_loader");
         });
     },
     rowClicked(item, index, column, e) {
@@ -201,7 +200,6 @@ export default {
     },
     onTableChange() {
       setTimeout(() => {
-        this.loading = false;
         const agent = this.$refs.externalAgent;
         this.ReceivingData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);

@@ -28,6 +28,7 @@
               Add Supplier</CButton
             >
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -39,7 +40,6 @@
               pagination
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -105,7 +105,7 @@ import SupplierServices from "@/services/contacts/supplier/SupplierServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import SupplierModel from "@/components/contacts/supplier/SupplierModel";
 import { tableMixin } from "@/mixins/tableMixin";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "serial_no", label: "Serial No", _style: "min-width:15%;" },
   { key: "name", label: "NAME", _style: "min-width:40%" },
@@ -124,6 +124,7 @@ export default {
   mixins: [tableMixin],
   components: {
     SupplierModel,
+    Loader,
   },
   cilPencil,
   cilTrash,

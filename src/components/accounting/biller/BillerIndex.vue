@@ -2,6 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
+        <Loader />
         <CDataTable
           :items="Biller"
           :fields="fields"
@@ -12,7 +13,6 @@
           sorter
           clickable-rows
           hover
-          :loading="loading"
           @row-clicked="rowClicked"
           ref="externalAgent"
         >
@@ -62,11 +62,7 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination
-          v-show="pages > 1"
-          :pages="pages"
-          :active-page.sync="activePage"
-        />
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
       </CCol>
     </CRow>
   </div>
@@ -75,7 +71,7 @@
 <script>
 import RecurringBillService from "@/services/accounting/recurringbill/RecurringBillService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   // {
   //   key: "select",
@@ -95,6 +91,7 @@ const fields = [
 
 export default {
   name: "RecurringBillerIndex",
+  components: { Loader },
   cilPencil,
   cilTrash,
   cilEye,
@@ -102,7 +99,6 @@ export default {
     return {
       BillerData: [],
       fields,
-      loading: false,
       deleteRows: [],
       activePage: 1,
       pages: 0,
@@ -110,7 +106,6 @@ export default {
     };
   },
   created() {
-    this.loading = true;
     this.getBiller();
   },
   computed: {
@@ -128,12 +123,12 @@ export default {
   },
   methods: {
     getBiller(page = "", per_page = "") {
+      this.$store.commit("set_loader");
       this.empId = this.$route.params.id;
       RecurringBillService.getAll(page, per_page)
         .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
+          if (data) {
             this.BillerData = [];
-            this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
                 this.BillerData.push({ ...item, id });
@@ -143,9 +138,10 @@ export default {
               this.setPagination(data.meta);
             }
           }
-          this.loading = false;
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },
@@ -186,9 +182,7 @@ export default {
                     text: "Biller Deleted Successfully",
                     timer: 3600,
                   });
-                  this.BillerData = this.BillerData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.BillerData = this.BillerData.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })
@@ -210,7 +204,6 @@ export default {
     },
     onTableChange() {
       setTimeout(() => {
-        this.loading = false;
         const agent = this.$refs.externalAgent;
         this.BillerData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);

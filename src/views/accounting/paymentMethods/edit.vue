@@ -5,6 +5,7 @@
         <CCard>
           <CCardHeader>Edit Payment Method</CCardHeader>
           <CCardBody>
+            <Loader />
             <form @submit.prevent="updateData">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
@@ -45,9 +46,7 @@
                     <p v-if="!$v.form.percent.required" class="errorMsg">
                       Percent is required
                     </p>
-                    <p v-if="!$v.form.percent.decimal" class="errorMsg">
-                      Must be Digit
-                    </p>
+                    <p v-if="!$v.form.percent.decimal" class="errorMsg">Must be Digit</p>
                     <p v-if="!$v.form.percent.minValue" class="errorMsg">
                       Minimum number must be zero
                     </p>
@@ -67,9 +66,7 @@
                     <p v-if="!$v.form.amount.required" class="errorMsg">
                       Fix amount is required
                     </p>
-                    <p v-if="!$v.form.amount.decimal" class="errorMsg">
-                      Must be Digit
-                    </p>
+                    <p v-if="!$v.form.amount.decimal" class="errorMsg">Must be Digit</p>
                     <p v-if="!$v.form.amount.minValue" class="errorMsg">
                       Minimum number must be zero
                     </p>
@@ -114,19 +111,15 @@
 
 <script>
 import PaymentMethodsServices from "@/services/accounting/paymentMethods/PaymentMethodsServices";
-
-import {
-  required,
-  minValue,
-  minLength,
-  decimal,
-} from "vuelidate/lib/validators";
+import Loader from "@/components/layouts/Loader";
+import { required, minValue, minLength, decimal } from "vuelidate/lib/validators";
 import AccountDropdown from "@/components/general/AccountDropdown";
 
 export default {
   name: "EditPaymentMethods",
   components: {
     AccountDropdown,
+    Loader,
   },
   data: () => ({
     url_data: "",
@@ -167,6 +160,7 @@ export default {
       }
     },
     getEditableData() {
+      this.$store.commit("set_loader");
       this.url_data = this.$route.params.id;
       PaymentMethodsServices.get(this.url_data)
         .then((res) => {
@@ -182,6 +176,7 @@ export default {
             this.form.tax = res.data.tax;
             this.form.status = res.data.status;
           }
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
@@ -191,11 +186,13 @@ export default {
             text: "Something Went Wrong",
             timer: 3600,
           });
+          this.$store.commit("close_loader");
         });
     },
     updateData() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
+        this.$store.commit("set_loader");
         let data = this.form;
         PaymentMethodsServices.update(this.url_data, data)
           .then((res) => {
@@ -210,6 +207,7 @@ export default {
 
               this.$router.push({ path: "/accounting/paymentMethods/index" });
             }
+            this.$store.commit("close_loader");
           })
           .catch((error) => {
             console.log(error);
@@ -219,6 +217,7 @@ export default {
               text: "Something Went Wrong",
               timer: 3600,
             });
+            this.$store.commit("close_loader");
           });
       }
     },

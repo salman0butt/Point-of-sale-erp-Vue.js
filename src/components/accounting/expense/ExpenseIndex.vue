@@ -2,6 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
+        <Loader />
         <CDataTable
           :items="Expense"
           :fields="fields"
@@ -12,7 +13,6 @@
           sorter
           clickable-rows
           hover
-          :loading="loading"
           @row-clicked="rowClicked"
           ref="externalAgent"
         >
@@ -73,11 +73,7 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination
-          v-show="pages > 1"
-          :pages="pages"
-          :active-page.sync="activePage"
-        />
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
       </CCol>
     </CRow>
   </div>
@@ -86,7 +82,7 @@
 <script>
 import ExpenseService from "@/services/accounting/expense/ExpenseService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   // {
   //   key: "select",
@@ -105,6 +101,9 @@ const fields = [
 
 export default {
   name: "ExpenseIndex",
+  components: {
+    Loader,
+  },
   cilPencil,
   cilTrash,
   cilEye,
@@ -112,7 +111,6 @@ export default {
     return {
       ExpenseData: [],
       fields,
-      loading: false,
       deleteRows: [],
       activePage: 1,
       pages: 0,
@@ -120,7 +118,6 @@ export default {
     };
   },
   created() {
-    this.loading = true;
     this.getExpense();
   },
   computed: {
@@ -138,12 +135,12 @@ export default {
   },
   methods: {
     getExpense(page = "", per_page = "") {
+      this.$store.commit("set_loader");
       this.empId = this.$route.params.id;
       ExpenseService.getAll(page, per_page)
         .then(({ data }) => {
           if (data !== "" && data !== undefined) {
             this.ExpenseData = [];
-            this.loading = true;
             if (data.data) {
               data.data.map((item, id) => {
                 item.account = item.account.name;
@@ -154,9 +151,10 @@ export default {
               this.setPagination(data.meta);
             }
           }
-          this.loading = false;
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },
@@ -197,9 +195,7 @@ export default {
                     text: "Expense Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ExpenseData = this.ExpenseData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.ExpenseData = this.ExpenseData.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })
@@ -221,7 +217,6 @@ export default {
     },
     onTableChange() {
       setTimeout(() => {
-        this.loading = false;
         const agent = this.$refs.externalAgent;
         this.ExpenseData = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);

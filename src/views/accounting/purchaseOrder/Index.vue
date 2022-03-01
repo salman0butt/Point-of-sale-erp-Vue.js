@@ -12,6 +12,7 @@
               >Create PO</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -23,7 +24,6 @@
               pagination
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -83,7 +83,7 @@
 import PurchaseService from "@/services/accounting/purchaseOrder/PurchaseOrderServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { tableMixin } from "@/mixins/tableMixin";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "date", label: "Date", _style: "min-width:40%" },
   { key: "purchase_order_id", label: "PO#", _style: "min-width:40%" },
@@ -103,6 +103,7 @@ const fields = [
 export default {
   name: "IndexPurchaseOrder",
   mixins: [tableMixin],
+  components: { Loader },
   cilPencil,
   cilTrash,
   cilEye,

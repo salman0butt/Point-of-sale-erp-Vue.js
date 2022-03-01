@@ -1,6 +1,7 @@
 <template>
   <CRow>
     <CCol xs="12" lg="12">
+      <Loader />
       <CRow>
         <CCol sm="12" md="12" class="pt-2">
           <CDataTable
@@ -13,7 +14,6 @@
             sorter
             clickable-rows
             hover
-            :loading="loading"
             ref="externalAgent"
           >
             <template #actions="{ item }">
@@ -59,6 +59,7 @@
 <script>
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import TaxService from "@/services/taxes/TaxService";
+import Loader from "@/components/layouts/Loader";
 const taxFields = [
   { key: "name", label: "Name", _style: "min-width:40%" },
   { key: "percentage", label: "RATE %", _style: "min-width:15%;" },
@@ -70,6 +71,7 @@ export default {
   cilPencil,
   cilTrash,
   cilEye,
+  components: { Loader },
   props: {
     updatedObj: { Object },
   },
@@ -86,9 +88,6 @@ export default {
   computed: {
     taxItems() {
       return this.taxes;
-    },
-    loading() {
-      return this.$store.getters.loading;
     },
   },
   watch: {
