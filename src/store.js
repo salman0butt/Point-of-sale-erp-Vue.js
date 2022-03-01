@@ -43,6 +43,7 @@ const state = {
   openingModel: false,
   closingModel: false,
   PaymernTermId: '',
+  business_logo: localStorage.getItem('business_logo') || '/img/images/switcher-logo.jpeg',
 }
 
 const mutations = {
@@ -160,7 +161,12 @@ const mutations = {
   },
   set_closing_model(state, status) {
     state.closingModel = status;
+  },
+  set_business_logo(state, logo) {
+    state.business_logo = logo;
+    localStorage.setItem('business_logo', logo);
   }
+
 
 }
 const actions = {
@@ -175,7 +181,10 @@ const actions = {
           localStorage.setItem('employee_id', data.employee.uuid);
           localStorage.setItem('permissions', JSON.stringify(data.permissions));
           localStorage.setItem('list_branches', JSON.stringify(data.branches));
-          localStorage.setItem('business_id', data.business_id);
+          localStorage.setItem('business_id', data.business.uuid);
+          if(data.business && data.business.logo && data.business.logo.path){
+            localStorage.setItem('business_logo', data.business.logo.path);
+          }
           if (data.branches && data.branches.length == 1) {
             localStorage.setItem('selected_branches', JSON.stringify([data.branches[0].uuid]));
           }
@@ -284,7 +293,8 @@ const getters = {
   getPaymentTermModel: state => state.PaymentTermModel,
   getPaymentTermId: state => state.PaymernTermId,
   getOpeningModel: state => state.openingModel,
-  getClosingModel: state => state.closingModel
+  getClosingModel: state => state.closingModel,
+  getBusinessLogo: state => state.business_logo
 
 }
 
