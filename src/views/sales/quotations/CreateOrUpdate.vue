@@ -65,14 +65,7 @@
                     :value.sync="form.payment_terms"
                   />
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    @change="changeDelivery($event)"
-                    label="Delivery"
-                    :options="options.delivery_methods"
-                    :value.sync="form.delivery_method"
-                  />
-                </CCol>
+
                 <CCol sm="6" md="4" class="pt-2" v-if="isEditing">
                   <CSelect
                     label="Status"
@@ -90,15 +83,24 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
-                  <CInput label="Address" v-model="form.address_for_delivery" />
-                </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <SearchProduct
                     searchType="quotation"
                     :itemsData="form.items"
                   />
                 </CCol>
+                <CCol sm="12" md="12" class="pt-2">
+                  <CSelect
+                    @change="changeDelivery($event)"
+                    label="Delivery"
+                    :options="options.delivery_methods"
+                    :value.sync="form.delivery_method"
+                  />
+                </CCol>
+                <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                  <CInput label="Address" v-model="form.address_for_delivery" />
+                </CCol>
+
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Sub Total" readonly :value="subTotal" />
                 </CCol>
