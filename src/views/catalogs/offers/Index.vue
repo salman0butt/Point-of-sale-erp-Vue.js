@@ -15,6 +15,7 @@
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="Offer"
               :fields="fields"
@@ -25,7 +26,6 @@
               sorter
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -75,7 +75,7 @@
 import OfferService from "@/services/catalogs/offers/OfferService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { tableMixin } from "@/mixins/tableMixin";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "type", label: "TYPE", _style: "min-width:15%;" },
@@ -89,6 +89,7 @@ const fields = [
 export default {
   name: "IndexOffer",
   mixins: [tableMixin],
+  components: { Loader },
   cilPencil,
   cilTrash,
   cilEye,

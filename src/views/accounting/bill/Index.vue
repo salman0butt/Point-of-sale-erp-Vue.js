@@ -14,6 +14,7 @@
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="Brand"
               :fields="fields"
@@ -24,7 +25,6 @@
               sorter
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -75,6 +75,7 @@ import BrandService from "@/services/catalogs/brands/BrandService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import BrandModel from "@/components/catalogs/brands/BrandModel";
 import { tableMixin } from "@/mixins/tableMixin";
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "name", label: "NAME", _style: "width:50%" },
   { key: "status", label: "STATUS", _style: "width:30%;" },
@@ -86,6 +87,7 @@ export default {
   mixins: [tableMixin],
   components: {
     BrandModel,
+    Loader,
   },
   cilPencil,
   cilTrash,

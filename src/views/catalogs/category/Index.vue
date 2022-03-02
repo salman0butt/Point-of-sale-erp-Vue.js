@@ -23,6 +23,7 @@
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="productCategory"
               :fields="fields"
@@ -33,7 +34,6 @@
               sorter
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
               :noItemsView="{
@@ -122,7 +122,7 @@ import ProductCategoryService from "@/services/catalogs/category/ProductCategory
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import CategoryModel from "@/components/catalogs/category/CategoryModel";
 import { tableMixin } from "@/mixins/tableMixin";
-
+import Loader from "@/components/layouts/Loader";
 export default {
   name: "IndexProductCategory",
   mixins: [tableMixin],
@@ -131,6 +131,7 @@ export default {
   cilEye,
   components: {
     CategoryModel,
+    Loader,
   },
   data() {
     return {

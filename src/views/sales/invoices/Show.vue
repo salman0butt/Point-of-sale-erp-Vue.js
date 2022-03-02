@@ -7,9 +7,7 @@
         <CCard>
           <CCardHeader>
             Invoice
-            <strong style="text-align: center"
-              ># {{ invoice.invoice_ref_no }}</strong
-            >
+            <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
             <div class="float-center">
@@ -19,11 +17,9 @@
                   :to="`/customers/show/${customer.uuid}`"
                   v-if="$can('show customers')"
                 >
-                  <strong
-                    class="margin:auto"
-                    style="color: red; font-size: 22px"
-                    >{{ customer.name }}</strong
-                  ></router-link
+                  <strong class="margin:auto" style="color: red; font-size: 22px">{{
+                    customer.name
+                  }}</strong></router-link
                 >
               </div>
             </div>
@@ -37,8 +33,8 @@
             <form @submit.prevent="paymentSubmit()">
               <CCol sm="12" md="12" class="pt-2">
                 <Label
-                  ><CIcon style="color: green" :content="$options.cisWallet" />
-                  Payment Method</Label
+                  ><CIcon style="color: green" :content="$options.cisWallet" /> Payment
+                  Method</Label
                 >
                 <CSelect
                   :options="options.paymentMethods"
@@ -64,9 +60,7 @@
                 />
               </CCol>
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">
-                  Amount is required
-                </p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
               <CButton
                 progress
@@ -103,10 +97,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
@@ -116,11 +107,7 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -136,9 +123,7 @@
           <CCardHeader>
             Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
             <div class="float-right">
-              <a href="#" class="btn btn-sm btn-info">
-                <CIcon name="cil-save" /> Save
-              </a>
+              <a href="#" class="btn btn-sm btn-info"> <CIcon name="cil-save" /> Save </a>
               <a class="btn btn-sm btn-info ml-1" @click="print">
                 <CIcon name="cil-print" class="mr-1" /> Print Me
               </a>
@@ -147,12 +132,7 @@
           <CCardBody id="printMe">
             <CRow class="mb-4">
               <CCol sm="4">
-                <CImg
-                  v-bind:src="business.logo"
-                  block
-                  class="mb-2 imger"
-                  width="100%"
-                />
+                <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" />
                 <h6 class="mb-3">To:</h6>
                 <div>
                   <strong>{{ customer.name }}</strong>
@@ -160,9 +140,7 @@
                 <div v-if="customer.address">
                   Address : {{ customer.address.street.en }}
                 </div>
-                <div v-if="customer.email">
-                  Email: {{ customer.email.email }}
-                </div>
+                <div v-if="customer.email">Email: {{ customer.email.email }}</div>
                 <div v-if="customer.contact_number">
                   Phone: {{ customer.contact_number.number.en }}
                 </div>
@@ -191,10 +169,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    v-for="(product, index) in invoice.products"
-                    :key="product.uuid"
-                  >
+                  <tr v-for="(product, index) in invoice.products" :key="product.uuid">
                     <td class="center">{{ index + 1 }}</td>
                     <td class="left">{{ product.product.name.en }}</td>
                     <td class="left">{{ product.description }}</td>
@@ -203,9 +178,7 @@
                     <td class="right">{{ product.tax }}</td>
                     <td class="right">
                       {{
-                        product.discount_per
-                          ? product.discount + "%"
-                          : product.discount
+                        product.discount_per ? product.discount + "%" : product.discount
                       }}
                     </td>
                     <td class="right">{{ product.total }}</td>
@@ -385,12 +358,15 @@ export default {
           data.products.map((item, id) => {
             serverproducts.push(item);
           });
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
 
       // Business logo
+      this.$store.commit("set_loader");
       let business_id = localStorage.getItem("business_id");
       this.$http
         .get("/business/" + business_id)
@@ -398,6 +374,7 @@ export default {
           if (data.logo && data.logo.path) {
             this.business.logo = data.logo.path;
           }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
           this.$store.commit("close_loader");
@@ -406,15 +383,18 @@ export default {
 
       // Payment Methods display
       let paymentMethods = this.options.paymentMethods;
+      this.$store.commit("set_loader");
       PaymentInvoiceService.create()
         .then(({ data }) => {
           if (data && data.paymentMethods) {
             data.paymentMethods.map((value, index) => {
               paymentMethods.push({ label: value.name, value: value.uuid });
             });
+            this.$store.commit("close_loader");
           }
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
 

@@ -6,6 +6,7 @@
           <CCardHeader>{{ isEditing ? "Edit" : "Create" }} Offer </CCardHeader>
           <CCardBody>
             <CRow>
+              <Loader />
               <CCol xs="12" lg="12">
                 <form @submit.prevent="isEditing ? updateOffer() : saveOffer()">
                   <CRow>
@@ -400,10 +401,10 @@ import { required } from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import { VueTagsInput } from "@johmun/vue-tags-input";
 import { VueEditor } from "vue2-editor";
-
+import Loader from "@/components/layouts/Loader";
 export default {
   name: "CreateOrUpdateOffer",
-  components: { Multiselect, VueTagsInput, VueEditor },
+  components: { Multiselect, VueTagsInput, VueEditor, Loader },
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -628,6 +629,7 @@ export default {
       }
     },
     getAllOfferOptions() {
+      this.$store.commit("set_loader");
       OfferService.getAllOfferOptions()
         .then((res) => {
           if (res.status == 200) {
@@ -654,19 +656,24 @@ export default {
               }
             }
           }
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
+          this.$store.commit("close_loader");
         });
     },
     getOffer() {
+      this.$store.commit("set_loader");
       OfferService.get(this.form.id)
         .then(({ data }) => {
           this.displayData(data);
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
           console.log(error);
           this.isEditing = false;
+          this.$store.commit("close_loader");
           this.$router.push({ path: "/catalogs/offers/index" });
         });
     },

@@ -27,9 +27,7 @@
                 @input="$v.form.date.$touch()"
               />
               <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">
-                  Date is required
-                </p>
+                <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -40,27 +38,8 @@
               />
             </CCol>
           </CRow>
-          <CRow>
-            <CCol sm="12" md="12" class="pt-2">
-              <CTextarea
-                label="Delevery Notes"
-                placeholder="Content..."
-                v-model="form.reference_id"
-              />
-            </CCol>
-          </CRow>
+
           <SearchProduct searchType="receivings" :itemsData="form.items" />
-          <CRow>
-            <CCol sm="12" md="12" class="pt-2">
-              <CInput
-                label="Total Cost"
-                type="number"
-                v-model="form.total_cost"
-                :class="{ error: $v.form.total_cost.$error }"
-                @input="$v.form.total_cost.$touch()"
-              />
-            </CCol>
-          </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2">
               <CInput
@@ -78,10 +57,15 @@
             </CCol>
 
             <CCol sm="12" md="12" class="pt-2">
+              <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="12" md="12" class="pt-2">
               <CTextarea
-                label="Note"
+                label="Delevery Notes"
                 placeholder="Content..."
-                v-model="form.note"
+                v-model="form.reference_id"
               />
             </CCol>
           </CRow>
@@ -118,9 +102,7 @@
               </div>
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -136,12 +118,7 @@
               timeout="2000"
               block
               color="danger"
-              style="
-                float: right;
-                width: 140px;
-                margin-left: 20px;
-                margin-top: 0;
-              "
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -183,9 +160,7 @@ export default {
     },
     display_images: [],
     options: {
-      suppliers: [
-        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
-      ],
+      suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
       receiving_status: [
         {
           value: "",

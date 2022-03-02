@@ -13,6 +13,7 @@
               >Create Payment Method</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -24,7 +25,6 @@
               pagination
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -43,13 +43,14 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!--<CButton
                       v-if="$can('show paymentMethod')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
                     >
+                    -->
                     <CButton
                       v-if="$can('edit paymentMethod')"
                       @click="editRow(item.uuid)"
@@ -84,7 +85,7 @@
 <script>
 import PaymentMethodsServices from "@/services/accounting/paymentMethods/PaymentMethodsServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "name", label: "NAME", _style: "min-width:40%" },
   { key: "account", label: "PARENT ACCOUNT", _style: "min-width:15%;" },
@@ -100,18 +101,19 @@ export default {
   cilPencil,
   cilTrash,
   cilEye,
+  components: {
+    Loader,
+  },
   data() {
     return {
       serverData: [],
       fields,
-      loading: false,
       activePage: 1,
       pages: 0,
       perPage: 10,
     };
   },
   created() {
-    this.loading = true;
     this.getServerData();
   },
   watch: {
@@ -126,22 +128,23 @@ export default {
   },
   methods: {
     getServerData() {
+      this.$store.commit("set_loader");
       PaymentMethodsServices.getAll(this.activePage, this.perPage)
         .then(({ data }) => {
-          this.loading = true;
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
               this.serverData.push({ ...item, id });
             });
-            this.loading = false;
           }
           if (data.meta) {
             this.setPagination(data.meta);
           }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
           console.log(err);
+          this.$store.commit("close_loader");
         });
     },
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Loader />
+    <!-- <Loader /> -->
 
     <!-- <CCard>
       <CCardHeader> Accounting </CCardHeader>
@@ -115,14 +115,14 @@
 // import AccoutingSettingService from "@/services/settings/AccoutingSettingService";
 // import { required } from "vuelidate/lib/validators";
 // import { VueTagsInput } from "@johmun/vue-tags-input";
-import Loader from "@/components/layouts/Loader";
+// import Loader from "@/components/layouts/Loader";
 import TaxForm from "@/components/taxes/TaxForm";
 import TermAndCondition from "@/components/termsAndConditions/TermAndCondition";
 import PaymentTermIndex from "@/components/paymentTerms/PaymentTermIndex";
 
 export default {
   name: "HrSettingForm",
-  components: { Loader, TaxForm, TermAndCondition, PaymentTermIndex },
+  components: { TaxForm, TermAndCondition, PaymentTermIndex },
   data: () => ({
     settingData: [],
     // form: {

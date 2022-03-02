@@ -2,11 +2,18 @@
   <div class="c-app flex-row align-items-center" :class="{ 'c-dark-theme': $store.state.darkMode }">
     <CContainer>
       <CRow class="justify-content-center">
+    <Loader/>
         <CCol md="8">
           <CCardGroup>
             <CCard class="p-4">
               <CCardBody>
                 <CForm @submit.prevent="login">
+                   <CImg
+                    :src="getBusinessLogo()"
+                    block
+                    class="mb-2"
+                    style="max-width: 100px;max-height: 100px;display:block;margin:0 auto;"
+                />
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
 
@@ -81,14 +88,37 @@
 // import http from '../../http-common'
 import { mapActions } from "vuex";
 import { required } from "vuelidate/lib/validators";
-
+import Loader from "@/components/layouts/Loader";
 export default {
   name: "Login",
+  components: {
+    Loader,
+  },
   data() {
     return {
       username: "",
       password: "",
     };
+  },
+  beforeCreate() {
+    this.$store.commit("set_loader");
+      this.$http
+      .get("/business-info")
+      .then(({ data }) => {
+       console.log(data);
+       if(data) {
+         if(data.logo && data.logo.path){
+            this.$store.commit("set_business_logo", data.logo.path);
+          }else {
+            localStorage.removeItem("business_logo");
+          }
+       }
+        this.$store.commit("close_loader");
+      })
+      .catch((err) => {
+        this.$store.commit("close_loader");
+        console.log(err);
+      });
   },
   validations() {
     return {
@@ -109,6 +139,9 @@ computed: {
   },
   methods: {
     ...mapActions(["set_errors"]),
+    getBusinessLogo() {
+      return this.$store.getters.getBusinessLogo;
+    },
     login() {
       let username = this.username;
       let password = this.password;

@@ -20,6 +20,7 @@
               >{{ $t("products.index.add") }}</router-link
             >
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -31,7 +32,6 @@
               pagination
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
               :noItemsView="{
@@ -133,10 +133,14 @@
 import ProductService from "@/services/products/ProductService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { tableMixin } from "@/mixins/tableMixin";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "IndexProduct",
   mixins: [tableMixin],
+  components: {
+    Loader,
+  },
   cilPencil,
   cilTrash,
   cilEye,

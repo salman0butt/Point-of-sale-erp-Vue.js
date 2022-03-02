@@ -17,6 +17,7 @@
             </div>
             <br />
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="branches"
               :fields="fields"
@@ -26,7 +27,6 @@
               sorter
               pagination:false
               clickable-rows
-              :loading="loading"
               hover
               @row-clicked="rowClicked"
             >
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "name", label: "Name Of Branch", _style: "min-width:40%" },
   { key: "area", label: "Area", _style: "min-width:10%;" },
@@ -74,9 +75,9 @@ const fields = [
 
 export default {
   name: "Branches",
+  components: { Loader },
   data() {
     return {
-      loading: true,
       Branches: [],
       fields,
     };
@@ -98,6 +99,7 @@ export default {
       this.$set(this.Branches[item.id], "_selected", !val);
     },
     dataCall() {
+      this.$store.commit("set_loader");
       this.$http
         .get("/branches", {
           headers: {
@@ -108,7 +110,7 @@ export default {
           data.map((item, id) => {
             this.Branches.push({ ...item, id });
           });
-          this.loading = false;
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
           console.log(err);
