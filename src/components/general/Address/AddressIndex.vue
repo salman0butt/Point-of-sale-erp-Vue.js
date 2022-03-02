@@ -2,6 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
+        <Loader />
         <CDataTable
           :items="Addresses"
           :fields="fields"
@@ -12,7 +13,6 @@
           sorter
           clickable-rows
           hover
-          :loading="loading"
           ref="externalAgent"
         >
           <!-- item.floor = item.floor?.en;
@@ -90,6 +90,7 @@
 import SupplierAddressServices from "@/services/contacts/supplier/SupplierAddressServices";
 import CustomerAddressServices from "@/services/contacts/customers/CustomerAddressServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader";
 
 let fields = [
   { key: "flat", label: "FLAT", _style: "min-width:40%" },
@@ -107,7 +108,7 @@ export default {
   cilPencil,
   cilTrash,
   cilEye,
-
+  components: { Loader },
   data() {
     return {
       AddressesData: [],
@@ -135,9 +136,6 @@ export default {
   computed: {
     Addresses() {
       return this.AddressesData;
-    },
-    loading() {
-      return this.$store.getters.loading;
     },
   },
   watch: {

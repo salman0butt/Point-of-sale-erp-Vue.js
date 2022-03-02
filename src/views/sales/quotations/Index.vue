@@ -14,6 +14,7 @@
             >
 
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -25,7 +26,6 @@
               pagination
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -93,6 +93,7 @@
 <script>
 import QuotationService from "@/services/sale/QuotationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader";
 
 const fields = [
   { key: "quotation_ref_no", label: "Ref No", _style: "min-width:15%;" },
@@ -106,6 +107,9 @@ const fields = [
 
 export default {
   name: "IndexQuotations",
+  components: {
+    Loader,
+  },
   cilPencil,
   cilTrash,
   cilEye,
@@ -113,7 +117,6 @@ export default {
     return {
       serverData: [],
       fields,
-      loading: false,
 
       activePage: 1,
       pages: 0,
@@ -121,7 +124,6 @@ export default {
     };
   },
   created() {
-    this.loading = true;
     this.getServerData();
   },
   watch: {
@@ -136,22 +138,23 @@ export default {
   },
   methods: {
     getServerData() {
+      this.$store.commit("set_loader");
       QuotationService.getAll(this.activePage, this.perPage)
         .then(({ data }) => {
-          this.loading = true;
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
               item.customer = item.customer.full_name.en;
               this.serverData.push({ ...item, id });
             });
-            this.loading = false;
           }
           if (data.meta) {
             this.setPagination(data.meta);
           }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },
@@ -207,9 +210,7 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {

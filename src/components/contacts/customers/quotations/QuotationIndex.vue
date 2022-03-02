@@ -3,6 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <div style="clear: both; margin-bottom: 20px"></div>
+        <Loader />
         <CDataTable
           :items="items"
           :fields="fields"
@@ -13,7 +14,6 @@
           sorter
           pagination
           hover
-          :loading="loading"
           @row-clicked="rowClicked"
           ref="externalAgent"
         >
@@ -36,10 +36,7 @@
                 >Approve</CButton
               >
               <CButtonGroup>
-                <CButton
-                  @click="viewRow(item.uuid)"
-                  class="btn-sm"
-                  color="success"
+                <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                   >View</CButton
                 >
                 <CButton
@@ -49,22 +46,14 @@
                 >
                   <CIcon :content="$options.cilPencil"
                 /></CButton>
-                <CButton
-                  @click="deleteRow(item.uuid)"
-                  class="btn-sm"
-                  color="danger"
-                >
+                <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                   <CIcon :content="$options.cilTrash" />
                 </CButton>
               </CButtonGroup>
             </td>
           </template>
         </CDataTable>
-        <CPagination
-          v-show="pages > 1"
-          :pages="pages"
-          :active-page.sync="activePage"
-        />
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
       </CCol>
     </CRow>
   </div>
@@ -73,6 +62,7 @@
 <script>
 import QuotationService from "@/services/sale/QuotationService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import Loader from "@/components/layouts/Loader";
 
 let fields = [
   { key: "quotation_ref_no", label: "Ref No", _style: "min-width:15%;" },
@@ -91,6 +81,9 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  components: {
+    Loader,
   },
   cilPencil,
   cilTrash,
@@ -120,9 +113,6 @@ export default {
   computed: {
     items() {
       return this.serverData;
-    },
-    loading() {
-      return this.$store.getters.loading;
     },
   },
   methods: {
@@ -185,9 +175,7 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {

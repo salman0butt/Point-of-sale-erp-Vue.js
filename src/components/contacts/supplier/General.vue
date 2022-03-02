@@ -5,6 +5,7 @@
         <CCard>
           <CCardHeader>General</CCardHeader>
           <CCardBody>
+            <Loader />
             <form @submit.prevent="isEditing ? updateData() : saveData()">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2">
@@ -110,11 +111,11 @@
 <script>
 import GroupServices from "@/services/groups/GroupServices";
 import SupplierServices from "@/services/contacts/supplier/SupplierServices";
-
 import { required, numeric } from "vuelidate/lib/validators";
-
+import Loader from "@/components/layouts/Loader";
 export default {
   name: "SupplierGeneralForm",
+  components: { Loader },
   props: {
     readOnly: {
       type: Boolean,
@@ -155,6 +156,7 @@ export default {
   },
   methods: {
     getDependenices() {
+      this.$store.commit("set_loader");
       // Supplier Groups
       let active = "active";
       let module_type = "supplier";
@@ -167,8 +169,10 @@ export default {
               label: val.name,
             });
           });
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
         });
     },

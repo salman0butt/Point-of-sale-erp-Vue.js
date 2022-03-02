@@ -28,6 +28,7 @@
               Add Customer</CButton
             >
             <div style="clear: both; margin-bottom: 20px"></div>
+            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -39,7 +40,6 @@
               pagination
               clickable-rows
               hover
-              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
             >
@@ -105,7 +105,7 @@ import CustomerServices from "@/services/contacts/customers/CustomerServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import CustomerModel from "@/components/contacts/customers/CustomerModel";
 import { tableMixin } from "@/mixins/tableMixin";
-
+import Loader from "@/components/layouts/Loader";
 const fields = [
   { key: "serial_no", label: "Serial No", _style: "min-width:15%;" },
   { key: "full_name", label: "NAME", _style: "min-width:40%" },
@@ -120,6 +120,7 @@ export default {
   mixins: [tableMixin],
   components: {
     CustomerModel,
+    Loader,
   },
   cilPencil,
   cilTrash,

@@ -83,10 +83,10 @@ export default {
         // { key: "Sales", name: "Sales" },
         // { key: "Payments", name: "Payments" },
         { key: "Returns", name: "Returns" },
-        {
-          key: "CreditPaymentAccount",
-          name: "Credit Account Payment",
-        },
+        // {
+        //   key: "CreditPaymentAccount",
+        //   name: "Credit Account Payment",
+        // },
         // { key: "Discounts", name: "Discounts" },
       ],
     };

@@ -11,7 +11,6 @@
         sorter
         clickable-rows
         hover
-        :loading="loading"
         ref="externalAgent"
       >
         <template #actions="{ item }">
@@ -73,9 +72,6 @@ export default {
   computed: {
     taxItems() {
       return this.deliveries;
-    },
-    loading() {
-      return this.$store.getters.loading;
     },
   },
   watch: {
@@ -164,7 +160,6 @@ export default {
     },
     onTableChange() {
       setTimeout(() => {
-        this.loading = false;
         const agent = this.$refs.externalAgent;
         this.deliveries = agent.currentItems;
         this.pages = Math.ceil(agent.sortedItems.length / 5);
