@@ -203,7 +203,7 @@
                   </CCol>
                 </CRow>
               </CTab>
-              <CTab>
+              <CTab >
                 <template slot="title">
                   {{ tabs[2] }}
                 </template>
@@ -275,16 +275,16 @@
 import { mapActions } from "vuex";
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
+import ModuleService from "@/services/merchant/ModuleService";
 
 export default {
   name: "Tabs",
-    components: {
-    Loader
+  components: {
+    Loader,
   },
   cilTrash,
   data() {
     return {
-      pluginlist: [],
       pluginname: "",
       general_items: {
         business_name: "",
@@ -308,37 +308,7 @@ export default {
       PluginLst: [
         {
           name: "plugin1",
-          imgUrl:  "/img/images/photo-not-available.png",
-          content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
-          active: "Active",
-        },
-        {
-          name: "plugin2",
-          imgUrl:  "/img/images/photo-not-available.png",
-          content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
-          active: "Deactive",
-        },
-        {
-          name: "plugin3",
-          imgUrl:  "/img/images/photo-not-available.png",
-          content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
-          active: "Deactive",
-        },
-        {
-          name: "plugin4",
-          imgUrl:  "/img/images/photo-not-available.png",
-          content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
-          active: "Active",
-        },
-        {
-          name: "plugin5",
-          imgUrl:  "/img/images/photo-not-available.png",
-          content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
-          active: "Deactive",
-        },
-        {
-          name: "plugin6",
-          imgUrl:  "/img/images/photo-not-available.png",
+          imgUrl: "/img/images/photo-not-available.png",
           content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
           active: "Active",
         },
@@ -356,14 +326,15 @@ export default {
 
     this.$store.commit("remove_errors");
   },
-   computed: {
+  computed: {
     loading() {
       return this.$store.getters.loading;
     },
   },
   created() {
     this.pluginlist = this.PluginLst;
-      this.getBusinessInfo();
+    this.getBusinessInfo();
+    this.indexPlugins();
   },
   methods: {
     ...mapActions(["set_errors"]),
@@ -371,37 +342,37 @@ export default {
       this.$store.commit("set_loader");
       let business_id = localStorage.getItem("business_id");
       this.$http
-      .get("/business/" + business_id)
-      .then(({ data }) => {
-        this.displayData(data);
-        this.$store.commit("close_loader");
-      })
-      .catch((err) => {
-        this.$store.commit("close_loader");
-        console.log(err);
-      });
+        .get("/business/" + business_id)
+        .then(({ data }) => {
+          this.displayData(data);
+          this.$store.commit("close_loader");
+        })
+        .catch((err) => {
+          this.$store.commit("close_loader");
+          console.log(err);
+        });
     },
-    displayData(data = null){
-      if (data && data !== '') {
-          this.general_items.business_name = JSON.parse(data.business_name).en;
-          this.general_items.business_activity = JSON.parse(
-            data.business_activity
-          ).en;
-          this.general_items.name = JSON.parse(data.owner_name).en;
-          this.general_items.email = data.business_email;
-          this.general_items.mobile = data.business_mobile_no;
-          this.general_items.country = data.country;
-          this.general_items.tax_id = data.tax_id;
-          if (data.logo) {
-            this.general_items.previewImage = data.logo.path;
-          }
-          this.general_items.logo = "";
-          this.general_items.stamp = "";
-
-          if (data.stamp) {
-            this.general_items.previewStampImage = data.stamp.path;
-          }
+    displayData(data = null) {
+      if (data && data !== "") {
+        this.general_items.business_name = JSON.parse(data.business_name).en;
+        this.general_items.business_activity = JSON.parse(
+          data.business_activity
+        ).en;
+        this.general_items.name = JSON.parse(data.owner_name).en;
+        this.general_items.email = data.business_email;
+        this.general_items.mobile = data.business_mobile_no;
+        this.general_items.country = data.country;
+        this.general_items.tax_id = data.tax_id;
+        if (data.logo) {
+          this.general_items.previewImage = data.logo.path;
         }
+        this.general_items.logo = "";
+        this.general_items.stamp = "";
+
+        if (data.stamp) {
+          this.general_items.previewStampImage = data.stamp.path;
+        }
+      }
     },
     PluginSeach() {
       var data = [];
@@ -431,8 +402,8 @@ export default {
       if (this.general_items.logo != "") {
         formData.append("logo", this.general_items.logo);
       }
-      if(this.general_items.stamp) {
-          formData.append("stamp", this.general_items.stamp);
+      if (this.general_items.stamp) {
+        formData.append("stamp", this.general_items.stamp);
       }
       formData.append("_method", "PATCH");
 
@@ -451,7 +422,7 @@ export default {
               text: "Detail Updated Successfully",
               timer: 3600,
             });
-              this.displayData(response.data);
+            this.displayData(response.data);
           }
         })
         .catch((error) => {
@@ -485,6 +456,23 @@ export default {
         reader.readAsDataURL(file[0]);
       }
     },
+    indexPlugins() {
+      var plugins = this.pluginlist;
+      ModuleService.index()
+        .then(({ data }) => {
+          data.map((item, id) => {
+            plugins.push({
+              name: item.name,
+              imgUrl: "/img/images/photo-not-available.png",
+              content: item.description,
+              active: "Active",
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>
@@ -501,13 +489,13 @@ export default {
   color: red;
 }
 .p-0.col-sm-6.col-md-4 {
-    max-width: 31% !important;
-    margin:10px !important;
+  max-width: 31% !important;
+  margin: 10px !important;
 }
 .imger {
-      max-height: 150px;
-    width: auto;
-    display: block !important;
-    margin: 0 auto;
+  max-height: 150px;
+  width: auto;
+  display: block !important;
+  margin: 0 auto;
 }
 </style>
