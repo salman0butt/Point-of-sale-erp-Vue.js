@@ -207,7 +207,7 @@ export default {
       this.form.mediaLst.push(data);
       this.mediaitem.name = "";
       this.mediaitem.number = "";
-      this.mediaitem.country = "";
+      // this.mediaitem.country = "";
     },
     DelMedia(index) {
       this.form.mediaLst.splice(index, 1);
