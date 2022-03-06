@@ -4,22 +4,11 @@
     <CCardHeader>
       Quotation <strong># {{ invoice.quotation_ref_no }}</strong>
       <div class="float-right">
-        <CButton
-          v-if="showWhatsappButton"
-          color="success"
-          class="btn mr-2"
-          @click="sendWhatsapp('quotation')"
-        >
-          Send WhatsApp</CButton
-        >
+        <CButton color="success" class="btn mr-2"> Pay</CButton>
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
-        <a
-          class="btn btn-sm btn-info ml-1"
-          @click.prevent="print"
-          style="color: #fff"
-        >
+        <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
           <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
       </div>
@@ -42,12 +31,7 @@
         <section slot="pdf-content" md="12" style="padding: 0 20px">
           <CRow class="mb-4">
             <CCol sm="4">
-              <CImg
-                v-bind:src="business.logo"
-                block
-                class="mb-2 imger"
-                width="100%"
-              />
+              <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" />
               <h6 class="mb-3">To:</h6>
               <div>
                 <strong>{{ customer.name }}</strong>
@@ -84,10 +68,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(product, index) in invoice.products"
-                  :key="product.uuid"
-                >
+                <tr v-for="(product, index) in invoice.products" :key="product.uuid">
                   <td class="center">{{ index + 1 }}</td>
                   <td class="left">{{ product.product.name.en }}</td>
                   <td class="left">{{ product.description }}</td>
@@ -95,11 +76,7 @@
                   <td class="right">{{ product.selling_price }}</td>
                   <td class="right">{{ product.tax }}</td>
                   <td class="right">
-                    {{
-                      product.discount_per
-                        ? product.discount + "%"
-                        : product.discount
-                    }}
+                    {{ product.discount_per ? product.discount + "%" : product.discount }}
                   </td>
                   <td class="right">{{ product.total }}</td>
                 </tr>
@@ -160,14 +137,14 @@
 </template>
 <script>
 import QuotationService from "@/services/sale/QuotationService";
-import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
+// import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import Loader from "@/components/layouts/Loader";
 import VueHtml2pdf from "vue-html2pdf";
 
 export default {
   name: "Invoice",
   components: { Loader, VueHtml2pdf },
-  mixins: [whatsappMixin],
+  // mixins: [whatsappMixin],
   data() {
     return {
       output: null,
@@ -231,14 +208,13 @@ export default {
           this.customer.address = data.customer.default_address;
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
-          if (data.customer && data.customer.contact) {
-            const number =
-              data.customer.contact.country.dialCode +
-              data.customer.contact.number.en;
-            this.customer.contact = number;
-            this.whatsapp.name = data.customer.full_name;
-            this.whatsapp.number = number;
-          }
+          // if (data.customer && data.customer.contact) {
+          //   const number =
+          //     data.customer.contact.country.dialCode + data.customer.contact.number.en;
+          //   this.customer.contact_number = number;
+          // this.whatsapp.name = data.customer.full_name?.en;
+          // this.whatsapp.number = number;
+          // }
           data.products.map((item, id) => {
             serverproducts.push(item);
           });
