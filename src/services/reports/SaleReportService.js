@@ -7,6 +7,10 @@ class SaleReportService extends Helper {
     return http.get(`/sales-by-customer-report`);
   }
 
+  getSalesByItem() {
+    return http.get(`/sales-by-item-report`);
+  }
+
   // getAll(page, per_page) {
   //   let url = "/employee-resignations";
 

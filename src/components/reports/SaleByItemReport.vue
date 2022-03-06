@@ -1,125 +1,5 @@
 <template>
   <div>
-    <!-- <CCard>
-      <CCardHeader>
-        Sales Report
-        <CButton
-          @click="toggleSection()"
-          style="float: right; border: none; box-shadow: none"
-          >{{ toggleOptions ? "-" : "+" }}</CButton
-        ></CCardHeader
-      >
-      <CCardBody v-if="toggleOptions">
-        <CRow>
-          <CCol xs="12" lg="12">
-            <form @submit.prevent="">
-              <CRow>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Date Range"
-                    :options="options.date_ranges"
-                    :value.sync="form.date_range"
-                  />
-                </CCol>
-
-                <CCol
-                  v-if="form.date_range === 'custom_date_range'"
-                  sm="6"
-                  md="4"
-                  class="pt-2"
-                >
-                  <CInput
-                    label="From Date"
-                    type="date"
-                    :value.sync="form.from_date"
-                  />
-                </CCol>
-                <CCol
-                  v-if="form.date_range === 'custom_date_range'"
-                  sm="6"
-                  md="4"
-                  class="pt-2"
-                >
-                  <CInput
-                    label="To Date"
-                    type="date"
-                    :value.sync="form.to_date"
-                  />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Sale Type"
-                    :options="options.sale_types"
-                    :value.sync="form.sale_type"
-                  />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <label class="typo__label">Branches</label>
-                  <multiselect
-                    v-model="form.branches"
-                    :options="options.branches"
-                    :multiple="true"
-                    :close-on-select="false"
-                    :clear-on-select="false"
-                    :preserve-search="true"
-                    placeholder="Select Branches"
-                    label="label"
-                    track-by="label"
-                    :preselect-first="true"
-                  >
-                    <template
-                      slot="selection"
-                      slot-scope="{ values, search, isOpen }"
-                    >
-                      <span
-                        class="multiselect__single"
-                        v-if="values.value &amp;&amp; !isOpen"
-                        >{{ values.length }} options selected</span
-                      ></template
-                    >
-                  </multiselect>
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Sold By"
-                    :options="options.sold_by"
-                    :value.sync="form.sold_by"
-                  />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Customer"
-                    :options="options.customers"
-                    :value.sync="form.customer"
-                  />
-                </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Payment Types"
-                    :options="options.payment_types"
-                    :value.sync="form.payment_type"
-                  />
-                </CCol>
-              </CRow>
-
-              <CRow>
-                <CCol sm="6" md="3" class="pt-2">
-                  <CButton
-                    progress
-                    timeout="2000"
-                    block
-                    color="success"
-                    style="margin-top: 30px"
-                    @click="genrateReport()"
-                    >Genrate Report</CButton
-                  >
-                </CCol>
-              </CRow>
-            </form>
-          </CCol>
-        </CRow>
-      </CCardBody>
-    </CCard> -->
     <CRow style="display: flex; justify-content: flex-end; margin-bottom: 20px">
       <CCol sm="2" md="2">
         <CButton color="success" class="btn-block"> Download PDF</CButton>
@@ -132,6 +12,8 @@
       <CCardHeader> Result </CCardHeader>
       <CCardBody>
         <div>
+          <Loader />
+
           <CDataTable
             :items="items"
             :fields="fields"
@@ -142,10 +24,14 @@
             sorter
             clickable-rows
             hover
-            :loading="loading"
             @row-clicked="rowClicked"
             ref="externalAgent"
           >
+            <template #name="{ item }">
+              <td>
+                {{ item.name.en ? item.name.en : item.name }}
+              </td>
+            </template>
           </CDataTable>
           <CPagination
             v-show="pages > 1"
@@ -162,106 +48,25 @@ import { cibAddthis, cisMinusSquare } from "@coreui/icons-pro";
 // import BrandService from "@/services/catalogs/brands/BrandService";
 import { tableMixin } from "@/mixins/tableMixin";
 import Multiselect from "vue-multiselect";
+import SaleReportService from "@/services/reports/SaleReportService";
+import Loader from "@/components/layouts/Loader";
 
 const fields = [
-  { key: "sale_id", label: "Sales ID", _style: "width:50%" },
-  { key: "date_time", label: "Date + Time", _style: "width:50%" },
-  {
-    key: "products_purchased",
-    label: "Products Purchased",
-    _style: "width:50%",
-  },
-  { key: "sold_by", label: "Sold By", _style: "width:50%" },
-  { key: "sold_to", label: "Sold To", _style: "width:50%" },
-  { key: "phone_number", label: "Phone Number", _style: "width:50%" },
-  { key: "subtotal", label: "Subtotal", _style: "width:50%" },
-  { key: "discount", label: "Discount", _style: "width:50%" },
-  { key: "total", label: "Total", _style: "width:50%" },
-  { key: "tax", label: "Tax", _style: "width:50%" },
-  { key: "profit", label: "Profit", _style: "width:50%" },
-  {
-    key: "cost_of_goods_sold",
-    label: "Cost Of Goods Sold",
-    _style: "width:50%",
-  },
-  { key: "payment_type", label: "Payment Type", _style: "width:50%" },
-  { key: "note", label: "Note", _style: "width:50%" },
+  { key: "item_name", label: "Item Name" },
+  { key: "quantity_sold", label: "Quantity Sold" },
+  { key: "amount", label: "Amount" },
+  { key: "average_price", label: "Average Price" },
 ];
 
 export default {
-  name: "SaleByItemReport",
-  components: { Multiselect },
+  name: "SaleByCustomerReport",
+  components: { Multiselect, Loader },
   mixins: [tableMixin],
   cibAddthis,
   cisMinusSquare,
   data: () => ({
     perPage: 25,
-    data: [
-      {
-        sale_id: "1",
-        date_time: "2019-01-01",
-        products_purchased: "1",
-        sold_by: "user1",
-        sold_to: "user2",
-        phone_number: "123456789",
-        subtotal: "100",
-        discount: "10%",
-        total: "90",
-        tax: "0",
-        profit: "5",
-        cost_of_goods_sold: "10",
-        payment_type: "Cash",
-        note: "Some Notes",
-      },
-      {
-        sale_id: "2",
-        date_time: "2019-01-01",
-        products_purchased: "1",
-        sold_by: "user1",
-        sold_to: "user2",
-        phone_number: "123456789",
-        subtotal: "100",
-        discount: "10%",
-        total: "90",
-        tax: "0",
-        profit: "5",
-        cost_of_goods_sold: "10",
-        payment_type: "Cash",
-        note: "Some Notes",
-      },
-      {
-        sale_id: "3",
-        date_time: "2019-01-01",
-        products_purchased: "1",
-        sold_by: "user1",
-        sold_to: "user2",
-        phone_number: "123456789",
-        subtotal: "100",
-        discount: "10%",
-        total: "90",
-        tax: "0",
-        profit: "5",
-        cost_of_goods_sold: "10",
-        payment_type: "Cash",
-        note: "Some Notes",
-      },
-      {
-        sale_id: "4",
-        date_time: "2019-01-01",
-        products_purchased: "1",
-        sold_by: "user1",
-        sold_to: "user2",
-        phone_number: "123456789",
-        subtotal: "100",
-        discount: "10%",
-        total: "90",
-        tax: "0",
-        profit: "5",
-        cost_of_goods_sold: "10",
-        payment_type: "Cash",
-        note: "Some Notes",
-      },
-    ],
+    data: [],
     fields,
     toggleOptions: true,
     form: {
@@ -349,7 +154,7 @@ export default {
     },
   }),
   created() {
-    // this.getData();
+    this.getServerData();
   },
   computed: {
     items() {
@@ -357,6 +162,22 @@ export default {
     },
   },
   methods: {
+    getServerData() {
+      this.$store.commit("set_loader");
+      let serverData = this.data;
+      SaleReportService.getSalesByItem()
+        .then(function ({ data }) {
+          data.map(function (value) {
+            serverData.push(value);
+          });
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+
+          console.log(error);
+        });
+    },
     toggleSection() {
       this.toggleOptions = !this.toggleOptions;
     },
