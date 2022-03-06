@@ -131,11 +131,11 @@
                       <strong>{{ customer.name }}</strong>
                     </div>
                     <div v-if="customer.address">
-                      Address : {{ customer.address.street.en }}
+                      Address : {{ customer.address.street }}
                     </div>
                     <div v-if="customer.email">Email: {{ customer.email.email }}</div>
                     <div v-if="customer.contact_number">
-                      Phone: {{ customer.contact_number.number.en }}
+                      Phone: {{ customer.contact_number.number }}
                     </div>
                   </CCol>
                   <CCol sm="8" class="mt-5" style="text-align: right">
@@ -397,18 +397,17 @@ export default {
 
           // customer
           this.customer.uuid = data.customer.uuid;
-          this.customer.name = data.customer.full_name.en;
+          this.customer.name = data.customer.full_name;
           this.customer.address = data.customer.default_address;
           this.customer.contact_number = data.customer.default_contact;
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
 
-          if (data.customer && data.customer.default_contact) {
+          if (data.customer && data.customer.contact) {
             const number =
-              data.customer.default_contact.country.dialCode +
-              data.customer.default_contact.number.en;
-            this.customer.default_contact_number = number;
-            this.whatsapp.name = data.customer.full_name.en;
+              data.customer.contact.country.dialCode + data.customer.contact.number.en;
+            this.customer.contact_number = number;
+            this.whatsapp.name = data.customer.full_name;
             this.whatsapp.number = number;
           }
 

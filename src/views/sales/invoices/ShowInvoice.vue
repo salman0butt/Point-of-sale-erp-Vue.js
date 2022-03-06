@@ -272,15 +272,14 @@ export default {
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
 
-          if (data.customer && data.customer.default_contact) {
-            const number =
-              data.customer.default_contact.country.dialCode +
-              data.customer.default_contact.number.en;
-            this.customer.default_contact_number = number;
+          // if (data.customer && data.customer.contact) {
+          //   const number =
+          //     data.customer.contact.country.dialCode + data.customer.contact.number.en;
+          //   this.customer.contact_number = number;
 
-            // this.whatsapp.name = data.customer.full_name.en;
-            // this.whatsapp.number = number;
-          }
+          // this.whatsapp.name = data.customer.full_name.en;
+          // this.whatsapp.number = number;
+          // }
 
           data.products.map((item) => {
             serverproducts.push(item);

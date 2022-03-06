@@ -211,16 +211,15 @@ export default {
           this.invoice.terms_and_conditions = data.terms_and_conditions;
 
           // customer
-          this.customer.name = data.customer.full_name.en;
+          this.customer.name = data.customer.full_name;
           this.customer.address = data.customer.default_address;
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
-          if (data.customer && data.customer.default_contact) {
+          if (data.customer && data.customer.contact) {
             const number =
-              data.customer.default_contact.country.dialCode +
-              data.customer.default_contact.number.en;
-            this.customer.default_contact_number = number;
-            this.whatsapp.name = data.customer.full_name?.en;
+              data.customer.contact.country.dialCode + data.customer.contact.number.en;
+            this.customer.contact = number;
+            this.whatsapp.name = data.customer.full_name;
             this.whatsapp.number = number;
           }
           data.products.map((item, id) => {
