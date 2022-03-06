@@ -69,9 +69,7 @@
                 <td v-else>-</td>
               </template>
               <template #color="{ item }">
-                <td>
-                  {{ item.color ? item.color : "" }}
-                </td>
+                <td :style="[{ 'background-color': item.color }]"></td>
               </template>
               <template #status="{ item }">
                 <td>

@@ -1,7 +1,7 @@
 {
   "table": {
     "noResults": "no filtering results available",
-    "noItems": "no items available",
+    "noItems": "No Data Found",
     "itemsPerPageSelect": {
       "label": "Items per page:"
     },
