@@ -20,10 +20,7 @@
                   track-by="label"
                   @input="quotationChange()"
                 >
-                  <template
-                    slot="selection"
-                    slot-scope="{ values, search, isOpen }"
-                  >
+                  <template slot="selection" slot-scope="{ values, search, isOpen }">
                     <span
                       class="multiselect__single"
                       v-if="values.value &amp;&amp; !isOpen"
@@ -74,6 +71,7 @@
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <SelectSalePerson
+                    :createOnly="isEditing ? false : true"
                     @salesPersonSelected="salesPersonSelected($event)"
                     v-model="form.sales_persons"
                     :class="{ error: $v.form.sales_persons.$error }"
@@ -109,10 +107,7 @@
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <SearchProduct
-                    searchType="quotation"
-                    :itemsData="form.items"
-                  />
+                  <SearchProduct searchType="quotation" :itemsData="form.items" />
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <CSelect
@@ -133,22 +128,14 @@
                   <CInput label="Tax Total" readonly :value="taxTotal" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
-                  <CInput
-                    label="Total Discount"
-                    readonly
-                    :value="totalDiscount"
-                  />
+                  <CInput label="Total Discount" readonly :value="totalDiscount" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Total" readonly :value="allTotal" />
                 </CCol>
 
                 <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
-                  <CInput
-                    label="Delivery"
-                    readonly
-                    :value="form.delivery_method_price"
-                  />
+                  <CInput label="Delivery" readonly :value="form.delivery_method_price" />
                 </CCol>
                 <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
                   <CInput
@@ -175,11 +162,7 @@
                   ></vue-editor>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <CTextarea
-                    label="Note"
-                    placeholder="Content..."
-                    v-model="form.note"
-                  />
+                  <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
                 </CCol>
 
                 <CCol sm="12" md="12" class="pt-2">
@@ -196,11 +179,7 @@
                         class="display-attachment-row"
                       >
                         <CIcon :content="$options.cisFile" />
-                        <a
-                          v-bind:href="img.path"
-                          target="_blank"
-                          class="name-attachment"
-                        >
+                        <a v-bind:href="img.path" target="_blank" class="name-attachment">
                           {{ img.name }}</a
                         >
                         <a
@@ -229,12 +208,7 @@
                     timeout="2000"
                     block
                     color="danger"
-                    style="
-                      float: right;
-                      width: 140px;
-                      margin-left: 20px;
-                      margin-top: 0;
-                    "
+                    style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                     @click="saveAndExit = true"
                     type="submit"
                     >Save & Exit</CButton
@@ -400,8 +374,7 @@ export default {
   },
   methods: {
     changeDelivery(e) {
-      let rate_on_customer =
-        e.target.selectedOptions[0].getAttribute("rate_on_customer");
+      let rate_on_customer = e.target.selectedOptions[0].getAttribute("rate_on_customer");
       if (rate_on_customer == null) {
         rate_on_customer = 0;
       }
@@ -410,8 +383,7 @@ export default {
       let quotation_total = this.$store.getters.getQuotationTotal;
       let total_price_with_delivery =
         parseFloat(quotation_total) + parseFloat(rate_on_customer);
-      this.form.total_price_with_delivery =
-        total_price_with_delivery.toFixed(3);
+      this.form.total_price_with_delivery = total_price_with_delivery.toFixed(3);
 
       if (!e.target.selectedOptions[0].value) {
         this.delivery_check = false;
@@ -525,21 +497,12 @@ export default {
         formData.append("terms_and_conditions", this.form.terms_and_conditions);
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
-        formData.append(
-          "total_discount",
-          this.$store.getters.getQuotationDiscount
-        );
+        formData.append("total_discount", this.$store.getters.getQuotationDiscount);
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
         formData.append("address_for_delivery", this.form.address_for_delivery);
         formData.append("delivery_method", this.form.delivery_method);
-        formData.append(
-          "delivery_method_price",
-          this.form.delivery_method_price
-        );
-        formData.append(
-          "total_price_with_delivery",
-          this.form.total_price_with_delivery
-        );
+        formData.append("delivery_method_price", this.form.delivery_method_price);
+        formData.append("total_price_with_delivery", this.form.total_price_with_delivery);
 
         if (this.form.images && this.form.images.length > 0) {
           this.form.images.map((image) => {
@@ -697,8 +660,7 @@ export default {
 
             this.form.previousValue = {
               value: res.data.customer.uuid,
-              label:
-                res.data.customer.full_name + " (mobile : " + contacts + ")",
+              label: res.data.customer.full_name + " (mobile : " + contacts + ")",
             };
             this.form.id = res.data.uuid;
             this.form.dated = res.data.dated;
@@ -710,8 +672,7 @@ export default {
             if (res.data.delivery && res.data.delivery.uuid) {
               this.form.delivery_method = res.data.delivery.uuid;
               this.form.delivery_method_price = res.data.delivery_method_price;
-              this.form.total_price_with_delivery =
-                res.data.total_price_with_delivery;
+              this.form.total_price_with_delivery = res.data.total_price_with_delivery;
               this.delivery_check = true;
               this.form.address_for_delivery = res.data.address_for_delivery;
             }
@@ -753,9 +714,7 @@ export default {
                   qty: item.qty,
                   description: item.description,
                   weight_unit: item.product.weight_unit,
-                  discount: item.discount_per
-                    ? item.discount + "%"
-                    : item.discount,
+                  discount: item.discount_per ? item.discount + "%" : item.discount,
                   total: total_each,
                 });
               });
@@ -763,10 +722,7 @@ export default {
             }
             this.$store.commit("set_quotation_sub_total", res.data.sub_total);
             this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-            this.$store.commit(
-              "set_quotation_total_discount",
-              res.data.total_discount
-            );
+            this.$store.commit("set_quotation_total_discount", res.data.total_discount);
             this.$store.commit("set_quotation_total", res.data.grand_total);
             this.previousSalesPersons = res.data.salespersons;
             this.$store.commit("close_loader");

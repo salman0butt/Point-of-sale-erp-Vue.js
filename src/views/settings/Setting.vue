@@ -42,7 +42,7 @@ import DashboardSettingForm from "@/components/settings/DashboardSettingForm";
 import DeliverySettingForm from "@/components/settings/DeliverySettingForm";
 import CurrencySettingForm from "@/components/settings/CurrencySettingForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
-
+import SmtpSettingForm from "@/components/plugins/SmtpSettingForm";
 export default {
   name: "Setting",
   cilUser,
@@ -55,6 +55,7 @@ export default {
     DashboardSettingForm,
     DeliverySettingForm,
     CurrencySettingForm,
+    SmtpSettingForm,
   },
   data() {
     return {
@@ -71,16 +72,33 @@ export default {
       ],
     };
   },
-  created() {},
+  created() {
+    this.checkSmtpPlugin();
+  },
   methods: {
     changeActiveTab(value) {
       this.activeTab = value;
+    },
+    checkSmtpPlugin() {
+      const serial_number = "email";
+      this.$http
+        .get(`/modules/${serial_number}`)
+        .then((response) => {
+          if (response.status === 200) {
+            if (response.data && response.data.status === "active") {
+              this.tabs.push({ key: "SmtpSettingForm", name: "SMTP" });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 a.nav-link {
   color: black;
 }

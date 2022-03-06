@@ -123,7 +123,7 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.customer = item.customer.full_name.en;
+              item.customer = item.customer.full_name;
               this.serverData.push({ ...item, id });
             });
             if (data.meta) {

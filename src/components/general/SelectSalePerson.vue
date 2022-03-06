@@ -33,6 +33,10 @@ export default {
   },
   props: {
     previousSalesPersons: [Object, String, Array, Function],
+    createOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   watch: {
     previousSalesPersons(newValue, oldValue) {
@@ -52,8 +56,34 @@ export default {
   }),
   created() {
     this.getAllUsers();
+    if (this.createOnly) {
+      this.loggedInUser();
+    }
   },
   methods: {
+    async loggedInUser() {
+      let default_user = "";
+      await new Promise((resolve, reject) => {
+        UserService.getLoggedInUser()
+          .then(function ({ data }) {
+            if (data) {
+              // eslint-disable-next-line no-const-assign
+              default_user = {
+                label: data.name,
+                value: data.uuid,
+              };
+            }
+            resolve();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
+      if (default_user) {
+        this.form.user = default_user;
+      }
+    },
+
     getAllUsers() {
       let users = this.options.users;
       UserService.getAll(1, 50)
