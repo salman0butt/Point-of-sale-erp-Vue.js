@@ -65,18 +65,22 @@
 import CustomerReport from "@/components/reports/CustomerReport";
 import ProductReport from "@/components/reports/ProductReport";
 import SaleReport from "@/components/reports/SaleReport";
+import SaleByCustomerReport from "@/components/reports/SaleByCustomerReport";
+import SaleByItemReport from "@/components/reports/SaleByItemReport";
+import SaleBySalesPersonReport from "@/components/reports/SaleBySalesPersonReport";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
   name: "ShowReport",
   cilUser,
   cisCircle,
-  // cilMinus,
-  // cilPlus,
   components: {
     CustomerReport,
     ProductReport,
     SaleReport,
+    SaleByCustomerReport,
+    SaleByItemReport,
+    SaleBySalesPersonReport,
   },
   data() {
     return {
@@ -103,7 +107,17 @@ export default {
             { key: "Child2", name: "Child2" },
           ],
         },
-        { key: "SaleReport", name: "Sales Report" },
+        {
+          key: "SaleReport",
+          name: "Sales Report",
+          isCollapse: false,
+          hasChildren: true,
+          childrens: [
+            { key: "SaleByCustomerReport", name: "Sales By Customer" },
+            { key: "SaleByItemReport", name: "Sales By Item" },
+            { key: "SaleBySalesPersonReport", name: "Sales By SalesPerson" },
+          ],
+        },
         { key: "Report4", name: "Report4" },
         { key: "Report5", name: "Report5" },
       ],

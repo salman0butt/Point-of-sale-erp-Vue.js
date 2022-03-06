@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CCard>
+    <!-- <CCard>
       <CCardHeader>
         Sales Report
         <CButton
@@ -119,7 +119,7 @@
           </CCol>
         </CRow>
       </CCardBody>
-    </CCard>
+    </CCard> -->
     <CRow style="display: flex; justify-content: flex-end; margin-bottom: 20px">
       <CCol sm="2" md="2">
         <CButton color="success" class="btn-block"> Download PDF</CButton>
@@ -189,7 +189,7 @@ const fields = [
 ];
 
 export default {
-  name: "CustomerReport",
+  name: "SaleBySalesPersonReport",
   components: { Multiselect },
   mixins: [tableMixin],
   cibAddthis,
@@ -362,7 +362,6 @@ export default {
     },
     genrateReport() {
       this.toggleSection();
-      // this.getData();
     },
   },
 };
