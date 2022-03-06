@@ -676,13 +676,29 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             this.isEditing = true;
+
+            // Getting contacts of customers
+            let contacts = "";
+            if (
+              res.data.customer.all_contacts &&
+              res.data.customer.all_contacts.length > 0
+            ) {
+              res.data.customer.all_contacts.map(function (contact, index) {
+                if (index > 0) {
+                  contacts += ",";
+                }
+                if (typeof contact.number == "object") {
+                  contacts += contact.number.en;
+                } else {
+                  contacts += contact.number;
+                }
+              });
+            }
+
             this.form.previousValue = {
               value: res.data.customer.uuid,
               label:
-                res.data.customer.full_name.en +
-                " (serial: " +
-                res.data.customer.serial_no +
-                ")",
+                res.data.customer.full_name + " (mobile : " + contacts + ")",
             };
             this.form.id = res.data.uuid;
             this.form.dated = res.data.dated;
