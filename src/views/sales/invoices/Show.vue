@@ -21,6 +21,14 @@
                     customer.name
                   }}</strong></router-link
                 >
+                <CButton
+                  v-if="showWhatsappButton"
+                  color="success"
+                  class="btn mr-2"
+                  @click="sendWhatsapp()"
+                >
+                  Send WhatsApp</CButton
+                >
               </div>
             </div>
           </CCardBody>
@@ -252,6 +260,7 @@ import { cisWallet } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader.vue";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
@@ -271,6 +280,7 @@ export default {
   components: {
     Loader,
   },
+  mixins: [whatsappMixin],
   data() {
     return {
       fields,
@@ -355,6 +365,16 @@ export default {
           this.customer.contact_number = data.customer.default_contact;
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
+
+          if (data.customer && data.customer.default_contact) {
+            const number =
+              data.customer.default_contact.country.dialCode +
+              data.customer.default_contact.number.en;
+            this.customer.default_contact_number = number;
+            this.whatsapp.name = data.customer.full_name.en;
+            this.whatsapp.number = number;
+          }
+
           data.products.map((item, id) => {
             serverproducts.push(item);
           });

@@ -1,11 +1,18 @@
 <template>
   <CCard>
+    <Loader />
     <CCardHeader>
       Quotation <strong># {{ invoice.quotation_ref_no }}</strong>
       <div class="float-right">
-        <a href="#" class="btn btn-sm btn-info">
-          <CIcon name="cil-save" /> Save
-        </a>
+        <CButton
+          v-if="showWhatsappButton"
+          color="success"
+          class="btn mr-2"
+          @click="sendWhatsapp()"
+        >
+          Send WhatsApp</CButton
+        >
+        <a href="#" class="btn btn-sm btn-info"> <CIcon name="cil-save" /> Save </a>
         <a class="btn btn-sm btn-info ml-1" @click="print">
           <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
@@ -14,19 +21,12 @@
     <CCardBody id="printMe">
       <CRow class="mb-4">
         <CCol sm="4">
-          <CImg
-            v-bind:src="business.logo"
-            block
-            class="mb-2 imger"
-            width="100%"
-          />
+          <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" />
           <h6 class="mb-3">To:</h6>
           <div>
             <strong>{{ customer.name }}</strong>
           </div>
-          <div v-if="customer.address">
-            Address : {{ customer.address.street.en }}
-          </div>
+          <div v-if="customer.address">Address : {{ customer.address.street.en }}</div>
           <div v-if="customer.email">Email: {{ customer.email.email }}</div>
           <div v-if="customer.contact_number">
             Phone: {{ customer.contact_number.number.en }}
@@ -56,10 +56,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(product, index) in invoice.products"
-              :key="product.uuid"
-            >
+            <tr v-for="(product, index) in invoice.products" :key="product.uuid">
               <td class="center">{{ index + 1 }}</td>
               <td class="left">{{ product.product.name.en }}</td>
               <td class="left">{{ product.description }}</td>
@@ -67,11 +64,7 @@
               <td class="right">{{ product.selling_price }}</td>
               <td class="right">{{ product.tax }}</td>
               <td class="right">
-                {{
-                  product.discount_per
-                    ? product.discount + "%"
-                    : product.discount
-                }}
+                {{ product.discount_per ? product.discount + "%" : product.discount }}
               </td>
               <td class="right">{{ product.total }}</td>
             </tr>
@@ -130,9 +123,12 @@
 </template>
 <script>
 import QuotationService from "@/services/sale/QuotationService";
-
+import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
+import Loader from "@/components/layouts/Loader";
 export default {
   name: "Invoice",
+  components: { Loader },
+  mixins: [whatsappMixin],
   data() {
     return {
       output: null,
@@ -191,9 +187,16 @@ export default {
           // customer
           this.customer.name = data.customer.full_name.en;
           this.customer.address = data.customer.default_address;
-          this.customer.contact_number = data.customer.default_contact;
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
+          if (data.customer && data.customer.default_contact) {
+            const number =
+              data.customer.default_contact.country.dialCode +
+              data.customer.default_contact.number.en;
+            this.customer.default_contact_number = number;
+            this.whatsapp.name = data.customer.full_name.en;
+            this.whatsapp.number = number;
+          }
           data.products.map((item, id) => {
             serverproducts.push(item);
           });

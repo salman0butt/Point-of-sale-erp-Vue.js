@@ -2,6 +2,7 @@
   <div>
     <CRow>
       <CCol xs="12" lg="12">
+    <Loader/>
         <CCard>
           <CCardHeader> Merchant View </CCardHeader>
           <CCardBody>
@@ -11,7 +12,7 @@
                   {{ tabs[0] }}
                 </template>
                 <CRow>
-                  <Loader/>
+
                   <CCol xs="12" lg="7">
                     <CCardHeader> <strong>Merchant</strong> Information </CCardHeader>
                     <CCardBody>
@@ -209,6 +210,14 @@
                 </template>
                 <CCardHeader>
                   <strong>Plugin</strong>
+                  <CButton
+                  color="success"
+                  class="btn mr-2"
+                  style="float: right;line-height: 16px;"
+                  @click="addCustomPlugin()"
+                >
+                  Add Custom Plugin</CButton
+                >
                 </CCardHeader>
                 <CCardBody>
                   <CRow>
@@ -227,8 +236,8 @@
                     </CCol>
                   </CRow>
                 </CCardBody>
-                <CRow>
-                  <CCol v-for="item in pluginlist" :key="item.name" sm="6" md="4" class="p-0">
+                <CRow v-if="pluginlist && pluginlist.length > 0">
+                  <CCol v-for="(item, k) in pluginlist" :key="k" sm="6" md="4" class="p-0">
                     <CCard accent-color="primary">
                       <CCardHeader>{{ item.name }}</CCardHeader>
                       <CCardBody>
@@ -246,15 +255,19 @@
                             <CButton
                               block
                               color="success"
-                              style="float: right; width: 80px; margin-top: 15px"
-                              >{{ item.active }}</CButton
+                              style="float: right; width: 100px; margin-top: 15px"
+                              @click="togglePlugin(item.uuid)"
+                              >{{ item.status }}</CButton
                             >
                           </CCol>
                         </CRow>
                       </CCardBody>
                     </CCard>
                   </CCol>
+
                 </CRow>
+                 <CRow v-else class="text-center">
+                    <CCol sm="12" md="12" class="text-muted text-center">No Plugin Found </CCol></CRow>
                 <CButton
                   block
                   color="success"
@@ -267,6 +280,7 @@
         </CCard>
       </CCol>
     </CRow>
+      <CustomPluginModel @update-table="updateTable" />
   </div>
 </template>
 
@@ -276,11 +290,13 @@ import { mapActions } from "vuex";
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import ModuleService from "@/services/merchant/ModuleService";
+import CustomPluginModel from "@/components/merchant/CustomPluginModel";
 
 export default {
   name: "Tabs",
   components: {
     Loader,
+    CustomPluginModel
   },
   cilTrash,
   data() {
@@ -306,12 +322,7 @@ export default {
         { InvoiceNum: "#234244", InvoiceDate: "07/07/2021", action: "Unpaid" },
       ],
       PluginLst: [
-        {
-          name: "plugin1",
-          imgUrl: "/img/images/photo-not-available.png",
-          content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit,",
-          active: "Active",
-        },
+
       ],
       activeTab: 1,
     };
@@ -337,6 +348,11 @@ export default {
     this.indexPlugins();
   },
   methods: {
+    updateTable() {
+      setTimeout(() => {
+        this.indexPlugins();
+      }, 1000);
+    },
     ...mapActions(["set_errors"]),
     getBusinessInfo() {
       this.$store.commit("set_loader");
@@ -460,18 +476,60 @@ export default {
       var plugins = this.pluginlist;
       ModuleService.index()
         .then(({ data }) => {
+          if(data){
           data.map((item, id) => {
             plugins.push({
+              uuid: item.uuid,
+              global_id: item.global_id,
               name: item.name,
               imgUrl: "/img/images/photo-not-available.png",
               content: item.description,
-              active: "Active",
+              status: item.status == "active" ? "Deactivate" : "Activate" ,
             });
           });
+          }
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    addCustomPlugin() {
+      this.$store.commit("set_custom_plugin_model", true);
+    },
+    togglePlugin(uuid) {
+      this.$store.commit("set_loader");
+      let plugins = this.pluginlist;
+      let plugin = plugins.find((item) => item.uuid == uuid);
+      let status = '';
+      let successMsg = '';
+      if (plugin.status === "Activate") {
+        status = "active";
+        successMsg = 'Activated';
+        plugin.status = "Deactivate";
+      } else {
+        status = "inactive";
+         successMsg = 'Deactivated';
+        plugin.status = "Activate";
+      }
+      this.$http.patch(`/modules/${plugin.global_id}/${status}`).then((response) => {
+        if (response.status === 200) {
+          this.$swal.fire({
+            icon: "success",
+            title: "Success",
+            text: `Plugin ${successMsg} Successfully`,
+            timer: 3600,
+          });
+        }
+        this.$store.commit("close_loader");
+      }).catch((error) => {
+         this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something went wrong",
+            timer: 3600,
+          });
+        this.$store.commit("close_loader");
+      });
     },
   },
 };
