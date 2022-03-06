@@ -141,6 +141,8 @@ const Page500 = () => import('@/views/pages/Page500')
 // const Inbox = () => import('@/views/apps/email/Inbox')
 // const Message = () => import('@/views/apps/email/Message')
 const test = () => import('@/views/Testing')
+const ShowQuotation = () => import('@/views/sales/quotations/ShowQuotation')
+const ShowInvoice = () => import('@/views/sales/invoices/ShowInvoice')
 
 Vue.use(Router)
 
@@ -149,6 +151,16 @@ const router = new Router({
   linkActiveClass: 'open active',
   scrollBehavior: () => ({ y: 0 }),
   routes: [
+    {
+      path: '/show-quotation/:id',
+      name: 'ShowQuotation',
+      component: ShowQuotation
+    },
+    {
+      path: '/show-invoice/:id',
+      name: 'ShowInvoice',
+      component: ShowInvoice
+    },
     {
       path: '/',
       redirect: '/login',
