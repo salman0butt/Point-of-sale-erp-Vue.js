@@ -57,11 +57,11 @@
                       <strong>{{ customer.name }}</strong>
                     </div>
                     <div v-if="customer.address">
-                      Address : {{ customer.address.street.en }}
+                      Address : {{ customer.address.street }}
                     </div>
                     <div v-if="customer.email">Email: {{ customer.email.email }}</div>
                     <div v-if="customer.contact_number">
-                      Phone: {{ customer.contact_number.number.en }}
+                      Phone: {{ customer.contact_number.number }}
                     </div>
                   </CCol>
                   <CCol sm="8" class="mt-5" style="text-align: right">
@@ -107,6 +107,21 @@
                         </td>
                         <td class="right">{{ product.total }}</td>
                       </tr>
+                      <tr v-if="invoice.delivery">
+                        <td></td>
+                        <td><b>Delivery</b></td>
+                        <td>
+                          <b>
+                            {{
+                              invoice.delivery.name.en ? invoice.delivery.name.en : "-"
+                            }}
+                          </b>
+                        </td>
+                        <td colspan="4">
+                          <b>Address : </b> {{ invoice.address_for_delivery }}
+                        </td>
+                        <td>{{ invoice.delivery_method_price }}</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -148,6 +163,22 @@
                           <td class="left"><strong>Total</strong></td>
                           <td class="right">
                             <strong>{{ invoice.grand_total }}</strong>
+                          </td>
+                        </tr>
+                        <tr v-if="invoice.delivery">
+                          <td class="left">
+                            <strong>Delivery charges</strong>
+                          </td>
+                          <td class="right">
+                            <strong>{{ invoice.delivery_method_price }}</strong>
+                          </td>
+                        </tr>
+                        <tr v-if="invoice.delivery">
+                          <td class="left">
+                            <strong>Total With Delivery</strong>
+                          </td>
+                          <td class="right">
+                            <strong>{{ invoice.total_price_with_delivery }}</strong>
                           </td>
                         </tr>
                         <!-- <tr>
@@ -214,6 +245,11 @@ export default {
         terms_and_conditions: "",
         note: "",
         products: [],
+        // delivery
+        delivery: "",
+        address_for_delivery: "",
+        delivery_method_price: "",
+        total_price_with_delivery: "",
       },
       business: {
         logo: "",
@@ -280,6 +316,12 @@ export default {
           // this.whatsapp.name = data.customer.full_name.en;
           // this.whatsapp.number = number;
           // }
+
+          // delivery
+          this.invoice.delivery = data.delivery;
+          this.invoice.delivery_method_price = data.delivery_method_price;
+          this.invoice.address_for_delivery = data.address_for_delivery;
+          this.invoice.total_price_with_delivery = data.total_price_with_delivery;
 
           data.products.map((item) => {
             serverproducts.push(item);
