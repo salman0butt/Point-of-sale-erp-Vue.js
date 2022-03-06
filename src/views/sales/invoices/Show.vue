@@ -7,7 +7,9 @@
         <CCard>
           <CCardHeader>
             Invoice
-            <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
+            <strong style="text-align: center"
+              ># {{ invoice.invoice_ref_no }}</strong
+            >
           </CCardHeader>
           <CCardBody>
             <div class="float-center">
@@ -17,9 +19,11 @@
                   :to="`/customers/show/${customer.uuid}`"
                   v-if="$can('show customers')"
                 >
-                  <strong class="margin:auto" style="color: red; font-size: 22px">{{
-                    customer.name
-                  }}</strong></router-link
+                  <strong
+                    class="margin:auto"
+                    style="color: red; font-size: 22px"
+                    >{{ customer.name }}</strong
+                  ></router-link
                 >
                 <CButton
                   v-if="showWhatsappButton"
@@ -41,8 +45,8 @@
             <form @submit.prevent="paymentSubmit()">
               <CCol sm="12" md="12" class="pt-2">
                 <Label
-                  ><CIcon style="color: green" :content="$options.cisWallet" /> Payment
-                  Method</Label
+                  ><CIcon style="color: green" :content="$options.cisWallet" />
+                  Payment Method</Label
                 >
                 <CSelect
                   :options="options.paymentMethods"
@@ -68,7 +72,9 @@
                 />
               </CCol>
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">
+                  Amount is required
+                </p>
               </div>
               <CButton
                 progress
@@ -105,7 +111,10 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
                     >
                     <CButton
@@ -115,7 +124,11 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                    <CButton
+                      @click="deleteRow(item.uuid)"
+                      class="btn-sm"
+                      color="danger"
+                    >
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -131,7 +144,9 @@
           <CCardHeader>
             Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
             <div class="float-right">
-              <a href="#" class="btn btn-sm btn-info"> <CIcon name="cil-save" /> Save </a>
+              <a href="#" class="btn btn-sm btn-info">
+                <CIcon name="cil-save" /> Save
+              </a>
               <a class="btn btn-sm btn-info ml-1" @click="print">
                 <CIcon name="cil-print" class="mr-1" /> Print Me
               </a>
@@ -140,7 +155,12 @@
           <CCardBody id="printMe">
             <CRow class="mb-4">
               <CCol sm="4">
-                <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" />
+                <CImg
+                  v-bind:src="business.logo"
+                  block
+                  class="mb-2 imger"
+                  width="100%"
+                />
                 <h6 class="mb-3">To:</h6>
                 <div>
                   <strong>{{ customer.name }}</strong>
@@ -148,7 +168,9 @@
                 <div v-if="customer.address">
                   Address : {{ customer.address.street.en }}
                 </div>
-                <div v-if="customer.email">Email: {{ customer.email.email }}</div>
+                <div v-if="customer.email">
+                  Email: {{ customer.email.email }}
+                </div>
                 <div v-if="customer.contact_number">
                   Phone: {{ customer.contact_number.number.en }}
                 </div>
@@ -177,7 +199,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(product, index) in invoice.products" :key="product.uuid">
+                  <tr
+                    v-for="(product, index) in invoice.products"
+                    :key="product.uuid"
+                  >
                     <td class="center">{{ index + 1 }}</td>
                     <td class="left">{{ product.product.name.en }}</td>
                     <td class="left">{{ product.description }}</td>
@@ -186,10 +211,29 @@
                     <td class="right">{{ product.tax }}</td>
                     <td class="right">
                       {{
-                        product.discount_per ? product.discount + "%" : product.discount
+                        product.discount_per
+                          ? product.discount + "%"
+                          : product.discount
                       }}
                     </td>
                     <td class="right">{{ product.total }}</td>
+                  </tr>
+                  <tr v-if="invoice.delivery">
+                    <td></td>
+                    <td><b>Delivery</b></td>
+                    <td>
+                      <b>
+                        {{
+                          invoice.delivery.name.en
+                            ? invoice.delivery.name.en
+                            : "-"
+                        }}
+                      </b>
+                    </td>
+                    <td colspan="4">
+                      <b>Address : </b> {{ invoice.address_for_delivery }}
+                    </td>
+                    <td>{{ invoice.delivery_method_price }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -232,6 +276,18 @@
                       <td class="left"><strong>Total</strong></td>
                       <td class="right">
                         <strong>{{ invoice.grand_total }}</strong>
+                      </td>
+                    </tr>
+                    <tr v-if="invoice.delivery">
+                      <td class="left"><strong>Delivery charges</strong></td>
+                      <td class="right">
+                        <strong>{{ invoice.delivery_method_price }}</strong>
+                      </td>
+                    </tr>
+                    <tr v-if="invoice.delivery">
+                      <td class="left"><strong>Total With Delivery</strong></td>
+                      <td class="right">
+                        <strong>{{ invoice.total_price_with_delivery }}</strong>
                       </td>
                     </tr>
                     <!-- <tr>
@@ -299,6 +355,11 @@ export default {
         terms_and_conditions: "",
         note: "",
         products: [],
+        // delivery
+        delivery: "",
+        address_for_delivery: "",
+        delivery_method_price: "",
+        total_price_with_delivery: "",
       },
       business: {
         logo: "",
@@ -378,6 +439,13 @@ export default {
           data.products.map((item, id) => {
             serverproducts.push(item);
           });
+
+          // delivery
+          this.invoice.delivery = data.delivery;
+          this.invoice.delivery_method_price = data.delivery_method_price;
+          this.invoice.address_for_delivery = data.address_for_delivery;
+          this.invoice.total_price_with_delivery =
+            data.total_price_with_delivery;
           this.$store.commit("close_loader");
         })
         .catch((err) => {
