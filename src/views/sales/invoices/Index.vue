@@ -37,6 +37,17 @@
               hover
               @row-clicked="rowClicked"
               ref="externalAgent"
+              :noItemsView="{
+                noResults: this.$t('table.noResults'),
+                noItems: this.$t('table.noItems'),
+              }"
+              :itemsPerPageSelect="{
+                label: this.$t('table.itemsPerPageSelect.label'),
+              }"
+              :tableFilter="{
+                label: this.$t('table.tableFilter.label'),
+                placeholder: this.$t('table.tableFilter.placeholder'),
+              }"
             >
               <template #select="{ item }">
                 <td>
