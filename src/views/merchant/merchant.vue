@@ -407,6 +407,7 @@ export default {
       } else if (this.pluginname == "") {
         this.pluginlist = initial;
       }
+       this.$forceUpdate();
     },
     updateDetail() {
       let business_id = localStorage.getItem("business_id");
@@ -487,6 +488,8 @@ export default {
               status: item.status == "active" ? "Deactivate" : "Activate" ,
             });
           });
+          // this.pluginname = "";
+          this.$forceUpdate();
           }
         })
         .catch((error) => {

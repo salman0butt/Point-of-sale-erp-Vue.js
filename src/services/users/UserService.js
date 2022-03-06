@@ -14,6 +14,10 @@ class UserService extends Helper {
         return http.get(url, super.selectedBranch());
     }
 
+    getLoggedInUser() {
+        return http.get("/users/me");
+    }
+
     getCreateDetail() {
       return http.get("/employees-create", super.selectedBranch());
     }
