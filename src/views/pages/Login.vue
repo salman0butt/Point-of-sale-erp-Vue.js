@@ -105,14 +105,15 @@ export default {
       this.$http
       .get("/business-info")
       .then(({ data }) => {
-       console.log(data);
        if(data) {
          if(data.logo && data.logo.path){
             this.$store.commit("set_business_logo", data.logo.path);
           }else {
             localStorage.removeItem("business_logo");
           }
-       }
+       }else {
+            localStorage.removeItem("business_logo");
+          }
         this.$store.commit("close_loader");
       })
       .catch((err) => {

@@ -210,6 +210,14 @@
                 </template>
                 <CCardHeader>
                   <strong>Plugin</strong>
+                  <CButton
+                  color="success"
+                  class="btn mr-2"
+                  style="float: right;line-height: 16px;"
+                  @click="addCustomPlugin()"
+                >
+                  Add Custom Plugin</CButton
+                >
                 </CCardHeader>
                 <CCardBody>
                   <CRow>
@@ -258,7 +266,8 @@
                   </CCol>
 
                 </CRow>
-                 <CRow v-else class="text-center">No Plugin Found</CRow>
+                 <CRow v-else class="text-center">
+                    <CCol sm="12" md="12" class="text-muted text-center">No Plugin Found </CCol></CRow>
                 <CButton
                   block
                   color="success"
@@ -271,6 +280,7 @@
         </CCard>
       </CCol>
     </CRow>
+      <CustomPluginModel @update-table="updateTable" />
   </div>
 </template>
 
@@ -280,11 +290,13 @@ import { mapActions } from "vuex";
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import ModuleService from "@/services/merchant/ModuleService";
+import CustomPluginModel from "@/components/merchant/CustomPluginModel";
 
 export default {
   name: "Tabs",
   components: {
     Loader,
+    CustomPluginModel
   },
   cilTrash,
   data() {
@@ -336,6 +348,11 @@ export default {
     this.indexPlugins();
   },
   methods: {
+    updateTable() {
+      setTimeout(() => {
+        this.indexPlugins();
+      }, 1000);
+    },
     ...mapActions(["set_errors"]),
     getBusinessInfo() {
       this.$store.commit("set_loader");
@@ -475,6 +492,9 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    addCustomPlugin() {
+      this.$store.commit("set_custom_plugin_model", true);
     },
     togglePlugin(uuid) {
       this.$store.commit("set_loader");

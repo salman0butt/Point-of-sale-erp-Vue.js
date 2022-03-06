@@ -44,6 +44,7 @@ const state = {
   closingModel: false,
   PaymernTermId: '',
   business_logo: localStorage.getItem('business_logo') || '/img/images/switcher-logo.jpeg',
+  customPluginModel: false,
 }
 
 const mutations = {
@@ -165,6 +166,9 @@ const mutations = {
   set_business_logo(state, logo) {
     state.business_logo = logo;
     localStorage.setItem('business_logo', logo);
+  },
+  set_custom_plugin_model(state, status) {
+    state.customPluginModel = status;
   }
 
 
@@ -294,7 +298,8 @@ const getters = {
   getPaymentTermId: state => state.PaymernTermId,
   getOpeningModel: state => state.openingModel,
   getClosingModel: state => state.closingModel,
-  getBusinessLogo: state => state.business_logo
+  getBusinessLogo: state => state.business_logo,
+  getCustomPluginModel: state => state.customPluginModel
 
 }
 
