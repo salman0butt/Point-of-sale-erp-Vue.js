@@ -131,11 +131,13 @@ import {
   cisGroup,
   cilBriefcase,
   cilLibraryBooks,
+  cibWhatsapp
 } from "@coreui/icons-pro"
 import { logo } from './logo'
 
 
 export const iconsSet = Object.assign({}, { logo }, {
+  cibWhatsapp,
   cilAlignCenter,
   cilAlignLeft,
   cilAlignRight,
