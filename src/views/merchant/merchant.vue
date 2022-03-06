@@ -487,6 +487,8 @@ export default {
               status: item.status == "active" ? "Deactivate" : "Activate" ,
             });
           });
+          // this.pluginname = "";
+          this.$forceUpdate();
           }
         })
         .catch((error) => {
