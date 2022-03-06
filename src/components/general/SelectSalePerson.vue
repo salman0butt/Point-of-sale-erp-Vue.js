@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label class="typo__label">SalesPerson</label>
+    <label class="typo__label">Assign To</label>
     <multiselect
       v-model="form.user"
       :options="options.users"

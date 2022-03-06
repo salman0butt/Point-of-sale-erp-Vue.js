@@ -102,15 +102,28 @@ export default {
           .then(function ({ data }) {
             if (data && data.data) {
               data.data.map(function (item) {
+                let contacts = "";
+                if (item.all_contacts && item.all_contacts.length > 0) {
+                  item.all_contacts.map(function (contact, index) {
+                    if (index > 0) {
+                      contacts += ",";
+                    }
+                    if (typeof contact.number == "object") {
+                      contacts += contact.number.en;
+                    } else {
+                      contacts += contact.number;
+                    }
+                  });
+                }
                 customers.push({
                   value: item.uuid,
-                  label: item.full_name + " (serial: " + item.serial_no + ")",
+                  label: item.full_name + " (mobile: " + contacts + ")",
                   defaultAddress: item.defaultAddress,
                 });
                 if (item.full_name == "Walk In Customer" && create_only) {
                   // eslint-disable-next-line no-unused-vars
                   default_data = {
-                    label: item.full_name + " (serial: " + item.serial_no + ")",
+                    label: item.full_name + " (mobile: " + contacts + ")",
                     value: item.uuid,
                     defaultAddress: item.defaultAddress,
                   };
@@ -141,7 +154,7 @@ export default {
               data.map(function (item) {
                 customers.push({
                   value: item.uuid,
-                  label: item.full_name + " (serial: " + item.serial_no + ")",
+                  label: item.full_name + " (mobile: " + contacts + ")",
                   defaultAddress: item.defaultAddress,
                 });
               });
@@ -157,7 +170,7 @@ export default {
     newData(item) {
       const obj = {
         value: item.uuid,
-        label: item.full_name + " (serial: " + item.serial_no + ")",
+        label: item.full_name + " (mobile: " + contacts + ")",
         defaultAddress: item.defaultAddress,
       };
       this.options.customers.push(obj);

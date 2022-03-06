@@ -37,6 +37,17 @@
               hover
               @row-clicked="rowClicked"
               ref="externalAgent"
+              :noItemsView="{
+                noResults: this.$t('table.noResults'),
+                noItems: this.$t('table.noItems'),
+              }"
+              :itemsPerPageSelect="{
+                label: this.$t('table.itemsPerPageSelect.label'),
+              }"
+              :tableFilter="{
+                label: this.$t('table.tableFilter.label'),
+                placeholder: this.$t('table.tableFilter.placeholder'),
+              }"
             >
               <template #select="{ item }">
                 <td>
@@ -148,7 +159,7 @@ export default {
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.customer = item.customer.full_name.en;
+              item.customer = item.customer.full_name;
               this.serverData.push({ ...item, id });
             });
           }
@@ -198,7 +209,9 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
+                  this.serverData = this.serverData.filter(
+                    (item) => item.uuid != uuid
+                  );
                 }
               })
               .catch((error) => {

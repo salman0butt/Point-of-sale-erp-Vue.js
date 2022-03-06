@@ -68,7 +68,10 @@
                       >View</CButton
                     >
                     <CButton
-                      v-if="$can('edit customers')"
+                      v-if="
+                        $can('edit customers') &&
+                        item.full_name != 'Walk In Customer'
+                      "
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -76,7 +79,10 @@
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      v-if="$can('delete customers')"
+                      v-if="
+                        $can('delete customers') &&
+                        item.full_name != 'Walk In Customer'
+                      "
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
