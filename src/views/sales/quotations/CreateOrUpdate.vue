@@ -198,6 +198,21 @@
                     color="success"
                     style="float: right; width: 200px; margin-left: 20px"
                     type="submit"
+                    @click="saveAndExit = false"
+                    >Save & Continue</CButton
+                  >
+                  <CButton
+                    timeout="2000"
+                    block
+                    color="danger"
+                    style="
+                      float: right;
+                      width: 140px;
+                      margin-left: 20px;
+                      margin-top: 0;
+                    "
+                    @click="saveAndExit = true"
+                    type="submit"
                     >Save & Exit</CButton
                   >
                 </CRow>
@@ -304,6 +319,7 @@ export default {
     display_images: [],
     previousSalesPersons: Array,
     delivery_check: false,
+    saveAndExit: false,
   }),
   validations() {
     return {
@@ -489,10 +505,14 @@ export default {
                   text: "Quotation Added Successfully",
                   timer: 3600,
                 });
-                // this.$v.$reset();
-                // this.resetForm();
                 this.$store.commit("close_loader");
-                this.$router.push({ path: "/sales/quotations/index" });
+                if (this.saveAndExit) {
+                  this.$router.push({ path: "/sales/quotations/index" });
+                } else {
+                  this.$router.push({
+                    path: "/sales/quotations/show/" + res.data.uuid,
+                  });
+                }
               }
             })
             .catch((error) => {
@@ -519,7 +539,13 @@ export default {
                   timer: 3600,
                 });
                 this.$store.commit("close_loader");
-                this.$router.push({ path: "/sales/quotations/index" });
+                if (this.saveAndExit) {
+                  this.$router.push({ path: "/sales/quotations/index" });
+                } else {
+                  this.$router.push({
+                    path: "/sales/quotations/show/" + res.data.uuid,
+                  });
+                }
               }
             })
             .catch((error) => {

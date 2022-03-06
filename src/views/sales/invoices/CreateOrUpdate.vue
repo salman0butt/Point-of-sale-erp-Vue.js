@@ -1,50 +1,42 @@
 <template>
   <div>
     <CRow>
+      <Loader />
       <CCol xs="12" lg="12">
         <CCard>
           <CCardHeader>
-            <div style="float: left" class="col-6 pt-3">
-              {{ isEditing ? "Edit" : "New" }} Invoice
-            </div>
-            <div style="text-align: right">
-              <!-- <CSelect
-                label="Quotation"
-                horizontal
-                :options="options.quotation"
-                :value.sync="form.id"
-                @change="quotationChange()"
-              /> -->
-              <multiselect
-                v-model="form.id"
-                :options="options.quotation"
-                :multiple="false"
-                :close-on-select="true"
-                :clear-on-select="false"
-                :preserve-search="true"
-                placeholder="Search..."
-                label="label"
-                track-by="label"
-                @input="quotationChange()"
-              >
-                <template
-                  slot="selection"
-                  slot-scope="{ values, search, isOpen }"
+            <div class="row">
+              <div class="col-8">{{ isEditing ? "Edit" : "New" }} Invoice</div>
+              <div class="col-4" style="text-align: right">
+                <multiselect
+                  v-model="form.id"
+                  :options="options.quotation"
+                  :multiple="false"
+                  :close-on-select="true"
+                  :clear-on-select="false"
+                  :preserve-search="true"
+                  placeholder="Search..."
+                  label="label"
+                  track-by="label"
+                  @input="quotationChange()"
                 >
-                  <span
-                    class="multiselect__single"
-                    v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }} options selected</span
-                  ></template
-                >
-              </multiselect>
+                  <template
+                    slot="selection"
+                    slot-scope="{ values, search, isOpen }"
+                  >
+                    <span
+                      class="multiselect__single"
+                      v-if="values.value &amp;&amp; !isOpen"
+                      >{{ values.length }} options selected</span
+                    ></template
+                  >
+                </multiselect>
+              </div>
             </div>
           </CCardHeader>
           <form @submit.prevent="formSubmit()">
             <CCardBody>
               <CRow>
-                <Loader />
-
                 <CCol sm="6" md="4" class="pt-2">
                   <CustomerSearch
                     :previousValue="form.previousValue"
@@ -101,14 +93,7 @@
                     :value.sync="form.payment_terms"
                   />
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    @change="changeDelivery($event)"
-                    label="Delivery"
-                    :options="options.delivery_methods"
-                    :value.sync="form.delivery_method"
-                  />
-                </CCol>
+
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
                     label="Status"
@@ -123,15 +108,24 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
-                  <CInput label="Address" v-model="form.address_for_delivery" />
-                </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <SearchProduct
                     searchType="quotation"
                     :itemsData="form.items"
                   />
                 </CCol>
+                <CCol sm="12" md="12" class="pt-2">
+                  <CSelect
+                    @change="changeDelivery($event)"
+                    label="Delivery"
+                    :options="options.delivery_methods"
+                    :value.sync="form.delivery_method"
+                  />
+                </CCol>
+                <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                  <CInput label="Address" v-model="form.address_for_delivery" />
+                </CCol>
+
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Sub Total" readonly :value="subTotal" />
                 </CCol>
@@ -148,6 +142,7 @@
                 <CCol sm="3" md="3" class="pt-2">
                   <CInput label="Total" readonly :value="allTotal" />
                 </CCol>
+
                 <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
                   <CInput
                     label="Delivery"
@@ -162,6 +157,7 @@
                     :value="form.total_price_with_delivery"
                   />
                 </CCol>
+
                 <CCol sm="12" md="12" class="pt-2">
                   <Label>Payment Terms </Label>
                   <vue-editor
@@ -178,7 +174,6 @@
                     :editor-toolbar="customToolbar"
                   ></vue-editor>
                 </CCol>
-
                 <CCol sm="12" md="12" class="pt-2">
                   <CTextarea
                     label="Note"
@@ -227,6 +222,21 @@
                     color="success"
                     style="float: right; width: 200px; margin-left: 20px"
                     type="submit"
+                    @click="saveAndExit = false"
+                    >Save & Continue</CButton
+                  >
+                  <CButton
+                    timeout="2000"
+                    block
+                    color="danger"
+                    style="
+                      float: right;
+                      width: 140px;
+                      margin-left: 20px;
+                      margin-top: 0;
+                    "
+                    @click="saveAndExit = true"
+                    type="submit"
                     >Save & Exit</CButton
                   >
                 </CRow>
@@ -248,15 +258,14 @@ import AppUpload from "@/components/uploads/Upload.vue";
 import InvoiceService from "@/services/sale/InvoiceService";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
 import { globalMixin } from "@/mixins/globalMixin";
-import { VueEditor } from "vue2-editor";
 import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
-import Loader from "@/components/layouts/Loader.vue";
+import { VueEditor } from "vue2-editor";
 import SettingService from "@/services/settings/SettingService";
 import DeliveryService from "@/services/delivery/DeliveryService";
+import Loader from "@/components/layouts/Loader";
 import Multiselect from "vue-multiselect";
-
 export default {
-  name: "CreateBrand",
+  name: "CreateOrUpdateQuotations",
   mixins: [globalMixin],
   components: {
     CustomerSearch,
@@ -284,6 +293,7 @@ export default {
       invoice_status: "draft",
       payment_terms: "",
       terms_and_conditions: "",
+      previousCustomer: "",
       delivery_method: "",
       delivery_method_price: 0,
       total_price_with_delivery: 0,
@@ -294,13 +304,6 @@ export default {
         { label: "Draft", value: "draft" },
         { label: "Approved", value: "approved" },
         { label: "Rejected", value: "rejected" },
-      ],
-      quotation: [
-        {
-          label: "Choose Quotation",
-          value: "",
-          selected: true,
-        },
       ],
       payment_terms: [
         {
@@ -317,15 +320,40 @@ export default {
           selected: true,
         },
       ],
+      quotation: [
+        {
+          label: "Choose Quotation",
+          value: "",
+          selected: true,
+        },
+      ],
     },
-    sales_persons: [],
-    display_images: [],
-    previousSalesPersons: Array,
     customToolbar: [
       ["bold", "italic", "underline"],
       [{ list: "ordered" }, { list: "bullet" }],
     ],
+    terms: [
+      {
+        key: "invoice_term_and_condition",
+        label: "Invoice",
+        data: "",
+      },
+      {
+        key: "quotation_term_and_condition",
+        label: "Quotation ",
+        data: "",
+      },
+      {
+        key: "purchase_order_term_and_condition",
+        label: "Purchase Orders",
+        data: "",
+      },
+    ],
+    sales_persons: [],
+    display_images: [],
+    previousSalesPersons: Array,
     delivery_check: false,
+    saveAndExit: false,
   }),
   validations() {
     return {
@@ -339,10 +367,7 @@ export default {
     };
   },
   created() {
-    this.form.dated = this.calculateTodayDate();
-    this.form.due_date = this.calculateDueDate();
-    this.createFunction();
-    this.getEditData(this.$route.params.id);
+    this.createMethod();
   },
   computed: {
     receivingItems() {
@@ -369,9 +394,6 @@ export default {
     this.$store.commit("set_quotation_total", 0);
   },
   watch: {
-    // total_cost(val) {
-    //   this.form.total_cost = val;
-    // },
     receivingItems(val) {
       this.form.items = val;
     },
@@ -395,18 +417,9 @@ export default {
         this.delivery_check = false;
       }
     },
-    customerSelected(customer) {
-      this.form.customer = customer.value;
-    },
-    quotationChange() {
-      let uuid = this.form.id;
-      if (uuid) {
-        this.resetForm();
-        this.getEditData(uuid.value);
-      }
-      console.log;
-    },
-    createFunction() {
+    createMethod() {
+      this.$store.commit("set_loader");
+
       InvoiceService.getCreateRequisites()
         .then(({ data }) => {
           // console.log(data);
@@ -434,7 +447,6 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-
       var terms_and_conditions = this.form.terms_and_conditions;
 
       SettingService.getAll("accounting")
@@ -443,7 +455,7 @@ export default {
             data.map((item) => {
               this.terms.map((term) => {
                 if (term.key === item.key) {
-                  if (item.key == "quotation_term_and_condition") {
+                  if (item.key == "invoice_term_and_condition") {
                     let testing = item.value;
                     terms_and_conditions = testing;
                   }
@@ -482,6 +494,15 @@ export default {
           console.log(error);
           this.$store.commit("close_loader");
         });
+
+      this.form.id = this.$route.params.id;
+      this.form.dated = this.calculateTodayDate();
+      this.form.due_date = this.calculateDueDate();
+
+      if (this.form.id !== "" && this.form.id !== undefined) {
+        this.isEditing = true;
+        this.getEditData(this.form.id);
+      }
     },
     formSubmit() {
       this.$v.$touch();
@@ -491,19 +512,19 @@ export default {
           headers: { "Content-Type": "multipart/form-data" },
         };
         let formData = new FormData();
+        formData.append("id", this.form.id);
         formData.append("dated", this.form.dated);
-        formData.append("terminal_id", this.form.terminal_id);
         formData.append("due_date", this.form.due_date);
+        formData.append("terminal_id", this.form.terminal_id);
         formData.append("customer", this.form.customer);
         formData.append("sales_persons", this.form.sales_persons);
         formData.append("note", this.form.note);
-        formData.append("payment_terms", this.form.payment_terms);
         formData.append("invoice_status", this.form.invoice_status);
         formData.append("items", JSON.stringify(this.form.items));
+        formData.append("payment_terms", this.form.payment_terms);
+        formData.append("terms_and_conditions", this.form.terms_and_conditions);
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
-        formData.append("terms_and_conditions", this.form.terms_and_conditions);
-
         formData.append(
           "total_discount",
           this.$store.getters.getQuotationDiscount
@@ -525,11 +546,7 @@ export default {
             formData.append("images[]", image);
           });
         }
-        // Display the key/value pairs
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
-        }
-
+        this.$store.commit("set_loader");
         if (!this.isEditing) {
           InvoiceService.create(formData, config)
             .then((res) => {
@@ -540,10 +557,14 @@ export default {
                   text: "Invoice Added Successfully",
                   timer: 3600,
                 });
-                // this.$v.$reset();
-                // this.resetForm();
                 this.$store.commit("close_loader");
-                this.$router.push({ path: "/sales/invoices/index" });
+                if (this.saveAndExit) {
+                  this.$router.push({ path: "/sales/invoices/index" });
+                } else {
+                  this.$router.push({
+                    path: "/sales/invoices/show/" + res.data.uuid,
+                  });
+                }
               }
             })
             .catch((error) => {
@@ -558,7 +579,7 @@ export default {
             });
         } else {
           formData.append("_method", "PUT");
-
+          this.$store.commit("set_loader");
           InvoiceService.update(this.form.id, formData, config)
             .then((res) => {
               // console.log(res);
@@ -570,7 +591,13 @@ export default {
                   timer: 3600,
                 });
                 this.$store.commit("close_loader");
-                this.$router.push({ path: "/sales/invoices/index" });
+                if (this.saveAndExit) {
+                  this.$router.push({ path: "/sales/invoices/index" });
+                } else {
+                  this.$router.push({
+                    path: "/sales/invoices/show/" + res.data.uuid,
+                  });
+                }
               }
             })
             .catch((error) => {
@@ -586,7 +613,19 @@ export default {
         }
       }
     },
-
+    customerSelected(customer) {
+      this.form.customer = customer.value;
+      if (
+        customer &&
+        customer.defaultAddress &&
+        customer.defaultAddress.street &&
+        customer.defaultAddress.street.en
+      ) {
+        this.form.address_for_delivery = customer.defaultAddress.street.en;
+      } else {
+        this.form.address_for_delivery = "";
+      }
+    },
     salesPersonSelected(person) {
       this.form.sales_persons = person;
     },
@@ -632,122 +671,120 @@ export default {
         });
     },
     getEditData(uuid) {
-      this.form.id = uuid;
-      if (this.form.id !== "" && this.form.id !== undefined) {
-        this.$store.commit("set_loader");
-
-        this.isEditing = true;
-
-        InvoiceService.get(this.form.id)
-          .then((res) => {
-            if (res.status == 200) {
-              this.isEditing = true;
-              this.form.sales_persons = [];
-              this.form.customer = res.data.customer.uuid;
-              this.form.dated = res.data.dated;
-              this.form.due_date = res.data.due_date;
-              this.form.note = res.data.note;
-              this.form.payment_terms = res.data.payment_terms;
-              this.form.invoice_status = res.data.invoice_status;
-              this.form.terms_and_conditions = res.data.terms_and_conditions;
-
-              if (res.data.delivery && res.data.delivery.uuid) {
-                this.form.delivery_method = res.data.delivery.uuid;
-                this.form.delivery_method_price =
-                  res.data.delivery_method_price;
-                this.form.total_price_with_delivery =
-                  res.data.total_price_with_delivery;
-                this.delivery_check = true;
-                this.form.address_for_delivery = res.data.address_for_delivery;
-              }
-
-              this.form.sales_persons = [];
-              if (res.data.salespersons && res.data.salespersons.length > 0) {
-                let sales_persons = this.form.sales_persons;
-                res.data.salespersons.map(function (item) {
-                  sales_persons.push(item.uuid);
-                });
-              }
-
-              // this.form.sales_persons
-              this.display_images = [];
-              if (res.data.attachments && res.data.attachments.length > 0) {
-                let display_images = this.display_images;
-                res.data.attachments.map(function (item) {
-                  display_images.push(item);
-                });
-              }
-
-              if (res.data.products && res.data.products.length > 0) {
-                res.data.products.map((item) => {
-                  let total_each = 0;
-                  if (!item.discount_per) {
-                    total_each =
-                      (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                        parseInt(item.qty) -
-                      parseFloat(item.discount);
-                  } else {
-                    total_each =
-                      (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                      parseInt(item.qty);
-                    total_each =
-                      total_each - total_each * (item.discount / 100);
-                  }
-
-                  this.form.items.push({
-                    uuid: item.product.uuid,
-                    type: "product",
-                    name: item.product.name.en,
-                    unit_price: item.selling_price ?? 0,
-                    tax_price: item.tax ?? 0,
-                    qty: item.qty,
-                    description: item.description,
-                    weight_unit: item.product.weight_unit,
-                    discount: item.discount_per
-                      ? item.discount + "%"
-                      : item.discount,
-                    total: total_each,
-                  });
-                });
-                // this.$store.commit("set_search_product_items", itemsData);
-              }
-
-              this.$store.commit("set_quotation_sub_total", res.data.sub_total);
-              this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-              this.$store.commit(
-                "set_quotation_total_discount",
-                res.data.total_discount
-              );
-              this.$store.commit("set_quotation_total", res.data.grand_total);
-
-              this.form.previousValue = {
-                value: res.data.customer.uuid,
-                label:
-                  res.data.customer.full_name.en +
-                  " (serial: " +
-                  res.data.customer.serial_no +
-                  ")",
-              };
-              this.previousSalesPersons = res.data.salespersons;
-              this.$store.commit("close_loader");
+      this.$store.commit("set_loader");
+      InvoiceService.get(uuid)
+        .then((res) => {
+          if (res.status == 200) {
+            this.isEditing = true;
+            this.form.previousValue = {
+              value: res.data.customer.uuid,
+              label:
+                res.data.customer.full_name.en +
+                " (serial: " +
+                res.data.customer.serial_no +
+                ")",
+            };
+            this.form.id = res.data.uuid;
+            this.form.dated = res.data.dated;
+            this.form.due_date = res.data.due_date;
+            this.form.note = res.data.note;
+            this.form.invoice_status = res.data.invoice_status;
+            this.form.payment_terms = res.data.payment_terms;
+            this.form.terms_and_conditions = res.data.terms_and_conditions;
+            if (res.data.delivery && res.data.delivery.uuid) {
+              this.form.delivery_method = res.data.delivery.uuid;
+              this.form.delivery_method_price = res.data.delivery_method_price;
+              this.form.total_price_with_delivery =
+                res.data.total_price_with_delivery;
+              this.delivery_check = true;
+              this.form.address_for_delivery = res.data.address_for_delivery;
             }
-          })
-          .catch((error) => {
-            console.log(error);
+            this.form.sales_persons = [];
+            if (res.data.salespersons && res.data.salespersons.length > 0) {
+              let sales_persons = this.form.sales_persons;
+              res.data.salespersons.map(function (item) {
+                sales_persons.push(item.uuid);
+              });
+            }
+            this.display_images = [];
+            if (res.data.attachments && res.data.attachments.length > 0) {
+              let display_images = this.display_images;
+              res.data.attachments.map(function (item) {
+                display_images.push(item);
+              });
+            }
+            if (res.data.products && res.data.products.length > 0) {
+              res.data.products.map((item) => {
+                let total_each = 0;
+                if (!item.discount_per) {
+                  total_each =
+                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                      parseInt(item.qty) -
+                    parseFloat(item.discount);
+                } else {
+                  total_each =
+                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                    parseInt(item.qty);
+                  total_each = total_each - total_each * (item.discount / 100);
+                }
+
+                this.form.items.push({
+                  uuid: item.product.uuid,
+                  type: "product",
+                  name: item.product.name.en,
+                  unit_price: item.selling_price ?? 0,
+                  tax_price: item.tax ?? 0,
+                  qty: item.qty,
+                  description: item.description,
+                  weight_unit: item.product.weight_unit,
+                  discount: item.discount_per
+                    ? item.discount + "%"
+                    : item.discount,
+                  total: total_each,
+                });
+              });
+              // this.$store.commit("set_search_product_items", itemsData);
+            }
+            this.$store.commit("set_quotation_sub_total", res.data.sub_total);
+            this.$store.commit("set_quotation_tax_total", res.data.total_tax);
+            this.$store.commit(
+              "set_quotation_total_discount",
+              res.data.total_discount
+            );
+            this.$store.commit("set_quotation_total", res.data.grand_total);
+            this.previousSalesPersons = res.data.salespersons;
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$store.commit("close_loader");
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
           });
+        });
+    },
+    quotationChange() {
+      let uuid = this.form.id;
+      if (uuid && uuid.value) {
+        this.resetForm();
+        this.getEditData(uuid.value);
+      } else {
+        this.resetForm();
       }
     },
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";
       }
+      let store = this.$store;
+      store.commit("set_quotation_sub_total", 0.0);
+      store.commit("set_quotation_tax_total", 0.0);
+      store.commit("set_quotation_total_discount", 0.0);
+      store.commit("set_quotation_total", 0.0);
       this.form.items = [];
       this.form.images = [];
       this.display_images = [];
@@ -756,11 +793,8 @@ export default {
   },
 };
 </script>
-<style scoped>
-.multiselect__tags {
-  min-height: 36px;
-  height: 36px;
-}
+
+<style>
 #editor1 {
   height: 120px;
 }
