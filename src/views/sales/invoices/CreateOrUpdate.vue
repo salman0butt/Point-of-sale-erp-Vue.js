@@ -688,7 +688,7 @@ export default {
             this.form.dated = res.data.dated;
             this.form.due_date = res.data.due_date;
             this.form.note = res.data.note;
-            this.form.invoice_status = res.data.invoice_status;
+            this.form.invoice_status = res.data.invoice_status ?? "draft";
             this.form.payment_terms = res.data.payment_terms;
             this.form.terms_and_conditions = res.data.terms_and_conditions;
             if (res.data.delivery && res.data.delivery.uuid) {
