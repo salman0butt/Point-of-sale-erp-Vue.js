@@ -4,14 +4,7 @@
     <CCardHeader>
       Quotation <strong># {{ invoice.quotation_ref_no }}</strong>
       <div class="float-right">
-        <CButton
-          v-if="showWhatsappButton"
-          color="success"
-          class="btn mr-2"
-          @click="sendWhatsapp('quotation')"
-        >
-          Send WhatsApp</CButton
-        >
+        <CButton color="success" class="btn mr-2"> Pay</CButton>
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
@@ -144,14 +137,14 @@
 </template>
 <script>
 import QuotationService from "@/services/sale/QuotationService";
-import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
+// import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import Loader from "@/components/layouts/Loader";
 import VueHtml2pdf from "vue-html2pdf";
 
 export default {
   name: "Invoice",
   components: { Loader, VueHtml2pdf },
-  mixins: [whatsappMixin],
+  // mixins: [whatsappMixin],
   data() {
     return {
       output: null,
@@ -220,8 +213,8 @@ export default {
               data.customer.default_contact.country.dialCode +
               data.customer.default_contact.number.en;
             this.customer.default_contact_number = number;
-            this.whatsapp.name = data.customer.full_name?.en;
-            this.whatsapp.number = number;
+            // this.whatsapp.name = data.customer.full_name?.en;
+            // this.whatsapp.number = number;
           }
           data.products.map((item, id) => {
             serverproducts.push(item);

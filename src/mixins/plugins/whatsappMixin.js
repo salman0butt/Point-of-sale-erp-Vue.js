@@ -23,13 +23,26 @@ export const whatsappMixin = {
 
   },
   methods: {
-    sendWhatsapp() {
+    sendWhatsapp(type = null) {
+      const id = this.$route.params.id;
+      if(!type || !id) return;
+
+      let send_link = '';
+      let base_url = window.location.origin;
+      if(type === 'invoice') {
+        send_link = base_url+`/show-invoice/`+id;
+      }else if(type === 'quotation') {
+        send_link = base_url+`/show-quotation/`+id;
+      }else {
+        return;
+      }
+
       if(this.whatsapp.number && this.whatsapp.name){
         this.whatsapp.link =
         "https://wa.me/" +
         this.whatsapp.number +
         "?text=" +
-        `Dear%20${this.whatsapp.name}%0A%0AClick%20on%20the%20link%20below%20to%20view%2Fdownload%20your%20%28invoice%29%0A%0Ahttps%3A%2F%2Fdemo.switcher.one%2Fpu%2Fdoc%2Ffilename.pdf%0A%0Athank%20you`;
+        `Dear%20${this.whatsapp.name}%0A%0AClick%20on%20the%20link%20below%20to%20view%2Fdownload%20your%20%28invoice%29%0A%0A${send_link}%0A%0Athank%20you`;
       window.open(this.whatsapp.link);
       }else {
         this.$swal.fire({

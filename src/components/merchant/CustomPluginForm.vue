@@ -82,9 +82,10 @@ export default {
     saveCustomPlugin() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        this.$v.$reset();
-        alert("Custom Plugin Saved");
-        this.resetForm();
+        return;
+        // this.$v.$reset();
+        // alert("Custom Plugin Saved");
+        // this.resetForm();
         // this.$store.commit("set_loader");
         // let data = this.form;
         // CustomPluginService.create(data)
