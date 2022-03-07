@@ -23,6 +23,9 @@ export const whatsappMixin = {
 
   },
   methods: {
+    openWhatsappModel() {
+      this.$store.commit("set_whatsapp_plugin_model", true);
+    },
     sendWhatsapp(type = null) {
       const id = this.$route.params.id;
       if(!type || !id) return;

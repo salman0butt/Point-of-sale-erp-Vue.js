@@ -45,6 +45,7 @@ const state = {
   PaymernTermId: '',
   business_logo: localStorage.getItem('business_logo') || '/img/images/switcher-logo.jpeg',
   customPluginModel: false,
+  whatsappPluginModel: false
 }
 
 const mutations = {
@@ -169,7 +170,11 @@ const mutations = {
   },
   set_custom_plugin_model(state, status) {
     state.customPluginModel = status;
+  },
+  set_whatsapp_plugin_model(state, status) {
+    state.whatsappPluginModel = status;
   }
+
 
 
 }
@@ -299,7 +304,8 @@ const getters = {
   getOpeningModel: state => state.openingModel,
   getClosingModel: state => state.closingModel,
   getBusinessLogo: state => state.business_logo,
-  getCustomPluginModel: state => state.customPluginModel
+  getCustomPluginModel: state => state.customPluginModel,
+  getWhatsappPluginModel: state => state.whatsappPluginModel
 
 }
 

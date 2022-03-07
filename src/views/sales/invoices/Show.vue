@@ -81,13 +81,17 @@
         <CCard>
           <CCardHeader>
             Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
-            <div class="float-right">
+            <div class="float-right buttons-box">
               <a
                 v-if="showWhatsappButton"
                 color="success"
                 class="btn btn-sm btn-success"
                 style="color: #fff; margin-right: 5px; text-align: center"
-                @click.prevent="sendWhatsapp('quotation')"
+                @click.prevent="
+                  options.contacts && options.contacts.length > 1
+                    ? openWhatsappModel()
+                    : sendWhatsapp('quotation')
+                "
               >
                 <CIcon name="cib-whatsapp" /> Send WhatsApp</a
               >
@@ -313,6 +317,7 @@
             </CDataTable>
           </CCardBody>
         </CCard>
+        <WhatsappPluginModel :contacts="options.contacts" type="invoice" />
       </div>
     </div>
   </div>
@@ -326,7 +331,7 @@ import Loader from "@/components/layouts/Loader.vue";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import VueHtml2pdf from "vue-html2pdf";
-
+import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
   { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
@@ -345,12 +350,14 @@ export default {
   components: {
     Loader,
     VueHtml2pdf,
+    WhatsappPluginModel,
   },
   mixins: [whatsappMixin],
   data() {
     return {
       fields,
       output: null,
+      contact: "",
       uuid: "",
       invoice: {
         dated: "",
@@ -389,6 +396,7 @@ export default {
       },
       options: {
         paymentMethods: [{ label: "Choose Payment Method", value: "" }],
+        contacts: [{ label: "Choose Contact", value: "" }],
       },
       payments: [],
     };
@@ -440,12 +448,31 @@ export default {
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
 
-          if (data.customer && data.customer.contact) {
-            const number =
-              data.customer.contact.country.dialCode + data.customer.contact.number.en;
-            this.customer.contact_number = number;
-            this.whatsapp.name = data.customer.full_name;
-            this.whatsapp.number = number;
+          if (
+            data.customer &&
+            data.customer.all_contacts &&
+            data.customer.all_contacts.length > 0
+          ) {
+            if (data.customer.all_contacts.length === 1) {
+              const number =
+                data.customer.contact.country.dialCode + data.customer.contact.number.en;
+              this.customer.contact_number = number;
+              this.whatsapp.name = data.customer.full_name;
+              this.whatsapp.number = number;
+            } else {
+              let contacts = this.options.contacts;
+              data.customer.all_contacts.map(function (item) {
+                contacts.push({
+                  label:
+                    item.country.dialCode + item.number.en + " (" + item.name.en + ")",
+                  value: JSON.stringify({
+                    uuid: item.uuid,
+                    name: data.customer.full_name,
+                    number: item.country.dialCode + item.number.en,
+                  }),
+                });
+              });
+            }
           }
 
           // delivery
@@ -512,6 +539,16 @@ export default {
         });
 
       this.$store.commit("close_loader");
+    },
+    changeWhatsappContact() {
+      if (this.contact) {
+        const contact = JSON.parse(this.contact);
+        this.whatsapp.name = contact.name;
+        this.whatsapp.number = contact.number;
+      } else {
+        this.whatsapp.name = "";
+        this.whatsapp.number = "";
+      }
     },
     paymentSubmit() {
       this.$v.$touch();
@@ -597,5 +634,10 @@ export default {
   width: auto !important;
   height: auto !important;
   background: initial !important;
+}
+.buttons-box {
+  display: flex;
+  width: auto;
+  align-items: center;
 }
 </style>

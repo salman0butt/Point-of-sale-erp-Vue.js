@@ -3,13 +3,17 @@
     <Loader />
     <CCardHeader>
       Quotation <strong># {{ invoice.quotation_ref_no }}</strong>
-      <div class="float-right">
+      <div class="float-right buttons-box">
         <a
           v-if="showWhatsappButton"
           color="success"
           class="btn btn-sm btn-success"
           style="color: #fff; margin-right: 5px; text-align: center"
-          @click.prevent="sendWhatsapp('quotation')"
+          @click.prevent="
+            options.contacts && options.contacts.length > 1
+              ? openWhatsappModel()
+              : sendWhatsapp('quotation')
+          "
         >
           <CIcon name="cib-whatsapp" /> Send WhatsApp</a
         >
@@ -166,6 +170,7 @@
         </section>
       </vue-html2pdf>
     </CCardBody>
+    <WhatsappPluginModel :contacts="options.contacts" type="quotation" />
   </CCard>
 </template>
 <script>
@@ -173,10 +178,10 @@ import QuotationService from "@/services/sale/QuotationService";
 import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import Loader from "@/components/layouts/Loader";
 import VueHtml2pdf from "vue-html2pdf";
-
+import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
 export default {
   name: "Invoice",
-  components: { Loader, VueHtml2pdf },
+  components: { Loader, VueHtml2pdf, WhatsappPluginModel },
   mixins: [whatsappMixin],
   data() {
     return {
@@ -210,6 +215,9 @@ export default {
         address: "",
         contact_number: "",
         email: "",
+      },
+      options: {
+        contacts: [{ label: "Choose Contact", value: "" }],
       },
     };
   },
@@ -246,12 +254,31 @@ export default {
           this.customer.address = data.customer.default_address;
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
-          if (data.customer && data.customer.contact) {
-            const number =
-              data.customer.contact.country.dialCode + data.customer.contact.number.en;
-            this.customer.contact = number;
-            this.whatsapp.name = data.customer.full_name;
-            this.whatsapp.number = number;
+          if (
+            data.customer &&
+            data.customer.all_contacts &&
+            data.customer.all_contacts.length > 0
+          ) {
+            if (data.customer.all_contacts.length === 1) {
+              const number =
+                data.customer.contact.country.dialCode + data.customer.contact.number.en;
+              this.customer.contact_number = number;
+              this.whatsapp.name = data.customer.full_name;
+              this.whatsapp.number = number;
+            } else {
+              let contacts = this.options.contacts;
+              data.customer.all_contacts.map(function (item) {
+                contacts.push({
+                  label:
+                    item.country.dialCode + item.number.en + " (" + item.name.en + ")",
+                  value: JSON.stringify({
+                    uuid: item.uuid,
+                    name: data.customer.full_name,
+                    number: item.country.dialCode + item.number.en,
+                  }),
+                });
+              });
+            }
           }
           data.products.map((item, id) => {
             serverproducts.push(item);
