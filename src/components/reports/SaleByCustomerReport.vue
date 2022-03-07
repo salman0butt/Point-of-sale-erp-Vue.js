@@ -53,7 +53,7 @@ import Loader from "@/components/layouts/Loader";
 
 const fields = [
   { key: "full_name", label: "Customer" },
-  { key: "invoices_count", label: "Invoice Count" },
+  { key: "approved_invoices_count", label: "Invoice Count" },
   { key: "sales_total", label: "Sales" },
   { key: "sales_total_with_tax", label: "Sales With Tax" },
 ];
