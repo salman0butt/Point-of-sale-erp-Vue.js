@@ -52,7 +52,7 @@ import SaleReportService from "@/services/reports/SaleReportService";
 import Loader from "@/components/layouts/Loader";
 
 const fields = [
-  { key: "item_name", label: "Item Name" },
+  { key: "name", label: "Item Name" },
   { key: "quantity_sold", label: "Quantity Sold" },
   { key: "amount", label: "Amount" },
   { key: "average_price", label: "Average Price" },
