@@ -14,6 +14,15 @@ class HrSettingService {
     return http.patch(`/settings`, data);
   }
 
+  getDashboardSetting(card) {
+    return http.get(`/setting-dashboard/${card}`);
+  }
+
+  updateDashboardSettings(data) {
+    return http.patch(`/setting-dashboard`, data);
+  }
+
+
 }
 
 export default new HrSettingService();
