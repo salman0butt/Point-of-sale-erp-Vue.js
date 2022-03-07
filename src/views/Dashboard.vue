@@ -30,6 +30,36 @@
         </CCardGroup>
       </CCol>
     </CRow>
+    <CRow>
+      <CCol sm="12" md="12">
+        <CCardGroup class="mb-4 remove-progress">
+          <CWidgetProgressIcon
+            header="87.500"
+            text="Visitors"
+            color="gradient-info"
+          >
+            <CIcon name="cil-people" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon
+            header="385"
+            text="New Clients"
+            color="gradient-success"
+          >
+            <CIcon name="cil-userFollow" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon
+            header="1238"
+            text="Products sold"
+            color="gradient-warning"
+          >
+            <CIcon name="cil-basket" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon header="28%" text="Returning Visitors">
+            <CIcon name="cil-chartPie" height="36" />
+          </CWidgetProgressIcon>
+        </CCardGroup>
+      </CCol>
+    </CRow>
     <!-- <CRow>
       <CCol sm="2" md="2">
         <CButton color="primary" class="btn-block" @click="opening()">
