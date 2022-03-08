@@ -295,6 +295,11 @@
                   {{ item.created_by.username }}
                 </td>
               </template>
+              <template #payment_no="{ item }">
+                <td>
+                  {{ item.payment_no ? item.payment_no : "-" }}
+                </td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -577,6 +582,7 @@ export default {
       }
     },
     resetForm() {
+      this.$v.$reset();
       for (let index in this.form) {
         this.form[index] = "";
       }

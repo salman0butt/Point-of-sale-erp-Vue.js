@@ -104,6 +104,7 @@
                   name="some-radios"
                   value="voucher"
                   id="voucher"
+                  @change="changeVoucher()"
                 />
                 <label class="form-check-label" for="voucher"> Return Voucher </label>
               </div>
@@ -149,7 +150,6 @@ export default {
     isEditing: false,
     showCash: false,
     showReplacement: false,
-
     form: {
       id: "",
       qty: 1,
@@ -202,6 +202,10 @@ export default {
     changeReturnCash() {
       this.showReplacement = false;
       this.showCash = true;
+    },
+    changeVoucher() {
+      this.showReplacement = false;
+      this.showCash = false;
     },
     updateQty() {
       this.form.total =
