@@ -302,7 +302,7 @@ export default {
 
           // customer
           this.customer.uuid = data.customer.uuid;
-          this.customer.name = data.customer.full_name.en;
+          this.customer.name = data.customer.full_name;
           this.customer.address = data.customer.default_address;
           this.customer.contact_number = data.customer.default_contact;
           this.customer.email = data.customer.default_email;

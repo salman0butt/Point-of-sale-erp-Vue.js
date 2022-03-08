@@ -6,7 +6,7 @@
       <div>
         <CCard>
           <CCardHeader>
-            Invoice
+            New Return
             <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
@@ -164,6 +164,7 @@
                         <th class="right">Tax</th>
                         <th class="right">Discount</th>
                         <th class="right">Total</th>
+                        <th class="right">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -185,6 +186,11 @@
                           }}
                         </td>
                         <td class="right">{{ product.total }}</td>
+                        <td>
+                          <CButton block color="success" @click="addReturn(index)"
+                            >Return</CButton
+                          >
+                        </td>
                       </tr>
                       <tr v-if="invoice.delivery">
                         <td></td>
@@ -196,7 +202,7 @@
                             }}
                           </b>
                         </td>
-                        <td colspan="4">
+                        <td colspan="5">
                           <b>Address : </b> {{ invoice.address_for_delivery }}
                         </td>
                         <td>{{ invoice.delivery_method_price }}</td>
@@ -318,6 +324,7 @@
           </CCardBody>
         </CCard>
         <WhatsappPluginModel :contacts="options.contacts" type="invoice" />
+        <ReturnByInvoiceModel :product="openInvoice" />
       </div>
     </div>
   </div>
@@ -332,6 +339,8 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import VueHtml2pdf from "vue-html2pdf";
 import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
+
+import ReturnByInvoiceModel from "@/components/returns/ReturnByInvoiceModel";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
   { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
@@ -342,7 +351,7 @@ const fields = [
 ];
 
 export default {
-  name: "Invoice",
+  name: "Exchnage",
   cisWallet,
   cilPencil,
   cilTrash,
@@ -351,12 +360,14 @@ export default {
     Loader,
     VueHtml2pdf,
     WhatsappPluginModel,
+    ReturnByInvoiceModel,
   },
   mixins: [whatsappMixin],
   data() {
     return {
       fields,
       output: null,
+      openInvoice: {},
       contact: "",
       uuid: "",
       invoice: {
@@ -586,6 +597,10 @@ export default {
     },
     editRow(uuid) {
       this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    },
+    addReturn(k) {
+      this.openInvoice = this.invoice.products[k];
+      this.$store.commit("set_return_by_invoice_model", true);
     },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);

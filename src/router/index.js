@@ -43,6 +43,7 @@ import invoiceRoutes from '@/router/sales/invoiceRoutes';
 import reportRoutes from '@/router/reports/reportRoutes';
 import purchaseOrderRoutes from '@/router/accounting/purchaseOrder/purchaseOrderRoutes';
 import journalRoutes from '@/router/accounting/journal/journalRoutes';
+import returnRoutes from '@/router/returns/returnRoutes';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
@@ -246,6 +247,7 @@ const router = new Router({
         reportRoutes,
         purchaseOrderRoutes,
         journalRoutes,
+        returnRoutes,
 
         // {
         //   path: 'theme',

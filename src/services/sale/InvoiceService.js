@@ -23,6 +23,10 @@ class InvoiceService extends Helper {
         return http.get(`/invoices/${id}`);
     }
 
+    search(query){
+       return http.get(`/invoices/search/${query}`, super.selectedBranch());
+    }
+
     getCreateRequisites() {
 
         return http.get(`/invoices/create`);
