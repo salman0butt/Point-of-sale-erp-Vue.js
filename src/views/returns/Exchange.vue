@@ -1,21 +1,100 @@
 <template>
   <div class="row">
     <Loader />
-    <div class="col-12">
+
+    <div class="col-3">
+      <div>
+        <CCard>
+          <CCardHeader>
+            New Return
+            <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
+          </CCardHeader>
+          <CCardBody>
+            <div class="float-center">
+              Customer
+              <div>
+                <router-link
+                  :to="`/customers/show/${customer.uuid}`"
+                  v-if="$can('show customers')"
+                >
+                  <strong class="margin:auto" style="color: red; font-size: 22px">{{
+                    customer.name
+                  }}</strong></router-link
+                >
+              </div>
+            </div>
+          </CCardBody>
+        </CCard>
+      </div>
+      <div>
+        <CCard>
+          <CCardHeader> Payment </CCardHeader>
+          <CCardBody>
+            <form @submit.prevent="paymentSubmit()">
+              <CCol sm="12" md="12" class="pt-2">
+                <Label
+                  ><CIcon style="color: green" :content="$options.cisWallet" /> Payment
+                  Method</Label
+                >
+                <CSelect
+                  :options="options.paymentMethods"
+                  :value.sync="form.paymentMethod"
+                  :class="{ error: $v.form.paymentMethod.$error }"
+                  @input="$v.form.paymentMethod.$touch()"
+                />
+                <div v-if="$v.form.paymentMethod.$error">
+                  <p v-if="!$v.form.paymentMethod.required" class="errorMsg">
+                    Payment Method is required
+                  </p>
+                </div>
+              </CCol>
+              <CCol sm="12" md="12" class="pt-2">
+                <CInput
+                  label="Amount"
+                  type="number"
+                  step="any"
+                  placeholder="0.000"
+                  v-model="form.amount"
+                  :class="{ error: $v.form.amount.$error }"
+                  @input="$v.form.amount.$touch()"
+                />
+              </CCol>
+              <div v-if="$v.form.amount.$error">
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
+              </div>
+              <CButton
+                progress
+                timeout="2000"
+                block
+                color="success"
+                style="width: 200px; margin-left: 20px"
+                type="submit"
+                >Pay</CButton
+              >
+            </form>
+          </CCardBody>
+        </CCard>
+      </div>
+    </div>
+    <div class="col-9">
       <div>
         <CCard>
           <CCardHeader>
             Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
-            <div class="float-right">
-              <!-- <CButton
+            <div class="float-right buttons-box">
+              <a
                 v-if="showWhatsappButton"
                 color="success"
-                class="btn mr-2"
-                @click="sendWhatsapp()"
+                class="btn btn-sm btn-success"
+                style="color: #fff; margin-right: 5px; text-align: center"
+                @click.prevent="
+                  options.contacts && options.contacts.length > 1
+                    ? openWhatsappModel()
+                    : sendWhatsapp('quotation')
+                "
               >
-                Send WhatsApp</CButton
-              > -->
-              <CButton color="success" class="btn mr-2"> Pay</CButton>
+                <CIcon name="cib-whatsapp" /> Send WhatsApp</a
+              >
               <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
                 <CIcon name="cil-save" /> Download
               </a>
@@ -85,6 +164,7 @@
                         <th class="right">Tax</th>
                         <th class="right">Discount</th>
                         <th class="right">Total</th>
+                        <th class="right">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -106,6 +186,11 @@
                           }}
                         </td>
                         <td class="right">{{ product.total }}</td>
+                        <td>
+                          <CButton block color="success" @click="addReturn(index)"
+                            >Return</CButton
+                          >
+                        </td>
                       </tr>
                       <tr v-if="invoice.delivery">
                         <td></td>
@@ -117,7 +202,7 @@
                             }}
                           </b>
                         </td>
-                        <td colspan="4">
+                        <td colspan="5">
                           <b>Address : </b> {{ invoice.address_for_delivery }}
                         </td>
                         <td>{{ invoice.delivery_method_price }}</td>
@@ -199,17 +284,63 @@
           </CCardBody>
         </CCard>
       </div>
+      <div>
+        <CCard>
+          <CCardHeader> <strong>Payment List</strong> </CCardHeader>
+          <CCardBody>
+            <CDataTable
+              :items="payments"
+              :fields="fields"
+              table-filter
+              sorter
+              hover
+              ref="externalAgent"
+            >
+              <template #created_by="{ item }">
+                <td>
+                  {{ item.created_by.username }}
+                </td>
+              </template>
+              <template #actions="{ item }">
+                <td>
+                  <CButtonGroup>
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                      >View</CButton
+                    >
+                    <CButton
+                      @click="editRow(item.uuid)"
+                      class="btn-sm text-white"
+                      color="warning"
+                    >
+                      <CIcon :content="$options.cilPencil"
+                    /></CButton>
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                      <CIcon :content="$options.cilTrash" />
+                    </CButton>
+                  </CButtonGroup>
+                </td>
+              </template>
+            </CDataTable>
+          </CCardBody>
+        </CCard>
+        <WhatsappPluginModel :contacts="options.contacts" type="invoice" />
+        <ReturnByInvoiceModel :product="openInvoice" />
+      </div>
     </div>
   </div>
 </template>
 <script>
 import QuotationService from "@/services/sale/QuotationService";
-
+import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
 import { cisWallet } from "@coreui/icons-pro";
+import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader.vue";
-// import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
+import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import VueHtml2pdf from "vue-html2pdf";
+import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
 
+import ReturnByInvoiceModel from "@/components/returns/ReturnByInvoiceModel";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
   { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
@@ -220,17 +351,24 @@ const fields = [
 ];
 
 export default {
-  name: "Invoice",
+  name: "Exchnage",
   cisWallet,
+  cilPencil,
+  cilTrash,
+  cilEye,
   components: {
     Loader,
     VueHtml2pdf,
+    WhatsappPluginModel,
+    ReturnByInvoiceModel,
   },
-  // mixins: [whatsappMixin],
+  mixins: [whatsappMixin],
   data() {
     return {
       fields,
       output: null,
+      openInvoice: {},
+      contact: "",
       uuid: "",
       invoice: {
         dated: "",
@@ -267,9 +405,22 @@ export default {
         customer: "",
         invoice: "",
       },
+      options: {
+        paymentMethods: [{ label: "Choose Payment Method", value: "" }],
+        contacts: [{ label: "Choose Contact", value: "" }],
+      },
+      payments: [],
     };
   },
 
+  validations() {
+    return {
+      form: {
+        paymentMethod: { required },
+        amount: { required },
+      },
+    };
+  },
   created() {
     this.getServerData();
   },
@@ -308,14 +459,32 @@ export default {
           this.customer.email = data.customer.default_email;
           let serverproducts = this.invoice.products;
 
-          // if (data.customer && data.customer.contact) {
-          //   const number =
-          //     data.customer.contact.country.dialCode + data.customer.contact.number.en;
-          //   this.customer.contact_number = number;
-
-          // this.whatsapp.name = data.customer.full_name.en;
-          // this.whatsapp.number = number;
-          // }
+          if (
+            data.customer &&
+            data.customer.all_contacts &&
+            data.customer.all_contacts.length > 0
+          ) {
+            if (data.customer.all_contacts.length === 1) {
+              const number =
+                data.customer.contact.country.dialCode + data.customer.contact.number.en;
+              this.customer.contact_number = number;
+              this.whatsapp.name = data.customer.full_name;
+              this.whatsapp.number = number;
+            } else {
+              let contacts = this.options.contacts;
+              data.customer.all_contacts.map(function (item) {
+                contacts.push({
+                  label:
+                    item.country.dialCode + item.number.en + " (" + item.name.en + ")",
+                  value: JSON.stringify({
+                    uuid: item.uuid,
+                    name: data.customer.full_name,
+                    number: item.country.dialCode + item.number.en,
+                  }),
+                });
+              });
+            }
+          }
 
           // delivery
           this.invoice.delivery = data.delivery;
@@ -323,13 +492,12 @@ export default {
           this.invoice.address_for_delivery = data.address_for_delivery;
           this.invoice.total_price_with_delivery = data.total_price_with_delivery;
 
-          data.products.map((item) => {
+          data.products.map((item, id) => {
             serverproducts.push(item);
           });
           this.$store.commit("close_loader");
         })
         .catch((err) => {
-          this.$router.push({ path: "/not-found" });
           this.$store.commit("close_loader");
           console.log(err);
         });
@@ -350,7 +518,127 @@ export default {
           console.log(err);
         });
 
+      // Payment Methods display
+      let paymentMethods = this.options.paymentMethods;
+      this.$store.commit("set_loader");
+      PaymentInvoiceService.create()
+        .then(({ data }) => {
+          if (data && data.paymentMethods) {
+            data.paymentMethods.map((value, index) => {
+              paymentMethods.push({ label: value.name, value: value.uuid });
+            });
+            this.$store.commit("close_loader");
+          }
+        })
+        .catch((err) => {
+          this.$store.commit("close_loader");
+          console.log(err);
+        });
+
+      // All Payments of invoice
+      let payments = this.payments;
+      PaymentInvoiceService.getInvoicePayments(this.uuid)
+        .then(({ data }) => {
+          if (data) {
+            data.map((value, index) => {
+              payments.push(value);
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
       this.$store.commit("close_loader");
+    },
+    changeWhatsappContact() {
+      if (this.contact) {
+        const contact = JSON.parse(this.contact);
+        this.whatsapp.name = contact.name;
+        this.whatsapp.number = contact.number;
+      } else {
+        this.whatsapp.name = "";
+        this.whatsapp.number = "";
+      }
+    },
+    paymentSubmit() {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let payments = this.payments;
+        this.$store.commit("set_loader");
+        this.form.customer = this.customer.uuid;
+        this.form.invoice = this.uuid;
+        PaymentInvoiceService.store(this.form)
+          .then(({ data }) => {
+            payments.unshift(data);
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Payment Added Successfully",
+              timer: 3600,
+            });
+            this.resetForm();
+
+            this.$store.commit("close_loader");
+          })
+          .catch((err) => {
+            this.$store.commit("close_loader");
+            console.log(err);
+          });
+      }
+    },
+    resetForm() {
+      for (let index in this.form) {
+        this.form[index] = "";
+      }
+    },
+    viewRow(uuid) {
+      this.$router.push({ path: "/sales/invoices/reciept/show/" + uuid });
+    },
+    editRow(uuid) {
+      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    },
+    addReturn(k) {
+      this.openInvoice = this.invoice.products[k];
+      this.$store.commit("set_return_by_invoice_model", true);
+    },
+    deleteRow(uuid) {
+      this.deleteRows = JSON.stringify([uuid]);
+      this.$swal
+        .fire({
+          title: "Do you want to delete this record",
+          text: "This will be record from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          // if (result.isConfirmed) {
+          //   InvoiceService.delete(this.deleteRows)
+          //     .then((res) => {
+          //       if (res.status == 200) {
+          //         this.$swal.fire({
+          //           icon: "success",
+          //           title: "Success",
+          //           text: "Quotation Deleted Successfully",
+          //           timer: 3600,
+          //         });
+          //         this.serverData = this.serverData.filter(
+          //           (item) => item.uuid != uuid
+          //         );
+          //       }
+          //     })
+          //     .catch((error) => {
+          //       this.$swal.fire({
+          //         icon: "error",
+          //         title: "Error",
+          //         text: "Something went Wrong",
+          //         timer: 3600,
+          //       });
+          //     });
+          //   this.deleteRows = [];
+          // }
+        });
     },
   },
 };
@@ -361,5 +649,10 @@ export default {
   width: auto !important;
   height: auto !important;
   background: initial !important;
+}
+.buttons-box {
+  display: flex;
+  width: auto;
+  align-items: center;
 }
 </style>
