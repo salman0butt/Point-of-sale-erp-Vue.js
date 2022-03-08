@@ -30,6 +30,36 @@
         </CCardGroup>
       </CCol>
     </CRow>
+    <CRow>
+      <CCol sm="12" md="12">
+        <CCardGroup class="mb-4 remove-progress">
+          <CWidgetProgressIcon
+            header="87.500"
+            text="Visitors"
+            color="gradient-info"
+          >
+            <CIcon name="cil-people" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon
+            header="385"
+            text="New Clients"
+            color="gradient-success"
+          >
+            <CIcon name="cil-userFollow" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon
+            header="1238"
+            text="Products sold"
+            color="gradient-warning"
+          >
+            <CIcon name="cil-basket" height="36" />
+          </CWidgetProgressIcon>
+          <CWidgetProgressIcon header="28%" text="Returning Visitors">
+            <CIcon name="cil-chartPie" height="36" />
+          </CWidgetProgressIcon>
+        </CCardGroup>
+      </CCol>
+    </CRow>
     <!-- <CRow>
       <CCol sm="2" md="2">
         <CButton color="primary" class="btn-block" @click="opening()">
@@ -69,15 +99,18 @@
       <CCardHeader class="py-0">
         <span style="position: relative; top: 15px">BarChart</span>
         <CCol sm="2" md="2" class="pt-2" style="float: right; height: 3.2rem">
-          <CSelect
+          <!-- <CSelect
             placeholder="By Month"
             :options="options.chart"
             :value.sync="chart1"
-          />
+          /> -->
         </CCol>
       </CCardHeader>
       <CCardBody>
-        <BarChart />
+        <BarChart
+          :dashboardMonths="barChart.months"
+          :dashboardDefaultDataset="barChart.defaultDataset"
+        />
       </CCardBody>
     </CCard>
     <CRow>
@@ -85,7 +118,10 @@
         <CCard>
           <CCardHeader> Best Payment Method </CCardHeader>
           <CCardBody>
-            <PieChart />
+            <PieChart
+              :dashboardLabels="pieChart.labels"
+              :dashboardDefaultDataset="pieChart.defaultDataset"
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -93,7 +129,11 @@
         <CCard>
           <CCardHeader> Recent Transections</CCardHeader>
           <CCardBody style="padding-bottom: 15px">
-            <CDataTable :items="dataItems" :fields="transFields" hover />
+            <CDataTable
+              :items="recentTransactionsItems"
+              :fields="recentTransactionFields"
+              hover
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -103,7 +143,7 @@
         <CCard>
           <CCardHeader> Top 5 Products </CCardHeader>
           <CCardBody>
-            <CDataTable :items="productData" :fields="productFields" hover />
+            <CDataTable :items="topProducts" :fields="topProductsField" hover />
           </CCardBody>
         </CCard>
       </CCol>
@@ -150,14 +190,15 @@ import BarChart from "@/components/dashboard/BarChart";
 import PieChart from "@/components/dashboard/PieChart";
 import OpeningModel from "@/components/dashboard/OpeningModel";
 import ClosingModel from "@/components/dashboard/ClosingModel";
-const transFields = [
-  { key: "name", label: "Name", _style: "min-width:40%" },
+import DashboardService from "@/services/dashboard/DashboardService";
+const recentTransactionFields = [
+  { key: "customer", label: "Name", _style: "min-width:40%" },
   { key: "amount", label: "Amount", _style: "min-width:15%;" },
-  { key: "date", label: "Date", _style: "min-width:15%;" },
+  { key: "dated", label: "Dated", _style: "min-width:15%;" },
 ];
-const productFields = [
+const topProductsField = [
   { key: "name", label: "Name", _style: "min-width:40%" },
-  { key: "qty", label: "Quantity", _style: "min-width:15%;" },
+  { key: "total", label: "Quantity", _style: "min-width:15%;" },
   { key: "serial_number", label: "Serial Number", _style: "min-width:15%;" },
 ];
 
@@ -173,65 +214,32 @@ const orderFields = [
   { key: "qty", label: "Quantity", _style: "min-width:15%;" },
   { key: "Total", label: "Total", _style: "min-width:15%;" },
 ];
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 export default {
   name: "Dashboard",
   components: { BarChart, PieChart, OpeningModel, ClosingModel },
   data() {
     return {
-      transFieldsitems: [
-        {
-          name: "Jane Doe",
-          amount: "15,000",
-          date: "11/11/2019",
-        },
-        {
-          name: "Joe Doe",
-          amount: "18,000",
-          date: "11/11/2019",
-        },
-        {
-          name: "John Doe",
-          amount: "12,000",
-          date: "11/11/2019",
-        },
-        {
-          name: "Jane Doe",
-          amount: "15,000",
-          date: "11/11/2019",
-        },
-        {
-          name: "Joe Doe",
-          amount: "18,000",
-          date: "11/11/2019",
-        },
-      ],
-      productData: [
-        {
-          name: "Product 1",
-          qty: "10",
-          serial_number: "12345",
-        },
-        {
-          name: "Product 2",
-          qty: "20",
-          serial_number: "12345",
-        },
-        {
-          name: "Product 3",
-          qty: "30",
-          serial_number: "12345",
-        },
-        {
-          name: "Product 4",
-          qty: "40",
-          serial_number: "12345",
-        },
-        {
-          name: "Product 5",
-          qty: "50",
-          serial_number: "12345",
-        },
-      ],
+      recentTransactions: [],
+      recentTransactionFields,
+
+      topProducts: [],
+      topProductsField,
+
       productAlertData: [
         {
           name: "Product 1",
@@ -292,8 +300,6 @@ export default {
         },
       ],
       productAlertFields,
-      productFields,
-      transFields,
       orderFields,
       chart1: "",
       options: {
@@ -304,14 +310,90 @@ export default {
           { value: "year", label: "By Year" },
         ],
       },
+
+      barChart: {
+        months: [],
+        defaultDataset: [
+          {
+            label: "Income",
+            backgroundColor: "#f87979",
+            data: [],
+          },
+        ],
+      },
+      pieChart: {
+        labels: [],
+        defaultDataset: [
+          {
+            backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
+            data: [],
+          },
+        ],
+      },
     };
   },
+
   computed: {
-    dataItems() {
-      return this.transFieldsitems;
+    recentTransactionsItems() {
+      return this.recentTransactions;
     },
   },
+  created() {
+    this.getServerData();
+  },
   methods: {
+    getServerData() {
+      DashboardService.index()
+        .then(({ data }) => {
+          if (data) {
+            if (data.barChart && data.barChart.length > 0) {
+              let labels = this.barChart.months;
+              let defaultDataset = this.barChart.defaultDataset;
+              data.barChart.map(function (val) {
+                let label = monthNames[val.month - 1] + "-" + val.year;
+                labels.push(label);
+                if (defaultDataset[0].data) {
+                  defaultDataset[0].data.push(val.total_sale);
+                }
+              });
+            }
+            if (data.pieChart && data.pieChart.length > 0) {
+              let labelsPieChart = this.pieChart.labels;
+              let defaultDatasetPieChart = this.pieChart.defaultDataset;
+
+              data.pieChart.map(function (val) {
+                labelsPieChart.push(val.name);
+                let total = parseFloat(
+                  val.invoice_payments_sum_invoice_paymentsamount
+                );
+                if (defaultDatasetPieChart[0].data) {
+                  defaultDatasetPieChart[0].data.push(total);
+                }
+              });
+            }
+            if (data.recentTransactions && data.recentTransactions.length > 0) {
+              let recentTransactions = this.recentTransactions;
+              data.recentTransactions.map(function (val) {
+                val.customer = val.customer.full_name.en
+                  ? val.customer.full_name.en
+                  : val.customer.full_name;
+                recentTransactions.push(val);
+              });
+            }
+            if (data.topProducts && data.topProducts.length > 0) {
+              let topProducts = this.topProducts;
+              data.topProducts.map(function (val) {
+                let name = JSON.parse(val.name);
+                val.name = name.en ? name.en : name;
+                topProducts.push(val);
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     opening() {
       alert("check inside invoices");
       // this.$store.commit("set_opening_model", true);
