@@ -45,7 +45,9 @@ const state = {
   PaymernTermId: '',
   business_logo: localStorage.getItem('business_logo') || '/img/images/switcher-logo.jpeg',
   customPluginModel: false,
-  whatsappPluginModel: false
+  whatsappPluginModel: false,
+  returnByProductModel: false,
+  ReturnByInvoiceModel: false,
 }
 
 const mutations = {
@@ -173,6 +175,12 @@ const mutations = {
   },
   set_whatsapp_plugin_model(state, status) {
     state.whatsappPluginModel = status;
+  },
+  set_return_by_product_model(state, status) {
+    state.returnByProductModel = status;
+  },
+  set_return_by_invoice_model(state, status) {
+    state.ReturnByInvoiceModel = status;
   }
 
 
@@ -305,7 +313,9 @@ const getters = {
   getClosingModel: state => state.closingModel,
   getBusinessLogo: state => state.business_logo,
   getCustomPluginModel: state => state.customPluginModel,
-  getWhatsappPluginModel: state => state.whatsappPluginModel
+  getWhatsappPluginModel: state => state.whatsappPluginModel,
+  getReturnByProductModel: state => state.returnByProductModel,
+  getReturnByInvoiceModel: state => state.ReturnByInvoiceModel
 
 }
 
