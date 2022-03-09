@@ -182,9 +182,6 @@ const mutations = {
   set_return_by_invoice_model(state, status) {
     state.ReturnByInvoiceModel = status;
   }
-
-
-
 }
 const actions = {
   login({ commit, dispatch }, user) {

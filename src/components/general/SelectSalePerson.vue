@@ -81,6 +81,7 @@ export default {
       });
       if (default_user) {
         this.form.user = default_user;
+        this.$emit("salesPersonSelected", [default_user.value]);
       }
     },
 

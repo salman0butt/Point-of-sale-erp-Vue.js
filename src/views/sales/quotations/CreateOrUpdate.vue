@@ -85,6 +85,13 @@
                 <CCol sm="12" md="12" class="pt-2">
                   <SearchProduct searchType="quotation" :itemsData="form.items" />
                 </CCol>
+                <CCol sm="12" md="12">
+                  <div v-if="$v.form.items.$error">
+                    <p v-if="!$v.form.items.required" class="errorMsg">
+                      Please Select Atlease One Product
+                    </p>
+                  </div>
+                </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <CSelect
                     @change="changeDelivery($event)"
@@ -303,6 +310,7 @@ export default {
         due_date: { required },
         sales_persons: { required },
         quotation_status: { required },
+        items: { required },
       },
     };
   },
