@@ -18,12 +18,21 @@
                   <tr>
                     <td>{{ product.name }}</td>
                     <td>
-                      <CInput type="number" style="max-width: 100px" v-model="form.qty" />
+                      <CInput
+                        type="number"
+                        style="max-width: 100px"
+                        min="1"
+                        v-model="form.qty"
+                        @change="updateQty()"
+                      />
                     </td>
                     <td>
                       {{
                         product.price
-                          ? parseInt(product.price.cost_price) * parseInt(form.qty)
+                          ? (
+                              parseFloat(product.price.selling_price_without_tax) *
+                              parseFloat(form.qty)
+                            ).toFixed(3)
                           : 0
                       }}
                     </td>
@@ -35,29 +44,43 @@
                   <input
                     class="form-check-input"
                     type="radio"
-                    name="exampleRadios"
-                    id="exchange"
                     value="exchange"
+                    v-model="exchange_return"
+                    id="exchange"
+                    name="return_type"
+                    @change="changeReplacement()"
                   />
-                  <label class="form-check-label" for="exchange"> Exchange </label>
+                  <label class="form-check-label" for="exchange"> Replacement </label>
+                </div>
+
+                <div class="form-check m-1">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    value="damage"
+                    v-model="exchange_return"
+                    id="damage"
+                    name="return_type"
+                    @change="changeDamage()"
+                  />
+                  <label class="form-check-label" for="damage"> Damage </label>
                 </div>
                 <div class="form-check m-1">
                   <input
                     class="form-check-input"
                     type="radio"
-                    name="exampleRadios"
-                    id="damage"
-                    value="damage"
+                    value="return_cash"
+                    @change="changeReturnCash()"
+                    name="return_type"
+                    id="return_cash"
                   />
-                  <label class="form-check-label" for="damage"> Damage </label>
+                  <label class="form-check-label" for="return_cash"> Return Cash </label>
                 </div>
               </div>
+              <CInput v-if="showCash" class="col-md-4" readonly v-model="form.total" />
             </CCol>
           </CRow>
           <CRow>
-            <CCol sm="6" md="6" class="pt-2">
-              <CInput placeholder="i.e Expiry Date" v-model="form.expiry" />
-            </CCol>
             <CCol sm="12" md="12" class="pt-2">
               <CTextarea
                 label="Return Note"
@@ -95,11 +118,15 @@ export default {
   cilTrash,
   data: () => ({
     isEditing: false,
+    showCash: false,
+    showReplacement: false,
+    exchange_return: "",
     form: {
       id: "",
       qty: 1,
       expiry: "",
       return_note: "",
+      total: 0,
     },
   }),
   // validations() {
@@ -135,6 +162,29 @@ export default {
   methods: {
     saveReturnByProduct() {
       alert("Return Saved");
+    },
+    changeReplacement() {
+      // this.showReplacement = true;
+      this.$emit("replacement-change", true);
+      this.showCash = false;
+    },
+    changeDamage() {
+      this.$emit("replacement-change", false);
+      this.showReplacement = false;
+      this.$store.commit("set_return_by_invoice_model", false);
+      this.$router.push({ path: "/catalogs/damages/create" });
+    },
+    changeReturnCash() {
+      this.$emit("replacement-change", false);
+      this.showCash = true;
+      this.showReplacement = false;
+      this.updateQty();
+    },
+    updateQty() {
+      this.form.total = (
+        parseFloat(this.form.qty) *
+        parseFloat(this.product.price.selling_price_without_tax)
+      ).toFixed(3);
     },
   },
 };

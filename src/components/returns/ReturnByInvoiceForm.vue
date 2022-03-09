@@ -33,81 +33,61 @@
                     <td>{{ product.discount }}</td>
                     <td>
                       {{
-                        parseInt(form.qty) * parseInt(product.selling_price) +
-                        parseInt(product.discount)
+                        (
+                          parseInt(form.qty) * parseInt(product.selling_price) +
+                          parseInt(product.discount)
+                        ).toFixed(3)
                       }}
                     </td>
                   </tr>
                 </tbody>
               </table>
 
-              <div class="form-check m-1">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  id="product_replacement"
-                  value="replacement"
-                  name="some-radios"
-                  @change="changeReplacement()"
-                  checked
-                />
-                <label class="form-check-label" for="product_replacement">
-                  Product Replacement
-                </label>
-              </div>
-              <div v-if="showReplacement">
-                <div class="d-flex">
-                  <div class="form-check m-1">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      value="exchange"
-                      v-model="exchange"
-                      id="exchange"
-                    />
-                    <label class="form-check-label" for="exchange"> Exchange </label>
-                  </div>
-                  <div class="form-check m-1">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      value="damage"
-                      v-model="exchange_return"
-                      id="damage"
-                    />
-                    <label class="form-check-label" for="damage"> Damage </label>
-                  </div>
+              <div class="d-flex">
+                <div class="form-check m-1">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    value="exchange"
+                    v-model="exchange_return"
+                    id="exchange"
+                    name="return_type"
+                    @change="changeReplacement()"
+                  />
+                  <label class="form-check-label" for="exchange"> Replacement </label>
                 </div>
 
-                <CInput
-                  class="col-md-4"
-                  placeholder="i.e Expiry Date"
-                  v-model="form.expiry"
-                />
+                <div class="form-check m-1">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    value="damage"
+                    v-model="exchange_return"
+                    id="damage"
+                    name="return_type"
+                    @change="changeDamage()"
+                  />
+                  <label class="form-check-label" for="damage"> Damage </label>
+                </div>
+                <div class="form-check m-1">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    value="return_cash"
+                    @change="changeReturnCash()"
+                    name="return_type"
+                    id="return_cash"
+                  />
+                  <label class="form-check-label" for="return_cash"> Return Cash </label>
+                </div>
               </div>
-              <div class="form-check m-1">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  value="return_cash"
-                  @change="changeReturnCash()"
-                  name="some-radios"
-                  id="return_cash"
-                />
-                <label class="form-check-label" for="return_cash"> Return Cash </label>
-              </div>
+              <!-- <ProductSearchSelect
+                v-if="showReplacement"
+                @product-change="productSelected($event)"
+                class="mb-2"
+              /> -->
+
               <CInput v-if="showCash" class="col-md-4" readonly v-model="form.total" />
-              <div class="form-check m-1">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="some-radios"
-                  value="voucher"
-                  id="voucher"
-                  @change="changeVoucher()"
-                />
-                <label class="form-check-label" for="voucher"> Return Voucher </label>
-              </div>
             </CCol>
           </CRow>
           <CRow>
@@ -129,11 +109,12 @@
 // import { required } from "vuelidate/lib/validators";
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
-
+// import ProductSearchSelect from "@/components/general/search/ProductSearchSelect";
 export default {
   name: "CreateOrUpdateReturnByInvoice",
   components: {
     Loader,
+    // ProductSearchSelect,
   },
   props: {
     submit: {
@@ -150,10 +131,10 @@ export default {
     isEditing: false,
     showCash: false,
     showReplacement: false,
+    exchange_return: "",
     form: {
       id: "",
       qty: 1,
-      expiry: "",
       return_note: "",
       total: 0,
     },
@@ -196,21 +177,28 @@ export default {
       alert("Return Saved");
     },
     changeReplacement() {
-      this.showReplacement = true;
+      // this.showReplacement = true;
+      this.$emit("replacement-change", true);
       this.showCash = false;
+    },
+    changeDamage() {
+      this.$emit("replacement-change", false);
+      this.showReplacement = false;
+      this.$store.commit("set_return_by_invoice_model", false);
+      this.$router.push({ path: "/catalogs/damages/create" });
     },
     changeReturnCash() {
-      this.showReplacement = false;
+      this.$emit("replacement-change", false);
       this.showCash = true;
-    },
-    changeVoucher() {
       this.showReplacement = false;
-      this.showCash = false;
     },
+    // productSelected(val) {
+    //   console.log(val);
+    // },
     updateQty() {
       this.form.total =
-        parseInt(this.form.qty) * parseInt(this.product.selling_price) +
-        parseInt(this.product.discount);
+        parseFloat(this.form.qty) * parseFloat(this.product.selling_price) +
+        parseFloat(this.product.discount).toFixed(3);
     },
   },
 };

@@ -6,7 +6,7 @@
       <div>
         <CCard>
           <CCardHeader>
-            Invoice Return
+            New Return
             <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
@@ -123,7 +123,7 @@
               ref="html2Pdf"
             >
               <section slot="pdf-content" md="12" style="padding: 0 20px">
-                <CRow class="mb-4">
+                <!-- <CRow class="mb-4">
                   <CCol sm="4">
                     <CImg
                       v-bind:src="business.logo"
@@ -151,7 +151,7 @@
                       Due Date :<strong># {{ invoice.due_date }}</strong>
                     </div>
                   </CCol>
-                </CRow>
+                </CRow> -->
                 <div class="table-responsive-sm">
                   <table class="table table-striped">
                     <thead>
@@ -162,9 +162,8 @@
                         <th class="center">Quantity</th>
                         <th class="right">Unit Cost</th>
                         <th class="right">Tax</th>
-                        <th class="right">Discount</th>
+                        <!-- <th class="right">Discount</th> -->
                         <th class="right">Total</th>
-                        <th class="right">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -173,26 +172,24 @@
                         :key="product.uuid"
                       >
                         <td class="center">{{ index + 1 }}</td>
-                        <td class="left">{{ product.product.name.en }}</td>
+                        <td class="left">{{ product.name }}</td>
                         <td class="left">{{ product.description }}</td>
                         <td class="center">{{ product.qty }}</td>
                         <td class="right">{{ product.selling_price }}</td>
                         <td class="right">{{ product.tax }}</td>
-                        <td class="right">
+                        <!-- <td class="right">
                           {{
                             product.discount_per
                               ? product.discount + "%"
                               : product.discount
                           }}
-                        </td>
+                        </td> -->
                         <td class="right">{{ product.total }}</td>
-                        <td>
-                          <CButton block color="success" @click="addReturn(index)"
-                            >Return</CButton
-                          >
-                        </td>
+                        {{
+                          setProductPrice(product.total)
+                        }}
                       </tr>
-                      <tr v-if="invoice.delivery">
+                      <!-- <tr v-if="invoice.delivery">
                         <td></td>
                         <td><b>Delivery</b></td>
                         <td>
@@ -202,16 +199,21 @@
                             }}
                           </b>
                         </td>
-                        <td colspan="5">
+                        <td colspan="4">
                           <b>Address : </b> {{ invoice.address_for_delivery }}
                         </td>
                         <td>{{ invoice.delivery_method_price }}</td>
-                      </tr>
+                      </tr> -->
                     </tbody>
                   </table>
                 </div>
                 <CRow>
-                  <CCol lg="4" sm="5">
+                  <CCol sm="12" md="12" class="pt-2">
+                    <SearchProduct searchType="quotation" :itemsData="form.items" />
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <!-- <CCol lg="4" sm="5">
                     <div>
                       <label><b> Payment Terms :</b></label>
 
@@ -226,11 +228,15 @@
                       <label><b> Note : </b></label>
                       {{ invoice.note }}
                     </div>
-                  </CCol>
+                  </CCol> -->
 
                   <CCol lg="4" sm="5" class="ml-auto">
                     <table class="table table-clear">
                       <tbody>
+                        <tr v-if="invoice.return_price">
+                          <td class="left"><strong>Return</strong></td>
+                          <td class="right">{{ invoice.return_price }}</td>
+                        </tr>
                         <tr>
                           <td class="left"><strong>Subtotal</strong></td>
                           <td class="right">{{ invoice.sub_total }}</td>
@@ -239,10 +245,10 @@
                           <td class="left"><strong>VAT </strong></td>
                           <td class="right">{{ invoice.total_tax }}</td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td class="left"><strong>Discount </strong></td>
                           <td class="right">{{ invoice.total_discount }}</td>
-                        </tr>
+                        </tr> -->
 
                         <tr>
                           <td class="left"><strong>Total</strong></td>
@@ -250,7 +256,7 @@
                             <strong>{{ invoice.grand_total }}</strong>
                           </td>
                         </tr>
-                        <tr v-if="invoice.delivery">
+                        <!-- <tr v-if="invoice.delivery">
                           <td class="left">
                             <strong>Delivery charges</strong>
                           </td>
@@ -265,7 +271,7 @@
                           <td class="right">
                             <strong>{{ invoice.total_price_with_delivery }}</strong>
                           </td>
-                        </tr>
+                        </tr> -->
                         <!-- <tr>
                       <td class="left"><strong>Payment </strong></td>
                       <td class="right">
@@ -344,7 +350,8 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import VueHtml2pdf from "vue-html2pdf";
 import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
-
+import SearchProduct from "@/components/layouts/SearchProduct";
+import ProductService from "@/services/products/ProductService";
 import ReturnByInvoiceModel from "@/components/returns/ReturnByInvoiceModel";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
@@ -356,7 +363,7 @@ const fields = [
 ];
 
 export default {
-  name: "Exchnage",
+  name: "NewReturn",
   cisWallet,
   cilPencil,
   cilTrash,
@@ -366,6 +373,7 @@ export default {
     VueHtml2pdf,
     WhatsappPluginModel,
     ReturnByInvoiceModel,
+    SearchProduct,
   },
   mixins: [whatsappMixin],
   data() {
@@ -374,8 +382,12 @@ export default {
       output: null,
       openInvoice: {},
       contact: "",
+      product_id: "",
       uuid: "",
       invoice: {
+        product_price: 0,
+        return_price: 0,
+        items: [],
         dated: "",
         due_date: "",
         sub_total: "",
@@ -426,10 +438,86 @@ export default {
       },
     };
   },
+  computed: {
+    items() {
+      return this.$store.getters.getSearchProductItems;
+    },
+    subTotal() {
+      return this.$store.getters.getQuotationSubTotal;
+    },
+    taxTotal() {
+      return this.$store.getters.getQuotationTaxTotal;
+    },
+    totalDiscount() {
+      return this.$store.getters.getQuotationDiscount;
+    },
+    allTotal() {
+      return this.$store.getters.getQuotationTotal;
+    },
+  },
+  beforeDestroy() {
+    this.$store.commit("set_search_product_items", []);
+    this.$store.commit("set_quotation_sub_total", 0);
+    this.$store.commit("set_quotation_tax_total", 0);
+    this.$store.commit("set_quotation_total_discount", 0);
+    this.$store.commit("set_quotation_total", 0);
+  },
+  watch: {
+    items(val) {
+      if (val) {
+        this.invoice.items = val;
+      } else {
+        this.return_price = 0;
+      }
+    },
+    subTotal(val) {
+      this.invoice.sub_total = val;
+    },
+    taxTotal(val) {
+      this.invoice.total_tax = val;
+    },
+    totalDiscount(val) {
+      this.invoice.total_discount = val;
+    },
+    allTotal(val) {
+      this.invoice.return_price = this.invoice.product_price - val;
+      this.invoice.grand_total = val;
+      this.invoice.total_price_with_delivery =
+        parseFloat(val) + parseFloat(this.invoice.delivery_method_price);
+    },
+  },
   created() {
-    this.getServerData();
+    this.product_id = this.$route.params.id;
+    // this.getServerData();
+    ProductService.get(this.product_id)
+      .then((response) => {
+        const { data } = response;
+        if (data) {
+          this.invoice.products.push({
+            name: data.name,
+            uuid: data.uuid,
+            description: data.description,
+            selling_price: data.price.selling_price_with_tax,
+            qty: 1,
+            tax: data.price.tax.percentage,
+            total: data.price.selling_price_with_tax,
+          });
+          this.invoice.sub_total = data.price.selling_price_with_tax;
+          this.invoice.total_tax = data.price.tax.percentage;
+          this.invoice.product_price = data.price.selling_price_with_tax;
+          this.invoice.grand_total = data.price.selling_price_with_tax;
+
+          this.$forceUpdate();
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   },
   methods: {
+    setProductPrice(val) {
+      this.invoice.product_price = val;
+    },
     async print() {
       // Pass the element id here
       await this.$htmlToPaper("printMe");
