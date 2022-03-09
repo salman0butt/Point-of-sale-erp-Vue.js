@@ -80,7 +80,8 @@
       <div>
         <CCard>
           <CCardHeader>
-            Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
+            <!-- Invoice <strong># {{ invoice.invoice_ref_no }}</strong> -->
+            <strong>New Returns</strong>
             <div class="float-right buttons-box">
               <a
                 v-if="showWhatsappButton"
