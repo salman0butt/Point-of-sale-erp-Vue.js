@@ -171,7 +171,7 @@ export default {
     changeDamage() {
       this.$emit("replacement-change", false);
       this.showReplacement = false;
-      this.$store.commit("set_return_by_invoice_model", false);
+      this.$store.commit("set_return_by_product_model", false);
       this.$router.push({ path: "/catalogs/damages/create" });
     },
     changeReturnCash() {
