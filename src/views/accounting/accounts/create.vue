@@ -19,7 +19,10 @@
                       Account Code is required
                     </p>
                     <p v-if="!$v.form.code.minLength" class="errorMsg">
-                      Account Code should be at least 4 character
+                      Account Code should be at least 6 character
+                    </p>
+                    <p v-if="!$v.form.code.numeric" class="errorMsg">
+                      Account Code should be numeric
                     </p>
                   </div>
                 </CCol>
@@ -87,7 +90,7 @@
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import AccountTypeDropdown from "@/components/accounting/general/AccountTypeDropdown";
 
-import { required, minLength } from "vuelidate/lib/validators";
+import { required, minLength, numeric } from "vuelidate/lib/validators";
 
 export default {
   name: "CreateAccount",
@@ -118,7 +121,7 @@ export default {
   validations() {
     return {
       form: {
-        code: { required, minLength: minLength(4) },
+        code: { required, minLength: minLength(6), numeric },
         name: { required, minLength: minLength(4) },
         type: { required },
       },
@@ -140,8 +143,15 @@ export default {
                 timer: 3600,
               });
               this.$v.$reset();
-
               this.$router.push({ path: "/accounting" });
+            }
+            if (res.status == 422) {
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "testlksjadfl",
+                timer: 3600,
+              });
             }
           })
           .catch((error) => {

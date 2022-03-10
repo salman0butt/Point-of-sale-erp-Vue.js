@@ -20,7 +20,11 @@
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
-        <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
+        <a
+          class="btn btn-sm btn-info ml-1"
+          @click.prevent="print"
+          style="color: #fff"
+        >
           <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
       </div>
@@ -43,7 +47,12 @@
         <section slot="pdf-content" md="12" style="padding: 0 20px">
           <CRow class="mb-4">
             <CCol sm="4">
-              <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" />
+              <CImg
+                v-bind:src="business.logo"
+                block
+                class="mb-2 imger"
+                width="100%"
+              />
               <h6 class="mb-3">To:</h6>
               <div>
                 <strong>{{ customer.name }}</strong>
@@ -80,7 +89,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(product, index) in invoice.products" :key="product.uuid">
+                <tr
+                  v-for="(product, index) in invoice.products"
+                  :key="product.uuid"
+                >
                   <td class="center">{{ index + 1 }}</td>
                   <td class="left">{{ product.product.name.en }}</td>
                   <td class="left">{{ product.description }}</td>
@@ -88,7 +100,11 @@
                   <td class="right">{{ product.selling_price }}</td>
                   <td class="right">{{ product.tax }}</td>
                   <td class="right">
-                    {{ product.discount_per ? product.discount + "%" : product.discount }}
+                    {{
+                      product.discount_per
+                        ? product.discount + "%"
+                        : product.discount
+                    }}
                   </td>
                   <td class="right">{{ product.total }}</td>
                 </tr>
@@ -97,7 +113,11 @@
                   <td><b>Delivery</b></td>
                   <td>
                     <b>
-                      {{ invoice.delivery.name.en ? invoice.delivery.name.en : "-" }}
+                      {{
+                        invoice.delivery.name.en
+                          ? invoice.delivery.name.en
+                          : "-"
+                      }}
                     </b>
                   </td>
                   <td colspan="4">
@@ -261,7 +281,8 @@ export default {
           ) {
             if (data.customer.all_contacts.length === 1) {
               const number =
-                data.customer.contact.country.dialCode + data.customer.contact.number.en;
+                data.customer.contact.country.dialCode +
+                data.customer.contact.number.en;
               this.customer.contact_number = number;
               this.whatsapp.name = data.customer.full_name;
               this.whatsapp.number = number;
@@ -270,7 +291,11 @@ export default {
               data.customer.all_contacts.map(function (item) {
                 contacts.push({
                   label:
-                    item.country.dialCode + item.number.en + " (" + item.name.en + ")",
+                    item.country.dialCode +
+                    item.number.en +
+                    " (" +
+                    item.name.en +
+                    ")",
                   value: JSON.stringify({
                     uuid: item.uuid,
                     name: data.customer.full_name,
@@ -288,7 +313,8 @@ export default {
           this.invoice.delivery = data.delivery;
           this.invoice.delivery_method_price = data.delivery_method_price;
           this.invoice.address_for_delivery = data.address_for_delivery;
-          this.invoice.total_price_with_delivery = data.total_price_with_delivery;
+          this.invoice.total_price_with_delivery =
+            data.total_price_with_delivery;
         })
 
         .catch((err) => {
