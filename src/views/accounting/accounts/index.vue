@@ -26,9 +26,15 @@
                 <td>
                   {{ props.row.parent }}
                   <span v-if="props.row.editable"
-                    >(<a class="drecord" @click.prevent="editRow(props.row.uuid)">Edit</a>
+                    >(<a
+                      class="drecord"
+                      @click.prevent="editRow(props.row.uuid)"
+                      >Edit</a
+                    >
                     -
-                    <a class="drecord" @click.prevent="deleteRow(props.row.uuid)"
+                    <a
+                      class="drecord"
+                      @click.prevent="deleteRow(props.row.uuid)"
                       >Delete</a
                     >)</span
                   >
@@ -118,17 +124,36 @@ export default {
           if (data !== "" && data !== undefined) {
             this.rows = [];
             data.map((item, id) => {
+              let children = [];
+              let children2 = [];
+              let children3 = [];
               if (item.children.length > 0) {
-                let children = [];
                 item.children.map((accountsubtype) => {
+                  children2 = [];
                   if (accountsubtype.accounts.length > 0) {
-                    let children2 = [];
-                    accountsubtype.accounts.map((account) => {
-                      children2.push({
-                        uuid: account.uuid,
-                        parent: account.name,
-                        editable: account.editable,
-                      });
+                    accountsubtype.accounts.map((account1) => {
+                      if (account1.children.length > 0) {
+                        children3 = [];
+                        account1.children.map((account2) => {
+                          children3.push({
+                            uuid: account2.uuid,
+                            parent: account2.name,
+                            editable: account2.editable,
+                          });
+                        });
+                        children2.push({
+                          uuid: account1.uuid,
+                          parent: account1.name,
+                          _children: children3,
+                        });
+                      } else if (account1.parent_id != null) {
+                        // console.log("their parenet exit");
+                      } else {
+                        children2.push({
+                          uuid: account1.uuid,
+                          parent: account1.name,
+                        });
+                      }
                     });
 
                     children.push({
@@ -143,26 +168,24 @@ export default {
                     });
                   }
                 });
-
-                item = {
-                  uuid: item.uuid,
-                  parent: item.name,
-                  _children: children,
-                };
-              } else {
-                item = {
-                  uuid: item.uuid,
-                  parent: item.name,
-                };
+              } else if (item.accounts.length > 0) {
+                item.accounts.map((account1) => {
+                  children.push({
+                    uuid: account1.uuid,
+                    parent: account1.name,
+                  });
+                });
               }
+              item = {
+                uuid: item.uuid,
+                parent: item.name,
+                _children: children,
+              };
 
               this.rows.push({ ...item, _id: id });
             });
           }
           this.$store.commit("close_loader");
-          // if (data.meta) {
-          //   this.setPagination(data.meta);
-          // }
         })
         .catch((err) => {
           this.$store.commit("close_loader");
@@ -299,7 +322,8 @@ export default {
     color: inherit;
   }
   code {
-    font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New,
+      monospace;
   }
   canvas,
   iframe,
@@ -368,9 +392,9 @@ export default {
     flex-grow: 1;
   }
   .vue-ads-font-sans {
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue,
-      Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
-      Noto Color Emoji;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+      Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
+      Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   }
   .vue-ads-font-normal {
     font-weight: 400;
