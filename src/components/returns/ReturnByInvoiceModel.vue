@@ -17,10 +17,14 @@
         :product="product"
         @reset-model="resetModel()"
         @reset-submit="resetSubmit()"
+        @replacement-change="changeReplacement($event)"
       />
       <template #footer>
         <CButton @click="closeModel()" color="danger">Close</CButton>
-        <CButton @click="saveReturnByInvoice()" color="success">Save</CButton>
+        <CButton v-if="!isReplace" @click="saveReturnByInvoice()" color="success"
+          >Save</CButton
+        >
+        <CButton v-else @click="nextReturnByInvoice()" color="success">Next</CButton>
       </template>
     </CModal>
   </div>
@@ -42,6 +46,7 @@ export default {
   data() {
     return {
       isSubmit: false,
+      isReplace: false,
     };
   },
   computed: {
@@ -65,6 +70,14 @@ export default {
     closeModel() {
       this.isSubmit = false;
       this.$store.commit("set_return_by_invoice_model", false);
+    },
+    changeReplacement(val) {
+      this.isReplace = val;
+    },
+    nextReturnByInvoice() {
+      const id = this.product.product.uuid;
+      this.$store.commit("set_return_by_invoice_model", false);
+      this.$router.push({ path: "/returns/new/" + id });
     },
   },
 };

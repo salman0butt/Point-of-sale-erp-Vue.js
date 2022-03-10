@@ -181,7 +181,7 @@ const mutations = {
   },
   set_return_by_invoice_model(state, status) {
     state.ReturnByInvoiceModel = status;
-  }
+  },
 }
 const actions = {
   login({ commit, dispatch }, user) {
@@ -312,7 +312,7 @@ const getters = {
   getCustomPluginModel: state => state.customPluginModel,
   getWhatsappPluginModel: state => state.whatsappPluginModel,
   getReturnByProductModel: state => state.returnByProductModel,
-  getReturnByInvoiceModel: state => state.ReturnByInvoiceModel
+  getReturnByInvoiceModel: state => state.ReturnByInvoiceModel,
 
 }
 

@@ -63,7 +63,9 @@ export default {
   watch: {
     products: {
       handler: function (val) {
-        this.$emit("product-change", val);
+        if (val) {
+          this.$emit("product-change", val);
+        }
       },
       deep: true,
     },
@@ -87,6 +89,7 @@ export default {
               products.push({
                 value: item.uuid,
                 label: item.name + " (serial: " + item.serial_number + ")",
+                product: item,
               });
             });
           }
@@ -109,6 +112,7 @@ export default {
                 products.push({
                   value: item.uuid,
                   label: item.name + " (serial: " + item.serial_number + ")",
+                  product: item,
                 });
               });
             }

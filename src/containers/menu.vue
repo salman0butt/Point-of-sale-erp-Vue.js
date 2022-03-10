@@ -76,6 +76,16 @@ export default {
             },
           ]);
         }
+        if (this.$can("read invoices")) {
+          this.sideBarItems_sales.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "- Returns",
+              to: "/returns/index",
+              // icon: "cil-lan",
+            },
+          ]);
+        }
 
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",
@@ -189,16 +199,7 @@ export default {
             },
           ]);
         }
-        if (this.$can("read offers")) {
-          this.sideBarItems_products.push([
-            {
-              _name: "CSidebarNavItem",
-              name: "- Returns",
-              to: "/returns/index",
-              // icon: "cil-lan",
-            },
-          ]);
-        }
+
         // if (this.$can("read accounts")) {
         //   this.sideBarItems_products.push([
         //     {
