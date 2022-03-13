@@ -95,6 +95,19 @@
               >
                 <CIcon name="cib-whatsapp" /> Send WhatsApp</a
               >
+              <a
+                v-if="showSmsButton"
+                color="success"
+                class="btn btn-sm btn-success"
+                style="color: #fff; margin-right: 5px; text-align: center"
+                @click.prevent="
+                  options.contacts && options.contacts.length > 1
+                    ? openSmsModel()
+                    : sendSms('quotation')
+                "
+              >
+                <CIcon name="cib-whatsapp" /> Send Sms</a
+              >
               <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
                 <CIcon name="cil-save" /> Download
               </a>
@@ -323,6 +336,7 @@
           </CCardBody>
         </CCard>
         <WhatsappPluginModel :contacts="options.contacts" type="invoice" />
+        <SmsPluginModel :contacts="options.contacts" type="invoice" />
       </div>
     </div>
   </div>
@@ -335,8 +349,10 @@ import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader.vue";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
+import { smsMixin } from "@/mixins/plugins/smsMixin";
 import VueHtml2pdf from "vue-html2pdf";
 import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
+import SmsPluginModel from "@/components/plugins/sms/SmsPluginModel";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
   { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
@@ -356,8 +372,9 @@ export default {
     Loader,
     VueHtml2pdf,
     WhatsappPluginModel,
+    SmsPluginModel,
   },
-  mixins: [whatsappMixin],
+  mixins: [whatsappMixin, smsMixin],
   data() {
     return {
       fields,
@@ -464,6 +481,9 @@ export default {
               this.customer.contact_number = number;
               this.whatsapp.name = data.customer.full_name;
               this.whatsapp.number = number;
+
+              this.sms.name = data.customer.full_name;
+              this.sms.number = number;
             } else {
               let contacts = this.options.contacts;
               data.customer.all_contacts.map(function (item) {

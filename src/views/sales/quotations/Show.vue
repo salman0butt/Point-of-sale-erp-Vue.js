@@ -17,6 +17,19 @@
         >
           <CIcon name="cib-whatsapp" /> Send WhatsApp</a
         >
+        <a
+          v-if="showSmsButton"
+          color="success"
+          class="btn btn-sm btn-success"
+          style="color: #fff; margin-right: 5px; text-align: center"
+          @click.prevent="
+            options.contacts && options.contacts.length > 1
+              ? openSmsModel()
+              : sendSms('quotation')
+          "
+        >
+          <CIcon name="cib-whatsapp" /> Send Sms</a
+        >
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
@@ -191,18 +204,22 @@
       </vue-html2pdf>
     </CCardBody>
     <WhatsappPluginModel :contacts="options.contacts" type="quotation" />
+    <SmsPluginModel :contacts="options.contacts" type="quotation" />
   </CCard>
 </template>
 <script>
 import QuotationService from "@/services/sale/QuotationService";
 import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
+import { smsMixin } from "@/mixins/plugins/smsMixin";
 import Loader from "@/components/layouts/Loader";
 import VueHtml2pdf from "vue-html2pdf";
 import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
+import SmsPluginModel from "@/components/plugins/sms/SmsPluginModel";
+
 export default {
   name: "Invoice",
-  components: { Loader, VueHtml2pdf, WhatsappPluginModel },
-  mixins: [whatsappMixin],
+  components: { Loader, VueHtml2pdf, WhatsappPluginModel, SmsPluginModel },
+  mixins: [whatsappMixin, smsMixin],
   data() {
     return {
       output: null,
@@ -286,6 +303,9 @@ export default {
               this.customer.contact_number = number;
               this.whatsapp.name = data.customer.full_name;
               this.whatsapp.number = number;
+
+              this.sms.name = data.customer.full_name;
+              this.sms.number = number;
             } else {
               let contacts = this.options.contacts;
               data.customer.all_contacts.map(function (item) {

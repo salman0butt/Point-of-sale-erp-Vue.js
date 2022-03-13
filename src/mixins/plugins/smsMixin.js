@@ -1,8 +1,8 @@
-export const whatsappMixin = {
+export const smsMixin = {
   data: function () {
     return {
-      showWhatsappButton: false,
-      whatsapp: {
+      showSmsButton: false,
+      sms: {
         name: "",
         number: "",
         link: "",
@@ -10,11 +10,11 @@ export const whatsappMixin = {
     }
   },
   created: function () {
-    const serial_number = JSON.stringify(['whatsapp']);
+    const serial_number = JSON.stringify(['sms']);
     this.$http.get(`/modules/${serial_number}`).then((response) => {
       if (response.status === 200) {
           if(response.data && response.data[0] && response.data[0].status === 'active') {
-            this.showWhatsappButton = true;
+            this.showSmsButton = true;
           }
       }
     }).catch((error) => {
@@ -23,10 +23,10 @@ export const whatsappMixin = {
 
   },
   methods: {
-    openWhatsappModel() {
-      this.$store.commit("set_whatsapp_plugin_model", true);
+    openSmsModel() {
+      this.$store.commit("set_sms_plugin_model", true);
     },
-    sendWhatsapp(type = null) {
+    sendSms(type = null) {
       const id = this.$route.params.id;
       if(!type || !id) return;
 
@@ -39,14 +39,29 @@ export const whatsappMixin = {
       }else {
         return;
       }
+      if(this.sms.number){
+        let msg = `Dear%20${this.sms.name}%0A%0AClick%20on%20the%20link%20below%20to%20view%2Fdownload%20your%20%28invoice%29%0A%0A${send_link}%0A%0Athank%20you`;
+        this.$http.post(`/plugins/sms/send`, {
+          number: this.sms.number,
+          message: msg,
+        }).then((response) => {
+          if (response.status === 200) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "SMS Sent Successfully",
+              timer: 3600,
+            });
+          }
+        }).catch((error) => {
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something went wrong.",
+            timer: 3600,
+          });
+        });
 
-      if(this.whatsapp.number && this.whatsapp.name){
-        this.whatsapp.link =
-        "https://wa.me/" +
-        this.whatsapp.number +
-        "?text=" +
-        `Dear%20${this.whatsapp.name}%0A%0AClick%20on%20the%20link%20below%20to%20view%2Fdownload%20your%20%28invoice%29%0A%0A${send_link}%0A%0Athank%20you`;
-      window.open(this.whatsapp.link);
       }else {
         this.$swal.fire({
           icon: "error",

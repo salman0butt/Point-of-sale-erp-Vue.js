@@ -479,11 +479,12 @@ export default {
         .then(({ data }) => {
           if(data){
           data.map((item, id) => {
+            console.log(item.image);
             plugins.push({
               uuid: item.uuid,
               global_id: item.global_id,
               name: item.name,
-              imgUrl: "/img/images/photo-not-available.png",
+              imgUrl: item.image ? item.image : "/img/images/photo-not-available.png",
               content: item.description,
               status: item.status == "active" ? "Deactivate" : "Activate" ,
             });
