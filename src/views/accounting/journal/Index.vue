@@ -7,7 +7,6 @@
           <CCardBody>
             <div>
               <router-link
-                v-if="$can('create transfer')"
                 class="btn btn-success"
                 to="/accounting/journals/create"
                 style="float: right; margin-right: 10px"

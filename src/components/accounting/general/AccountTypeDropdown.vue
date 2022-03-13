@@ -1,7 +1,7 @@
 <template>
   <div>
     <CSelect
-      label="Parent Account"
+      label="Choose Account Type"
       :options="options.account"
       @change="updateValue"
       :value.sync="account"
@@ -22,7 +22,7 @@ export default {
         account: [
           {
             value: "",
-            label: "Choose Parent",
+            label: "Choose Account Type",
             selected: "",
           },
         ],
@@ -53,34 +53,29 @@ export default {
             let account = this.options.account;
             data.map(function (val) {
               // Main Accounts
-              account.push({
-                value: val.uuid,
-                label: val.name,
-                disabled: true,
-                custom: true,
-                attrs: [{ style: "font-size: 15px; font-weight: bold" }],
-              });
+
               //   seconday accounts
               if (val.children && val.children.length > 0) {
+                account.push({
+                  value: val.uuid,
+                  label: val.name,
+                  disabled: true,
+                  custom: true,
+                  attrs: [{ style: "font-size: 15px; font-weight: bold" }],
+                });
+
                 val.children.map(function (child) {
                   account.push({
                     value: child.uuid,
                     label: "-" + child.name,
                   });
-                  //     if (child.accounts && child.accounts.length > 0) {
-                  //       child.accounts.map(function (child2) {
-                  //         account.push({
-                  //           value: child2.uuid,
-                  //           label: "--" + child2.name,
-                  //           attrs: [
-                  //             {
-                  //               style:
-                  //                 "font-size: 15px; font-weight: bold; color:black",
-                  //             },
-                  //           ],
-                  //         });
-                  //       });
-                  //     }
+                });
+              } else {
+                account.push({
+                  value: val.uuid,
+                  label: val.name,
+                  custom: true,
+                  attrs: [{ style: "font-size: 15px; font-weight: bold" }],
                 });
               }
             });

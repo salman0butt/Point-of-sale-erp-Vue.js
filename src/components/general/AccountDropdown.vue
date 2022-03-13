@@ -78,8 +78,7 @@ export default {
               });
             }
             if (val.children && val.children.length > 0) {
-              // Account Subtype
-
+              //   // Account Subtype
               val.children.map(function (val2) {
                 if (val2.accounts && val2.accounts.length > 0) {
                   account.push({
@@ -88,12 +87,27 @@ export default {
                     $isDisabled: true,
                   });
                   val2.accounts.map(function (val3) {
-                    account.push({
-                      value: val3.uuid,
-                      label: "-- " + val3.name,
-                    });
+                    // console.log(val3);
+                    if (val3.children.length > 0) {
+                      account.push({
+                        value: val3.uuid,
+                        label: "--" + val3.name,
+                      });
+                    } else {
+                      account.push({
+                        value: val3.uuid,
+                        label: "-- " + val3.name,
+                      });
+                    }
                   });
                 }
+              });
+            } else if (val.accounts && val.accounts.length > 0) {
+              val.accounts.map(function (value) {
+                account.push({
+                  value: value.uuid,
+                  label: "-- " + value.name,
+                });
               });
             }
           });

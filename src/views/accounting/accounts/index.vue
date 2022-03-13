@@ -170,10 +170,30 @@ export default {
                 });
               } else if (item.accounts.length > 0) {
                 item.accounts.map((account1) => {
-                  children.push({
-                    uuid: account1.uuid,
-                    parent: account1.name,
-                  });
+                  if (account1.children && account1.children.length > 0) {
+                    children3 = [];
+                    account1.children.map((account2) => {
+                      children3.push({
+                        uuid: account2.uuid,
+                        parent: account2.name,
+                        editable: account2.editable,
+                      });
+                    });
+                    children.push({
+                      uuid: account1.uuid,
+                      parent: account1.name,
+                      _children: children3,
+                    });
+                  } else if (account1.parent != null) {
+                    // parent exist
+                    //  console.log(account1.parent_id);
+                  } else {
+                    children.push({
+                      uuid: account1.uuid,
+                      parent: account1.name,
+                      editable: account1.editable,
+                    });
+                  }
                 });
               }
               item = {
