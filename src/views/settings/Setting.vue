@@ -43,6 +43,8 @@ import DeliverySettingForm from "@/components/settings/DeliverySettingForm";
 import CurrencySettingForm from "@/components/settings/CurrencySettingForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import SmtpSettingForm from "@/components/plugins/SmtpSettingForm";
+import SmsSettingForm from "@/components/plugins/sms/SmsSettingForm";
+
 export default {
   name: "Setting",
   cilUser,
@@ -56,6 +58,7 @@ export default {
     DeliverySettingForm,
     CurrencySettingForm,
     SmtpSettingForm,
+    SmsSettingForm,
   },
   data() {
     return {
@@ -80,13 +83,23 @@ export default {
       this.activeTab = value;
     },
     checkSmtpPlugin() {
-      const serial_number = "email";
+      const serial_number = JSON.stringify(["email", "sms"]);
       this.$http
         .get(`/modules/${serial_number}`)
         .then((response) => {
           if (response.status === 200) {
-            if (response.data && response.data.status === "active") {
-              this.tabs.push({ key: "SmtpSettingForm", name: "SMTP" });
+            console.log(response.data);
+            if (response.data && response.data.length > 0) {
+              response.data.map((item) => {
+                if (item.status === "active") {
+                  if (item.serial_number === "email") {
+                    this.tabs.push({ key: "SmtpSettingForm", name: "SMTP" });
+                  }
+                  if (item.serial_number === "sms") {
+                    this.tabs.push({ key: "SmsSettingForm", name: "SMS" });
+                  }
+                }
+              });
             }
           }
         })

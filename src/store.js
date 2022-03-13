@@ -48,6 +48,9 @@ const state = {
   whatsappPluginModel: false,
   returnByProductModel: false,
   ReturnByInvoiceModel: false,
+  buyCreditModel: false,
+  smsCredits: 0,
+  smsPluginModel: false,
 }
 
 const mutations = {
@@ -182,6 +185,17 @@ const mutations = {
   set_return_by_invoice_model(state, status) {
     state.ReturnByInvoiceModel = status;
   },
+  set_buy_credit_model(state, status) {
+    state.buyCreditModel = status;
+  },
+  set_sms_credits(state, credits) {
+    state.smsCredits = credits;
+  },
+  set_sms_plugin_model(state, status) {
+    state.smsPluginModel = status;
+  }
+
+
 }
 const actions = {
   login({ commit, dispatch }, user) {
@@ -313,6 +327,9 @@ const getters = {
   getWhatsappPluginModel: state => state.whatsappPluginModel,
   getReturnByProductModel: state => state.returnByProductModel,
   getReturnByInvoiceModel: state => state.ReturnByInvoiceModel,
+  getBuyCreditModel: state => state.buyCreditModel,
+  getSmsCredits: state => state.smsCredits,
+  getSmsPluginModel: state => state.smsPluginModel
 
 }
 
