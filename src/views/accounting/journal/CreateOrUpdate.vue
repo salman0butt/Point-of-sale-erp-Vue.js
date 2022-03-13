@@ -94,31 +94,14 @@
                         <tbody>
                           <tr v-for="(item, k) in form.items" :key="k">
                             <th>
-                              <multiselect
-                                v-model="item.account"
-                                :options="options.account"
-                                :close-on-select="true"
-                                :clear-on-select="false"
-                                :disabled="isDisabled"
-                                placeholder="Select Account"
-                                label="label"
-                                :class="{
-                                  error: $v.form.items.$each[k].account.$error,
-                                }"
-                                @input="$v.form.items.$each[k].account.$touch()"
-                              >
-                              </multiselect>
-
-                              <div v-if="$v.form.items.$each[k].account.$error">
-                                <p
-                                  v-if="
-                                    !$v.form.items.$each[k].account.required
-                                  "
-                                  class="errorMsg"
-                                >
-                                  Account is required
-                                </p>
-                              </div>
+                              <AccountDropdown
+                                :showLabel="false"
+                                @getAccountDropdown="
+                                  getAccountDropDown($event, k)
+                                "
+                                :previousValue.sync="previousAccount"
+                                :key="k"
+                              />
                             </th>
                             <td>
                               <CTextarea
@@ -285,7 +268,7 @@ export default {
   name: "CreateOrUpdateJournal",
   components: {
     Loader,
-    Multiselect,
+    // Multiselect,
     AccountDropdown,
   },
   cilTrash,
@@ -320,6 +303,7 @@ export default {
     options: {
       account: [],
     },
+    previousAccount: {},
   }),
   validations() {
     return {
@@ -559,7 +543,6 @@ export default {
                 label: value.to_account.name,
                 value: value.to_account.uuid,
               };
-              //
             }
             this.form.items.push({
               account: account_uuid,
@@ -580,6 +563,9 @@ export default {
       // }
       this.form.items = [];
       this.isEditing = false;
+    },
+    getAccountDropDown(val, key) {
+      this.form.items[key].account = val.value;
     },
   },
 };
