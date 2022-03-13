@@ -83,6 +83,19 @@
             Invoice <strong># {{ invoice.invoice_ref_no }}</strong>
             <div class="float-right buttons-box">
               <a
+                v-if="showSmsButton"
+                color="success"
+                class="btn btn-sm btn-warning"
+                style="color: #fff; margin-right: 5px; text-align: center"
+                @click.prevent="
+                  options.contacts && options.contacts.length > 1
+                    ? openSmsModel()
+                    : sendSms('quotation')
+                "
+              >
+                <CIcon name="cis-mobile-sms" /> Send Sms</a
+              >
+              <a
                 v-if="showWhatsappButton"
                 color="success"
                 class="btn btn-sm btn-success"
@@ -95,19 +108,7 @@
               >
                 <CIcon name="cib-whatsapp" /> Send WhatsApp</a
               >
-              <a
-                v-if="showSmsButton"
-                color="success"
-                class="btn btn-sm btn-success"
-                style="color: #fff; margin-right: 5px; text-align: center"
-                @click.prevent="
-                  options.contacts && options.contacts.length > 1
-                    ? openSmsModel()
-                    : sendSms('quotation')
-                "
-              >
-                <CIcon name="cib-whatsapp" /> Send Sms</a
-              >
+
               <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
                 <CIcon name="cil-save" /> Download
               </a>

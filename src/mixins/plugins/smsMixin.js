@@ -40,7 +40,9 @@ export const smsMixin = {
         return;
       }
       if(this.sms.number){
-        let msg = `Dear%20${this.sms.name}%0A%0AClick%20on%20the%20link%20below%20to%20view%2Fdownload%20your%20%28invoice%29%0A%0A${send_link}%0A%0Athank%20you`;
+        let msg_type = this.type === 'invoice' ? 'Invoice' : 'Quotation';
+        // let msg = `Dear%20${this.sms.name}%0A%0AClick%20on%20the%20link%20below%20to%20view%2Fdownload%20your%20%28invoice%29%0A%0A${send_link}%0A%0Athank%20you`;
+        let msg = `Dear ${this.sms.name} Click on the link below to view/download your (${msg_type}) ${send_link} thank you.`;
         this.$http.post(`/plugins/sms/send`, {
           number: this.sms.number,
           message: msg,
