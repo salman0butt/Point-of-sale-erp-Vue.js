@@ -43,26 +43,32 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Type"
-                    :options="options.type"
-                    :value.sync="form.type"
-                    :class="{ error: $v.form.type.$error }"
-                    @input="$v.form.type.$touch()"
+                  <AccountDropdown
+                    :previousValue="form.parent_account"
+                    @getAccountDropdown="getAccountDropdown"
                   />
-                  <div v-if="$v.form.type.$error">
-                    <p v-if="!$v.form.type.required" class="errorMsg">
-                      Account Type is required
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <AccountTypeDropdown
+                    :uuid="form.account_type"
+                    @getAccountDropdown="getAccountTypeDropdown"
+                  />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Nature"
+                    :options="options.nature"
+                    :value.sync="form.nature"
+                    :class="{ error: $v.form.nature.$error }"
+                    @input="$v.form.nature.$touch()"
+                  />
+                  <div v-if="$v.form.nature.$error">
+                    <p v-if="!$v.form.nature.required" class="errorMsg">
+                      Account nature is required
                     </p>
                   </div>
                 </CCol>
 
-                <CCol sm="6" md="4" class="pt-2">
-                  <AccountTypeDropdown
-                    :uuid="form.parent"
-                    @getAccountDropdown="getAccountDropdown"
-                  />
-                </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CTextarea label="Desription" v-model="form.description" />
                 </CCol>
@@ -97,6 +103,7 @@
 <script>
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import AccountTypeDropdown from "@/components/accounting/general/AccountTypeDropdown";
+import AccountDropdown from "@/components/general/AccountDropdown";
 
 import { required, minLength, numeric } from "vuelidate/lib/validators";
 
@@ -104,23 +111,25 @@ export default {
   name: "EditAccount",
   components: {
     AccountTypeDropdown,
+    AccountDropdown,
   },
   data: () => ({
     url_data: "",
     form: {
       code: "",
       name: "",
-      status: "",
+      parent_account: "",
+      account_type: "",
       description: "",
-      parent: "",
-      type: "",
+      nature: "",
+      status: "",
     },
     options: {
       status: [
         { value: "active", label: "Active" },
         { value: "inactive", label: "Inactive" },
       ],
-      type: [
+      nature: [
         {
           value: "",
           label: "Select Account Type",
@@ -137,7 +146,7 @@ export default {
       form: {
         code: { required, minLength: minLength(6), numeric },
         name: { required, minLength: minLength(4) },
-        type: { required },
+        nature: { required },
       },
     };
   },
@@ -151,10 +160,14 @@ export default {
         if (res.status == 200) {
           this.form.code = res.data.code;
           this.form.name = res.data.name;
-          this.form.type = res.data.type;
+          this.form.account_type = res.data.accountType.uuid;
+          this.form.nature = res.data.type;
           this.form.description = res.data.description;
           this.form.status = res.data.status;
-          this.form.parent = res.data.accountType.uuid;
+          this.form.parent_account = {
+            value: res.data.parent.uuid,
+            label: res.data.parent.name,
+          };
         }
       });
     },
@@ -187,8 +200,11 @@ export default {
           });
       }
     },
+    getAccountTypeDropdown(value) {
+      this.form.account_type = value;
+    },
     getAccountDropdown(value) {
-      this.form.parent = value;
+      this.form.parent_account = value.value;
     },
   },
 };
