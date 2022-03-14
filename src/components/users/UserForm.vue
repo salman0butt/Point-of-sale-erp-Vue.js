@@ -411,12 +411,9 @@ export default {
       let formData = new FormData();
       for (const index in this.form) {
         if (index === "branch_id") {
-          formData.append(
-            index + "[]",
-            this.form[index].map((item) => {
-              return item.value;
-            })
-          );
+          this.form[index].map((item) => {
+            formData.append(index + "[]", item.value);
+          });
         } else {
           if (this.form[index]) {
             formData.append(index, this.form[index]);
@@ -425,6 +422,9 @@ export default {
       }
       if (update) {
         formData.append("_method", "PATCH");
+      }
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
       }
       return formData;
     },

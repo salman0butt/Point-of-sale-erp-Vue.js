@@ -63,7 +63,7 @@
               />
             </CCol>
             <CCol sm="12" md="4" class="pt-2">
-              <a
+              <!-- <a
                 v-if="showSmsButton"
                 color="success"
                 class="btn btn-sm btn-warning"
@@ -75,7 +75,7 @@
                 "
               >
                 <CIcon name="cis-mobile-sms" /> Send Sms</a
-              >
+              > -->
               <CButton color="success" style="margin-top: 3rem">Closing</CButton>
             </CCol>
           </CRow>

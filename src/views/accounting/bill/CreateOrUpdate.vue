@@ -25,7 +25,7 @@
                       </div>
                     </CCol>
                     <CCol xs="6" md="4" class="pt-2">
-                      <SupplierSearch />
+                      <SupplierSearch @supplier-change="supplierChange($event)" />
                     </CCol>
                     <CCol xs="6" md="4" class="pt-2">
                       <CInput
@@ -188,12 +188,7 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       @click="saveAndExit = true"
                       type="submit"
                       >Save & Exit</CButton
@@ -209,16 +204,13 @@
   </div>
 </template>
 <script>
-import PurchaseService from "@/services/accounting/purchaseOrder/PurchaseOrderServices";
+import BillService from "@/services/accounting/bill/BillService";
 import { required } from "vuelidate/lib/validators";
 import { cilTrash, cisCaretBottom, cisFile } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import { attachmentMixin } from "@/mixins/attachmentMixin";
 import { globalMixin } from "@/mixins/globalMixin";
 import ProductSearch from "@/components/general/search/ProductSearch.vue";
-
-// new
-
 import SupplierSearch from "@/components/general/search/SupplierSearch";
 
 export default {
@@ -233,6 +225,8 @@ export default {
   cisCaretBottom,
   cisFile,
   data: () => ({
+    isEditing: false,
+    saveAndExit: false,
     form: {
       bill_no: "",
       product_id: "",
@@ -246,9 +240,7 @@ export default {
       supplier_notes: "",
       terms_and_conditions: "",
       due_date: "",
-      payment_terms: "",
       status: "",
-
       items: [
         {
           uuid: "",
@@ -279,18 +271,12 @@ export default {
       form: {
         bill_no: { required },
         date: { required },
-        po: { required },
-        status: { required },
-        ref: { required },
-        deliver_to: { required },
+        due_date: { required },
         supplier_id: { required },
-        branch_id: { required },
+        items: { required },
         subTotal: { required },
         total: { required },
-        shipment_preference: { required },
-        due_date: { required },
-        payment_terms: { required },
-        items: { required },
+        status: { required },
       },
     };
   },
@@ -299,7 +285,7 @@ export default {
     this.form.due_date = this.calculateDueDate();
 
     if (this.form.id) {
-      await this.getPurchaseOrder();
+      await this.getBill();
     }
   },
 
@@ -327,14 +313,14 @@ export default {
           headers: { "Content-Type": "multipart/form-data" },
         };
         // let data = this.form;
-        PurchaseService.create(formData, config)
+        BillService.create(formData, config)
           .then((res) => {
             if (res.status == 201) {
               this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Purchase Added Successfully",
+                text: "Bill Added Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -370,14 +356,14 @@ export default {
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };
-        PurchaseService.update(this.form.id, formData, config)
+        BillService.update(this.form.id, formData, config)
           .then((res) => {
             if (res.status == 200) {
               this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Purchase Updated Successfully",
+                text: "Bill Updated Successfully",
                 timer: 3600,
               });
               this.$v.$reset();
@@ -399,24 +385,21 @@ export default {
           });
       }
     },
-
+    supplierChange(val) {
+      this.form.supplier_id = val;
+    },
     formData(update = false) {
       let formData = new FormData();
+      formData.append("bill_no", this.form.bill_no);
       formData.append("supplier_id", this.form.supplier_id);
-      formData.append("branch_id", this.form.branch_id);
-      formData.append("customer_id", this.form.customer_id);
-      formData.append("purchase_order_id", this.form.po);
-      formData.append("reference", this.form.ref);
-      formData.append("deliver_to", this.form.deliver_to);
       formData.append("date", this.form.date);
       formData.append("due_date", this.form.due_date);
+      formData.append("status", this.form.status);
       formData.append("discount", this.form.discount);
       formData.append("discount_val", this.form.discount_val);
       formData.append("total", this.form.total);
-      formData.append("customer_note", this.form.supplier_notes);
+      formData.append("note", this.form.supplier_notes);
       formData.append("terms_and_conditions", this.form.terms_and_conditions);
-      formData.append("shipment_preference", this.form.shipment_preference);
-      formData.append("payment_terms", this.form.payment_terms);
       formData.append("sub_total", this.form.subTotal);
       formData.append("items", JSON.stringify(this.form.items));
 
@@ -430,9 +413,9 @@ export default {
       }
       return formData;
     },
-    getPurchaseOrder() {
+    getBill() {
       this.$store.commit("set_loader");
-      PurchaseService.get(this.form.id)
+      BillService.get(this.form.id)
         .then(({ data }) => {
           this.displayData(data);
           this.$store.commit("close_loader");
@@ -450,22 +433,14 @@ export default {
         this.resetForm();
         this.isEditing = true;
         this.form.id = data.uuid;
+        this.form.bill_no = data.bill_no;
         this.form.supplier_id = data.supplier?.uuid ?? "";
-        this.form.branch_id = data.branch?.uuid ?? "";
-        this.form.customer_id = data.customer?.uuid ?? "";
-        this.form.po = data.purchase_order_id;
-        this.form.ref = data.reference;
-        this.form.deliver_to = data.deliver_to
-          ? data.deliver_to
-          : "organization";
         this.form.date = data.date;
         this.form.due_date = data.due_date;
         this.form.discount = data.discount ? data.discount : "";
         this.form.total = parseFloat(data.total);
-        this.form.supplier_notes = data.customer_note;
+        this.form.supplier_notes = data.note;
         this.form.terms_and_conditions = data.terms_and_conditions;
-        this.form.shipment_preference = data.shipment_preference;
-        this.form.payment_terms = data.payment_term;
         this.form.subTotal = parseFloat(data.sub_total);
         this.displayAttachment = [];
 
@@ -493,10 +468,32 @@ export default {
             this.form.items.push(data);
           });
         }
-        this.calculateAllItems();
+        // this.calculateAllItems();
       }
     },
-
+    calculateTotalAmount() {
+      let sub_total = 0;
+      let discount = 0;
+      let total = 0;
+      this.form.items.map((item) => {
+        sub_total = sub_total + parseFloat(item.amount);
+      });
+      this.form.subTotal = sub_total.toFixed(2);
+      if (this.form.discount) {
+        let isPercentage = /%/gi;
+        if (isPercentage.test(this.form.discount)) {
+          discount = parseFloat(this.form.discount);
+          this.form.discount_val = ((sub_total * parseFloat(discount)) / 100).toFixed(2);
+          total = (sub_total - this.form.discount_val).toFixed(2);
+        } else {
+          total = sub_total - parseFloat(this.form.discount);
+          this.form.discount_val = parseFloat(this.form.discount);
+        }
+      } else {
+        total = sub_total.toFixed(2);
+      }
+      this.form.total = total;
+    },
     resetForm() {
       for (let index in this.form) {
         if (index === "items" || index === "attachments") {
