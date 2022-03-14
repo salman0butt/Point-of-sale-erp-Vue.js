@@ -84,20 +84,20 @@
         </form>
       </CCol>
     </CRow>
-    <SmsPluginModel :contacts="options.contacts" type="invoice" />
+    <!-- <SmsPluginModel :contacts="options.contacts" type="invoice" /> -->
   </div>
 </template>
 <script>
 // import SupplierServices from "@/services/contacts/supplier/SupplierServices";
 // import { required } from "vuelidate/lib/validators";
-import { smsMixin } from "@/mixins/plugins/smsMixin";
-import SmsPluginModel from "@/components/plugins/sms/SmsPluginModel";
+// import { smsMixin } from "@/mixins/plugins/smsMixin";
+// import SmsPluginModel from "@/components/plugins/sms/SmsPluginModel";
 export default {
   name: "OpeningForm",
-  components: {
-    SmsPluginModel,
-  },
-  mixins: [smsMixin],
+  // components: {
+  //   SmsPluginModel,
+  // },
+  // mixins: [smsMixin],
   props: {
     submit: {
       type: Boolean,
