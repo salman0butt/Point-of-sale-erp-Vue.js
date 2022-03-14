@@ -5,51 +5,13 @@
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateExpense() : saveExpense()">
           <CRow>
-            <!-- <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Category"
-                :options="options.categories"
-                :value.sync="form.category_id"
-                :class="{ error: $v.form.category_id.$error }"
-                @input="$v.form.category_id.$touch()"
-              />
-              <div v-if="$v.form.category_id.$error">
-                <p v-if="!$v.form.category_id.required" class="errorMsg">
-                  Category is required
-                </p>
-              </div>
-            </CCol> -->
             <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Account"
-                :options="options.accounts"
-                :value.sync="form.account_id"
-                :class="{ error: $v.form.account_id.$error }"
-                @input="$v.form.account_id.$touch()"
+              <AccountDropdown
+                :previousValue="form.parent_account"
+                @getAccountDropdown="getAccountDropdown"
               />
-              <div v-if="$v.form.account_id.$error">
-                <p v-if="!$v.form.account_id.required" class="errorMsg">
-                  Account is required
-                </p>
-              </div>
             </CCol>
-            <!-- <CCol sm="6" md="4" class="pt-2">
-              <CSelect
-                label="Payment Method"
-                :options="options.payment_methods"
-                :value.sync="form.from_payment_method_id"
-                :class="{ error: $v.form.from_payment_method_id.$error }"
-                @input="$v.form.from_payment_method_id.$touch()"
-              />
-              <div v-if="$v.form.from_payment_method_id.$error">
-                <p
-                  v-if="!$v.form.from_payment_method_id.required"
-                  class="errorMsg"
-                >
-                  Payment Method is required
-                </p>
-              </div>
-            </CCol> -->
+
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Debit"
@@ -60,7 +22,9 @@
                 @input="$v.form.debit.$touch()"
               />
               <div v-if="$v.form.debit.$error">
-                <p v-if="!$v.form.debit.required" class="errorMsg">Debit is required</p>
+                <p v-if="!$v.form.debit.required" class="errorMsg">
+                  Debit is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -72,7 +36,9 @@
                 @input="$v.form.date.$touch()"
               />
               <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
+                <p v-if="!$v.form.date.required" class="errorMsg">
+                  Date is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -95,7 +61,9 @@
                 @input="$v.form.status.$touch()"
               />
               <div v-if="$v.form.status.$error">
-                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
+                <p v-if="!$v.form.status.required" class="errorMsg">
+                  Status is required
+                </p>
               </div>
             </CCol>
           </CRow>
@@ -111,7 +79,11 @@
                     class="display-attachment-row"
                   >
                     <CIcon :content="$options.cisFile" />
-                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
+                    <a
+                      v-bind:href="doc.path"
+                      target="_blank"
+                      class="name-attachment"
+                    >
                       {{ doc.name }}</a
                     >
                     <a
@@ -125,7 +97,9 @@
               </div>
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -141,7 +115,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -159,11 +138,14 @@ import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import Loader from "@/components/layouts/Loader";
+import AccountDropdown from "@/components/general/AccountDropdown";
+
 export default {
   name: "ExpenseForm",
   components: {
     AppUpload,
     Loader,
+    AccountDropdown,
   },
   cilTrash,
   cisFile,
@@ -195,7 +177,9 @@ export default {
       // categories: [
       //   { value: "", label: "Choose Category", disabled: true, selected: "" },
       // ],
-      accounts: [{ value: "", label: "Choose Account", disabled: true, selected: "" }],
+      accounts: [
+        { value: "", label: "Choose Account", disabled: true, selected: "" },
+      ],
     },
   }),
   validations() {
@@ -219,6 +203,9 @@ export default {
     }
   },
   methods: {
+    getAccountDropdown(value) {
+      this.form.account_id = value.value;
+    },
     saveExpense() {
       this.$v.$touch();
       if (!this.$v.$invalid) {

@@ -43,25 +43,28 @@
                   </div>
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
-                  <CSelect
-                    label="Type"
-                    :options="options.type"
-                    :value.sync="form.type"
-                    :class="{ error: $v.form.type.$error }"
-                    @input="$v.form.type.$touch()"
+                  <AccountDropdown @getAccountDropdown="getAccountDropdown" />
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <AccountTypeDropdown
+                    @getAccountDropdown="getAccountTypeDropdown"
                   />
-                  <div v-if="$v.form.type.$error">
-                    <p v-if="!$v.form.type.required" class="errorMsg">
-                      Account Type is required
+                </CCol>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Nature"
+                    :options="options.nature"
+                    :value.sync="form.nature"
+                    :class="{ error: $v.form.nature.$error }"
+                    @input="$v.form.nature.$touch()"
+                  />
+                  <div v-if="$v.form.nature.$error">
+                    <p v-if="!$v.form.nature.required" class="errorMsg">
+                      Account nature is required
                     </p>
                   </div>
                 </CCol>
 
-                <CCol sm="6" md="4" class="pt-2">
-                  <AccountTypeDropdown
-                    @getAccountDropdown="getAccountDropdown"
-                  />
-                </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CTextarea label="Desription" v-model="form.description" />
                 </CCol>
@@ -89,6 +92,7 @@
 <script>
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import AccountTypeDropdown from "@/components/accounting/general/AccountTypeDropdown";
+import AccountDropdown from "@/components/general/AccountDropdown";
 
 import { required, minLength, numeric } from "vuelidate/lib/validators";
 
@@ -96,17 +100,19 @@ export default {
   name: "CreateAccount",
   components: {
     AccountTypeDropdown,
+    AccountDropdown,
   },
   data: () => ({
     form: {
       code: "",
       name: "",
-      parent: "",
+      parent_account: "",
+      account_type: "",
       description: "",
-      type: "",
+      nature: "",
     },
     options: {
-      type: [
+      nature: [
         {
           value: "",
           label: "Select Account Type",
@@ -123,7 +129,7 @@ export default {
       form: {
         code: { required, minLength: minLength(6), numeric },
         name: { required, minLength: minLength(4) },
-        type: { required },
+        nature: { required },
       },
     };
   },
@@ -164,8 +170,11 @@ export default {
           });
       }
     },
+    getAccountTypeDropdown(value) {
+      this.form.account_type = value;
+    },
     getAccountDropdown(value) {
-      this.form.parent = value;
+      this.form.parent_account = value.value;
     },
   },
 };
