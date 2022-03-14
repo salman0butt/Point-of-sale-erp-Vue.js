@@ -1,7 +1,6 @@
 <template>
   <div>
     <CRow>
-      <Loader />
       <CCol xs="6" lg="6">
         <CCard>
           <CCardHeader> Total Send </CCardHeader>
@@ -22,6 +21,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <Loader />
           <CCardHeader> SMS Status </CCardHeader>
           <CCardBody>
             <CRow>
@@ -47,6 +47,11 @@
                   hover
                   ref="externalAgent"
                 >
+                  <template #user="{ item }">
+                    <td>
+                      {{ item.user.name }}
+                    </td>
+                  </template>
                 </CDataTable>
                 <CPagination
                   v-show="pages > 1"
@@ -62,6 +67,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
+          <Loader />
           <CCardHeader> Sender </CCardHeader>
           <CCardBody>
             <CRow>
@@ -111,57 +117,29 @@
 import SettingService from "@/services/settings/SettingService";
 import { required, maxLength } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader";
-import { tableMixin } from "@/mixins/tableMixin";
 import BuyCreditModel from "./BuyCreditModel";
+import SmsPluginService from "@/services/plugins/sms/SmsPluginService";
 
 const fields = [
-  { key: "sms", label: "Sms", _style: "min-width:40%" },
-  { key: "date", label: "Date", _style: "min-width:15%;" },
+  { key: "date", label: "Date", _style: "min-width:40%" },
+  { key: "time", label: "Time", _style: "min-width:15%;" },
+  { key: "user", label: "User", _style: "min-width:15%;" },
   { key: "status", label: "Status", _style: "width:25%;" },
 ];
 
 export default {
   name: "SmsSettingForm",
   components: { Loader, BuyCreditModel },
-  mixins: [tableMixin],
   data: () => ({
-    items: [
-      {
-        sms: "SMS",
-        date: "2020-01-01",
-        status: "Success",
-      },
-      {
-        sms: "SMS",
-        date: "2020-01-01",
-        status: "Success",
-      },
-      {
-        sms: "SMS",
-        date: "2020-01-01",
-        status: "Success",
-      },
-      {
-        sms: "SMS",
-        date: "2020-01-01",
-        status: "Success",
-      },
-      {
-        sms: "SMS",
-        date: "2020-01-01",
-        status: "Success",
-      },
-      {
-        sms: "SMS",
-        date: "2020-01-01",
-        status: "Success",
-      },
-    ],
+    items: [],
+    activePage: 1,
+    pages: 0,
+    perPage: 10,
     settingData: [],
     fields,
     form: {
       sender_id: "",
-      total_send: "200",
+      total_send: 0,
       total_credits: 0,
     },
   }),
@@ -174,6 +152,7 @@ export default {
   },
   created() {
     this.smsSettingService();
+    this.getSmsList();
   },
   computed: {
     credits() {
@@ -185,8 +164,39 @@ export default {
       this.form.total_credits = val;
       // this.smsSettingService();
     },
+
+    reloadParams() {
+      this.onTableChange();
+    },
+    activePage() {
+      this.getSmsList(this.activePage, this.perPage);
+    },
   },
   methods: {
+    getSmsList(page = "", per_page = "") {
+      this.items = [];
+      let items = this.items;
+      this.$store.commit("set_loader");
+      SmsPluginService.getAll(page, per_page)
+        .then(({ data }) => {
+          if (data && data.data) {
+            data.data.map((item, id) => {
+              items.push({ ...item, id });
+            });
+            if (data.data[0]) {
+              this.form.total_send = data.data[0].total_send;
+            }
+            if (data.meta) {
+              this.setPagination(data.meta);
+            }
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+          console.log(error);
+        });
+    },
     smsSettingService() {
       let type = "sms";
       this.$store.commit("set_loader");
@@ -253,6 +263,22 @@ export default {
             });
           });
       }
+    },
+    setPagination(meta) {
+      this.activePage = parseInt(meta.current_page);
+      this.pages = parseInt(meta.last_page);
+      this.perPage = parseInt(meta.per_page);
+    },
+    onTableChange() {
+      setTimeout(() => {
+        const agent = this.$refs.externalAgent;
+        this.designationsData = agent.currentItems;
+        this.pages = Math.ceil(agent.sortedItems.length / 5);
+      }, 1000);
+    },
+    changePagination(value) {
+      this.perPage = parseInt(value);
+      this.getSmsList("", this.perPage);
     },
   },
 };

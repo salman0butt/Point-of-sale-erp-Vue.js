@@ -63,6 +63,19 @@
               />
             </CCol>
             <CCol sm="12" md="4" class="pt-2">
+              <a
+                v-if="showSmsButton"
+                color="success"
+                class="btn btn-sm btn-warning"
+                style="color: #fff; margin-right: 5px; text-align: center"
+                @click.prevent="
+                  options.contacts && options.contacts.length > 1
+                    ? openSmsModel()
+                    : sendSms('quotation')
+                "
+              >
+                <CIcon name="cis-mobile-sms" /> Send Sms</a
+              >
               <CButton color="success" style="margin-top: 3rem">Closing</CButton>
             </CCol>
           </CRow>
@@ -71,14 +84,20 @@
         </form>
       </CCol>
     </CRow>
+    <!-- <SmsPluginModel :contacts="options.contacts" type="invoice" /> -->
   </div>
 </template>
 <script>
 // import SupplierServices from "@/services/contacts/supplier/SupplierServices";
 // import { required } from "vuelidate/lib/validators";
-
+// import { smsMixin } from "@/mixins/plugins/smsMixin";
+// import SmsPluginModel from "@/components/plugins/sms/SmsPluginModel";
 export default {
   name: "OpeningForm",
+  // components: {
+  //   SmsPluginModel,
+  // },
+  // mixins: [smsMixin],
   props: {
     submit: {
       type: Boolean,

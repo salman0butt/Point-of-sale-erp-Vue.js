@@ -187,6 +187,7 @@ const fields = [
   { key: "date", label: "DATE", _style: "min-width:40%" },
   { key: "variation_name", label: "VARIATION", _style: "min-width:15%;" },
   { key: "qty", label: "In/Out Qty", _style: "min-width:15%;" },
+  { key: "balance", label: "Balance", _style: "min-width:15%;" },
   { key: "expiry_date", label: "EXPIRY DATE", _style: "min-width:15%" },
 ];
 
@@ -265,6 +266,7 @@ export default {
                   variation_name: item.inventable.name,
                   date: date,
                   qty: qty,
+                  balance: item.balance ?? "",
                   expiry_date: item.expiry_date ?? "",
                 });
               }
@@ -275,6 +277,7 @@ export default {
                   variation_name: "",
                   date: date,
                   qty: qty,
+                  balance: item.balance ?? "",
                   expiry_date: item.expiry_date ?? "",
                 });
               }
