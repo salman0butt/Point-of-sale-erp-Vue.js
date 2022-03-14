@@ -11,6 +11,20 @@
                 <form @submit.prevent="isEditing ? updateBill() : storeBill()">
                   <CRow>
                     <CCol xs="6" md="4" class="pt-2">
+                      <CInput
+                        type="Text"
+                        label="Bill #"
+                        v-model="form.bill_no"
+                        :class="{ error: $v.form.bill_no.$error }"
+                        @input="$v.form.bill_no.$touch()"
+                      />
+                      <div v-if="$v.form.bill_no.$error">
+                        <p v-if="!$v.form.bill_no.required" class="errorMsg">
+                          Bill Number is required
+                        </p>
+                      </div>
+                    </CCol>
+                    <CCol xs="6" md="4" class="pt-2">
                       <SupplierSearch />
                     </CCol>
                     <CCol xs="6" md="4" class="pt-2">
@@ -59,6 +73,105 @@
                       </div>
                     </CCol>
                   </CRow>
+                  <CRow>
+                    <CCol xs="12" md="12" class="pt-2">
+                      <ProductSearch
+                        @update-items="updateItems($event)"
+                        :previousValue="form.items"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol xs="12" md="6" class="pt-2">
+                      <CTextarea
+                        class="mt-4"
+                        label="Supplier Notes"
+                        placeholder="Will be displayed on Bill"
+                        v-model="form.supplier_notes"
+                      />
+                    </CCol>
+                    <CCol xs="12" md="4" class="pt-2 offset-md-2">
+                      <CRow class="pt-2 ra">
+                        <CCol> <h6>Sub Total</h6> </CCol>
+                        <CCol> </CCol>
+                        <CCol md="3"
+                          ><h6>{{ form.subTotal }}</h6>
+                        </CCol>
+                      </CRow>
+                      <CRow class="pt-2 ra">
+                        <CCol> <h6>Discount %</h6></CCol>
+                        <CCol>
+                          <CInput
+                            v-model="form.discount"
+                            @change="calculateTotalAmount()"
+                          />
+                        </CCol>
+                        <CCol md="3"
+                          ><h6>{{ form.discount_val }}</h6>
+                        </CCol>
+                      </CRow>
+                      <CRow class="pt-2 ra">
+                        <CCol><h5>Total</h5> </CCol>
+                        <CCol> </CCol>
+                        <CCol md="3"
+                          ><h5>
+                            <strong>{{ form.total }}</strong>
+                          </h5>
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol xs="12" md="8">
+                      <CTextarea
+                        class="mt-4"
+                        label="Terms & Conditions"
+                        placeholder="Enter the terms and conditions of your business to be displayed in your transection"
+                        v-model="form.terms_and_conditions"
+                      />
+                    </CCol>
+                    <CCol xs="12" md="4" class="mt-3">
+                      <label for="attachment">Attach File(s) to Bill</label>
+                      <input
+                        class="form-control"
+                        id="attachment"
+                        type="file"
+                        @change="pickFile"
+                        multiple
+                      />
+                      <!-- <span style="font-size: 12px"
+                            >You can upload maximum of 5 files</span
+                          > -->
+
+                      <div
+                        class="attachment-display"
+                        v-if="displayAttachment && displayAttachment.length > 0"
+                      >
+                        <ul class="pl-0">
+                          <li
+                            v-for="(attachment, index) in displayAttachment"
+                            v-bind:key="index"
+                            class="display-attachment-row"
+                          >
+                            <CIcon :content="$options.cisFile" />
+                            <a
+                              v-bind:href="attachment.path"
+                              target="_blank"
+                              class="name-attachment"
+                            >
+                              {{ attachment.name }}</a
+                            >
+                            <a
+                              @click.prevent="deleteAttachment(attachment.uuid)"
+                              class="delete-attachment"
+                            >
+                              <CIcon :content="$options.cilTrash" />
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </CCol>
+                  </CRow>
 
                   <CRow class="mt-4">
                     <CButton
@@ -100,10 +213,9 @@ import PurchaseService from "@/services/accounting/purchaseOrder/PurchaseOrderSe
 import { required } from "vuelidate/lib/validators";
 import { cilTrash, cisCaretBottom, cisFile } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
-import ReceivingService from "@/services/receivings/ReceivingService";
-import AccountServices from "@/services/accounting/accounts/AccountServices";
 import { attachmentMixin } from "@/mixins/attachmentMixin";
 import { globalMixin } from "@/mixins/globalMixin";
+import ProductSearch from "@/components/general/search/ProductSearch.vue";
 
 // new
 
@@ -115,28 +227,24 @@ export default {
   components: {
     Loader,
     SupplierSearch,
+    ProductSearch,
   },
   cilTrash,
   cisCaretBottom,
   cisFile,
   data: () => ({
     form: {
+      bill_no: "",
       product_id: "",
       id: "",
       date: "",
-      po: "",
-      ref: "",
       supplier_id: "",
-      deliver_to: "organization",
-      branch_id: "",
-      customer_id: "",
       subTotal: 0.0,
       discount: "",
       discount_val: 0.0,
       total: 0.0,
-      customer_notes: "",
+      supplier_notes: "",
       terms_and_conditions: "",
-      shipment_preference: "",
       due_date: "",
       payment_terms: "",
       status: "",
@@ -146,7 +254,7 @@ export default {
           uuid: "",
           name: "",
           // type: "",
-          account: "",
+          account: Object,
           qty: "",
           rate: "",
           tax: "",
@@ -169,6 +277,7 @@ export default {
   validations() {
     return {
       form: {
+        bill_no: { required },
         date: { required },
         po: { required },
         status: { required },
@@ -195,6 +304,11 @@ export default {
   },
 
   methods: {
+    updateItems({ items, sub_total }) {
+      this.form.items = items;
+      this.form.subTotal = sub_total;
+      this.calculateTotalAmount();
+    },
     resetSearch() {
       this.form.product_id = "";
       // this.search = "";
@@ -299,7 +413,7 @@ export default {
       formData.append("discount", this.form.discount);
       formData.append("discount_val", this.form.discount_val);
       formData.append("total", this.form.total);
-      formData.append("customer_note", this.form.customer_notes);
+      formData.append("customer_note", this.form.supplier_notes);
       formData.append("terms_and_conditions", this.form.terms_and_conditions);
       formData.append("shipment_preference", this.form.shipment_preference);
       formData.append("payment_terms", this.form.payment_terms);
@@ -348,7 +462,7 @@ export default {
         this.form.due_date = data.due_date;
         this.form.discount = data.discount ? data.discount : "";
         this.form.total = parseFloat(data.total);
-        this.form.customer_notes = data.customer_note;
+        this.form.supplier_notes = data.customer_note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.shipment_preference = data.shipment_preference;
         this.form.payment_terms = data.payment_term;
