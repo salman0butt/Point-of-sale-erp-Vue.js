@@ -7,7 +7,7 @@
           <CRow>
             <CCol sm="6" md="4" class="pt-2">
               <AccountDropdown
-                :previousValue="form.parent_account"
+                :previousValue="form.account_id"
                 @getAccountDropdown="getAccountDropdown"
               />
             </CCol>
@@ -295,14 +295,16 @@ export default {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
-            // this.form.category_id = data.category.uuid;
-            // this.form.from_payment_method_id = data.from_payment_method.uuid;
+
             this.form.ref_id = data.ref_id;
             this.form.debit = data.debit;
             this.form.date = data.date;
             this.form.description = data.description;
             this.form.status = data.status;
-            this.form.account_id = data.account.uuid;
+            this.form.account_id = {
+              label: data.account.name,
+              value: data.account.uuid,
+            };
 
             if (data.documents) {
               this.display_documents = [];

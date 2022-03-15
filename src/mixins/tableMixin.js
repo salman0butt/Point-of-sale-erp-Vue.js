@@ -44,7 +44,7 @@ export const tableMixin = {
                   }else if(item.status == 'inactive' && active_lang === 'ar'){
                     item.status = 'غير مفعل';
                   }else {
-                    item.status = '';
+                    item.status = item.status ?? '';
                   }
                   // item.status = this.$t("status.en.active");
                 }
