@@ -10,7 +10,7 @@
               <CCol xs="12" lg="12">
                 <form @submit.prevent="isEditing ? updateBill() : storeBill()">
                   <CRow>
-                    <CCol xs="6" md="4" class="pt-2">
+                    <!-- <CCol xs="6" md="4" class="pt-2">
                       <CInput
                         type="Text"
                         label="Bill #"
@@ -23,7 +23,7 @@
                           Bill Number is required
                         </p>
                       </div>
-                    </CCol>
+                    </CCol> -->
                     <CCol xs="6" md="4" class="pt-2">
                       <SupplierSearch
                         @supplier-change="supplierChange($event)"
@@ -232,13 +232,13 @@ export default {
     saveAndExit: false,
     previousValue: null,
     form: {
-      bill_no: "",
+      // bill_no: "",
       product_id: "",
       id: "",
       date: "",
       supplier_id: "",
       subTotal: 0.0,
-      total_tax: 0.0,
+      total_tax: "",
       discount: "",
       discount_val: 0.0,
       total: 0.0,
@@ -275,7 +275,7 @@ export default {
   validations() {
     return {
       form: {
-        bill_no: { required },
+        // bill_no: { required },
         date: { required },
         due_date: { required },
         supplier_id: { required },
@@ -398,7 +398,7 @@ export default {
     },
     formData(update = false) {
       let formData = new FormData();
-      formData.append("bill_no", this.form.bill_no);
+      // formData.append("bill_no", this.form.bill_no);
       console.log(this.form.supplier_id);
       if (this.form.supplier_id && this.form.supplier_id.value) {
         formData.append("supplier_id", this.form.supplier_id.value);
@@ -445,7 +445,7 @@ export default {
         this.resetForm();
         this.isEditing = true;
         this.form.id = data.uuid;
-        this.form.bill_no = data.bill_no;
+        // this.form.bill_no = data.bill_no;
         if (data.supplier) {
           // this.form.supplier_id =
           //   {
@@ -464,7 +464,7 @@ export default {
         this.form.supplier_notes = data.note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.subTotal = parseFloat(data.sub_total);
-        this.form.total_tax = parseFloat(data.total_tax);
+        this.form.total_tax = data.total_tax ? parseFloat(data.total_tax) : "";
         this.form.status = data.status;
         this.displayAttachment = [];
 
