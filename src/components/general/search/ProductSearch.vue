@@ -365,7 +365,7 @@ export default {
           });
         }
       });
-      this.form.total_tax = total_tax;
+      this.form.total_tax = total_tax.toFixed(2) ?? 0;
     },
     updateAmount() {
       let sub_total = 0;
@@ -376,7 +376,7 @@ export default {
       this.$emit("update-items", {
         items: this.form.items,
         sub_total: this.form.subTotal,
-        total_tax: this.form.total_tax ? this.form.total_tax.toFixed(2) : 0,
+        total_tax: this.form.total_tax,
       });
     },
     getTaxes() {
