@@ -16,6 +16,13 @@
         },
         "show": {
             "receiptNo": "Receipt #"
+        },
+        "create": {
+            "form": {
+                "modelTitle": "Create Payment",
+                "close": "Close",
+                "save": "Save"
+            }
         }
     }
 }
