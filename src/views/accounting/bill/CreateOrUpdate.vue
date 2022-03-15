@@ -460,7 +460,7 @@ export default {
         this.form.date = data.date;
         this.form.due_date = data.due_date;
         this.form.discount = data.total_discount ? data.total_discount : "";
-        this.form.total = parseFloat(data.grand_total);
+        this.form.total = data.grand_total ? parseFloat(data.grand_total).toFixed(3) : "";
         this.form.supplier_notes = data.note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.subTotal = parseFloat(data.sub_total);
@@ -506,19 +506,19 @@ export default {
       this.form.items.map((item) => {
         sub_total = sub_total + parseFloat(item.amount);
       });
-      this.form.subTotal = sub_total.toFixed(2);
+      this.form.subTotal = sub_total.toFixed(3);
       if (this.form.discount) {
         let isPercentage = /%/gi;
         if (isPercentage.test(this.form.discount)) {
           discount = parseFloat(this.form.discount);
-          this.form.discount_val = ((sub_total * parseFloat(discount)) / 100).toFixed(2);
-          total = (sub_total - this.form.discount_val).toFixed(2);
+          this.form.discount_val = ((sub_total * parseFloat(discount)) / 100).toFixed(3);
+          total = (sub_total - this.form.discount_val).toFixed(3);
         } else {
           total = sub_total - parseFloat(this.form.discount);
           this.form.discount_val = parseFloat(this.form.discount);
         }
       } else {
-        total = sub_total.toFixed(2);
+        total = sub_total.toFixed(3);
       }
       this.form.total = total;
     },
