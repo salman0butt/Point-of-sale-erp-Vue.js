@@ -1,0 +1,18 @@
+{
+    "payments": {
+        "index": {
+            "payments": "Payments",
+            "add": "Add Payment",
+            "table": {
+                "paymentNo": "Payment #",
+                "paymentMethod": "Payment Mehtod",
+                "invoiceNo": "Invoice #",
+                "customer": "Customer",
+                "amount": "Amount",
+                "dated": "Dated",
+                "user": "User",
+                "actions": "Actions"
+            }
+        }
+    }
+}

@@ -86,6 +86,16 @@ export default {
             },
           ]);
         }
+        if (this.$can("read invoices")) {
+          this.sideBarItems_sales.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "- Payments",
+              to: "/sales/invoice/payments/index",
+              // icon: "cil-lan",
+            },
+          ]);
+        }
 
         this.sideBarItems.push({
           _name: "CSidebarNavDropdown",

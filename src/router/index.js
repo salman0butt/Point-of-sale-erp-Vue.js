@@ -40,6 +40,7 @@ import userRoutes from '@/router/users/userRoutes';
 import modifierRoutes from '@/router/modifiers/modifierRoutes';
 import salesRoutes from '@/router/sales/salesRoutes';
 import invoiceRoutes from '@/router/sales/invoiceRoutes';
+import paymentRoutes from '@/router/sales/paymentRoutes';
 import reportRoutes from '@/router/reports/reportRoutes';
 import purchaseOrderRoutes from '@/router/accounting/purchaseOrder/purchaseOrderRoutes';
 import journalRoutes from '@/router/accounting/journal/journalRoutes';
@@ -213,6 +214,7 @@ const router = new Router({
         settingRoutes,
         salesRoutes,
         invoiceRoutes,
+        paymentRoutes,
         assetRoutes,
         awardRoutes,
         gradeRoutes,
@@ -644,18 +646,18 @@ const router = new Router({
       component: ResetPassword
     },
     {
-      path :'/not-found',
+      path: '/not-found',
       name: "Page404",
-      component:Page404
+      component: Page404
     },
     {
-      path :'/something-wrong',
+      path: '/something-wrong',
       name: "Page500",
-      component:Page500
+      component: Page500
     },
     {
-      path :'*',
-      component:Page404
+      path: '*',
+      component: Page404
     },
     // {
     //   path: '/register',
