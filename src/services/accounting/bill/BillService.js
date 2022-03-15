@@ -29,6 +29,7 @@ class BillService extends Helper {
   }
 
   update(id, data, config) {
+    config = Object.assign(config, super.selectedBranch());
     return http.post(`/bill/${id}`, data, config);
   }
 

@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Brands </CCardHeader>
+          <CCardHeader> Bills </CCardHeader>
           <CCardBody>
             <div>
               <router-link
@@ -16,7 +16,7 @@
             <div style="clear: both; margin-bottom: 20px"></div>
             <Loader />
             <CDataTable
-              :items="Brand"
+              :items="Bill"
               :fields="fields"
               table-filter
               items-per-page-select
@@ -39,14 +39,15 @@
                       >View</CButton
                     > -->
                     <CButton
-                      v-if="$can('edit brands')"
+                      v-if="$can('edit bills')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      >Edit <CIcon :content="$options.cilPencil"
+                    >
+                      <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      v-if="$can('delete brands')"
+                      v-if="$can('delete bills')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
@@ -66,27 +67,27 @@
         </CCard>
       </CCol>
     </CRow>
-    <BrandModel @update-table="updateTable" />
   </div>
 </template>
 
 <script>
-import BrandService from "@/services/catalogs/brands/BrandService";
+import BillService from "@/services/accounting/bill/BillService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-import BrandModel from "@/components/catalogs/brands/BrandModel";
 import { tableMixin } from "@/mixins/tableMixin";
 import Loader from "@/components/layouts/Loader";
 const fields = [
-  { key: "name", label: "NAME", _style: "width:50%" },
-  { key: "status", label: "STATUS", _style: "width:30%;" },
+  { key: "bill_no", label: "Bill No", _style: "width:30%" },
+  { key: "date", label: "Date", _style: "width:15%;" },
+  { key: "sub_total", label: "Sub Total", _style: "width:15%;" },
+  { key: "grand_total", label: "Grand Total", _style: "width:15%;" },
+  { key: "status", label: "STATUS", _style: "width:15%;" },
   { key: "actions", label: "ACTION", _style: "width:25%;" },
 ];
 
 export default {
-  name: "IndexBrand",
+  name: "IndexBill",
   mixins: [tableMixin],
   components: {
-    BrandModel,
     Loader,
   },
   cilPencil,
@@ -102,30 +103,22 @@ export default {
     this.getData();
   },
   computed: {
-    Brand() {
+    Bill() {
       return this.data;
     },
   },
   methods: {
-    updateTable() {
-      setTimeout(() => {
-        this.getData();
-      }, 1000);
-    },
     getData(page = "", per_page = "") {
-      this.getServerData(BrandService, page, per_page);
-    },
-    addBrand() {
-      this.$store.commit("set_brand_model", true);
+      this.getServerData(BillService, page, per_page);
     },
     viewRow(uuid) {
       alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/catalogs/brands/edit/" + uuid });
+      this.$router.push({ path: "/accounting/bill/edit/" + uuid });
     },
     deleteRow(uuid) {
-      this.deleteData(BrandService, uuid);
+      this.deleteData(BillService, uuid);
     },
   },
 };

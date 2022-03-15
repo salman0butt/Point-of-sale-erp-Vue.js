@@ -25,7 +25,10 @@
                       </div>
                     </CCol>
                     <CCol xs="6" md="4" class="pt-2">
-                      <SupplierSearch @supplier-change="supplierChange($event)" />
+                      <SupplierSearch
+                        @supplier-change="supplierChange($event)"
+                        :previousValue="previousValue"
+                      />
                     </CCol>
                     <CCol xs="6" md="4" class="pt-2">
                       <CInput
@@ -227,6 +230,7 @@ export default {
   data: () => ({
     isEditing: false,
     saveAndExit: false,
+    previousValue: null,
     form: {
       bill_no: "",
       product_id: "",
@@ -234,6 +238,7 @@ export default {
       date: "",
       supplier_id: "",
       subTotal: 0.0,
+      total_tax: 0.0,
       discount: "",
       discount_val: 0.0,
       total: 0.0,
@@ -260,6 +265,7 @@ export default {
     products_list: [],
     options: {
       status: [
+        { value: "", label: "Choose Status", disabled: true, selected: true },
         { value: "draft", label: "Draft" },
         { value: "approved", label: "Approved" },
         { value: "rejected", label: "Rejected" },
@@ -281,6 +287,7 @@ export default {
     };
   },
   async created() {
+    this.form.id = this.$route.params.id;
     this.form.date = this.calculateTodayDate();
     this.form.due_date = this.calculateDueDate();
 
@@ -290,9 +297,10 @@ export default {
   },
 
   methods: {
-    updateItems({ items, sub_total }) {
+    updateItems({ items, sub_total, total_tax }) {
       this.form.items = items;
       this.form.subTotal = sub_total;
+      this.form.total_tax = total_tax;
       this.calculateTotalAmount();
     },
     resetSearch() {
@@ -327,10 +335,10 @@ export default {
               this.resetForm();
               this.$store.commit("close_loader");
               if (this.saveAndExit) {
-                this.$router.push({ path: "/purchases/index" });
+                this.$router.push({ path: "/accounting/bill/index" });
               } else {
                 this.$router.push({
-                  path: "/purchases/edit/" + res.data.uuid,
+                  path: "/accounting/bill/edit/" + res.data.uuid,
                 });
               }
             }
@@ -369,7 +377,7 @@ export default {
               this.$v.$reset();
               this.$store.commit("close_loader");
               if (this.saveAndExit) {
-                this.$router.push({ path: "/purchases/index" });
+                this.$router.push({ path: "/accounting/bill/index" });
               }
             }
           })
@@ -391,12 +399,16 @@ export default {
     formData(update = false) {
       let formData = new FormData();
       formData.append("bill_no", this.form.bill_no);
-      formData.append("supplier_id", this.form.supplier_id);
+      console.log(this.form.supplier_id);
+      if (this.form.supplier_id && this.form.supplier_id.value) {
+        formData.append("supplier_id", this.form.supplier_id.value);
+      }
       formData.append("date", this.form.date);
       formData.append("due_date", this.form.due_date);
       formData.append("status", this.form.status);
-      formData.append("discount", this.form.discount);
-      formData.append("discount_val", this.form.discount_val);
+      formData.append("total_discount", this.form.discount);
+      formData.append("total_tax", this.form.total_tax);
+      // formData.append("discount_val", this.form.discount_val);
       formData.append("total", this.form.total);
       formData.append("note", this.form.supplier_notes);
       formData.append("terms_and_conditions", this.form.terms_and_conditions);
@@ -424,7 +436,7 @@ export default {
           console.log(error);
           this.$store.commit("close_loader");
           this.isEditing = false;
-          this.$router.push({ path: "/purchases/index" });
+          this.$router.push({ path: "/accounting/bill/index" });
         });
     },
 
@@ -434,14 +446,26 @@ export default {
         this.isEditing = true;
         this.form.id = data.uuid;
         this.form.bill_no = data.bill_no;
-        this.form.supplier_id = data.supplier?.uuid ?? "";
+        if (data.supplier) {
+          // this.form.supplier_id =
+          //   {
+          //     value: data.supplier.uuid,
+          //     label: data.supplier?.name + " (serial: " + data.supplier?.serial_no + ")",
+          //   } ?? "";
+          this.previousValue = {
+            value: data.supplier.uuid,
+            label: data.supplier?.name + " (serial: " + data.supplier?.serial_no + ")",
+          };
+        }
         this.form.date = data.date;
         this.form.due_date = data.due_date;
-        this.form.discount = data.discount ? data.discount : "";
-        this.form.total = parseFloat(data.total);
+        this.form.discount = data.total_discount ? data.total_discount : "";
+        this.form.total = parseFloat(data.grand_total);
         this.form.supplier_notes = data.note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.subTotal = parseFloat(data.sub_total);
+        this.form.total_tax = parseFloat(data.total_tax);
+        this.form.status = data.status;
         this.displayAttachment = [];
 
         if (data.attachments && data.attachments.length > 0) {
@@ -455,8 +479,12 @@ export default {
             const data = {
               uuid: item.product?.uuid,
               // type: "product",
-              name: item.name,
+              name: item.product_name,
               account: item.account?.uuid,
+              previousAccount: {
+                label: "-- " + item.account?.name,
+                value: item.account?.uuid,
+              },
               rate: parseFloat(item.rate) ?? 0,
               qty: parseFloat(item.qty),
               tax: item && item.tax ? item.tax.uuid : "",
@@ -468,7 +496,7 @@ export default {
             this.form.items.push(data);
           });
         }
-        // this.calculateAllItems();
+        this.calculateTotalAmount();
       }
     },
     calculateTotalAmount() {
