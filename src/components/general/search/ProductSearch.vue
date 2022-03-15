@@ -365,7 +365,7 @@ export default {
           });
         }
       });
-      this.form.total_tax = total_tax.toFixed(2) ?? 0;
+      this.form.total_tax = total_tax.toFixed(3) ?? 0;
     },
     updateAmount() {
       let sub_total = 0;
