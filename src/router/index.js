@@ -145,6 +145,7 @@ const Page500 = () => import('@/views/pages/Page500')
 const test = () => import('@/views/Testing')
 const ShowQuotation = () => import('@/views/sales/quotations/ShowQuotation')
 const ShowInvoice = () => import('@/views/sales/invoices/ShowInvoice')
+const ShowPayment = () => import('@/views/sales/payments/ShowPayment')
 
 Vue.use(Router)
 
@@ -162,6 +163,11 @@ const router = new Router({
       path: '/show-invoice/:id',
       name: 'ShowInvoice',
       component: ShowInvoice
+    },
+    {
+      path: '/show-payment/:id',
+      name: 'ShowPayment',
+      component: ShowPayment
     },
     {
       path: '/',

@@ -13,6 +13,7 @@
                 >Create Brand</router-link
               > -->
               <CButton
+                v-if="$can('create payments')"
                 color="success"
                 class="btn"
                 style="float: right; margin-right: 10px"
@@ -144,7 +145,7 @@ import BrandModel from "@/components/catalogs/brands/BrandModel";
 import { tableMixin } from "@/mixins/tableMixin";
 import Loader from "@/components/layouts/Loader";
 export default {
-  name: "IndexBrand",
+  name: "IndexPayments",
   mixins: [tableMixin],
   components: {
     BrandModel,
@@ -213,7 +214,7 @@ export default {
       this.$store.commit("set_brand_model", true);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/sales/invoice/payments/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/catalogs/brands/edit/" + uuid });

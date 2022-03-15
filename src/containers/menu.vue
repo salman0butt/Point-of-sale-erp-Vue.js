@@ -86,7 +86,7 @@ export default {
             },
           ]);
         }
-        if (this.$can("read invoices")) {
+        if (this.$can("read payments")) {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",

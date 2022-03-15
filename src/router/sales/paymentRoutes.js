@@ -5,9 +5,8 @@ import auth from '@/middleware/auth'
 //Payments
 const IndexPayments = () => import('@/views/sales/payments/Index')
 // const CreatePayments = () => import('@/views/sales/payments/CreateOrUpdate')
-// const ShowPayments = () => import('@/views/sales/payments/Show')
+const ShowPayments = () => import('@/views/sales/payments/Show')
 // const EditPayments = () => import('@/views/sales/payments/CreateOrUpdate')
-// const Reciept = () => import('@/views/sales/payments/Reciept')
 
 
 
@@ -30,11 +29,11 @@ const paymentRoutes = {
         //     name: 'CreatePayments',
         //     component: CreatePayments
         // },
-        // {
-        //     path: 'show/:id',
-        //     name: 'ShowPayments',
-        //     component: ShowPayments
-        // },
+        {
+            path: 'show/:id',
+            name: 'ShowPayments',
+            component: ShowPayments
+        },
         // {
         //     path: 'edit/:id',
         //     name: 'EditPayments',

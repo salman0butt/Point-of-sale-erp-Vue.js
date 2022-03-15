@@ -27,6 +27,9 @@ class PaymentInvoiceService extends Helper {
     getInvoicePayments(id) {
         return http.get(`/invoice-payments/invoice/${id}`);
     }
+    delete(id) {
+        return http.delete(`/invoice-payments/${id}`);
+    }
 
 
 }
