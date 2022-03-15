@@ -131,6 +131,7 @@ export default {
     form: {
       product_id: "",
       subTotal: "",
+      total_tax: "",
       items: [
         {
           uuid: "",
@@ -351,6 +352,20 @@ export default {
       // this.$forceUpdate();
 
       // this.calculateTotalAmount();
+      this.calculateTotalTax();
+    },
+    calculateTotalTax() {
+      let total_tax = 0;
+      this.form.items.map((item) => {
+        if (item.tax && this.options.taxes) {
+          this.options.taxes.find((tax) => {
+            if (tax.value == item.tax) {
+              total_tax += item.amount * (tax.percentage / 100);
+            }
+          });
+        }
+      });
+      this.form.total_tax = total_tax;
     },
     updateAmount() {
       let sub_total = 0;
@@ -361,6 +376,7 @@ export default {
       this.$emit("update-items", {
         items: this.form.items,
         sub_total: this.form.subTotal,
+        total_tax: this.form.total_tax ? this.form.total_tax.toFixed(2) : 0,
       });
     },
     getTaxes() {

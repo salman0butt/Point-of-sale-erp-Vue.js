@@ -36,7 +36,7 @@ export default {
   },
   props: {
     previousValue: {
-      type: Array,
+      type: [Array, Object],
       default: () => [],
     },
   },
@@ -64,8 +64,10 @@ export default {
     suppliers: {
       handler: function (val) {
         this.$emit("supplier-change", val);
+        this.$nextTick();
       },
       deep: true,
+      immediate: true,
     },
     previousValue: {
       handler: function (val) {
