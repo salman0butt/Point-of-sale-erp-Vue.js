@@ -13,7 +13,10 @@
             <tr v-for="(term, k) in terms" :key="k">
               <td>{{ term.label }}</td>
               <td>
-                <CButton @click="editTerm(term)" class="btn-sm text-white" color="warning"
+                <CButton
+                  @click="editTerm(term)"
+                  class="btn-sm text-white"
+                  color="warning"
                   >Edit <CIcon :content="$options.cilPencil"
                 /></CButton>
               </td>
@@ -53,6 +56,11 @@ export default {
       {
         key: "purchase_order_term_and_condition",
         label: "Purchase Orders",
+        data: "",
+      },
+      {
+        key: "payment_term_and_conditon",
+        label: "Payments",
         data: "",
       },
     ],
@@ -98,7 +106,11 @@ export default {
         this.$store.commit("set_loader");
         this.settingData = [];
         for (const key in this.form) {
-          this.settingData.push({ key: key, value: this.form[key], type: "accounting" });
+          this.settingData.push({
+            key: key,
+            value: this.form[key],
+            type: "accounting",
+          });
         }
         let data = this.settingData;
         SettingService.update(data)
