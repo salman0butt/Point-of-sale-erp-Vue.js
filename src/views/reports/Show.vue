@@ -68,6 +68,9 @@ import SaleReport from "@/components/reports/SaleReport";
 import SaleByCustomerReport from "@/components/reports/SaleByCustomerReport";
 import SaleByItemReport from "@/components/reports/SaleByItemReport";
 import SaleBySalesPersonReport from "@/components/reports/SaleBySalesPersonReport";
+import ProfitAndLossReport from "@/components/reports/ProfitAndLossReport";
+import BalanceSheet from "@/components/reports/BalanceSheet";
+
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
 export default {
@@ -81,6 +84,8 @@ export default {
     SaleByCustomerReport,
     SaleByItemReport,
     SaleBySalesPersonReport,
+    ProfitAndLossReport,
+    BalanceSheet,
   },
   data() {
     return {
@@ -118,8 +123,8 @@ export default {
             { key: "SaleBySalesPersonReport", name: "Sales By SalesPerson" },
           ],
         },
-        { key: "Report4", name: "Report4" },
-        { key: "Report5", name: "Report5" },
+        { key: "ProfitAndLossReport", name: "Profit & Loss Report" },
+        { key: "BalanceSheet", name: "Balance Sheet" },
       ],
     };
   },
