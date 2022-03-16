@@ -277,19 +277,24 @@ export default {
       if (val) {
         this.isEditing = true;
         this.form.id = val.uuid;
-        this.form.invoice_id = {
-          label: val.invoice.invoice_ref_no,
-          value: val.invoice.uuid,
-        };
-        this.form.customer = val.customer.uuid;
-        this.form.previousValue = {
-          label:
-            val.customer.full_name +
-            " (mobile: " +
-            val.customer?.contact?.number.en +
-            ")",
-          value: val.customer.uuid,
-        };
+        if (val.invoice) {
+          this.form.invoice_id = {
+            label: val.invoice.invoice_ref_no,
+            value: val.invoice.uuid,
+          };
+        }
+        if (val.customer) {
+          this.form.customer = val.customer.uuid;
+          this.form.previousValue = {
+            label:
+              val.customer.full_name +
+              " (mobile: " +
+              val.customer?.contact?.number.en +
+              ")",
+            value: val.customer.uuid,
+          };
+        }
+
         if (val.invoice && val.invoice.salespersons) {
           this.form.sales_persons = val.invoice.salespersons.map((value) => {
             return value.uuid;
