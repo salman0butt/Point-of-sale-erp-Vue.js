@@ -79,7 +79,7 @@
                 <tr v-for="(product, index) in purchaseOrder.products" :key="index">
                   <td class="center">{{ index + 1 }}</td>
                   <td class="left">{{ product.name }}</td>
-                  <td class="left">{{ product.account.name }}</td>
+                  <td class="left">{{ product.account ? product.account.name : "" }}</td>
                   <td class="center">{{ product.qty }}</td>
                   <td class="right">{{ product.rate }}</td>
                   <td class="right">{{ product.tax ? product.tax.name : "" }}</td>
