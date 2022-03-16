@@ -3,6 +3,7 @@ import auth from '@/middleware/auth'
 //Purchase
 const IndexPurchase = () => import('@/views/accounting/purchaseOrder/Index')
 const CreatePurchase = () => import('@/views/accounting/purchaseOrder/CreateOrUpdate')
+const ShowPurchase = () => import('@/views/accounting/purchaseOrder/Show')
 
 const purchaseOrderRoutes =  {
     path: 'purchases',
@@ -27,6 +28,11 @@ const purchaseOrderRoutes =  {
         path: 'edit/:id',
         name: 'Edit Purchase',
         component: CreatePurchase
+      },
+      {
+        path: 'show/:id',
+        name: 'Show Purchase',
+        component: ShowPurchase
       }
     ]
 };

@@ -101,6 +101,7 @@
                           ><h6>{{ form.subTotal }}</h6>
                         </CCol>
                       </CRow>
+
                       <CRow class="pt-2 ra">
                         <CCol> <h6>Discount %</h6></CCol>
                         <CCol>
@@ -111,6 +112,13 @@
                         </CCol>
                         <CCol md="3"
                           ><h6>{{ form.discount_val }}</h6>
+                        </CCol>
+                      </CRow>
+                      <CRow v-if="form.total_tax" class="pt-2 ra">
+                        <CCol> <h6>Total Tax</h6> </CCol>
+                        <CCol> </CCol>
+                        <CCol md="3"
+                          ><h6>{{ form.total_tax }}</h6>
                         </CCol>
                       </CRow>
                       <CRow class="pt-2 ra">
@@ -481,10 +489,12 @@ export default {
               // type: "product",
               name: item.product_name,
               account: item.account?.uuid,
-              previousAccount: {
-                label: "-- " + item.account?.name,
-                value: item.account?.uuid,
-              },
+              ...(item.account && {
+                previousAccount: {
+                  label: "-- " + item.account?.name,
+                  value: item.account?.uuid,
+                },
+              }),
               rate: parseFloat(item.rate) ?? 0,
               qty: parseFloat(item.qty),
               tax: item && item.tax ? item.tax.uuid : "",

@@ -194,6 +194,7 @@
                               ><h6>{{ form.subTotal }}</h6>
                             </CCol>
                           </CRow>
+
                           <CRow class="pt-2 ra">
                             <CCol> <h6>Discount %</h6></CCol>
                             <CCol>
@@ -204,6 +205,13 @@
                             </CCol>
                             <CCol md="3"
                               ><h6>{{ form.discount_val }}</h6>
+                            </CCol>
+                          </CRow>
+                          <CRow v-if="form.total_tax" class="pt-2 ra">
+                            <CCol> <h6>Total Tax</h6> </CCol>
+                            <CCol> </CCol>
+                            <CCol md="3"
+                              ><h6>{{ form.total_tax }}</h6>
                             </CCol>
                           </CRow>
                           <CRow class="pt-2 ra">
@@ -342,6 +350,7 @@ export default {
       subTotal: 0.0,
       discount: "",
       discount_val: 0.0,
+      total_tax: "",
       total: 0.0,
       customer_notes: "",
       terms_and_conditions: "",
@@ -555,9 +564,10 @@ export default {
     //       console.log(error);
     //     });
     // },
-    updateItems({ items, sub_total }) {
+    updateItems({ items, sub_total, total_tax }) {
       this.form.items = items;
       this.form.subTotal = sub_total;
+      this.form.total_tax = total_tax;
       this.calculateTotalAmount();
     },
     // addOptions(item, k) {
@@ -994,6 +1004,7 @@ export default {
       formData.append("expected_delivery_date", this.form.expected_delivery_date);
       formData.append("discount", this.form.discount);
       formData.append("discount_val", this.form.discount_val);
+      formData.append("total_tax", this.form.total_tax);
       formData.append("total", this.form.total);
       formData.append("customer_note", this.form.customer_notes);
       formData.append("terms_and_conditions", this.form.terms_and_conditions);
@@ -1041,6 +1052,7 @@ export default {
         this.form.date = data.date;
         this.form.expected_delivery_date = data.expected_delivery_date;
         this.form.discount = data.discount ? data.discount : "";
+        this.form.total_tax = parseFloat(data.total_tax) ?? "";
         this.form.total = parseFloat(data.total);
         this.form.customer_notes = data.customer_note;
         this.form.terms_and_conditions = data.terms_and_conditions;
@@ -1061,11 +1073,13 @@ export default {
               uuid: item.product?.uuid,
               // type: "product",
               name: item.name,
-              account: item.account.uuid,
-              previousAccount: {
-                label: "-- " + item.account?.name,
-                value: item.account?.uuid,
-              },
+              account: item.account?.uuid,
+              ...(item.account && {
+                previousAccount: {
+                  label: "-- " + item.account?.name,
+                  value: item.account?.uuid,
+                },
+              }),
               rate: parseFloat(item.rate) ?? 0,
               qty: parseFloat(item.qty),
               tax: item && item.tax ? item.tax.uuid : "",
