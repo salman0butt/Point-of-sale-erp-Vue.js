@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label class="typo__label">Assign To</label>
+    <label class="typo__label">{{ label }}</label>
     <multiselect
       v-model="form.user"
       :options="options.users"
@@ -37,6 +37,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    label: String,
   },
   watch: {
     previousSalesPersons(newValue, oldValue) {

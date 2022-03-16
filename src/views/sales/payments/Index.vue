@@ -17,7 +17,7 @@
                 color="success"
                 class="btn"
                 style="float: right; margin-right: 10px"
-                @click="addBrand()"
+                @click="addPayment()"
               >
                 {{ $t("payments.index.add") }}</CButton
               >
@@ -134,21 +134,21 @@
         </CCard>
       </CCol>
     </CRow>
-    <BrandModel @update-table="updateTable" />
+    <PaymentModel @update-table="updateTable" />
   </div>
 </template>
 
 <script>
 import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-import BrandModel from "@/components/catalogs/brands/BrandModel";
+import PaymentModel from "@/components/sales/payment/PaymentModel";
 import { tableMixin } from "@/mixins/tableMixin";
 import Loader from "@/components/layouts/Loader";
 export default {
   name: "IndexPayments",
   mixins: [tableMixin],
   components: {
-    BrandModel,
+    PaymentModel,
     Loader,
   },
   cilPencil,
@@ -210,14 +210,14 @@ export default {
     getData(page = "", per_page = "") {
       this.getServerData(PaymentInvoiceService, page, per_page);
     },
-    addBrand() {
-      this.$store.commit("set_brand_model", true);
+    addPayment() {
+      this.$store.commit("set_payment_model", true);
     },
     viewRow(uuid) {
       this.$router.push({ path: "/sales/invoice/payments/show/" + uuid });
     },
     editRow(uuid) {
-      this.$router.push({ path: "/catalogs/brands/edit/" + uuid });
+      this.$store.commit("set_payment_model", true);
     },
     deleteRow(uuid) {
       this.deleteData(PaymentInvoiceService, uuid);

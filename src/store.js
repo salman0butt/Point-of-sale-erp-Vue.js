@@ -37,6 +37,7 @@ const state = {
   customerModel: false,
   supplierModel: false,
   brandModel: false,
+  paymentModel: false,
   categoryModel: false,
   TermAndConditionModel: false,
   PaymentTermModel: false,
@@ -151,6 +152,9 @@ const mutations = {
   set_brand_model(state, status) {
     state.brandModel = status;
   },
+  set_payment_model(state, status) {
+    state.paymentModel = status;
+  },
   set_category_model(state, status) {
     state.categoryModel = status;
   },
@@ -202,15 +206,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       commit('remove_errors');
       http.post('/auth/login', user).then(res => {
-        if(res.status === 200 && res.data) {
-          const {data} = res;
+        if (res.status === 200 && res.data) {
+          const { data } = res;
           const token = data.token;
           localStorage.setItem('token', token);
           localStorage.setItem('employee_id', data.employee.uuid);
           localStorage.setItem('permissions', JSON.stringify(data.permissions));
           localStorage.setItem('list_branches', JSON.stringify(data.branches));
           localStorage.setItem('business_id', data.business.uuid);
-          if(data.business && data.business.logo && data.business.logo.path){
+          if (data.business && data.business.logo && data.business.logo.path) {
             localStorage.setItem('business_logo', data.business.logo.path);
           }
           if (data.branches && data.branches.length == 1) {
@@ -224,7 +228,7 @@ const actions = {
           commit('set_permissions', data.permissions);
           commit('set_list_branches', data.branches);
           commit('auth_success', token);
-          if(data.employee.user && data.employee.user.language){
+          if (data.employee.user && data.employee.user.language) {
             dispatch("setLanguage", data.employee.user.language);
           }
           resolve(res);
@@ -277,11 +281,11 @@ const actions = {
     commit('set_language', language);
     localStorage.setItem("language", language);
     http.defaults.headers.common['lang'] = language;
-    const htmlEl=document.querySelector("html");
-    if(language === 'ar') {
+    const htmlEl = document.querySelector("html");
+    if (language === 'ar') {
       htmlEl.setAttribute('dir', 'rtl');
       htmlEl.setAttribute('lang', language);
-    }else if(language === 'en') {
+    } else if (language === 'en') {
       htmlEl.setAttribute('dir', 'ltr');
       htmlEl.setAttribute('lang', language);
     }
@@ -316,6 +320,7 @@ const getters = {
   getCustomerModel: state => state.customerModel,
   getSupplierModel: state => state.supplierModel,
   getBrandModel: state => state.brandModel,
+  getPaymentModel: state => state.paymentModel,
   getCategoryModel: state => state.categoryModel,
   getTermAndConditionModel: state => state.TermAndConditionModel,
   getPaymentTermModel: state => state.PaymentTermModel,
