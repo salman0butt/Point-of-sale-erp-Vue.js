@@ -24,6 +24,10 @@ class PaymentInvoiceService extends Helper {
         return http.post("/invoice-payments", data);
     }
 
+    update(id, data) {
+      return http.patch(`/invoice-payments/${id}`, data);
+    }
+
     getInvoicePayments(id) {
         return http.get(`/invoice-payments/invoice/${id}`);
     }
