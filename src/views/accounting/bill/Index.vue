@@ -35,9 +35,9 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
-                    > -->
+                    >
                     <CButton
                       v-if="$can('edit bills')"
                       @click="editRow(item.uuid)"
@@ -112,7 +112,7 @@ export default {
       this.getServerData(BillService, page, per_page);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/accounting/bill/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/accounting/bill/edit/" + uuid });

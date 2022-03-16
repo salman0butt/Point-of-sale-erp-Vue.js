@@ -2,7 +2,7 @@
   <CCard>
     <Loader />
     <CCardHeader>
-      Purchase Order <strong># {{ purchaseOrder.purchase_order_id }}</strong>
+      BIll No<strong># {{ bill.bill_no }}</strong>
       <div class="float-right buttons-box">
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
@@ -19,7 +19,7 @@
         :enable-download="true"
         :preview-modal="false"
         :paginate-elements-by-height="1400"
-        filename="purchaseOrder"
+        filename="bill"
         :pdf-quality="2"
         :manual-pagination="false"
         pdf-format="a4"
@@ -38,27 +38,20 @@
                 width="100%"
                 style="max-width: 150px"
               />
-              <div v-if="purchaseOrder.deliver_to === 'organization'">
+              <div>
                 <div>
-                  Branch: <strong>{{ purchaseOrder.branch.name }}</strong>
+                  Branch: <strong>{{ bill.branch.name }}</strong>
                 </div>
-                <div>Mobile : {{ purchaseOrder.branch.mobile }}</div>
-                <div>Address : {{ purchaseOrder.branch.address }}</div>
-              </div>
-              <div v-else-if="purchaseOrder.customer">
-                <div>
-                  Customer: <strong>{{ purchaseOrder.customer }}</strong>
-                </div>
+                <div>Mobile : {{ bill.branch.mobile }}</div>
+                <div>Address : {{ bill.branch.address }}</div>
               </div>
             </CCol>
             <CCol sm="8" class="mt-5" style="text-align: right">
               <div>
-                Date :<strong>{{ purchaseOrder.date }}</strong>
+                Date :<strong>{{ bill.date }}</strong>
               </div>
               <div>
-                Expected Delivery Date :<strong>
-                  {{ purchaseOrder.expected_delivery_date }}</strong
-                >
+                Due Date :<strong> {{ bill.due_date }}</strong>
               </div>
             </CCol>
           </CRow>
@@ -76,9 +69,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(product, index) in purchaseOrder.products" :key="index">
+                <tr v-for="(product, index) in bill.products" :key="index">
                   <td class="center">{{ index + 1 }}</td>
-                  <td class="left">{{ product.name }}</td>
+                  <td class="left">{{ product.product_name }}</td>
                   <td class="left">{{ product.account ? product.account.name : "" }}</td>
                   <td class="center">{{ product.qty }}</td>
                   <td class="right">{{ product.rate }}</td>
@@ -91,18 +84,13 @@
           <CRow>
             <CCol lg="4" sm="5">
               <div>
-                <label><b> Payment Terms :</b></label>
-
-                <span v-html="purchaseOrder.payment_term"></span>
-              </div>
-              <div>
                 <label><b>Terms & Conditions :</b></label>
 
-                <span v-html="purchaseOrder.terms_and_conditions"></span>
+                <span v-html="bill.terms_and_conditions"></span>
               </div>
               <div>
-                <label><b> Customer Note : </b></label>
-                {{ purchaseOrder.customer_note }}
+                <label><b> Supplier Note : </b></label>
+                {{ bill.note }}
               </div>
             </CCol>
 
@@ -111,21 +99,21 @@
                 <tbody>
                   <tr>
                     <td class="left"><strong>Subtotal</strong></td>
-                    <td class="right">{{ purchaseOrder.sub_total }}</td>
+                    <td class="right">{{ bill.sub_total }}</td>
                   </tr>
-                  <!-- <tr>
-                    <td class="left"><strong>VAT </strong></td>
-                    <td class="right">{{ purchaseOrder.total_tax }}</td>
-                  </tr> -->
-                  <tr v-if="purchaseOrder.total_discount">
+                  <tr v-if="bill.total_tax">
+                    <td class="left"><strong>Total Tax </strong></td>
+                    <td class="right">{{ bill.total_tax }}</td>
+                  </tr>
+                  <tr v-if="bill.total_discount">
                     <td class="left"><strong>Discount </strong></td>
-                    <td class="right">{{ purchaseOrder.total_discount }}</td>
+                    <td class="right">{{ bill.total_discount }}</td>
                   </tr>
 
                   <tr>
                     <td class="left"><strong>Total</strong></td>
                     <td class="right">
-                      <strong>{{ purchaseOrder.grand_total }}</strong>
+                      <strong>{{ bill.grand_total }}</strong>
                     </td>
                   </tr>
                 </tbody>
@@ -138,38 +126,34 @@
   </CCard>
 </template>
 <script>
-import PurchaseOrderServices from "@/services/accounting/purchaseOrder/PurchaseOrderServices";
+import BillService from "@/services/accounting/bill/BillService";
 import Loader from "@/components/layouts/Loader";
 import VueHtml2pdf from "vue-html2pdf";
 
 export default {
-  name: "showPurchaseOrder",
+  name: "showBill",
   components: { Loader, VueHtml2pdf },
   data() {
     return {
       uuid: "",
-      purchaseOrder: {
+      bill: {
         branch: {
           name: "",
           mobile: "",
           address: "",
         },
         supplier: "",
-        deliver_to: "",
-        customer: "",
-        purchase_order_id: "",
-        reference: "",
         date: "",
-        expected_delivery_date: "",
-        payment_term: "",
-        shipment_preference: "",
+        due_date: "",
         products: [],
-        customer_note: "",
+        note: "",
         terms_and_conditions: "",
         sub_total: "",
         total_discount: "",
+        total_tax: "",
         grand_total: "",
         attachment: [],
+        status: "",
       },
       options: {},
     };
@@ -193,42 +177,37 @@ export default {
     getServerData() {
       this.$store.commit("set_loader");
       this.uuid = this.$route.params.id;
-      PurchaseOrderServices.get(this.uuid)
+      BillService.get(this.uuid)
         .then(({ data }) => {
           if (data) {
-            this.purchaseOrder.date = data.date;
-            this.purchaseOrder.expected_delivery_date = data.expected_delivery_date;
-            this.purchaseOrder.payment_term = data.payment_term;
-            this.purchaseOrder.shipment_preference = data.shipment_preference;
-            this.purchaseOrder.customer_note = data.customer_note;
-            this.purchaseOrder.terms_and_conditions = data.terms_and_conditions;
-            this.purchaseOrder.sub_total = data.sub_total;
-            // this.purchaseOrder.total_discount = data.discount;
+            console.log(data);
+            this.bill.bill_no = data.bill_no;
+            this.bill.date = data.date;
+            this.bill.due_date = data.due_date;
+            this.bill.note = data.note;
+            this.bill.terms_and_conditions = data.terms_and_conditions;
+            this.bill.sub_total = data.sub_total;
+            // this.bill.total_discount = data.discount;
             // if discount is percentage convert it to number else leave it as it is
-            if (data.discount && data.discount.includes("%")) {
-              this.purchaseOrder.total_discount =
-                parseFloat(data.discount.replace("%", "")) / 100;
+            if (data.total_discount && data.total_discount.includes("%")) {
+              this.bill.total_discount =
+                parseFloat(data.total_discount.replace("%", "")) / 100;
             } else {
-              this.purchaseOrder.total_discount = parseFloat(data.discount) ?? "";
+              this.bill.total_discount = parseFloat(data.total_discount) ?? "";
             }
 
-            this.purchaseOrder.grand_total = data.total;
-            this.purchaseOrder.attachment = data.attachment;
-            this.purchaseOrder.supplier = data.supplier;
-            this.purchaseOrder.deliver_to = data.deliver_to;
-            if (data.deliver_to === "customer" && data.customer) {
-              this.purchaseOrder.customer = data.customer.full_name;
-            }
-            this.purchaseOrder.purchase_order_id = data.purchase_order_id;
-            if (data.deliver_to === "organization" && data.branch) {
-              this.purchaseOrder.branch.name = data.branch.name;
-              this.purchaseOrder.branch.mobile = data.branch.mob;
-              this.purchaseOrder.branch.address = data.branch.address;
-            }
+            this.bill.total_tax = data.total_tax;
+            this.bill.grand_total = data.grand_total;
+            this.bill.attachment = data.attachment;
+            this.bill.supplier = data.supplier;
+
+            this.bill.branch.name = data.branch.name;
+            this.bill.branch.mobile = data.branch.mob;
+            this.bill.branch.address = data.branch.address;
 
             if (data.items) {
               data.items.forEach((item) => {
-                this.purchaseOrder.products.push(item);
+                this.bill.products.push(item);
               });
             }
           }
