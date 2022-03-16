@@ -50,9 +50,9 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
-                    > -->
+                    >
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -126,7 +126,7 @@ export default {
       this.getServerData(PurchaseService, page, per_page);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/purchases/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/purchases/edit/" + uuid });

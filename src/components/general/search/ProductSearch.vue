@@ -4,7 +4,7 @@
       <thead>
         <tr>
           <th scope="col">Item Details</th>
-          <th scope="col">Acount</th>
+          <th scope="col">Account</th>
           <th scope="col">Quantity</th>
           <th scope="col">Rate</th>
           <th scope="col">Tax</th>
