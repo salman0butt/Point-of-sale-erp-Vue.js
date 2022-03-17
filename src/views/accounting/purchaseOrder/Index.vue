@@ -50,6 +50,13 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
+                    <CButton
+                      v-if="!item.is_converted_to_bill"
+                      @click="convertBill(item.uuid)"
+                      class="btn-sm mr-2"
+                      color="success"
+                      >Convert To Bill</CButton
+                    >
                     <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
@@ -127,6 +134,40 @@ export default {
     },
     viewRow(uuid) {
       this.$router.push({ path: "/purchases/show/" + uuid });
+    },
+    convertBill(uuid) {
+      this.$swal
+        .fire({
+          title: "Do you want to delete this record",
+          text: "This will be record from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            PurchaseService.billConvert(uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Converted to Bill Successfully",
+                    timer: 3600,
+                  });
+                  this.data.find((item) => item.uuid == uuid).is_converted_to_bill = true;
+                }
+              })
+              .catch((error) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+              });
+          }
+        });
     },
     editRow(uuid) {
       this.$router.push({ path: "/purchases/edit/" + uuid });

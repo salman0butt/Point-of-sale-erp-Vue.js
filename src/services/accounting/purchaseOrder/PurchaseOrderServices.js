@@ -43,6 +43,10 @@ class PurchaseOrderServices extends Helper {
     delete(id) {
         return http.delete(`/purchase-orders/${id}`);
     }
+
+    billConvert(id) {
+      return http.post(`/bill-convert/${id}`, {},  super.selectedBranch());
+    }
 }
 
 export default new PurchaseOrderServices();
