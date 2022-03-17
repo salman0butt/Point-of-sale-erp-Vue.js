@@ -131,7 +131,7 @@ export default {
     form: {
       product_id: "",
       subTotal: "",
-      total_tax: "",
+      total_tax: 0,
       items: [
         {
           uuid: "",
@@ -348,11 +348,11 @@ export default {
         }
         this.form.items[k].amount = amount;
       }
+      this.calculateTotalTax();
       this.updateAmount();
       // this.$forceUpdate();
 
       // this.calculateTotalAmount();
-      this.calculateTotalTax();
     },
     calculateTotalTax() {
       let total_tax = 0;
