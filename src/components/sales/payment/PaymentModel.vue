@@ -9,7 +9,13 @@
       :show.sync="showPaymentModel"
     >
       <template #header>
-        <h6 class="modal-title">{{ $t("payments.create.form.modelTitle") }}</h6>
+        <h6 class="modal-title">
+          {{
+            Object.keys(editData) && Object.keys(editData).length === 0
+              ? $t("payments.create.form.modelTitle")
+              : $t("payments.create.form.editmodelTitle")
+          }}
+        </h6>
       </template>
       <PaymentForm
         :editData="editData"

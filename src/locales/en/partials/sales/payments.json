@@ -20,6 +20,7 @@
         "create": {
             "form": {
                 "modelTitle": "Create Payment",
+                "editmodelTitle": "Edit Payment",
                 "close": "Close",
                 "save": "Save"
             }

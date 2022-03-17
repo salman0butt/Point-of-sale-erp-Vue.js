@@ -284,13 +284,10 @@ export default {
           };
         }
         if (val.customer) {
+          let number = val.customer.contact?.number?.en ?? "";
           this.form.customer = val.customer.uuid;
           this.form.previousValue = {
-            label:
-              val.customer.full_name +
-              " (mobile: " +
-              val.customer?.contact?.number.en +
-              ")",
+            label: val.customer.full_name + " (mobile: " + number + ")",
             value: val.customer.uuid,
           };
         }
@@ -398,77 +395,6 @@ export default {
           });
       }
     },
-    // getBrand() {
-    //   this.$store.commit("set_loader");
-    //   BrandService.get(this.form.id)
-    //     .then(({ data }) => {
-    //       this.displayData(data);
-    //       this.$store.commit("close_loader");
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       this.$store.commit("close_loader");
-    //       this.isEditing = false;
-    //       this.$router.push({ path: "/catalogs/brands/index" });
-    //     });
-    // },
-    // displayData(data = null) {
-    //   if (data != null && data != "") {
-    //     this.resetForm();
-    //     this.isEditing = true;
-    //     this.form.id = data.uuid;
-    //     this.form.name = data.name;
-    //     if (data.parent_id !== "" && data.parent_id !== null) {
-    //       this.form.parent_id = data.parent_id ?? "";
-    //     }
-    //     this.form.status = data.status;
-    //     this.display_images = data.image ?? "";
-    //     this.form.image = "";
-    //   }
-    // },
-    // handleFile(files) {
-    //   this.form.image = files[0];
-    // },
-    // deleteAttachment(uuid) {
-    //   this.$swal
-    //     .fire({
-    //       title: "Do you want to delete this Attachment",
-    //       text: "This will be Deleted from Database",
-    //       showCancelButton: true,
-    //       confirmButtonColor: "#e55353",
-    //       confirmButtonText: "Yes, remove it it!",
-    //     })
-    //     .then((result) => {
-    //       if (result.isConfirmed) {
-    //         this.$store
-    //           .dispatch("deleteAttachment", uuid)
-    //           .then((res) => {
-    //             if (res.status == 200) {
-    //               this.$store.commit("set_loader");
-    //               this.$swal.fire({
-    //                 icon: "success",
-    //                 title: "Success",
-    //                 text: "Attachment Deleted Successfully",
-    //                 timer: 3600,
-    //               });
-    //               this.display_images = null;
-    //               this.$store.commit("close_loader");
-    //             }
-    //           })
-    //           .catch((err) => {
-    //             console.log(err);
-    //             this.$swal.fire({
-    //               icon: "error",
-    //               title: "Error",
-    //               text: "Something went Wrong",
-    //               timer: 3600,
-    //             });
-    //             this.$store.commit("close_loader");
-    //             console.log(err);
-    //           });
-    //       }
-    //     });
-    // },
   },
 };
 </script>

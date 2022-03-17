@@ -7,9 +7,7 @@
         <CCard>
           <CCardHeader>
             Invoice
-            <strong style="text-align: center"
-              ># {{ invoice.invoice_ref_no }}</strong
-            >
+            <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
             <div class="float-center">
@@ -19,11 +17,9 @@
                   :to="`/customers/show/${customer.uuid}`"
                   v-if="$can('show customers')"
                 >
-                  <strong
-                    class="margin:auto"
-                    style="color: red; font-size: 22px"
-                    >{{ customer.name }}</strong
-                  ></router-link
+                  <strong class="margin:auto" style="color: red; font-size: 22px">{{
+                    customer.name
+                  }}</strong></router-link
                 >
               </div>
             </div>
@@ -37,8 +33,8 @@
             <form @submit.prevent="paymentSubmit()">
               <CCol sm="12" md="12" class="pt-2">
                 <Label
-                  ><CIcon style="color: green" :content="$options.cisWallet" />
-                  Payment Method</Label
+                  ><CIcon style="color: green" :content="$options.cisWallet" /> Payment
+                  Method</Label
                 >
                 <CSelect
                   :options="options.paymentMethods"
@@ -64,9 +60,7 @@
                 />
               </CCol>
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">
-                  Amount is required
-                </p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
               <CButton
                 progress
@@ -115,11 +109,7 @@
                 <CIcon name="cib-whatsapp" /> Send WhatsApp</a
               >
 
-              <a
-                href="#"
-                class="btn btn-sm btn-info"
-                @click.prevent="savePdf()"
-              >
+              <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
                 <CIcon name="cil-save" /> Download
               </a>
               <a
@@ -162,9 +152,7 @@
                     <div v-if="customer.address">
                       Address : {{ customer.address.street }}
                     </div>
-                    <div v-if="customer.email">
-                      Email: {{ customer.email.email }}
-                    </div>
+                    <div v-if="customer.email">Email: {{ customer.email.email }}</div>
                     <div v-if="customer.contact_number">
                       Phone: {{ customer.contact_number.number }}
                     </div>
@@ -218,9 +206,7 @@
                         <td>
                           <b>
                             {{
-                              invoice.delivery.name.en
-                                ? invoice.delivery.name.en
-                                : "-"
+                              invoice.delivery.name.en ? invoice.delivery.name.en : "-"
                             }}
                           </b>
                         </td>
@@ -285,9 +271,7 @@
                             <strong>Total With Delivery</strong>
                           </td>
                           <td class="right">
-                            <strong>{{
-                              invoice.total_price_with_delivery
-                            }}</strong>
+                            <strong>{{ invoice.total_price_with_delivery }}</strong>
                           </td>
                         </tr>
                         <!-- <tr>
@@ -312,6 +296,7 @@
         <CCard>
           <CCardHeader> <strong>Payment List</strong> </CCardHeader>
           <CCardBody>
+            <Loader />
             <CDataTable
               :items="payments"
               :fields="fields"
@@ -333,24 +318,17 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
-                      @click="editRow(item.uuid)"
+                      @click="editRow(item)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -361,6 +339,7 @@
         </CCard>
         <WhatsappPluginModel :contacts="options.contacts" type="invoice" />
         <SmsPluginModel :contacts="options.contacts" type="invoice" />
+        <PaymentModel @update-table="updateTable" :editData="editData" />
       </div>
     </div>
   </div>
@@ -377,6 +356,8 @@ import { smsMixin } from "@/mixins/plugins/smsMixin";
 import VueHtml2pdf from "vue-html2pdf";
 import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
 import SmsPluginModel from "@/components/plugins/sms/SmsPluginModel";
+import PaymentModel from "@/components/sales/payment/PaymentModel";
+
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
   { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
@@ -397,11 +378,14 @@ export default {
     VueHtml2pdf,
     WhatsappPluginModel,
     SmsPluginModel,
+    PaymentModel,
   },
   mixins: [whatsappMixin, smsMixin],
   data() {
     return {
       fields,
+      editData: {},
+      deleteRows: [],
       output: null,
       contact: "",
       uuid: "",
@@ -501,8 +485,7 @@ export default {
           ) {
             if (data.customer.all_contacts.length === 1) {
               const number =
-                data.customer.contact.country.dialCode +
-                data.customer.contact.number.en;
+                data.customer.contact.country.dialCode + data.customer.contact.number.en;
               this.customer.contact_number = number;
               this.whatsapp.name = data.customer.full_name;
               this.whatsapp.number = number;
@@ -514,11 +497,7 @@ export default {
               data.customer.all_contacts.map(function (item) {
                 contacts.push({
                   label:
-                    item.country.dialCode +
-                    item.number.en +
-                    " (" +
-                    item.name.en +
-                    ")",
+                    item.country.dialCode + item.number.en + " (" + item.name.en + ")",
                   value: JSON.stringify({
                     uuid: item.uuid,
                     name: data.customer.full_name,
@@ -533,8 +512,7 @@ export default {
           this.invoice.delivery = data.delivery;
           this.invoice.delivery_method_price = data.delivery_method_price;
           this.invoice.address_for_delivery = data.address_for_delivery;
-          this.invoice.total_price_with_delivery =
-            data.total_price_with_delivery;
+          this.invoice.total_price_with_delivery = data.total_price_with_delivery;
 
           data.products.map((item, id) => {
             serverproducts.push(item);
@@ -562,6 +540,8 @@ export default {
           console.log(err);
         });
 
+      this.getPayments();
+
       // Payment Methods display
       let paymentMethods = this.options.paymentMethods;
       this.$store.commit("set_loader");
@@ -579,21 +559,27 @@ export default {
           console.log(err);
         });
 
+      this.$store.commit("close_loader");
+    },
+    getPayments() {
+      this.$store.commit("set_loader");
       // All Payments of invoice
+      this.payments = [];
       let payments = this.payments;
+
       PaymentInvoiceService.getInvoicePayments(this.uuid)
         .then(({ data }) => {
           if (data) {
-            data.map((value, index) => {
+            data.map((value) => {
               payments.push(value);
             });
           }
+          this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
-
-      this.$store.commit("close_loader");
     },
     changeWhatsappContact() {
       if (this.contact) {
@@ -640,8 +626,14 @@ export default {
     viewRow(uuid) {
       this.$router.push({ path: "/sales/invoice/payments/show/" + uuid });
     },
-    editRow(uuid) {
-      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    editRow(item) {
+      this.editData = item;
+      this.$store.commit("set_payment_model", true);
+    },
+    updateTable() {
+      setTimeout(() => {
+        this.getPayments();
+      }, 1000);
     },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
@@ -654,31 +646,29 @@ export default {
           confirmButtonText: "Yes, remove it it!",
         })
         .then((result) => {
-          // if (result.isConfirmed) {
-          //   InvoiceService.delete(this.deleteRows)
-          //     .then((res) => {
-          //       if (res.status == 200) {
-          //         this.$swal.fire({
-          //           icon: "success",
-          //           title: "Success",
-          //           text: "Quotation Deleted Successfully",
-          //           timer: 3600,
-          //         });
-          //         this.serverData = this.serverData.filter(
-          //           (item) => item.uuid != uuid
-          //         );
-          //       }
-          //     })
-          //     .catch((error) => {
-          //       this.$swal.fire({
-          //         icon: "error",
-          //         title: "Error",
-          //         text: "Something went Wrong",
-          //         timer: 3600,
-          //       });
-          //     });
-          //   this.deleteRows = [];
-          // }
+          if (result.isConfirmed) {
+            PaymentInvoiceService.delete(this.deleteRows)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Payment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.payments = this.payments.filter((item) => item.uuid != uuid);
+                }
+              })
+              .catch((error) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+              });
+            this.deleteRows = [];
+          }
         });
     },
   },

@@ -1,233 +1,338 @@
 <template>
-  <CCard>
-    <Loader />
-    <CCardHeader>
-      BIll No<strong># {{ bill.bill_no }}</strong>
-      <div class="float-right buttons-box">
-        <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
-          <CIcon name="cil-save" /> Download
-        </a>
-        <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
-          <CIcon name="cil-print" class="mr-1" /> Print Me
-        </a>
+  <div class="row">
+    <!-- <Loader /> -->
+
+    <div class="col-3">
+      <div>
+        <CCard>
+          <CCardHeader>
+            Bill
+            <strong style="text-align: center"># {{ bill.bill_no }}</strong>
+          </CCardHeader>
+          <CCardBody>
+            <div class="float-center">
+              Supplier
+              <div>
+                <router-link
+                  :to="`/supplier/show/${bill.supplier.uuid}`"
+                  v-if="$can('show customers')"
+                >
+                  <strong class="margin:auto" style="color: red; font-size: 22px">{{
+                    bill.supplier.name
+                  }}</strong></router-link
+                >
+              </div>
+            </div>
+          </CCardBody>
+        </CCard>
       </div>
-    </CCardHeader>
-    <CCardBody id="printMe">
-      <vue-html2pdf
-        :show-layout="false"
-        :float-layout="true"
-        :enable-download="true"
-        :preview-modal="false"
-        :paginate-elements-by-height="1400"
-        filename="bill"
-        :pdf-quality="2"
-        :manual-pagination="false"
-        pdf-format="a4"
-        pdf-orientation="landscape"
-        pdf-content-width="100%"
-        ref="html2Pdf"
-      >
-        <section slot="pdf-content" md="12" style="padding: 0 20px">
-          <CRow class="mb-4">
-            <CCol sm="4">
-              <CImg
-                v-if="businessLogo"
-                :src="businessLogo"
-                block
-                class="mb-2 imger"
-                width="100%"
-                style="max-width: 150px"
-              />
-              <div>
-                <div>
-                  Branch: <strong>{{ bill.branch.name }}</strong>
+      <div>
+        <CCard>
+          <CCardHeader> Payment </CCardHeader>
+          <CCardBody>
+            <form @submit.prevent="paymentSubmit()">
+              <CCol sm="12" md="12" class="pt-2">
+                <Label
+                  ><CIcon style="color: green" :content="$options.cisWallet" /> Payment
+                  Method</Label
+                >
+                <CSelect
+                  :options="options.paymentMethods"
+                  :value.sync="form.payment_method_id"
+                  :class="{ error: $v.form.payment_method_id.$error }"
+                  @input="$v.form.payment_method_id.$touch()"
+                />
+                <div v-if="$v.form.payment_method_id.$error">
+                  <p v-if="!$v.form.payment_method_id.required" class="errorMsg">
+                    Payment Method is required
+                  </p>
                 </div>
-                <div>Mobile : {{ bill.branch.mobile }}</div>
-                <div>Address : {{ bill.branch.address }}</div>
+              </CCol>
+              <CCol sm="12" md="12" class="pt-2">
+                <CInput
+                  label="Amount"
+                  type="number"
+                  step="any"
+                  placeholder="0.000"
+                  v-model="form.amount"
+                  :class="{ error: $v.form.amount.$error }"
+                  @input="$v.form.amount.$touch()"
+                />
+              </CCol>
+              <div v-if="$v.form.amount.$error">
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
-            </CCol>
-            <CCol sm="8" class="mt-5" style="text-align: right">
-              <div>
-                Date :<strong>{{ bill.date }}</strong>
-              </div>
-              <div>
-                Due Date :<strong> {{ bill.due_date }}</strong>
-              </div>
-            </CCol>
-          </CRow>
-          <div class="table-responsive-sm">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th class="center">#</th>
-                  <th>Item</th>
-                  <th>Account</th>
-                  <th class="center">Quantity</th>
-                  <th class="right">Rate</th>
-                  <th class="right">Tax</th>
-                  <th class="right">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(product, index) in bill.products" :key="index">
-                  <td class="center">{{ index + 1 }}</td>
-                  <td class="left">{{ product.product_name }}</td>
-                  <td class="left">{{ product.account ? product.account.name : "" }}</td>
-                  <td class="center">{{ product.qty }}</td>
-                  <td class="right">{{ product.rate }}</td>
-                  <td class="right">{{ product.tax ? product.tax.name : "" }}</td>
-                  <td class="right">{{ product.amount }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <CRow>
-            <CCol lg="4" sm="5">
-              <div>
-                <label><b>Terms & Conditions :</b></label>
-
-                <span v-html="bill.terms_and_conditions"></span>
-              </div>
-              <div>
-                <label><b> Supplier Note : </b></label>
-                {{ bill.note }}
-              </div>
-            </CCol>
-
-            <CCol lg="4" sm="5" class="ml-auto">
-              <table class="table table-clear">
-                <tbody>
-                  <tr>
-                    <td class="left"><strong>Subtotal</strong></td>
-                    <td class="right">{{ bill.sub_total }}</td>
-                  </tr>
-                  <tr v-if="bill.total_tax">
-                    <td class="left"><strong>Total Tax </strong></td>
-                    <td class="right">{{ bill.total_tax }}</td>
-                  </tr>
-                  <tr v-if="bill.total_discount">
-                    <td class="left"><strong>Discount </strong></td>
-                    <td class="right">{{ bill.total_discount }}</td>
-                  </tr>
-
-                  <tr>
-                    <td class="left"><strong>Total</strong></td>
-                    <td class="right">
-                      <strong>{{ bill.grand_total }}</strong>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </CCol>
-          </CRow>
-        </section>
-      </vue-html2pdf>
-    </CCardBody>
-  </CCard>
+              <CButton
+                progress
+                timeout="2000"
+                block
+                color="success"
+                style="width: 200px; margin-left: 20px"
+                type="submit"
+                >Pay</CButton
+              >
+            </form>
+          </CCardBody>
+        </CCard>
+      </div>
+    </div>
+    <div class="col-9">
+      <div><ShowBill @bill-updated="billUpdated($event)" /></div>
+      <div>
+        <CCard>
+          <CCardHeader> <strong>Payment List</strong> </CCardHeader>
+          <CCardBody>
+            <CDataTable
+              :items="payments"
+              :fields="fields"
+              table-filter
+              sorter
+              hover
+              ref="externalAgent"
+            >
+              <template #created_by="{ item }">
+                <td>
+                  {{ item.created_by.username }}
+                </td>
+              </template>
+              <template #payment_no="{ item }">
+                <td>
+                  {{ item.payment_no ? item.payment_no : "-" }}
+                </td>
+              </template>
+              <template #actions="{ item }">
+                <td>
+                  <CButtonGroup>
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                      >View</CButton
+                    >
+                    <CButton
+                      @click="editRow(item.uuid)"
+                      class="btn-sm text-white"
+                      color="warning"
+                    >
+                      <CIcon :content="$options.cilPencil"
+                    /></CButton>
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                      <CIcon :content="$options.cilTrash" />
+                    </CButton>
+                  </CButtonGroup>
+                </td>
+              </template>
+            </CDataTable>
+          </CCardBody>
+        </CCard>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import BillService from "@/services/accounting/bill/BillService";
-import Loader from "@/components/layouts/Loader";
-import VueHtml2pdf from "vue-html2pdf";
+// import QuotationService from "@/services/sale/QuotationService";
+import BillPaymentService from "@/services/accounting/bill/BillPaymentService";
+import { cisWallet } from "@coreui/icons-pro";
+import { required } from "vuelidate/lib/validators";
+// import Loader from "@/components/layouts/Loader.vue";
+import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import ShowBill from "@/components/accounting/bill/ShowBill";
+
+const fields = [
+  { key: "created_by", label: "Created By", _style: "min-width:15%;" },
+  { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
+  { key: "dated", label: "Dated", _style: "min-width:40%" },
+  { key: "amount", label: "Amount", _style: "min-width:15%;" },
+  { key: "total_amount", label: "Total Amount", _style: "min-width:15%;" },
+  { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
+];
 
 export default {
-  name: "showBill",
-  components: { Loader, VueHtml2pdf },
+  name: "ShowBillAndPayment",
+  cisWallet,
+  cilPencil,
+  cilTrash,
+  cilEye,
+  components: {
+    // Loader,
+    ShowBill,
+  },
   data() {
     return {
+      fields,
+      deleteRows: [],
+      contact: "",
       uuid: "",
       bill: {
-        branch: {
+        bill_no: "",
+        supplier: {
           name: "",
-          mobile: "",
+          uuid: "",
           address: "",
+          contact_number: "",
+          email: "",
         },
-        supplier: "",
-        date: "",
-        due_date: "",
-        products: [],
-        note: "",
-        terms_and_conditions: "",
-        sub_total: "",
-        total_discount: "",
-        total_tax: "",
-        grand_total: "",
-        attachment: [],
-        status: "",
       },
-      options: {},
+      form: {
+        payment_method_id: "",
+        amount: "",
+        supplier_id: "",
+        bill_id: "",
+      },
+      options: {
+        paymentMethods: [{ label: "Choose Payment Method", value: "" }],
+        contacts: [{ label: "Choose Contact", value: "" }],
+      },
+      payments: [],
+    };
+  },
+
+  validations() {
+    return {
+      form: {
+        payment_method_id: { required },
+        amount: { required },
+      },
     };
   },
   created() {
+    this.uuid = this.$route.params.id;
     this.getServerData();
   },
-  computed: {
-    businessLogo() {
-      return this.$store.getters.getBusinessLogo;
-    },
-  },
   methods: {
-    async print() {
-      // Pass the element id here
-      await this.$htmlToPaper("printMe");
-    },
-    savePdf() {
-      this.$refs.html2Pdf.generatePdf();
-    },
     getServerData() {
       this.$store.commit("set_loader");
-      this.uuid = this.$route.params.id;
-      BillService.get(this.uuid)
+
+      // Payment Methods display
+      let paymentMethods = this.options.paymentMethods;
+      this.$store.commit("set_loader");
+      BillPaymentService.create()
+        .then(({ data }) => {
+          if (data && data.paymentMethods) {
+            data.paymentMethods.map((value) => {
+              paymentMethods.push({ label: value.name, value: value.uuid });
+            });
+            this.$store.commit("close_loader");
+          }
+        })
+        .catch((err) => {
+          this.$store.commit("close_loader");
+          console.log(err);
+        });
+
+      // All Payments of invoice
+      let payments = this.payments;
+      BillPaymentService.getBillPayments(this.uuid)
         .then(({ data }) => {
           if (data) {
-            console.log(data);
-            this.bill.bill_no = data.bill_no;
-            this.bill.date = data.date;
-            this.bill.due_date = data.due_date;
-            this.bill.note = data.note;
-            this.bill.terms_and_conditions = data.terms_and_conditions;
-            this.bill.sub_total = data.sub_total;
-            // this.bill.total_discount = data.discount;
-            // if discount is percentage convert it to number else leave it as it is
-            if (data.total_discount && data.total_discount.includes("%")) {
-              this.bill.total_discount =
-                parseFloat(data.total_discount.replace("%", "")) / 100;
-            } else {
-              this.bill.total_discount = parseFloat(data.total_discount) ?? "";
-            }
-
-            this.bill.total_tax = data.total_tax;
-            this.bill.grand_total = data.grand_total;
-            this.bill.attachment = data.attachment;
-            this.bill.supplier = data.supplier;
-
-            this.bill.branch.name = data.branch.name;
-            this.bill.branch.mobile = data.branch.mob;
-            this.bill.branch.address = data.branch.address;
-
-            if (data.items) {
-              data.items.forEach((item) => {
-                this.bill.products.push(item);
-              });
-            }
+            data.map((value) => {
+              payments.push(value);
+            });
           }
-          this.$store.commit("close_loader");
         })
         .catch((err) => {
           console.log(err);
-          this.$store.commit("close_loader");
-          this.$router.push({ path: "/not-found" });
+        });
+
+      this.$store.commit("close_loader");
+    },
+    paymentSubmit() {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        let payments = this.payments;
+        this.$store.commit("set_loader");
+        this.form.bill_id = this.uuid;
+        this.form.total_amount = this.form.amount;
+        BillPaymentService.store(this.form)
+          .then(({ data }) => {
+            payments.unshift(data);
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Payment Added Successfully",
+              timer: 3600,
+            });
+
+            this.resetForm();
+
+            this.$store.commit("close_loader");
+          })
+          .catch((err) => {
+            this.$store.commit("close_loader");
+            console.log(err);
+          });
+      }
+    },
+    billUpdated(obj) {
+      if (obj) {
+        this.bill.bill_no = obj.bill_no;
+        if (obj.supplier) {
+          this.form.supplier_id = obj.supplier.uuid;
+          this.bill.supplier.uuid = obj.supplier.uuid;
+          this.bill.supplier.name = obj.supplier.name;
+        }
+      }
+    },
+    resetForm() {
+      this.$v.$reset();
+      for (let index in this.form) {
+        if (index !== "supplier_id") this.form[index] = "";
+      }
+    },
+    viewRow(uuid) {
+      alert("not ready");
+      // this.$router.push({ path: "/sales/invoice/payments/show/" + uuid });
+    },
+    editRow(uuid) {
+      alert("not ready");
+      // this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    },
+    deleteRow(uuid) {
+      this.deleteRows = JSON.stringify([uuid]);
+      this.$swal
+        .fire({
+          title: "Do you want to delete this record",
+          text: "This will be record from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            BillPaymentService.delete(this.deleteRows)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Payment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.payments = this.payments.filter((item) => item.uuid != uuid);
+                }
+              })
+              .catch((error) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+              });
+            this.deleteRows = [];
+          }
         });
     },
   },
 };
 </script>
-
 <style>
 .vue-html2pdf .layout-container {
   position: inherit !important;
   width: auto !important;
   height: auto !important;
   background: initial !important;
+}
+.buttons-box {
+  display: flex;
+  width: auto;
+  align-items: center;
 }
 </style>
