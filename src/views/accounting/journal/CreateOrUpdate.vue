@@ -99,8 +99,7 @@
                                 @getAccountDropdown="
                                   getAccountDropDown($event, k)
                                 "
-                                :previousValue.sync="previousAccount"
-                                :key="k"
+                                :previousValue="item.account"
                               />
                             </th>
                             <td>
@@ -497,6 +496,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+
           this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
@@ -510,7 +510,6 @@ export default {
       this.$store.commit("set_loader");
       JournalServices.get(this.form.id)
         .then(({ data }) => {
-          console.log(data);
           this.displayData(data);
           this.$store.commit("close_loader");
         })
