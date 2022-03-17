@@ -60,11 +60,7 @@
               </template>
               <template #invoice="{ item }">
                 <td>
-                  {{
-                    item.invoice.invoice_ref_no
-                      ? item.invoice.invoice_ref_no
-                      : "-"
-                  }}
+                  {{ item.invoice.invoice_ref_no ? item.invoice.invoice_ref_no : "-" }}
                 </td>
               </template>
               <template #customer="{ item }">
@@ -99,15 +95,12 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
                       v-if="$can('edit brands')"
-                      @click="editRow(item.uuid)"
+                      @click="editRow(item)"
                       class="btn-sm text-white"
                       color="warning"
                     >
@@ -134,7 +127,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <PaymentModel @update-table="updateTable" />
+    <PaymentModel @update-table="updateTable" :editData="editData" />
   </div>
 </template>
 
@@ -157,6 +150,7 @@ export default {
   data() {
     return {
       data: [],
+      editData: {},
       fields: [
         {
           key: "payment_no",
@@ -216,7 +210,8 @@ export default {
     viewRow(uuid) {
       this.$router.push({ path: "/sales/invoice/payments/show/" + uuid });
     },
-    editRow(uuid) {
+    editRow(item) {
+      this.editData = item;
       this.$store.commit("set_payment_model", true);
     },
     deleteRow(uuid) {

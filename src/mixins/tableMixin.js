@@ -33,17 +33,17 @@ export const tableMixin = {
             this.data = [];
             if (data.data) {
               data.data.map((item, id) => {
-                if(item && item.status) {
+                if (item && item.status) {
                   const active_lang = this.$store.getters.getLanguage;
-                  if(item.status == 'active' && active_lang === 'en') {
+                  if (item.status == 'active' && active_lang === 'en') {
                     item.status = 'Active';
-                  }else if(item.status == 'inactive' && active_lang === 'en'){
+                  } else if (item.status == 'inactive' && active_lang === 'en') {
                     item.status = 'Inactive';
-                  }else if(item.status == 'active' && active_lang === 'ar'){
+                  } else if (item.status == 'active' && active_lang === 'ar') {
                     item.status = 'مفعل';
-                  }else if(item.status == 'inactive' && active_lang === 'ar'){
+                  } else if (item.status == 'inactive' && active_lang === 'ar') {
                     item.status = 'غير مفعل';
-                  }else {
+                  } else {
                     item.status = item.status ?? '';
                   }
                   // item.status = this.$t("status.en.active");
@@ -129,7 +129,7 @@ export const tableMixin = {
     }
   },
   translateStatus(status = null) {
-    if(status) {
+    if (status) {
       return this.$t("status." + status);
     }
   },
