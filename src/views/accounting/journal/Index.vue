@@ -38,22 +38,17 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
-                    > -->
+                    >
                     <CButton
-                      v-if="$can('edit brands')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      >Edit <CIcon :content="$options.cilPencil"
-                    /></CButton>
-                    <CButton
-                      v-if="$can('delete brands')"
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
                     >
+                      <CIcon :content="$options.cilPencil"
+                    /></CButton>
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -119,7 +114,7 @@ export default {
       this.$store.commit("set_brand_model", true);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/accounting/journals/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/accounting/journals/edit/" + uuid });

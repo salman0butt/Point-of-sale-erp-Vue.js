@@ -381,6 +381,7 @@ export default {
         this.general_items.tax_id = data.tax_id;
         if (data.logo) {
           this.general_items.previewImage = data.logo.path;
+           localStorage.setItem('business_logo', data.logo.path);
         }
         this.general_items.logo = "";
         this.general_items.stamp = "";
@@ -440,6 +441,7 @@ export default {
               timer: 3600,
             });
             this.displayData(response.data);
+
           }
         })
         .catch((error) => {

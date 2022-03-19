@@ -3,8 +3,12 @@
     <CCard>
       <Loader />
       <CCardHeader>
-        BIll Payment #
-        <strong> {{ payment.payment_no ? payment.payment_no : "-" }}</strong>
+        Journal #
+        <strong>
+          {{
+            journal.journal_no ? journal.journal_prefix + journal.journal_no : "-"
+          }}</strong
+        >
         <div class="float-right buttons-box">
           <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
             <CIcon name="cil-save" /> Download
@@ -51,70 +55,78 @@
                 <div>Phone :{{ branch.mob }}</div>
                 <div v-if="branch.cr">Cr #{{ branch.cr }}</div>
               </CCol>
+              <CCol sm="8" class="mt-5" style="text-align: right">
+                <div>
+                  Dated :<strong># {{ journal.date }}</strong>
+                </div>
+                <div>
+                  Refernce ID :<strong># {{ journal.ref_id }}</strong>
+                </div>
+              </CCol>
             </CRow>
             <div class="table-responsive-sm">
               <table class="table table-striped">
                 <thead>
                   <tr>
-                    <th class="right">Dated</th>
-                    <th class="center">Payment No</th>
-                    <th class="right">Supplier</th>
-                    <th class="center">Bill No</th>
-                    <th>Payment Method</th>
-                    <th class="right">Amount</th>
+                    <th class="right">Account</th>
+                    <th class="center">Description</th>
+                    <th class="right">Debits</th>
+                    <th class="center">Credits</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <tr v-for="(transaction, index) in journal.transactions" :key="index">
                     <td class="center">
-                      {{ payment.dated ? payment.dated : "-" }}
-                    </td>
-                    <td class="left">
-                      {{ payment.payment_no ? payment.payment_no : "-" }}
-                    </td>
-                    <td class="left" v-if="payment.supplier">
-                      {{ payment.supplier ? payment.supplier.name : "-" }}
-                    </td>
-                    <td class="center" v-if="payment.bill">
-                      {{ payment.bill ? payment.bill.bill_no : "-" }}
-                    </td>
-                    <td class="right" v-if="payment.payment_method">
                       {{
-                        payment.payment_method.name ? payment.payment_method.name : "-"
+                        transaction.from_account
+                          ? transaction.from_account.name
+                          : transaction.to_account.name
                       }}
                     </td>
-                    <td class="right">
-                      {{ payment.amount ? payment.amount : "-" }}
+                    <td class="left">
+                      {{ transaction.description ? transaction.description : "-" }}
+                    </td>
+                    <td class="left">
+                      {{ transaction.debit ? transaction.debit : "-" }}
+                    </td>
+                    <td class="center">
+                      {{ transaction.credit ? transaction.credit : "-" }}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <CRow>
+              <CCol lg="4" sm="5">
+                <div>
+                  <strong>
+                    Note :
+                    <span class="ml-2">{{ journal.description }}</span>
+                  </strong>
+                </div>
+              </CCol>
               <CCol lg="4" sm="5" class="ml-auto">
                 <table class="table table-clear">
                   <tbody>
-                    <tr v-if="payment.bill">
+                    <tr>
                       <td class="left">
-                        <strong>Bill Amount</strong>
+                        <strong>Total Credits</strong>
                       </td>
                       <td class="right">
-                        {{ payment.bill.grand_total }}
+                        {{ this.total_credit }}
                       </td>
                     </tr>
 
                     <tr>
-                      <td class="left"><strong>Total Amount Paid</strong></td>
+                      <td class="left"><strong>Total Debits</strong></td>
                       <td class="right">
-                        {{ payment.amount ? payment.amount : "-" }}
+                        {{ this.total_debit }}
                       </td>
                     </tr>
                     <tr>
-                      <td class="left"><strong>Balance</strong></td>
+                      <td class="left"><strong>Differnce</strong></td>
                       <td class="right">
-                        {{
-                          payment.amount ? payment.bill.grand_total - payment.amount : "-"
-                        }}
+                        {{ this.total_differnce }}
                       </td>
                     </tr>
                   </tbody>
@@ -128,7 +140,8 @@
   </div>
 </template>
 <script>
-import BillPaymentService from "@/services/accounting/bill/BillPaymentService";
+import JournalServices from "@/services/accounting/journal/JournalServices.js";
+
 import { cisWallet } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
@@ -136,7 +149,7 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import VueHtml2pdf from "vue-html2pdf";
 
 export default {
-  name: "ShowBillPayment",
+  name: "ShowJournal",
   cisWallet,
   cilPencil,
   cilTrash,
@@ -148,10 +161,12 @@ export default {
 
   data() {
     return {
-      output: null,
       uuid: "",
       branch: Object,
-      payment: Object,
+      journal: Object,
+      total_credit: 0,
+      total_debit: 0,
+      total_differnce: 0,
       // options: {
       //   contacts: [{ label: "Choose Contact", value: "" }],
       // },
@@ -177,40 +192,24 @@ export default {
       this.$store.commit("set_loader");
       await new Promise((resolve, reject) => {
         this.uuid = this.$route.params.id;
-        BillPaymentService.get(this.uuid)
+        JournalServices.get(this.uuid)
           .then(({ data }) => {
-            this.payment = data;
-            this.branch = data.bill.branch;
-            // if (
-            //   data.customer &&
-            //   data.customer.all_contacts &&
-            //   data.customer.all_contacts.length > 0
-            // ) {
-            //   if (data.customer.all_contacts.length === 1) {
-            //     const number =
-            //       data.customer.contact.country.dialCode +
-            //       data.customer.contact.number.en;
-            //     this.customer.contact_number = number;
-            //     this.whatsapp.name = data.customer.full_name;
-            //     this.whatsapp.number = number;
-
-            //     this.sms.name = data.customer.full_name;
-            //     this.sms.number = number;
-            //   } else {
-            //     let contacts = this.options.contacts;
-            //     data.customer.all_contacts.map(function (item) {
-            //       contacts.push({
-            //         label:
-            //           item.country.dialCode + item.number.en + " (" + item.name.en + ")",
-            //         value: JSON.stringify({
-            //           uuid: item.uuid,
-            //           name: data.customer.full_name,
-            //           number: item.country.dialCode + item.number.en,
-            //         }),
-            //       });
-            //     });
-            //   }
-            // }
+            console.log(data);
+            if (data) {
+              this.journal = data;
+              this.branch = data.branch;
+              if (data.transactions) {
+                data.transactions.map((transaction) => {
+                  if (transaction.debit) {
+                    this.total_debit += parseFloat(transaction.debit);
+                  }
+                  if (transaction.credit) {
+                    this.total_credit += parseFloat(transaction.credit);
+                  }
+                });
+                this.total_differnce = this.total_credit - this.total_debit;
+              }
+            }
 
             this.$store.commit("close_loader");
             resolve();
@@ -220,16 +219,6 @@ export default {
             console.log(err);
           });
       });
-    },
-    changeWhatsappContact() {
-      if (this.contact) {
-        const contact = JSON.parse(this.contact);
-        this.whatsapp.name = contact.name;
-        this.whatsapp.number = contact.number;
-      } else {
-        this.whatsapp.name = "";
-        this.whatsapp.number = "";
-      }
     },
   },
 };
