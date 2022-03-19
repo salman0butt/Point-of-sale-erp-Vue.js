@@ -52,6 +52,7 @@ const state = {
   buyCreditModel: false,
   smsCredits: 0,
   smsPluginModel: false,
+  billPaymentModel: false,
 }
 
 const mutations = {
@@ -197,7 +198,11 @@ const mutations = {
   },
   set_sms_plugin_model(state, status) {
     state.smsPluginModel = status;
+  },
+  set_bill_payment_model(state, status) {
+    state.billPaymentModel = status;
   }
+
 
 
 }
@@ -334,7 +339,8 @@ const getters = {
   getReturnByInvoiceModel: state => state.ReturnByInvoiceModel,
   getBuyCreditModel: state => state.buyCreditModel,
   getSmsCredits: state => state.smsCredits,
-  getSmsPluginModel: state => state.smsPluginModel
+  getSmsPluginModel: state => state.smsPluginModel,
+  getBillPaymentModel: state => state.billPaymentModel,
 
 }
 

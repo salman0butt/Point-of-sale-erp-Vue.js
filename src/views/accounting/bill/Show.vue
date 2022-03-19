@@ -82,6 +82,7 @@
         <CCard>
           <CCardHeader> <strong>Payment List</strong> </CCardHeader>
           <CCardBody>
+            <Loader />
             <CDataTable
               :items="payments"
               :fields="fields"
@@ -107,7 +108,7 @@
                       >View</CButton
                     >
                     <CButton
-                      @click="editRow(item.uuid)"
+                      @click="editRow(item)"
                       class="btn-sm text-white"
                       color="warning"
                     >
@@ -123,6 +124,7 @@
           </CCardBody>
         </CCard>
       </div>
+      <BillPaymentModel @update-table="updateTable" :editData="editData" />
     </div>
   </div>
 </template>
@@ -131,9 +133,10 @@
 import BillPaymentService from "@/services/accounting/bill/BillPaymentService";
 import { cisWallet } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
-// import Loader from "@/components/layouts/Loader.vue";
+import Loader from "@/components/layouts/Loader.vue";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import ShowBill from "@/components/accounting/bill/ShowBill";
+import BillPaymentModel from "@/components/accounting/bill/BillPaymentModel";
 
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
@@ -151,12 +154,14 @@ export default {
   cilTrash,
   cilEye,
   components: {
-    // Loader,
+    Loader,
     ShowBill,
+    BillPaymentModel,
   },
   data() {
     return {
       fields,
+      editData: {},
       deleteRows: [],
       contact: "",
       uuid: "",
@@ -218,18 +223,7 @@ export default {
         });
 
       // All Payments of invoice
-      let payments = this.payments;
-      BillPaymentService.getBillPayments(this.uuid)
-        .then(({ data }) => {
-          if (data) {
-            data.map((value) => {
-              payments.push(value);
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      this.getBillPayments();
 
       this.$store.commit("close_loader");
     },
@@ -260,6 +254,29 @@ export default {
           });
       }
     },
+    getBillPayments() {
+      this.$store.commit("set_loader");
+      this.payments = [];
+      let payments = this.payments;
+      BillPaymentService.getBillPayments(this.uuid)
+        .then(({ data }) => {
+          if (data) {
+            data.map((value) => {
+              payments.push(value);
+            });
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((err) => {
+          this.$store.commit("close_loader");
+          console.log(err);
+        });
+    },
+    updateTable() {
+      setTimeout(() => {
+        this.getBillPayments();
+      }, 1000);
+    },
     billUpdated(obj) {
       if (obj) {
         this.bill.bill_no = obj.bill_no;
@@ -277,12 +294,11 @@ export default {
       }
     },
     viewRow(uuid) {
-      alert("not ready");
-      // this.$router.push({ path: "/sales/invoice/payments/show/" + uuid });
+      this.$router.push({ path: "/accounting/bill/payments/show/" + uuid });
     },
-    editRow(uuid) {
-      alert("not ready");
-      // this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    editRow(item) {
+      this.editData = item;
+      this.$store.commit("set_bill_payment_model", true);
     },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
