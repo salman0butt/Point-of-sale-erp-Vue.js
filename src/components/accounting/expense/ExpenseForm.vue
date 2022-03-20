@@ -14,16 +14,16 @@
 
             <CCol sm="6" md="4" class="pt-2">
               <CInput
-                label="Debit"
+                label="Amount"
                 type="number"
                 placeholder="0.00"
-                v-model="form.debit"
-                :class="{ error: $v.form.debit.$error }"
-                @input="$v.form.debit.$touch()"
+                v-model="form.amount"
+                :class="{ error: $v.form.amount.$error }"
+                @input="$v.form.amount.$touch()"
               />
-              <div v-if="$v.form.debit.$error">
-                <p v-if="!$v.form.debit.required" class="errorMsg">
-                  Debit is required
+              <div v-if="$v.form.amount.$error">
+                <p v-if="!$v.form.amount.required" class="errorMsg">
+                  Amount is required
                 </p>
               </div>
             </CCol>
@@ -158,18 +158,22 @@ export default {
       account_id: "",
       // from_payment_method_id: "",
       ref_id: "",
-      debit: "",
+      amount: "",
       date: "",
-      status: "",
+      status: "draft",
       description: "",
       documents: [],
     },
     display_documents: [],
     options: {
       status: [
-        { value: "", label: "Choose Status", disabled: true, selected: "" },
-        { value: "pending", label: "Pending" },
-        { value: "paid", label: "Paid" },
+        {
+          value: "draft",
+          label: "Draft",
+          selected: "",
+        },
+        { value: "approved", label: "Approved" },
+        { value: "rejected", label: "Rejected" },
       ],
       payment_methods: [
         { value: "", label: "Choose Method", disabled: true, selected: "" },
@@ -188,7 +192,7 @@ export default {
         // category_id: { required },
         account_id: { required },
         // from_payment_method_id: { required },
-        debit: { required },
+        amount: { required },
         date: { required },
         status: { required },
       },
@@ -297,7 +301,7 @@ export default {
             this.form.id = data.uuid;
 
             this.form.ref_id = data.ref_id;
-            this.form.debit = data.debit;
+            this.form.amount = data.amount;
             this.form.date = data.date;
             this.form.description = data.description;
             this.form.status = data.status;

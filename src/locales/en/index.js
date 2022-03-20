@@ -5,6 +5,7 @@ import brands from './partials/catalogs/brands.json';
 import categories from './partials/catalogs/category.json';
 import products from './partials/catalogs/products.json';
 import payments from './partials/sales/payments.json';
+import reports from './partials/reports.json';
 
 export default {
   ...menu,
@@ -14,4 +15,5 @@ export default {
   ...categories,
   ...products,
   ...payments,
+  ...reports,
 }
