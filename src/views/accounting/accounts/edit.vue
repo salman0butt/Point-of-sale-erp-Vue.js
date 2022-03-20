@@ -42,12 +42,12 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
-                  <AccountDropdown
+                <!-- <CCol sm="6" md="4" class="pt-2"> -->
+                <!-- <AccountDropdown
                     :previousValue="form.parent_account"
                     @getAccountDropdown="getAccountDropdown"
                   />
-                </CCol>
+                </CCol> -->
                 <CCol sm="6" md="4" class="pt-2">
                   <AccountTypeDropdown
                     :uuid="form.account_type"
@@ -118,7 +118,7 @@ export default {
     form: {
       code: "",
       name: "",
-      parent_account: "",
+      // parent_account: "",
       account_type: "",
       description: "",
       nature: "",
@@ -164,10 +164,10 @@ export default {
           this.form.nature = res.data.type;
           this.form.description = res.data.description;
           this.form.status = res.data.status;
-          this.form.parent_account = {
-            value: res.data.parent.uuid,
-            label: res.data.parent.name,
-          };
+          // this.form.parent_account = {
+          //   value: res.data.parent.uuid,
+          //   label: res.data.parent.name,
+          // };
         }
       });
     },
@@ -203,9 +203,9 @@ export default {
     getAccountTypeDropdown(value) {
       this.form.account_type = value;
     },
-    getAccountDropdown(value) {
-      this.form.parent_account = value.value;
-    },
+    // getAccountDropdown(value) {
+    //   this.form.parent_account = value.value;
+    // },
   },
 };
 </script>
