@@ -42,9 +42,9 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <!-- <CCol sm="6" md="4" class="pt-2">
                   <AccountDropdown @getAccountDropdown="getAccountDropdown" />
-                </CCol>
+                </CCol> -->
                 <CCol sm="6" md="4" class="pt-2">
                   <AccountTypeDropdown
                     @getAccountDropdown="getAccountTypeDropdown"
@@ -106,7 +106,7 @@ export default {
     form: {
       code: "",
       name: "",
-      parent_account: "",
+      // parent_account: "",
       account_type: "",
       description: "",
       nature: "",
@@ -173,9 +173,9 @@ export default {
     getAccountTypeDropdown(value) {
       this.form.account_type = value;
     },
-    getAccountDropdown(value) {
-      this.form.parent_account = value.value;
-    },
+    // getAccountDropdown(value) {
+    //   this.form.parent_account = value.value;
+    // },
   },
 };
 </script>
