@@ -5,7 +5,9 @@
       "name": "Sales",
       "quotations": "Quotations",
       "invoices": "Invoices",
-      "customers": "Customers"
+      "customers": "Customers",
+      "returns": "Returns",
+      "payments": "Payments"
     },
     "contacts": {
       "name": "Contacts",

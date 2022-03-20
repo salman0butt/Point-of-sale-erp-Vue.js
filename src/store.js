@@ -175,8 +175,8 @@ const mutations = {
     state.closingModel = status;
   },
   set_business_logo(state, logo) {
-    state.business_logo = logo;
     localStorage.setItem('business_logo', logo);
+    state.business_logo = logo;
   },
   set_custom_plugin_model(state, status) {
     state.customPluginModel = status;
