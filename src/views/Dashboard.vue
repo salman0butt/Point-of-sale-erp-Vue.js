@@ -136,7 +136,7 @@
       </CCol>
     </CRow>
     <CRow>
-      <CCol sm="6" md="4">
+      <CCol sm="6" md="6">
         <CCard>
           <CCardHeader> Top 5 Products </CCardHeader>
           <CCardBody>
@@ -144,11 +144,15 @@
           </CCardBody>
         </CCard>
       </CCol>
-      <CCol sm="6" md="4">
+      <CCol sm="6" md="6">
         <CCard>
           <CCardHeader> Product Alert </CCardHeader>
           <CCardBody>
-            <CDataTable :items="productAlertData" :fields="productAlertFields" hover>
+            <CDataTable
+              :items="productAlertData"
+              :fields="productAlertFields"
+              hover
+            >
               <template slot="alert" slot-scope="{ item }">
                 <td>
                   <CBadge color="danger" shape="pill">{{ item.alert }}</CBadge>
@@ -334,7 +338,9 @@ export default {
 
               data.pieChart.map(function (val) {
                 labelsPieChart.push(val.name);
-                let total = parseFloat(val.invoice_payments_sum_invoice_paymentsamount);
+                let total = parseFloat(
+                  val.invoice_payments_sum_invoice_paymentsamount
+                );
                 if (defaultDatasetPieChart[0].data) {
                   defaultDatasetPieChart[0].data.push(total);
                 }
