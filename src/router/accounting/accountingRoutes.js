@@ -24,6 +24,7 @@ const EditIncome = () => import('@/views/accounting/income/Edit')
 const IndexExpense = () => import('@/views/accounting/expense/Index')
 const CreateExpense = () => import('@/views/accounting/expense/Create')
 const EditExpense = () => import('@/views/accounting/expense/Edit')
+const ShowExpense = () => import('@/views/accounting/expense/Show')
 
 // Transfer
 const IndexTransfer = () => import('@/views/accounting/transfer/Index')
@@ -135,6 +136,11 @@ const accountingRoutes =
             path: 'expense/edit/:id',
             name: 'EditExpense',
             component: EditExpense,
+        },
+        {
+            path: 'expense/show/:id',
+            name: 'ShowExpense',
+            component: ShowExpense,
         },
         {
             path: 'transfer/index',

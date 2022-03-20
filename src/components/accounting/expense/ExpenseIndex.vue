@@ -44,13 +44,13 @@
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
-                <!-- <CButton
+                <CButton
                   @click="viewRow(item.uuid)"
                   class="btn-sm"
                   color="success"
                   title="View"
                   >View</CButton
-                > -->
+                >
                 <CButton
                   v-if="$can('edit expense')"
                   @click="editRow(item.uuid)"
@@ -73,7 +73,11 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
       </CCol>
     </CRow>
   </div>
@@ -92,7 +96,7 @@ const fields = [
   //   filter: false,
   // },
   { key: "account", label: "Account", _style: "min-width:15%;" },
-  { key: "debit", label: "DEBIT", _style: "min-width:15%;" },
+  { key: "amount", label: "Amount", _style: "min-width:15%;" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "ref_id", label: "REFERNCE NO", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
@@ -168,7 +172,7 @@ export default {
       this.$set(this.ExpenseData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/accounting/expense/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/accounting/expense/edit/" + uuid });
@@ -195,7 +199,9 @@ export default {
                     text: "Expense Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ExpenseData = this.ExpenseData.filter((item) => item.uuid != uuid);
+                  this.ExpenseData = this.ExpenseData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })
