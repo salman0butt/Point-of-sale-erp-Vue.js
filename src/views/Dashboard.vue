@@ -1,20 +1,19 @@
 <template>
   <div>
-    <CRow>
+    <Loader />
+    <CRow v-if="cardBoxA && cardBoxA.length > 0">
       <CCol sm="12" md="12">
         <CCardGroup class="mb-4 remove-progress">
           <CWidgetProgressIcon
-            header="87.500"
-            text="Visitors"
+            v-for="(card, k) in cardBoxA"
+            :header="card.value"
+            :text="card.key"
             color="gradient-info"
+            :key="k"
           >
-            <CIcon name="cil-people" height="36" />
+            <CIcon name="cil-chartPie" height="36" />
           </CWidgetProgressIcon>
-          <CWidgetProgressIcon
-            header="385"
-            text="New Clients"
-            color="gradient-success"
-          >
+          <!-- <CWidgetProgressIcon header="385" text="New Clients" color="gradient-success">
             <CIcon name="cil-userFollow" height="36" />
           </CWidgetProgressIcon>
           <CWidgetProgressIcon
@@ -26,25 +25,23 @@
           </CWidgetProgressIcon>
           <CWidgetProgressIcon header="28%" text="Returning Visitors">
             <CIcon name="cil-chartPie" height="36" />
-          </CWidgetProgressIcon>
+          </CWidgetProgressIcon> -->
         </CCardGroup>
       </CCol>
     </CRow>
-    <CRow>
+    <CRow v-if="cardBoxB && cardBoxB.length > 0">
       <CCol sm="12" md="12">
         <CCardGroup class="mb-4 remove-progress">
           <CWidgetProgressIcon
-            header="87.500"
-            text="Visitors"
+            v-for="(card, k) in cardBoxB"
+            :header="card.value"
+            :text="card.key"
             color="gradient-info"
+            :key="k"
           >
-            <CIcon name="cil-people" height="36" />
+            <CIcon name="cil-chartPie" height="36" />
           </CWidgetProgressIcon>
-          <CWidgetProgressIcon
-            header="385"
-            text="New Clients"
-            color="gradient-success"
-          >
+          <!-- <CWidgetProgressIcon header="385" text="New Clients" color="gradient-success">
             <CIcon name="cil-userFollow" height="36" />
           </CWidgetProgressIcon>
           <CWidgetProgressIcon
@@ -56,7 +53,7 @@
           </CWidgetProgressIcon>
           <CWidgetProgressIcon header="28%" text="Returning Visitors">
             <CIcon name="cil-chartPie" height="36" />
-          </CWidgetProgressIcon>
+          </CWidgetProgressIcon> -->
         </CCardGroup>
       </CCol>
     </CRow>
@@ -151,11 +148,7 @@
         <CCard>
           <CCardHeader> Product Alert </CCardHeader>
           <CCardBody>
-            <CDataTable
-              :items="productAlertData"
-              :fields="productAlertFields"
-              hover
-            >
+            <CDataTable :items="productAlertData" :fields="productAlertFields" hover>
               <template slot="alert" slot-scope="{ item }">
                 <td>
                   <CBadge color="danger" shape="pill">{{ item.alert }}</CBadge>
@@ -165,20 +158,20 @@
           </CCardBody>
         </CCard>
       </CCol>
-      <CCol sm="6" md="4">
+      <!-- <CCol sm="6" md="4">
         <CCard>
           <CCardHeader> Last 5 Deliverd Order </CCardHeader>
           <CCardBody>
             <CDataTable :items="orderData" :fields="orderFields" hover>
-              <!-- <template slot="alert" slot-scope="{ item }">
+              <template slot="alert" slot-scope="{ item }">
                 <td>
                   <CBadge color="danger" shape="rounded-pill">{{ item.alert }}</CBadge>
                 </td>
-              </template> -->
+              </template>
             </CDataTable>
           </CCardBody>
         </CCard>
-      </CCol>
+      </CCol> -->
     </CRow>
     <!-- <OpeningModel /> -->
     <ClosingModel />
@@ -191,6 +184,7 @@ import PieChart from "@/components/dashboard/PieChart";
 import OpeningModel from "@/components/dashboard/OpeningModel";
 import ClosingModel from "@/components/dashboard/ClosingModel";
 import DashboardService from "@/services/dashboard/DashboardService";
+import Loader from "@/components/layouts/Loader";
 const recentTransactionFields = [
   { key: "customer", label: "Name", _style: "min-width:40%" },
   { key: "amount", label: "Amount", _style: "min-width:15%;" },
@@ -205,7 +199,7 @@ const topProductsField = [
 const productAlertFields = [
   { key: "name", label: "Name", _style: "min-width:40%" },
   { key: "alert", label: "Alert", _style: "min-width:15%;" },
-  { key: "Date", label: "Date", _style: "min-width:15%;" },
+  { key: "total_qty", label: "Qty", _style: "min-width:15%;" },
 ];
 
 const orderFields = [
@@ -231,42 +225,18 @@ const monthNames = [
 ];
 export default {
   name: "Dashboard",
-  components: { BarChart, PieChart, OpeningModel, ClosingModel },
+  components: { BarChart, PieChart, OpeningModel, ClosingModel, Loader },
   data() {
     return {
       recentTransactions: [],
       recentTransactionFields,
+      cardBoxA: [],
+      cardBoxB: [],
 
       topProducts: [],
       topProductsField,
 
-      productAlertData: [
-        {
-          name: "Product 1",
-          alert: "Low",
-          Date: "11/11/2019",
-        },
-        {
-          name: "Product 2",
-          alert: "Low",
-          Date: "11/11/2019",
-        },
-        {
-          name: "Product 3",
-          alert: "Low",
-          Date: "11/11/2019",
-        },
-        {
-          name: "Product 4",
-          alert: "Low",
-          Date: "11/11/2019",
-        },
-        {
-          name: "Product 5",
-          alert: "Low",
-          Date: "11/11/2019",
-        },
-      ],
+      productAlertData: [],
       orderData: [
         {
           customer_name: "Customer 1",
@@ -343,6 +313,7 @@ export default {
   },
   methods: {
     getServerData() {
+      this.$store.commit("set_loader");
       DashboardService.index()
         .then(({ data }) => {
           if (data) {
@@ -363,9 +334,7 @@ export default {
 
               data.pieChart.map(function (val) {
                 labelsPieChart.push(val.name);
-                let total = parseFloat(
-                  val.invoice_payments_sum_invoice_paymentsamount
-                );
+                let total = parseFloat(val.invoice_payments_sum_invoice_paymentsamount);
                 if (defaultDatasetPieChart[0].data) {
                   defaultDatasetPieChart[0].data.push(total);
                 }
@@ -388,9 +357,37 @@ export default {
                 topProducts.push(val);
               });
             }
+
+            if (data.alertQty && data.alertQty.length > 0) {
+              let productAlertData = this.productAlertData;
+              data.alertQty.map(function (val) {
+                let name = JSON.parse(val.name);
+                val.name = name.en ? name.en : name;
+                productAlertData.push({
+                  ...val,
+                  alert: "low",
+                });
+              });
+            }
+
+            if (data.cardBoxA && data.cardBoxA.length > 0) {
+              let cardBoxA = this.cardBoxA;
+              data.cardBoxA.map(function (val) {
+                cardBoxA.push({ key: val.key, value: val.value.toString() });
+              });
+            }
+
+            if (data.cardBoxB && data.cardBoxB.length > 0) {
+              let cardBoxB = this.cardBoxB;
+              data.cardBoxB.map(function (val) {
+                cardBoxB.push({ key: val.key, value: val.value.toString() });
+              });
+            }
           }
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
         });
     },

@@ -12,7 +12,7 @@
               <thead>
                 <tr>
                   <th>Account</th>
-                  <th>Debit</th>
+                  <th>Amount</th>
                   <th>Date</th>
                   <th>Reference No</th>
                   <th>Status</th>
@@ -21,7 +21,7 @@
               <tbody>
                 <tr>
                   <td>{{ expense.account ? expense.account.name : "-" }}</td>
-                  <td>{{ expense.debit ? expense.debit : "-" }}</td>
+                  <td>{{ expense.amount ? expense.amount : "-" }}</td>
                   <td>{{ expense.date ? expense.date : "-" }}</td>
                   <td>{{ expense.ref_id ? expense.ref_id : "-" }}</td>
                   <td>{{ expense.status ? expense.status : "-" }}</td>
