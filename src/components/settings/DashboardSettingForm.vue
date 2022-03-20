@@ -197,7 +197,7 @@ export default {
           label: "Total Income Pending (Amount)",
           value: "Total Income Pending (Amount)",
         },
-        { label: "Cashflow", value: "Cashflow" },
+        // { label: "Cashflow", value: "Cashflow" },
       ],
       periodic: [
         {
