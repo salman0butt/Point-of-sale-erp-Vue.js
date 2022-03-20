@@ -24,6 +24,7 @@ const EditIncome = () => import('@/views/accounting/income/Edit')
 const IndexExpense = () => import('@/views/accounting/expense/Index')
 const CreateExpense = () => import('@/views/accounting/expense/Create')
 const EditExpense = () => import('@/views/accounting/expense/Edit')
+const ShowExpense = () => import('@/views/accounting/expense/Show')
 
 // Transfer
 const IndexTransfer = () => import('@/views/accounting/transfer/Index')
@@ -35,6 +36,10 @@ const IndexBill = () => import('@/views/accounting/bill/Index')
 const CreateBill = () => import('@/views/accounting/bill/CreateOrUpdate')
 const EditBill = () => import('@/views/accounting/bill/CreateOrUpdate')
 const ShowBill = () => import('@/views/accounting/bill/Show')
+
+//bill payments
+const IndexBillPayment = () => import('@/views/accounting/billPayments/Index')
+const ShowBillPayment = () => import('@/views/accounting/billPayments/Show')
 
 // Reccuring Biller
 const IndexRecurringBill = () => import('@/views/accounting/recurringBill/Index')
@@ -133,6 +138,11 @@ const accountingRoutes =
             component: EditExpense,
         },
         {
+            path: 'expense/show/:id',
+            name: 'ShowExpense',
+            component: ShowExpense,
+        },
+        {
             path: 'transfer/index',
             name: 'IndexTransfer',
             component: IndexTransfer,
@@ -169,8 +179,17 @@ const accountingRoutes =
             name: 'ShowBill',
             component: ShowBill,
         },
-
-
+        // bill payments
+        {
+          path: 'bill/payments/index',
+          name: 'IndexBillPayment',
+          component: IndexBillPayment,
+      },
+        {
+          path: 'bill/payments/show/:id',
+          name: 'ShowBillPayment',
+          component: ShowBillPayment,
+      },
 
 
         // Recurring Biller

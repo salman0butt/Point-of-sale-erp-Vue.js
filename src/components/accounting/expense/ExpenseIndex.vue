@@ -44,13 +44,13 @@
           <template #actions="{ item }">
             <td>
               <CButtonGroup>
-                <!-- <CButton
+                <CButton
                   @click="viewRow(item.uuid)"
                   class="btn-sm"
                   color="success"
                   title="View"
                   >View</CButton
-                > -->
+                >
                 <CButton
                   v-if="$can('edit expense')"
                   @click="editRow(item.uuid)"
@@ -172,7 +172,7 @@ export default {
       this.$set(this.ExpenseData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/accounting/expense/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/accounting/expense/edit/" + uuid });

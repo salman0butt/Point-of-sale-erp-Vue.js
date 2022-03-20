@@ -3,17 +3,16 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> {{ $t("payments.index.payments") }} </CCardHeader>
+          <CCardHeader> Bill Payments </CCardHeader>
           <CCardBody>
             <div>
               <CButton
-                v-if="$can('create payments')"
                 color="success"
                 class="btn"
                 style="float: right; margin-right: 10px"
                 @click="addPayment()"
               >
-                {{ $t("payments.index.add") }}</CButton
+                Add Payment</CButton
               >
             </div>
             <div style="clear: both; margin-bottom: 20px"></div>
@@ -49,28 +48,24 @@
               </template>
               <template #payment_method_id="{ item }">
                 <td>
-                  {{ item.paymentMethod.name ? item.paymentMethod.name : "-" }}
+                  {{ item.payment_method ? item.payment_method.name : "-" }}
                 </td>
               </template>
-              <template #invoice="{ item }">
+              <!-- <template #bill="{ item }">
                 <td>
-                  {{ item.invoice.invoice_ref_no ? item.invoice.invoice_ref_no : "-" }}
+                  {{ item.bill_no ? item.bill_no : "-" }}
                 </td>
-              </template>
-              <template #customer="{ item }">
+              </template> -->
+              <template #supplier="{ item }">
                 <td>
-                  {{
-                    item.customer.full_name.en
-                      ? item.customer.full_name.en
-                      : item.customer.full_name
-                  }}
+                  {{ item.supplier ? item.supplier.name : "" }}
                 </td>
               </template>
-              <template #created_by="{ item }">
+              <!-- <template #created_by="{ item }">
                 <td>
                   {{ item.created_by.name ? item.created_by.name : "-" }}
                 </td>
-              </template>
+              </template> -->
 
               <template #status="{ item }">
                 <td>
@@ -93,19 +88,13 @@
                       >View</CButton
                     >
                     <CButton
-                      v-if="$can('edit brands')"
                       @click="editRow(item)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      v-if="$can('delete brands')"
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -121,21 +110,22 @@
         </CCard>
       </CCol>
     </CRow>
-    <PaymentModel @update-table="updateTable" :editData="editData" />
+    <BillPaymentModel @update-table="updateTable" :editData="editData" />
   </div>
 </template>
 
 <script>
-import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
+import BillPaymentService from "@/services/accounting/bill/BillPaymentService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-import PaymentModel from "@/components/sales/payment/PaymentModel";
+import BillPaymentModel from "@/components/accounting/bill/BillPaymentModel";
 import { tableMixin } from "@/mixins/tableMixin";
 import Loader from "@/components/layouts/Loader";
+
 export default {
-  name: "IndexPayments",
+  name: "IndexBillPayment",
   mixins: [tableMixin],
   components: {
-    PaymentModel,
+    BillPaymentModel,
     Loader,
   },
   cilPencil,
@@ -148,35 +138,31 @@ export default {
       fields: [
         {
           key: "payment_no",
-          label: this.$t("payments.index.table.paymentNo"),
+          label: "Payment No",
         },
         {
           key: "payment_method_id",
-          label: this.$t("payments.index.table.paymentMethod"),
+          label: "Payment Method",
         },
+        // {
+        //   key: "bill",
+        //   label: "BIll",
+        // },
         {
-          key: "invoice",
-          label: this.$t("payments.index.table.invoiceNo"),
-        },
-        {
-          key: "customer",
-          label: this.$t("payments.index.table.customer"),
+          key: "supplier",
+          label: "Supplier",
         },
         {
           key: "amount",
-          label: this.$t("payments.index.table.amount"),
+          label: "Amount",
         },
         {
           key: "dated",
-          label: this.$t("payments.index.table.dated"),
-        },
-        {
-          key: "created_by",
-          label: this.$t("payments.index.table.user"),
+          label: "Dated",
         },
         {
           key: "actions",
-          label: this.$t("payments.index.table.actions"),
+          label: "Actions",
         },
       ],
     };
@@ -196,20 +182,20 @@ export default {
       }, 1000);
     },
     getData(page = "", per_page = "") {
-      this.getServerData(PaymentInvoiceService, page, per_page);
+      this.getServerData(BillPaymentService, page, per_page);
     },
     addPayment() {
-      this.$store.commit("set_payment_model", true);
+      this.$store.commit("set_bill_payment_model", true);
     },
     viewRow(uuid) {
-      this.$router.push({ path: "/sales/invoice/payments/show/" + uuid });
+      this.$router.push({ path: "/accounting/bill/payments/show/" + uuid });
     },
     editRow(item) {
       this.editData = item;
-      this.$store.commit("set_payment_model", true);
+      this.$store.commit("set_bill_payment_model", true);
     },
     deleteRow(uuid) {
-      this.deleteData(PaymentInvoiceService, uuid);
+      this.deleteData(BillPaymentService, uuid);
     },
   },
 };

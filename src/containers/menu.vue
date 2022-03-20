@@ -80,7 +80,7 @@ export default {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",
-              name: "- Returns",
+              name: "- " + this.$t("menu.sale.returns"),
               to: "/returns/index",
               // icon: "cil-lan",
             },
@@ -90,7 +90,7 @@ export default {
           this.sideBarItems_sales.push([
             {
               _name: "CSidebarNavItem",
-              name: "- Payments",
+              name: "- " + this.$t("menu.sale.payments"),
               to: "/sales/invoice/payments/index",
               // icon: "cil-lan",
             },
@@ -270,6 +270,16 @@ export default {
               _name: "CSidebarNavItem",
               name: "- " + this.$t("menu.accounting.Bills"),
               to: "/accounting/bill/index",
+              // icon: "cil-lan",
+            },
+          ]);
+        }
+        if (this.$can("read bills")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "- " + this.$t("menu.accounting.billPayments"),
+              to: "/accounting/bill/payments/index",
               // icon: "cil-lan",
             },
           ]);

@@ -8,10 +8,10 @@
             <form @submit.prevent="isEditing ? updatePayment() : savePayment()">
               <CRow>
                 <CCol sm="12" md="12" class="pt-2">
-                  <label> Select Invoice </label>
+                  <label> Select Bill </label>
                   <multiselect
-                    v-model="form.invoice_id"
-                    :options="options.invoice"
+                    v-model="form.bill"
+                    :options="options.bills"
                     :multiple="false"
                     :close-on-select="true"
                     :clear-on-select="false"
@@ -19,8 +19,8 @@
                     placeholder="Search..."
                     label="label"
                     track-by="label"
-                    @input="[invoiceChange(), $v.form.invoice_id.$touch()]"
-                    :class="{ error: $v.form.invoice_id.$error }"
+                    @input="[$v.form.bill.$touch()]"
+                    :class="{ error: $v.form.bill.$error }"
                   >
                     <template slot="selection" slot-scope="{ values, search, isOpen }">
                       <span
@@ -30,36 +30,33 @@
                       ></template
                     >
                   </multiselect>
-                  <div v-if="$v.form.invoice_id.$error">
-                    <p v-if="!$v.form.invoice_id.required" class="errorMsg">
-                      Invoice is required
-                    </p>
+                  <div v-if="$v.form.bill.$error">
+                    <p v-if="!$v.form.bill.required" class="errorMsg">Bill is required</p>
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <Label> Payment Method</Label>
                   <CSelect
                     :options="options.paymentMethods"
-                    :value.sync="form.paymentMethod"
-                    :class="{ error: $v.form.paymentMethod.$error }"
-                    @input="$v.form.paymentMethod.$touch()"
+                    :value.sync="form.payment_method_id"
+                    :class="{ error: $v.form.payment_method_id.$error }"
+                    @input="$v.form.payment_method_id.$touch()"
                   />
-                  <div v-if="$v.form.paymentMethod.$error">
-                    <p v-if="!$v.form.paymentMethod.required" class="errorMsg">
+                  <div v-if="$v.form.payment_method_id.$error">
+                    <p v-if="!$v.form.payment_method_id.required" class="errorMsg">
                       Payment Method is required
                     </p>
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <CustomerSearch
+                  <SupplierSearch
+                    @supplier-change="supplierChange($event)"
                     :previousValue="form.previousValue"
-                    @customer-change="customerSelected($event)"
-                    :createOnly="isEditing ? false : true"
-                    @input="$v.form.customer.$touch()"
+                    @input="$v.form.supplier_id.$touch()"
                   />
-                  <div v-if="$v.form.customer.$error">
-                    <p v-if="!$v.form.customer.required" class="errorMsg">
-                      Customer is required
+                  <div v-if="$v.form.supplier_id.$error">
+                    <p v-if="!$v.form.supplier_id.required" class="errorMsg">
+                      Supplier is required
                     </p>
                   </div>
                 </CCol>
@@ -92,7 +89,7 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2">
+                <!-- <CCol sm="12" md="12" class="pt-2">
                   <SelectSalePerson
                     :createOnly="isEditing ? false : true"
                     @salesPersonSelected="salesPersonSelected($event)"
@@ -107,7 +104,7 @@
                       Sales person is required
                     </p>
                   </div>
-                </CCol>
+                </CCol> -->
               </CRow>
               <!-- <CRow>
                 <CCol sm="12" md="12" class="pt-2">
@@ -159,22 +156,22 @@
 </template>
 <script>
 import Loader from "@/components/layouts/Loader.vue";
-import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
+import BillPaymentService from "@/services/accounting/bill/BillPaymentService";
 import { required } from "vuelidate/lib/validators";
-import CustomerSearch from "@/components/general/search/CustomerSearch";
-import SelectSalePerson from "@/components/general/SelectSalePerson";
+import SupplierSearch from "@/components/general/search/SupplierSearch";
+// import SelectSalePerson from "@/components/general/SelectSalePerson";
 import Multiselect from "vue-multiselect";
-import InvoiceService from "@/services/sale/InvoiceService";
-
+import BillService from "@/services/accounting/bill/BillService";
+import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
 // import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
 
 export default {
-  name: "PaymentForm",
+  name: "BillPaymentForm",
   components: {
     Loader,
-    CustomerSearch,
-    SelectSalePerson,
+    SupplierSearch,
+    // SelectSalePerson,
     Multiselect,
   },
   props: {
@@ -192,19 +189,19 @@ export default {
     isEditing: false,
     form: {
       id: "",
-      invoice_id: "",
-      paymentMethod: "",
+      bill: "",
+      payment_method_id: "",
       // image: "",
-      customer: "",
+      supplier_id: "",
       amount: "",
       dated: "",
       sales_persons: "",
-      previousValue: Object,
+      previousValue: null,
     },
     // display_images: null,
     options: {
       paymentMethods: [{ label: "Choose Payment Method", value: "" }],
-      invoice: [],
+      bills: [],
     },
     sales_persons: [],
     previousSalesPersons: [],
@@ -212,10 +209,10 @@ export default {
   validations() {
     return {
       form: {
-        invoice_id: { required },
-        customer: { required },
-        sales_persons: { required },
-        paymentMethod: { required },
+        bill: { required },
+        supplier_id: { required },
+        // sales_persons: { required },
+        payment_method_id: { required },
         amount: { required },
         dated: { required },
       },
@@ -240,12 +237,12 @@ export default {
         console.log(err);
       });
 
-    InvoiceService.getAll(1, 100)
+    BillService.getAll(1, 100)
       .then(({ data }) => {
-        let invoice = this.options.invoice;
+        let bill = this.options.bills;
         data.data.map((value, index) => {
-          invoice.push({
-            label: value.invoice_ref_no,
+          bill.push({
+            label: value.bill_no,
             value: value.uuid,
           });
         });
@@ -273,32 +270,37 @@ export default {
         this.$emit("reset-submit");
       }
     },
+    //TODO: Billpayment Form Edit model
+    //TODO: Billpayment View page
     editData(val) {
       if (val) {
         this.isEditing = true;
         this.form.id = val.uuid;
-        if (val.invoice) {
-          this.form.invoice_id = {
-            label: val.invoice.invoice_ref_no,
-            value: val.invoice.uuid,
+        if (val.bill) {
+          this.form.bill = {
+            label: val.bill.bill_no,
+            value: val.bill.uuid,
           };
         }
-        if (val.customer) {
-          let number = val.customer.contact?.number?.en ?? "";
-          this.form.customer = val.customer.uuid;
+        if (val.supplier) {
+          let serial = val.supplier.serial_no ?? "";
+          this.form.supplier_id = val.supplier.uuid;
           this.form.previousValue = {
-            label: val.customer.full_name + " (mobile: " + number + ")",
-            value: val.customer.uuid,
+            label: val.supplier.name + " (serial: " + serial + ")",
+            value: val.supplier.uuid,
           };
+        } else {
+          this.form.supplier_id = "";
+          this.form.previousValue = {};
         }
 
-        if (val.invoice && val.invoice.salespersons) {
-          this.form.sales_persons = val.invoice.salespersons.map((value) => {
-            return value.uuid;
-          });
-        }
+        // if (val.bill && val.bill.salespersons) {
+        //   this.form.sales_persons = val.bill.salespersons.map((value) => {
+        //     return value.uuid;
+        //   });
+        // }
 
-        this.form.paymentMethod = val.paymentMethod.uuid;
+        this.form.payment_method_id = val.payment_method.uuid;
         this.form.amount = val.amount;
         this.form.dated = val.dated;
 
@@ -308,35 +310,37 @@ export default {
       }
     },
   },
+
   computed: {
     submitForm() {
       return this.submit;
     },
   },
   methods: {
-    customerSelected(customer) {
-      this.form.customer = customer.value;
+    supplierChange(val) {
+      this.form.supplier_id = val;
     },
     salesPersonSelected(person) {
       this.form.sales_persons = person;
     },
-    invoiceChange() {
-      let invoice_id = this.form.invoice_id;
-      if (invoice_id && invoice_id.value) {
-        // this.resetForm();
-        // this.getEditData(invoice_id.value);
-      } else {
-        // this.resetForm();
-      }
-    },
+    // billChange() {
+    //   let bill = this.form.bill;
+    //   if (bill && bill.value) {
+    //     // this.resetForm();
+    //     // this.getEditData(bill.value);
+    //   } else {
+    //     // this.resetForm();
+    //   }
+    // },
     resetForm() {
-      this.form.invoice_id = "";
-      this.form.customer = "";
+      this.form.id = "";
+      this.form.bill = "";
+      this.form.supplier_id = null;
       // this.form.sales_persons = [];
-      this.form.paymentMethod = "";
+      this.form.payment_method_id = "";
       this.form.amount = "";
       this.form.dated = "";
-      this.form.previousValue = Object;
+      this.form.previousValue = {};
       this.$v.$reset();
     },
     savePayment() {
@@ -344,14 +348,14 @@ export default {
       if (!this.$v.$invalid) {
         this.$store.commit("set_loader");
 
-        let data = this.form;
-        PaymentInvoiceService.store(data)
+        let data = this.formData();
+        BillPaymentService.store(data)
           .then((res) => {
             if (res.status === 200 || res.status === 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Payment Added Successfully",
+                text: "Bill Payment Added Successfully",
                 timer: 3600,
               });
 
@@ -365,18 +369,33 @@ export default {
           });
       }
     },
+    formData(update = false) {
+      let data = this.form;
+      let formData = new FormData();
+      formData.append("bill_id", data.bill.value);
+      formData.append("supplier_id", data.supplier_id.value);
+      formData.append("payment_method_id", data.payment_method_id);
+      formData.append("amount", data.amount);
+      formData.append("dated", data.dated);
+      // formData.append("sales_persons", data.sales_persons);
+
+      if (update) {
+        formData.append("_method", "PATCH");
+      }
+      return formData;
+    },
     updatePayment() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.$store.commit("set_loader");
-        let data = this.form;
-        PaymentInvoiceService.update(this.form.id, data)
+        let data = this.formData(true);
+        BillPaymentService.update(this.form.id, data)
           .then((res) => {
             if (res.status == 200) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
-                text: "Payment Updated Successfully",
+                text: "Bill Payment Updated Successfully",
                 timer: 3600,
               });
               this.resetForm();

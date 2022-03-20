@@ -5,7 +5,9 @@
       "name": "مبيعات",
       "quotations": "الاقتباسات",
       "invoices": "الفواتير",
-      "customers": "عملاء"
+      "customers": "عملاء",
+      "returns": "عائدات",
+      "payments": "Payments"
     },
     "contacts": {
       "name": "جهات الاتصال",
@@ -31,7 +33,8 @@
       "income": "دخل",
       "expense": "مصروف",
       "transfer": "تحويل",
-      "purchaseOrder": "أمر شراء"
+      "purchaseOrder": "أمر شراء",
+      "billPayments": "بيل المدفوعات"
     },
     "branches": "الفروع",
     "users": "المستخدمين",

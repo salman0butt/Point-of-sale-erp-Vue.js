@@ -369,18 +369,23 @@ export default {
         });
     },
     displayData(data = null) {
-      if (data && data !== "") {
-        this.general_items.business_name = JSON.parse(data.business_name).en;
-        this.general_items.business_activity = JSON.parse(
+      if (data) {
+        this.general_items.business_name = data.business_name ? data.business_name.en : "";
+        this.general_items.business_activity =  data.business_activity && JSON.parse(
           data.business_activity
-        ).en;
+        ) ? JSON.parse(
+          data.business_activity
+        ).en : "";
+
         this.general_items.name = JSON.parse(data.owner_name).en;
-        this.general_items.email = data.business_email;
-        this.general_items.mobile = data.business_mobile_no;
-        this.general_items.country = data.country;
-        this.general_items.tax_id = data.tax_id;
+        this.general_items.email = data.business_email ?? "";
+        this.general_items.mobile = data.business_mobile_no ?? "";
+        this.general_items.country = data.country ?? "";
+        this.general_items.tax_id = data.tax_id ?? "";
         if (data.logo) {
           this.general_items.previewImage = data.logo.path;
+
+          this.$store.commit("set_business_logo", data.logo.path);
         }
         this.general_items.logo = "";
         this.general_items.stamp = "";
@@ -389,6 +394,7 @@ export default {
           this.general_items.previewStampImage = data.stamp.path;
         }
       }
+      return;
     },
     PluginSeach() {
       var data = [];
@@ -440,6 +446,8 @@ export default {
               timer: 3600,
             });
             this.displayData(response.data);
+
+
           }
         })
         .catch((error) => {
