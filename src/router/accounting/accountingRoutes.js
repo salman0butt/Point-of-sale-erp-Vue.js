@@ -36,6 +36,10 @@ const CreateBill = () => import('@/views/accounting/bill/CreateOrUpdate')
 const EditBill = () => import('@/views/accounting/bill/CreateOrUpdate')
 const ShowBill = () => import('@/views/accounting/bill/Show')
 
+//bill payments
+const IndexBillPayment = () => import('@/views/accounting/billPayments/Index')
+const ShowBillPayment = () => import('@/views/accounting/billPayments/Show')
+
 // Reccuring Biller
 const IndexRecurringBill = () => import('@/views/accounting/recurringBill/Index')
 const CreateRecurringBill = () => import('@/views/accounting/recurringBill/CreateOrUpdate')
@@ -169,8 +173,17 @@ const accountingRoutes =
             name: 'ShowBill',
             component: ShowBill,
         },
-
-
+        // bill payments
+        {
+          path: 'bill/payments/index',
+          name: 'IndexBillPayment',
+          component: IndexBillPayment,
+      },
+        {
+          path: 'bill/payments/show/:id',
+          name: 'ShowBillPayment',
+          component: ShowBillPayment,
+      },
 
 
         // Recurring Biller

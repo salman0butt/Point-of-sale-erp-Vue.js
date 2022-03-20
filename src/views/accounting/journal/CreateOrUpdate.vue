@@ -8,9 +8,7 @@
             <CRow>
               <Loader />
               <CCol xs="12" lg="12">
-                <form
-                  @submit.prevent="isEditing ? updateJournal() : saveJournal()"
-                >
+                <form @submit.prevent="isEditing ? updateJournal() : saveJournal()">
                   <CRow>
                     <CCol xs="12" md="6" class="pt-2">
                       <CInput
@@ -96,10 +94,8 @@
                             <th>
                               <AccountDropdown
                                 :showLabel="false"
-                                @getAccountDropdown="
-                                  getAccountDropDown($event, k)
-                                "
-                                :previousValue.sync="previousAccount"
+                                @getAccountDropdown="getAccountDropDown($event, k)"
+                                :previousValue.sync="item.previousAccount"
                                 :key="k"
                               />
                             </th>
@@ -134,10 +130,7 @@
                             </td>
                             <td>
                               <CButton @click="removeItem(k)">
-                                <CIcon
-                                  :content="$options.cilTrash"
-                                  style="color: red"
-                                />
+                                <CIcon :content="$options.cilTrash" style="color: red" />
                               </CButton>
                             </td>
                           </tr>
@@ -151,9 +144,7 @@
                             color="default"
                             @click="addItem()"
                             >Add another line
-                            <CIcon
-                              :content="$options.cisCaretBottom"
-                              style="width: 10px"
+                            <CIcon :content="$options.cisCaretBottom" style="width: 10px"
                           /></CButton>
                         </CCol>
                         <CCol xs="12" md="5" class="pt-2 ml-1">
@@ -188,9 +179,7 @@
                             <CCol> </CCol>
                             <CCol
                               ><h5>
-                                <strong style="color: red">
-                                  {{ form.difference }}</strong
-                                >
+                                <strong style="color: red"> {{ form.difference }}</strong>
                               </h5>
                             </CCol>
                           </CRow>
@@ -234,12 +223,7 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       type="submit"
                       @click="saveAsDraft = true"
                       >Save As Draft</CButton
@@ -297,6 +281,7 @@ export default {
           description: "",
           debit: "0.000",
           credit: "0.000",
+          previousAccount: {},
         },
       ],
     },
@@ -339,10 +324,7 @@ export default {
       });
     },
     getPreRequisites() {
-      var currentDateWithFormat = new Date()
-        .toJSON()
-        .slice(0, 10)
-        .replace(/-/g, "-");
+      var currentDateWithFormat = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
       this.form.date = currentDateWithFormat;
 
       AccountServices.getTreeStructure()
@@ -544,11 +526,13 @@ export default {
                 value: value.to_account.uuid,
               };
             }
+
             this.form.items.push({
               account: account_uuid,
               description: value.description,
               debit: value.debit,
               credit: value.credit,
+              previousAccount: account_uuid,
             });
 
             // console.log(this.form.items);

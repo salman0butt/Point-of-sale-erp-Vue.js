@@ -28,7 +28,7 @@ class BillPaymentService extends Helper {
     }
 
     update(id, data) {
-      return http.patch(`/bill-payments/${id}`, data);
+      return http.post(`/bill-payments/${id}`, data);
     }
 
     getBillPayments(id) {

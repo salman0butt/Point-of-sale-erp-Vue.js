@@ -274,6 +274,16 @@ export default {
             },
           ]);
         }
+        if (this.$can("read bills")) {
+          this.sideBarItems_accounting.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "- " + this.$t("menu.accounting.billPayments"),
+              to: "/accounting/bill/payments/index",
+              // icon: "cil-lan",
+            },
+          ]);
+        }
 
         // if (this.$can("read recurring-bills")) {
         //   this.sideBarItems_accounting.push([
