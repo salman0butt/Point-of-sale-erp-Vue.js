@@ -92,26 +92,26 @@ export default {
       activeTab: "CustomerReport",
       subMenuList: [],
       tabs: [
-        {
-          key: "CustomerReport",
-          name: "Customer Report",
-          isCollapse: false,
-          hasChildren: true,
-          childrens: [
-            { key: "Child1", name: "Child1" },
-            { key: "Child2", name: "Child2" },
-          ],
-        },
-        {
-          key: "ProductReport",
-          name: "Product Report",
-          isCollapse: false,
-          hasChildren: true,
-          childrens: [
-            { key: "Child1", name: "Child1" },
-            { key: "Child2", name: "Child2" },
-          ],
-        },
+        // {
+        //   key: "CustomerReport",
+        //   name: "Customer Report",
+        //   isCollapse: false,
+        //   hasChildren: true,
+        //   childrens: [
+        //     { key: "Child1", name: "Child1" },
+        //     { key: "Child2", name: "Child2" },
+        //   ],
+        // },
+        // {
+        //   key: "ProductReport",
+        //   name: "Product Report",
+        //   isCollapse: false,
+        //   hasChildren: true,
+        //   childrens: [
+        //     { key: "Child1", name: "Child1" },
+        //     { key: "Child2", name: "Child2" },
+        //   ],
+        // },
         {
           key: "SaleReport",
           name: "Sales Report",
@@ -124,7 +124,7 @@ export default {
           ],
         },
         { key: "ProfitAndLossReport", name: "Profit & Loss Report" },
-        { key: "BalanceSheet", name: "Balance Sheet" },
+        // { key: "BalanceSheet", name: "Balance Sheet" },
       ],
     };
   },
