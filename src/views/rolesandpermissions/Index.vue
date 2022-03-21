@@ -39,15 +39,18 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
+                    <!-- <CButton
                       v-if="$can('show roles-and-permissions')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
-                      v-if="$can('edit roles-and-permissions')"
+                      v-if="
+                        $can('edit roles-and-permissions') &&
+                        item.name != 'super-admin'
+                      "
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -55,7 +58,10 @@
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      v-if="$can('delete roles-and-permissions')"
+                      v-if="
+                        $can('delete roles-and-permissions') &&
+                        item.name != 'super-admin'
+                      "
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
@@ -140,9 +146,9 @@ export default {
       const val = Boolean(this.usersData[item.id]._selected);
       this.$set(this.usersData[item.id], "_selected", !val);
     },
-    viewRow(uuid) {
-      alert("page not ready");
-    },
+    // viewRow(uuid) {
+    //   alert("page not ready");
+    // },
     editRow(uuid) {
       this.$router.push({ name: "Edit Role", params: { id: uuid } });
     },
@@ -158,20 +164,12 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            EmployeeService.delete(this.deleteRows)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Employee Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.usersData = this.usersData.filter(
-                    (item) => item.uuid != uuid
-                  );
-                  this.getTotalCardData();
-                }
+            this.$swal
+              .fire({
+                icon: "success",
+                title: "Success",
+                text: "Role Deleted Successfully",
+                timer: 3600,
               })
               .catch((error) => {
                 this.$swal.fire({
