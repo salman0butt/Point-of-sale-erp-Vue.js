@@ -455,21 +455,21 @@ export default {
     // getAccountDropDown(val, key) {
     //   this.form.items[key].account = val;
     // },
-    addItem() {
-      this.form.items.push({
-        uuid: "",
-        name: "",
-        // type: "",
-        account: Object,
-        qty: "",
-        rate: "",
-        tax: "",
-        amount: "",
-        options: {
-          products: [],
-        },
-      });
-    },
+    // addItem() {
+    //   this.form.items.push({
+    //     uuid: "",
+    //     name: "",
+    //     // type: "",
+    //     account: Object,
+    //     qty: "",
+    //     rate: "",
+    //     tax: "",
+    //     amount: "",
+    //     options: {
+    //       products: [],
+    //     },
+    //   });
+    // },
     // removeItem(index) {
     //   this.form.items.splice(index, 1);
     //   this.calculateTotalAmount();

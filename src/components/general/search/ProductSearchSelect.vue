@@ -1,17 +1,19 @@
 <template>
   <div>
-    <label class="typo__label">Products</label>
+    <!-- <label class="typo__label">Products</label> -->
     <multiselect
       v-model="form.product"
       :options="options.products"
-      :multiple="true"
-      :close-on-select="false"
+      :multiple="false"
+      :close-on-select="true"
       :clear-on-select="false"
       :preserve-search="true"
       :loading="loading"
       placeholder="Search..."
       label="label"
       track-by="label"
+      :taggable="true"
+      @tag="addTag"
       :preselect-first="true"
       :limit="10"
       @search-change="searchProducts"
@@ -36,7 +38,7 @@ export default {
   },
   props: {
     previousValue: {
-      type: Array,
+      type: [Array, Object],
       default: () => [],
     },
   },
@@ -71,7 +73,7 @@ export default {
     },
     previousValue: {
       handler: function (val) {
-        if (val) {
+        if (val && val.label) {
           this.form.product = val;
         }
       },
@@ -79,6 +81,15 @@ export default {
     },
   },
   methods: {
+    addTag(newTag) {
+      const tag = {
+        value: "",
+        label: newTag,
+        searchType: "empty",
+      };
+      this.options.products.unshift(tag);
+      this.form.product = tag;
+    },
     getProducts() {
       store.commit("set_loader");
       let products = this.options.products;
@@ -90,6 +101,7 @@ export default {
                 value: item.uuid,
                 label: item.name + " (serial: " + item.serial_number + ")",
                 product: item,
+                searchType: "product",
               });
             });
           }
@@ -113,6 +125,7 @@ export default {
                   value: item.uuid,
                   label: item.name + " (serial: " + item.serial_number + ")",
                   product: item,
+                  searchType: "product",
                 });
               });
             }
