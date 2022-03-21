@@ -2,6 +2,7 @@ import auth from '@/middleware/auth'
 
 //Reports
 const ShowReport = () => import('@/views/reports/Show')
+const ShowOpening = () => import('@/components/reports/opening/ShowOpening')
 
 const reportRoutes =  {
     path: 'reports',
@@ -16,8 +17,14 @@ const reportRoutes =  {
         path: '/reports/index',
         name: 'All',
         component: ShowReport
+      },
+      {
+        path: '/reports/opening/:id',
+        name: 'Show Opening Report',
+        component: ShowOpening
       }
     ]
+
 };
 
 export default reportRoutes;
