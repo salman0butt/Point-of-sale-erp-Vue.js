@@ -1,4 +1,7 @@
 import auth from '@/middleware/auth'
+import addProductMiddleware from '@/middleware/sales/addProductMiddleware'
+
+
 
 
 
@@ -21,13 +24,15 @@ const salesRoutes = {
     children: [
         {
             path: 'index',
-            name: 'IndexQuotations',
+            name: 'Index Quotations',
             component: IndexQuotations
         },
         {
             path: 'create',
-            name: 'CreateQuotations',
-            component: CreateQuotations
+            name: 'Create Quotations',
+            component: CreateQuotations,
+            beforeEnter: addProductMiddleware
+
         },
         {
             path: 'edit/:id',
@@ -36,7 +41,7 @@ const salesRoutes = {
         },
         {
             path: 'show/:id',
-            name: 'ShowQuotations',
+            name: 'Show Quotations',
             component: ShowQuotations
         }
     ],

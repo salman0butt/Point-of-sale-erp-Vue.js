@@ -60,7 +60,12 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="6" md="4" class="pt-2">
+                <CCol
+                  sm="6"
+                  md="4"
+                  class="pt-2"
+                  v-if="show.show_payment_term_on_quotation"
+                >
                   <CSelect
                     label="Payment Terms"
                     :options="options.payment_terms"
@@ -98,7 +103,12 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2">
+                <CCol
+                  :sm="delivery_check ? 6 : 12"
+                  :md="delivery_check ? 6 : 12"
+                  class="pt-2"
+                  v-if="show.show_delivery_on_quotation"
+                >
                   <CSelect
                     @change="changeDelivery($event)"
                     label="Delivery"
@@ -106,7 +116,7 @@
                     :value.sync="form.delivery_method"
                   />
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                <CCol sm="6" md="6" class="pt-2" v-if="delivery_check">
                   <CInput label="Address" v-model="form.address_for_delivery" />
                 </CCol>
 
@@ -142,7 +152,12 @@
                   />
                 </CCol>
 
-                <CCol sm="12" md="12" class="pt-2">
+                <CCol
+                  sm="12"
+                  md="12"
+                  class="pt-2"
+                  v-if="show.show_payment_term_on_quotation"
+                >
                   <Label>Payment Terms </Label>
                   <vue-editor
                     id="editor1"
@@ -150,7 +165,12 @@
                     :editor-toolbar="customToolbar"
                   ></vue-editor>
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2">
+                <CCol
+                  sm="12"
+                  md="12"
+                  class="pt-2"
+                  v-if="show.show_terms_and_conditions_on_quotation"
+                >
                   <Label>Terms And Conditions </Label>
                   <vue-editor
                     id="editor2"
@@ -158,7 +178,12 @@
                     :editor-toolbar="customToolbar"
                   ></vue-editor>
                 </CCol>
-                <CCol sm="12" md="12" class="pt-2">
+                <CCol
+                  sm="12"
+                  md="12"
+                  class="pt-2"
+                  v-if="show.show_note_on_quotation"
+                >
                   <CTextarea
                     ref="Note"
                     label="Note"
@@ -167,7 +192,12 @@
                   />
                 </CCol>
 
-                <CCol sm="12" md="12" class="pt-2">
+                <CCol
+                  sm="12"
+                  md="12"
+                  class="pt-2"
+                  v-if="show.show_attachment_on_quotation"
+                >
                   <app-upload ref="fileUpload" @file:changed="handleFile" />
 
                   <div
@@ -329,6 +359,13 @@ export default {
     previousSalesPersons: Array,
     delivery_check: false,
     saveAndExit: false,
+    show: {
+      show_payment_term_on_quotation: false,
+      show_terms_and_conditions_on_quotation: false,
+      show_note_on_quotation: false,
+      show_attachment_on_quotation: false,
+      show_delivery_on_quotation: false,
+    },
   }),
   validations() {
     return {
@@ -411,6 +448,35 @@ export default {
         this.getEditData();
       }
 
+      // Setting of Quotation
+      SettingService.getAll("general")
+        .then(({ data }) => {
+          if (data) {
+            data.forEach((item) => {
+              if (item.key == "show_payment_term_on_quotation") {
+                this.show.show_payment_term_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_terms_and_conditions_on_quotation") {
+                this.show.show_terms_and_conditions_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_note_on_quotation") {
+                this.show.show_note_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_attachment_on_quotation") {
+                this.show.show_attachment_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_delivery_on_quotation") {
+                this.show.show_delivery_on_quotation =
+                  item.value == "on" ? true : false;
+              }
+            });
+          }
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+          console.log(error);
+        });
+
       // Payment Terms
       PaymentTermService.getAll(1, 1000)
         .then(({ data }) => {
@@ -422,8 +488,9 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-      var terms_and_conditions = this.form.terms_and_conditions;
 
+      // Terms And Conditions
+      var terms_and_conditions = this.form.terms_and_conditions;
       SettingService.getAll("accounting")
         .then(({ data }) => {
           if (data) {
@@ -446,6 +513,7 @@ export default {
           console.log(error);
         });
 
+      // Delivery
       let delivery_methods = this.options.delivery_methods;
       this.$store.commit("set_loader");
       DeliveryService.getAll(1, 50)

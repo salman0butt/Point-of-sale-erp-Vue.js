@@ -145,18 +145,30 @@
           <CRow>
             <CCol lg="4" sm="5">
               <div>
-                <label><b> Payment Terms :</b></label>
+                <label v-if="show.show_payment_term_on_quotation"
+                  ><b> Payment Terms :</b></label
+                >
 
-                <span v-html="invoice.payment_terms"></span>
+                <span
+                  v-if="show.show_payment_term_on_quotation"
+                  v-html="invoice.payment_terms"
+                ></span>
               </div>
               <div>
-                <label><b>Terms & Conditions :</b></label>
+                <label v-if="show.show_terms_and_conditions_on_quotation"
+                  ><b>Terms & Conditions :</b></label
+                >
 
-                <span v-html="invoice.terms_and_conditions"></span>
+                <span
+                  v-if="show.show_terms_and_conditions_on_quotation"
+                  v-html="invoice.terms_and_conditions"
+                ></span>
               </div>
               <div>
-                <label><b> Note : </b></label>
-                {{ invoice.note }}
+                <label v-if="show.show_note_on_quotation"
+                  ><b> Note : </b>
+                  {{ invoice.note }}
+                </label>
               </div>
             </CCol>
 
@@ -209,6 +221,7 @@
   </CCard>
 </template>
 <script>
+import SettingService from "@/services/settings/SettingService";
 import QuotationService from "@/services/sale/QuotationService";
 import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import { smsMixin } from "@/mixins/plugins/smsMixin";
@@ -256,6 +269,13 @@ export default {
       },
       options: {
         contacts: [{ label: "Choose Contact", value: "" }],
+      },
+      show: {
+        show_payment_term_on_quotation: false,
+        show_terms_and_conditions_on_quotation: false,
+        show_note_on_quotation: false,
+        show_attachment_on_quotation: false,
+        show_delivery_on_quotation: false,
       },
     };
   },
@@ -354,6 +374,35 @@ export default {
         .catch((err) => {
           this.$store.commit("close_loader");
           console.log(err);
+        });
+
+      // Setting of Quotation
+      SettingService.getAll("general")
+        .then(({ data }) => {
+          if (data) {
+            data.forEach((item) => {
+              if (item.key == "show_payment_term_on_quotation") {
+                this.show.show_payment_term_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_terms_and_conditions_on_quotation") {
+                this.show.show_terms_and_conditions_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_note_on_quotation") {
+                this.show.show_note_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_attachment_on_quotation") {
+                this.show.show_attachment_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_delivery_on_quotation") {
+                this.show.show_delivery_on_quotation =
+                  item.value == "on" ? true : false;
+              }
+            });
+          }
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+          console.log(error);
         });
     },
   },

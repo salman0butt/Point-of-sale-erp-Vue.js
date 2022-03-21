@@ -1,7 +1,7 @@
 <template>
   <div>
     <Loader />
-    <CRow v-if="cardBoxA && cardBoxA.length > 0">
+    <CRow v-if="cardBoxA && cardBoxA.length > 0 && $can('Card A')">
       <CCol sm="12" md="12">
         <CCardGroup class="mb-4 remove-progress">
           <CWidgetProgressIcon
@@ -29,7 +29,7 @@
         </CCardGroup>
       </CCol>
     </CRow>
-    <CRow v-if="cardBoxB && cardBoxB.length > 0">
+    <CRow v-if="cardBoxB && cardBoxB.length > 0 && $can('Card B')">
       <CCol sm="12" md="12">
         <CCardGroup class="mb-4 remove-progress">
           <CWidgetProgressIcon
@@ -94,7 +94,7 @@
     <br />
     <CCard>
       <CCardHeader class="py-0">
-        <span style="position: relative; top: 15px">BarChart</span>
+        <span style="position: relative; top: 15px">Sales Income</span>
         <CCol sm="2" md="2" class="pt-2" style="float: right; height: 3.2rem">
           <!-- <CSelect
             placeholder="By Month"
@@ -113,7 +113,7 @@
     <CRow>
       <CCol sm="6" md="6">
         <CCard>
-          <CCardHeader> Best Payment Method </CCardHeader>
+          <CCardHeader>Payment Method</CCardHeader>
           <CCardBody>
             <PieChart
               :dashboardLabels="pieChart.labels"

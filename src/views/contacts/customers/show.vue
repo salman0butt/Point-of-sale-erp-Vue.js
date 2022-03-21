@@ -10,12 +10,12 @@
               role="tablist"
               aria-orientation="vertical"
             >
-              <div class="side-avatar">
-                <div>
-                  <span class="emp-name">{{ customer_name }} </span><br />
-                  <span class="emp-designation">{{ customer_group }}</span>
-                </div>
+              <!-- <div class="side-avatar"> -->
+              <div class="ml-3">
+                <span class="emp-name">{{ customer_name }} </span><br />
+                <span class="emp-designation">{{ customer_group }}</span>
               </div>
+              <!-- </div> -->
               <br />
               <a
                 class="nav-link bborder"
@@ -36,7 +36,11 @@
         </CCard>
       </CCol>
       <CCol xs="12" lg="9">
-        <component v-bind:is="activeTab" module="customer" :readOnly="true"></component>
+        <component
+          v-bind:is="activeTab"
+          module="customer"
+          :readOnly="true"
+        ></component>
       </CCol>
     </CRow>
   </div>

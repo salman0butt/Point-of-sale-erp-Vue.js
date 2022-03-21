@@ -1,4 +1,6 @@
-import auth from '@/middleware/auth'
+import auth from '@/middleware/auth';
+import addProductMiddleware from '@/middleware/sales/addProductMiddleware'
+
 
 
 
@@ -28,7 +30,9 @@ const invoiceRoutes = {
         {
             path: 'create',
             name: 'CreateInvoices',
-            component: CreateInvoices
+            component: CreateInvoices,
+            beforeEnter: addProductMiddleware
+
         },
         {
             path: 'show/:id',
