@@ -32,7 +32,7 @@
               </CRow>
 
               <h2><u> Permissions</u></h2>
-              <div v-for="module in modules">
+              <div v-for="module in modules" :key="module.id">
                 <h4>
                   <u> {{ module }}</u>
                 </h4>
