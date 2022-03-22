@@ -44,39 +44,22 @@
                     </CCol>
                   </CRow>
                   <CRow>
-                    <CCol sm="12" md="12" class="pt-2">
+                    <CCol sm="4" md="4" class="pt-2">
                       <label for="brand_logo">{{ $t("brands.form.logo") }}</label>
-                      <app-upload
-                        ref="fileUpload"
-                        class="col-md-12"
-                        :max="1"
-                        fileType="image/jpg,image/jpeg,image/png"
-                        @file:changed="handleFile"
-                      />
-
-                      <div v-if="display_images && isEditing" class="attachment-display">
-                        <ul class="mt-5 d-flex">
-                          <li class="display-attachment-row">
-                            <div>
-                              <span>
-                                <img
-                                  v-bind:src="display_images.path"
-                                  class="name-attachment"
-                                  style="max-width: 80px"
-                                />
-                              </span>
-                            </div>
-                            <span
-                              >{{ display_images.name }}
-                              <a
-                                @click.prevent="deleteAttachment(display_images.uuid)"
-                                class="delete-attachment"
-                              >
-                                <CIcon :content="$options.cilTrash" /> </a
-                            ></span>
-                          </li>
-                        </ul>
+                      <div class="mb-2">
+                        <CImg
+                          v-bind:src="display_images"
+                          block
+                          class="mb-2 imger"
+                          width="100%"
+                        />
                       </div>
+                      <input
+                        class="form-control"
+                        type="file"
+                        @change="pickFile"
+                        style="padding: 3px"
+                      />
                     </CCol>
                   </CRow>
                   <p v-if="$v.$anyError" class="errorMsg">
@@ -115,14 +98,14 @@
 <script>
 import BrandService from "@/services/catalogs/brands/BrandService";
 import { required } from "vuelidate/lib/validators";
-import AppUpload from "@/components/uploads/Upload.vue";
+// import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "CreateOrUpdateBrand",
   components: {
-    AppUpload,
+    // AppUpload,
     Loader,
   },
   cilTrash,
@@ -136,7 +119,7 @@ export default {
       image: "",
       status: "active",
     },
-    display_images: null,
+    display_images: "/img/images/no-logo.png",
     options: {
       status: [],
     },
@@ -285,7 +268,7 @@ export default {
         });
     },
     displayData(data = null) {
-      if (data != null && data != "") {
+      if (data) {
         this.resetForm();
         this.isEditing = true;
         this.form.id = data.uuid;
@@ -294,59 +277,72 @@ export default {
           this.form.parent_id = data.parent_id ?? "";
         }
         this.form.status = data.status;
-        this.display_images = data.image ?? "";
+        if (data.image && data.image.path) {
+          this.display_images = data.image.path;
+        }
         this.form.image = "";
       }
     },
-    handleFile(files) {
-      this.form.image = files[0];
+    // handleFile(files) {
+    //   this.form.image = files[0];
+    // },
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.form.image = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.display_images = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+      }
     },
-    deleteAttachment(uuid) {
-      this.$swal
-        .fire({
-          title: "Do you want to delete this Attachment",
-          text: "This will be Deleted from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            this.$store
-              .dispatch("deleteAttachment", uuid)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$store.commit("set_loader");
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Attachment Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.display_images = null;
-                  this.$store.commit("close_loader");
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-                this.$store.commit("close_loader");
-                console.log(err);
-              });
-          }
-        });
-    },
+    // deleteAttachment(uuid) {
+    //   this.$swal
+    //     .fire({
+    //       title: "Do you want to delete this Attachment",
+    //       text: "This will be Deleted from Database",
+    //       showCancelButton: true,
+    //       confirmButtonColor: "#e55353",
+    //       confirmButtonText: "Yes, remove it it!",
+    //     })
+    //     .then((result) => {
+    //       if (result.isConfirmed) {
+    //         this.$store
+    //           .dispatch("deleteAttachment", uuid)
+    //           .then((res) => {
+    //             if (res.status == 200) {
+    //               this.$store.commit("set_loader");
+    //               this.$swal.fire({
+    //                 icon: "success",
+    //                 title: "Success",
+    //                 text: "Attachment Deleted Successfully",
+    //                 timer: 3600,
+    //               });
+    //               this.display_images = null;
+    //               this.$store.commit("close_loader");
+    //             }
+    //           })
+    //           .catch((err) => {
+    //             console.log(err);
+    //             this.$swal.fire({
+    //               icon: "error",
+    //               title: "Error",
+    //               text: "Something went Wrong",
+    //               timer: 3600,
+    //             });
+    //             this.$store.commit("close_loader");
+    //             console.log(err);
+    //           });
+    //       }
+    //     });
+    // },
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";
       }
       this.isEditing = false;
-      this.$refs.fileUpload.reset();
+      // this.$refs.fileUpload.reset();
     },
   },
 };

@@ -69,6 +69,8 @@ export default {
         { key: "Address", name: "Address" },
         { key: "Contact", name: "Contact" },
         { key: "Email", name: "Email" },
+        { key: "Receiving", name: "Receiving" },
+        { key: "PurchaseOrder", name: "Purchase Order" },
 
         // { key: "Notes", name: "Notes", disabled: true },
         // {

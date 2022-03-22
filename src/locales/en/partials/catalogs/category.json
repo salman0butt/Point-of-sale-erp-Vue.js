@@ -17,7 +17,7 @@
       }
     },
     "form": {
-      "modelTitle": "Create Brand",
+      "modelTitle": "Create Category",
       "name": "Name",
       "parent": "Parent",
       "status": "Status",

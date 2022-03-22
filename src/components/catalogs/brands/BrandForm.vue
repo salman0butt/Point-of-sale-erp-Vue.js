@@ -41,6 +41,21 @@
               <CRow>
                 <CCol sm="12" md="12" class="pt-2">
                   <label for="brand_logo">{{ $t("brands.form.logo") }}</label>
+                  <div class="mb-2">
+                    <CImg
+                      v-bind:src="display_images"
+                      block
+                      class="mb-2 imger"
+                      width="100%"
+                    />
+                  </div>
+                  <input
+                    class="form-control"
+                    type="file"
+                    @change="pickFile"
+                    style="padding: 3px"
+                  />
+                  <!-- <label for="brand_logo">{{ $t("brands.form.logo") }}</label>
                   <app-upload
                     ref="fileUpload"
                     class="col-md-12"
@@ -71,7 +86,7 @@
                         ></span>
                       </li>
                     </ul>
-                  </div>
+                  </div> -->
                 </CCol>
               </CRow>
               <p v-if="$v.$anyError" class="errorMsg">
@@ -108,14 +123,14 @@
 <script>
 import BrandService from "@/services/catalogs/brands/BrandService";
 import { required } from "vuelidate/lib/validators";
-import AppUpload from "@/components/uploads/Upload.vue";
+// import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "CreateOrUpdateBrand",
   components: {
-    AppUpload,
+    // AppUpload,
     Loader,
   },
   props: {
@@ -135,7 +150,7 @@ export default {
       image: "",
       status: "active",
     },
-    display_images: null,
+    display_images: "/img/images/no-logo.png",
     options: {
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
@@ -230,6 +245,17 @@ export default {
           });
       }
     },
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.form.image = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.display_images = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+      }
+    },
     // updateBrand() {
     //   this.$v.$touch();
     //   if (!this.$v.$invalid) {
@@ -306,55 +332,55 @@ export default {
     //     this.form.image = "";
     //   }
     // },
-    handleFile(files) {
-      this.form.image = files[0];
-    },
-    deleteAttachment(uuid) {
-      this.$swal
-        .fire({
-          title: "Do you want to delete this Attachment",
-          text: "This will be Deleted from Database",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            this.$store
-              .dispatch("deleteAttachment", uuid)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$store.commit("set_loader");
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Attachment Deleted Successfully",
-                    timer: 3600,
-                  });
-                  this.display_images = null;
-                  this.$store.commit("close_loader");
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-                this.$store.commit("close_loader");
-                console.log(err);
-              });
-          }
-        });
-    },
+    // handleFile(files) {
+    //   this.form.image = files[0];
+    // },
+    // deleteAttachment(uuid) {
+    //   this.$swal
+    //     .fire({
+    //       title: "Do you want to delete this Attachment",
+    //       text: "This will be Deleted from Database",
+    //       showCancelButton: true,
+    //       confirmButtonColor: "#e55353",
+    //       confirmButtonText: "Yes, remove it it!",
+    //     })
+    //     .then((result) => {
+    //       if (result.isConfirmed) {
+    //         this.$store
+    //           .dispatch("deleteAttachment", uuid)
+    //           .then((res) => {
+    //             if (res.status == 200) {
+    //               this.$store.commit("set_loader");
+    //               this.$swal.fire({
+    //                 icon: "success",
+    //                 title: "Success",
+    //                 text: "Attachment Deleted Successfully",
+    //                 timer: 3600,
+    //               });
+    //               this.display_images = null;
+    //               this.$store.commit("close_loader");
+    //             }
+    //           })
+    //           .catch((err) => {
+    //             console.log(err);
+    //             this.$swal.fire({
+    //               icon: "error",
+    //               title: "Error",
+    //               text: "Something went Wrong",
+    //               timer: 3600,
+    //             });
+    //             this.$store.commit("close_loader");
+    //             console.log(err);
+    //           });
+    //       }
+    //     });
+    // },
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";
       }
       this.isEditing = false;
-      this.$refs.fileUpload.reset();
+      // this.$refs.fileUpload.reset();
     },
   },
 };

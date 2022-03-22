@@ -47,6 +47,8 @@
                 label="label"
                 track-by="label"
                 :preselect-first="true"
+                :class="{ error: $v.form.suppliers.$error }"
+                @input="$v.form.suppliers.$touch()"
               >
                 <template slot="selection" slot-scope="{ values, search, isOpen }">
                   <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
@@ -54,6 +56,11 @@
                   ></template
                 >
               </multiselect>
+              <div v-if="$v.form.suppliers.$error">
+                <p v-if="!$v.form.suppliers.required" class="errorMsg">
+                  Supplier is required
+                </p>
+              </div>
             </CCol>
           </CRow>
           <CRow>
@@ -62,14 +69,12 @@
                 :label="$t('products.form.brand')"
                 :options="options.brands"
                 :value.sync="form.brand_id"
-                :class="{ error: $v.form.brand_id.$error }"
-                @input="$v.form.brand_id.$touch()"
               />
-              <div v-if="$v.form.brand_id.$error">
+              <!-- <div v-if="$v.form.brand_id.$error">
                 <p v-if="!$v.form.brand_id.required" class="errorMsg">
                   {{ $t("products.form.validations.brand.required") }}
                 </p>
-              </div>
+              </div> -->
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2" id="categories">
@@ -85,6 +90,8 @@
                 label="label"
                 track-by="label"
                 :preselect-first="true"
+                :class="{ error: $v.form.categories.$error }"
+                @input="$v.form.categories.$touch()"
               >
                 <template slot="selection" slot-scope="{ values, search, isOpen }">
                   <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
@@ -92,6 +99,11 @@
                   ></template
                 >
               </multiselect>
+              <div v-if="$v.form.categories.$error">
+                <p v-if="!$v.form.categories.required" class="errorMsg">
+                  Categories is required
+                </p>
+              </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <label class="typo__label">{{ $t("products.form.branches") }}</label>
@@ -106,6 +118,8 @@
                 label="label"
                 track-by="label"
                 :preselect-first="true"
+                :class="{ error: $v.form.branches.$error }"
+                @input="$v.form.branches.$touch()"
               >
                 <template slot="selection" slot-scope="{ values, search, isOpen }">
                   <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
@@ -113,11 +127,16 @@
                   ></template
                 >
               </multiselect>
+              <div v-if="$v.form.branches.$error">
+                <p v-if="!$v.form.branches.required" class="errorMsg">
+                  Branches is required
+                </p>
+              </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput :label="$t('products.form.barcode')" :value.sync="form.barcode" />
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
+            <CCol sm="6" md="4" class="pt-2" v-if="isEdit">
               <CInput
                 :label="$t('products.form.serial_number')"
                 :value.sync="form.serial_number"
@@ -129,10 +148,16 @@
                 type="number"
                 placeholder="0"
                 :value.sync="form.alert_qty"
+                :class="{ error: $v.form.alert_qty.$error }"
+                @input="$v.form.alert_qty.$touch()"
               />
+              <div v-if="$v.form.alert_qty.$error">
+                <p v-if="!$v.form.alert_qty.required" class="errorMsg">
+                  Alert Qty is Required
+                </p>
+              </div>
             </CCol>
-          </CRow>
-          <CRow>
+
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 :label="$t('products.form.weight_unit')"
@@ -229,6 +254,12 @@ export default {
   components: { Multiselect, VueEditor, VueTagsInput, Loader },
   cibAddthis,
   cisMinusSquare,
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data: () => ({
     isEditing: false,
     saveAndExit: false,
@@ -290,7 +321,11 @@ export default {
     return {
       form: {
         name: { required },
-        brand_id: { required },
+        // brand_id: { required },
+        suppliers: { required },
+        categories: { required },
+        branches: { required },
+        alert_qty: { required },
       },
     };
   },
@@ -310,8 +345,6 @@ export default {
         {
           value: "",
           label: this.$t("products.form.choose_brand"),
-          disabled: true,
-          selected: "",
         },
       ];
     },
@@ -323,6 +356,19 @@ export default {
           disabled: true,
           selected: "",
         },
+        // {
+        //   value: "g",
+        //   label: "Gram",
+        // },
+        // {
+        //   value: "kg",
+        //   label: "Kilogram",
+        // },
+        // {
+        //   value: "ouance",
+        //   label: "Ouance",
+        // },
+        // all weight units list
         {
           value: "g",
           label: "Gram",
@@ -332,8 +378,213 @@ export default {
           label: "Kilogram",
         },
         {
-          value: "ouance",
+          value: "ounce",
           label: "Ouance",
+        },
+        {
+          value: "pound",
+          label: "Pound",
+        },
+        {
+          value: "stone",
+          label: "Stone",
+        },
+        {
+          value: "ton",
+          label: "Ton",
+        },
+        {
+          value: "tonne",
+          label: "Tonne",
+        },
+        // other weight units
+        {
+          value: "carat",
+          label: "Carat",
+        },
+        {
+          value: "centner",
+          label: "Centner",
+        },
+        {
+          value: "dram",
+          label: "Dram",
+        },
+        {
+          value: "grain",
+          label: "Grain",
+        },
+        {
+          value: "gram",
+          label: "Gram",
+        },
+        {
+          value: "hundredweight",
+          label: "Hundredweight",
+        },
+        {
+          value: "kilogram",
+          label: "Kilogram",
+        },
+        {
+          value: "longton",
+          label: "Longton",
+        },
+        {
+          value: "metric_ton",
+          label: "Metric Ton",
+        },
+        {
+          value: "microgram",
+          label: "Microgram",
+        },
+        {
+          value: "milligram",
+          label: "Milligram",
+        },
+        {
+          value: "milliliter",
+          label: "Milliliter",
+        },
+        {
+          value: "millilitre",
+          label: "Millilitre",
+        },
+        {
+          value: "ounce",
+          label: "Ounce",
+        },
+        {
+          value: "pennyweight",
+          label: "Pennyweight",
+        },
+        {
+          value: "pound",
+          label: "Pound",
+        },
+        {
+          value: "quarter",
+          label: "Quarter",
+        },
+        {
+          value: "short_ton",
+          label: "Short Ton",
+        },
+        {
+          value: "slug",
+          label: "Slug",
+        },
+        {
+          value: "stone",
+          label: "Stone",
+        },
+        {
+          value: "ton",
+          label: "Ton",
+        },
+        {
+          value: "tonne",
+          label: "Tonne",
+        },
+        {
+          value: "ton",
+          label: "Ton",
+        },
+        {
+          value: "ton_long",
+          label: "Ton Long",
+        },
+        {
+          value: "ton_short",
+          label: "Ton Short",
+        },
+        {
+          value: "troy_ounce",
+          label: "Troy Ounce",
+        },
+        {
+          value: "troy_pound",
+          label: "Troy Pound",
+        },
+        {
+          value: "troy_ton",
+          label: "Troy Ton",
+        },
+        {
+          value: "troy_tonne",
+          label: "Troy Tonne",
+        },
+        {
+          value: "us_gallon",
+          label: "US Gallon",
+        },
+        {
+          value: "us_gallon_imperial",
+          label: "US Gallon Imperial",
+        },
+        {
+          value: "us_quart",
+          label: "US Quart",
+        },
+        {
+          value: "us_ton",
+          label: "US Ton",
+        },
+        {
+          value: "us_ton_long",
+          label: "US Ton Long",
+        },
+        {
+          value: "us_ton_short",
+          label: "US Ton Short",
+        },
+        {
+          value: "us_wine_cup",
+          label: "US Wine Cup",
+        },
+        {
+          value: "us_wine_glass",
+          label: "US Wine Glass",
+        },
+        {
+          value: "us_wine_ounce",
+          label: "US Wine Ounce",
+        },
+        {
+          value: "us_wine_pint",
+          label: "US Wine Pint",
+        },
+        {
+          value: "us_wine_quart",
+          label: "US Wine Quart",
+        },
+        {
+          value: "us_wine_tablespoon",
+          label: "US Wine Tablespoon",
+        },
+        {
+          value: "us_wine_teaspoon",
+          label: "US Wine Teaspoon",
+        },
+        {
+          value: "yard",
+          label: "Yard",
+        },
+        {
+          value: "yard_foot",
+          label: "Yard Foot",
+        },
+        {
+          value: "yard_inch",
+          label: "Yard Inch",
+        },
+        {
+          value: "yard_mile",
+          label: "Yard Mile",
+        },
+        {
+          value: "yard_yard",
+          label: "Yard Yard",
         },
       ];
     },
@@ -383,47 +634,50 @@ export default {
       this.$store.commit("set_loader");
       ProductService.get(this.productId)
         .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
-            this.form.name = data.name ?? "";
-            this.form.short_name = data.short_name ?? "";
-            this.form.type = data.type ?? "";
-            this.form.serial_number = data.serial_number ?? "";
-            this.form.brand_id = data.brand?.uuid ?? "";
-            this.form.barcode = data.barcode ?? "";
-            this.form.alert_qty = data.alert_qty ?? "";
-            this.form.weight_unit = data.weight_unit ?? "";
-            this.form.short_description = data.short_description ?? "";
-            this.form.product_description = data.product_description ?? "";
-            this.form.is_favorite = data.is_favorite == "yes" ? true : false;
-            this.form.is_expiry = data.is_expiry == "yes" ? true : false;
-            this.form.categories = data.categories.map(function (item) {
-              return { label: item.name, value: item.uuid };
-            });
-            this.form.suppliers = data.suppliers.map(function (item) {
-              return { label: item.name, value: item.uuid };
-            });
-            this.form.branches = data.branches.map(function (item) {
-              return { label: item.name, value: item.uuid };
-            });
-
-            if (data.tags && data.tags.length > 0) {
-              data.tags.forEach((element) => {
-                this.form.tags.unshift({
-                  text: element.name,
-                  tiClasses: ["ti-valid"],
-                });
-              });
-            }
-            // this.form.images = data.images ?? "";
-            this.form.status = data.status ?? "";
-            this.$store.commit("close_loader");
-          }
+          this.displayData(data);
         })
         .catch((error) => {
           this.$store.commit("close_loader");
           console.log(error);
           this.$router.push("/products");
         });
+    },
+    displayData(data = null) {
+      if (data) {
+        this.form.name = data.name ?? "";
+        this.form.short_name = data.short_name ?? "";
+        this.form.type = data.type ?? "";
+        this.form.serial_number = data.serial_number ?? "";
+        this.form.brand_id = data.brand?.uuid ?? "";
+        this.form.barcode = data.barcode ?? "";
+        this.form.alert_qty = data.alert_qty ?? "";
+        this.form.weight_unit = data.weight_unit ?? "";
+        this.form.short_description = data.short_description ?? "";
+        this.form.product_description = data.product_description ?? "";
+        this.form.is_favorite = data.is_favorite == "yes" ? true : false;
+        this.form.is_expiry = data.is_expiry == "yes" ? true : false;
+        this.form.categories = data.categories.map(function (item) {
+          return { label: item.name, value: item.uuid };
+        });
+        this.form.suppliers = data.suppliers.map(function (item) {
+          return { label: item.name, value: item.uuid };
+        });
+        this.form.branches = data.branches.map(function (item) {
+          return { label: item.name, value: item.uuid };
+        });
+
+        if (data.tags && data.tags.length > 0) {
+          data.tags.forEach((element) => {
+            this.form.tags.unshift({
+              text: element.name,
+              tiClasses: ["ti-valid"],
+            });
+          });
+        }
+        // this.form.images = data.images ?? "";
+        this.form.status = data.status ?? "";
+        this.$store.commit("close_loader");
+      }
     },
     saveProduct() {
       this.$v.$touch();
@@ -474,6 +728,7 @@ export default {
         ProductService.update(this.productId, formData, config)
           .then((res) => {
             if (res.status == 200) {
+              this.displayData(res.data);
               this.$swal.fire({
                 icon: "success",
                 title: this.$t("general.swal.success"),
