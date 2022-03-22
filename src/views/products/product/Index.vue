@@ -91,7 +91,7 @@
                 <td>
                   <CButtonGroup>
                     <CButton
-                      v-if="$can('view products')"
+                      v-if="$can('read products')"
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"

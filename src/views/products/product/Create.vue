@@ -41,7 +41,7 @@
                 <template slot="title">
                   {{ pills.general }}
                 </template>
-                <ProductForm />
+                <ProductForm :isEdit="false" />
               </CTab>
             </CTabs>
           </CCardBody>
@@ -86,6 +86,7 @@ export default {
       this.tabs = [
         { key: "ProductTab", name: this.$t("products.tabs.general") },
         { key: "", name: this.$t("products.tabs.prices") },
+        { key: "", name: this.$t("products.tabs.inventory") },
         { key: "", name: this.$t("products.tabs.images") },
       ];
     },
@@ -96,7 +97,7 @@ export default {
         this.tabs.push({ key: "", name: this.$t("products.tabs.general") });
         this.tabs.push({ key: "", name: this.$t("products.tabs.variations") });
         this.tabs.push({ key: "", name: this.$t("products.tabs.prices") });
-        this.tabs.push({ key: "", name: this.$t("products.tabs.inventory") });
+        // this.tabs.push({ key: "", name: this.$t("products.tabs.inventory") });
         this.tabs.push({ key: "", name: this.$t("products.tabs.images") });
         this.tabs.push({ key: "", name: this.$t("products.tabs.modifiers") });
         this.tabs.push({ key: "", name: this.$t("products.tabs.units") });
