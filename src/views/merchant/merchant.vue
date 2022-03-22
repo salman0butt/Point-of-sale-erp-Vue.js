@@ -296,7 +296,7 @@ export default {
   name: "Tabs",
   components: {
     Loader,
-    CustomPluginModel
+    CustomPluginModel,
   },
   cilTrash,
   data() {
@@ -321,9 +321,7 @@ export default {
         { InvoiceNum: "#123122", InvoiceDate: "07/04/2021", action: "Paid" },
         { InvoiceNum: "#234244", InvoiceDate: "07/07/2021", action: "Unpaid" },
       ],
-      PluginLst: [
-
-      ],
+      PluginLst: [],
       activeTab: 1,
     };
   },
@@ -370,12 +368,13 @@ export default {
     },
     displayData(data = null) {
       if (data) {
-        this.general_items.business_name = data.business_name ? data.business_name.en : "";
-        this.general_items.business_activity =  data.business_activity && JSON.parse(
-          data.business_activity
-        ) ? JSON.parse(
-          data.business_activity
-        ).en : "";
+        this.general_items.business_name = data.business_name
+          ? data.business_name.en
+          : "";
+        this.general_items.business_activity =
+          data.business_activity && JSON.parse(data.business_activity)
+            ? JSON.parse(data.business_activity).en
+            : "";
 
         this.general_items.name = JSON.parse(data.owner_name).en;
         this.general_items.email = data.business_email ?? "";
@@ -413,7 +412,7 @@ export default {
       } else if (this.pluginname == "") {
         this.pluginlist = initial;
       }
-       this.$forceUpdate();
+      this.$forceUpdate();
     },
     updateDetail() {
       let business_id = localStorage.getItem("business_id");
@@ -446,8 +445,6 @@ export default {
               timer: 3600,
             });
             this.displayData(response.data);
-
-
           }
         })
         .catch((error) => {
@@ -485,19 +482,21 @@ export default {
       var plugins = this.pluginlist;
       ModuleService.index()
         .then(({ data }) => {
-          if(data){
-          data.map((item, id) => {
-            plugins.push({
-              uuid: item.uuid,
-              global_id: item.global_id,
-              name: item.name,
-              imgUrl: item.image ? item.image : "/img/images/photo-not-available.png",
-              content: item.description,
-              status: item.status == "active" ? "Deactivate" : "Activate" ,
+          if (data) {
+            data.map((item, id) => {
+              plugins.push({
+                uuid: item.uuid,
+                global_id: item.global_id,
+                name: item.name,
+                imgUrl: item.image
+                  ? item.image
+                  : "/img/images/photo-not-available.png",
+                content: item.description,
+                status: item.status == "active" ? "Deactivate" : "Activate",
+              });
             });
-          });
-          // this.pluginname = "";
-          this.$forceUpdate();
+            // this.pluginname = "";
+            this.$forceUpdate();
           }
         })
         .catch((error) => {
@@ -511,36 +510,39 @@ export default {
       this.$store.commit("set_loader");
       let plugins = this.pluginlist;
       let plugin = plugins.find((item) => item.uuid == uuid);
-      let status = '';
-      let successMsg = '';
+      let status = "";
+      let successMsg = "";
       if (plugin.status === "Activate") {
         status = "active";
-        successMsg = 'Activated';
+        successMsg = "Activated";
         plugin.status = "Deactivate";
       } else {
         status = "inactive";
-         successMsg = 'Deactivated';
+        successMsg = "Deactivated";
         plugin.status = "Activate";
       }
-      this.$http.patch(`/modules/${plugin.global_id}/${status}`).then((response) => {
-        if (response.status === 200) {
+      this.$http
+        .patch(`/modules/${plugin.global_id}/${status}`)
+        .then((response) => {
+          if (response.status === 200) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: `Plugin ${successMsg} Successfully`,
+              timer: 3600,
+            });
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
           this.$swal.fire({
-            icon: "success",
-            title: "Success",
-            text: `Plugin ${successMsg} Successfully`,
-            timer: 3600,
-          });
-        }
-        this.$store.commit("close_loader");
-      }).catch((error) => {
-         this.$swal.fire({
             icon: "error",
             title: "Error",
             text: "Something went wrong",
             timer: 3600,
           });
-        this.$store.commit("close_loader");
-      });
+          this.$store.commit("close_loader");
+        });
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="$can('read dashboard')">
     <Loader />
     <CRow v-if="cardBoxA && cardBoxA.length > 0 && $can('Card A')">
       <CCol sm="12" md="12">
