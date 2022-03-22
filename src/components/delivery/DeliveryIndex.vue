@@ -22,17 +22,25 @@
                 color="warning"
                 >Edit <CIcon :content="$options.cilPencil"
               /></CButton>
-              <CButton @click="defaultRow(item.uuid)" class="btn-sm" color="success"
+              <!-- <CButton @click="defaultRow(item.uuid)" class="btn-sm" color="success"
                 >Default</CButton
+              > -->
+              <CButton
+                @click="deleteRow(item.uuid)"
+                class="btn-sm"
+                color="danger"
               >
-              <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                 <CIcon :content="$options.cilTrash" />
               </CButton>
             </CButtonGroup>
           </td>
         </template>
       </CDataTable>
-      <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+      <CPagination
+        v-show="pages > 1"
+        :pages="pages"
+        :active-page.sync="activePage"
+      />
     </CCol>
   </CRow>
 </template>
@@ -47,7 +55,11 @@ const taxFields = [
     _style: "min-width:15%;",
   },
   { key: "rate_on_us", label: "RATE ON US", _style: "min-width:15%;" },
-  { key: "rate_on_customer", label: "RATE ON CUSTOMER", _style: "min-width:15%;" },
+  {
+    key: "rate_on_customer",
+    label: "RATE ON CUSTOMER",
+    _style: "min-width:15%;",
+  },
   { key: "actions", label: "ACTION", _style: "width:25%;" },
 ];
 
@@ -138,7 +150,9 @@ export default {
                     text: "Delivery Deleted Successfully",
                     timer: 3600,
                   });
-                  this.deliveries = this.deliveries.filter((item) => item.uuid != uuid);
+                  this.deliveries = this.deliveries.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })

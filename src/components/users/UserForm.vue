@@ -6,19 +6,6 @@
       <CRow>
         <CCol sm="6" md="4" class="pt-2">
           <CInput
-            label="Serial No"
-            v-model="form.serial_no"
-            :class="{ error: $v.form.serial_no.$error }"
-            @input="$v.form.serial_no.$touch()"
-          />
-          <div v-if="$v.form.serial_no.$error">
-            <p v-if="!$v.form.serial_no.required" class="errorMsg">
-              Serial No is required
-            </p>
-          </div>
-        </CCol>
-        <CCol sm="6" md="4" class="pt-2">
-          <CInput
             label="Full Name"
             v-model="form.full_name"
             :class="{ error: $v.form.full_name.$error }"
@@ -32,10 +19,13 @@
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
-          <CSelect label="Gender" :options="options.gender" :value.sync="form.gender" />
+          <CSelect
+            label="Gender"
+            :options="options.gender"
+            :value.sync="form.gender"
+          />
         </CCol>
-      </CRow>
-      <CRow>
+
         <CCol sm="6" md="4" class="pt-2">
           <CInput
             label="Phone"
@@ -69,19 +59,27 @@
             :preselect-first="true"
           >
             <template slot="selection" slot-scope="{ values, search, isOpen }">
-              <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+              <span
+                class="multiselect__single"
+                v-if="values.value &amp;&amp; !isOpen"
                 >{{ values.length }} options selected</span
               ></template
             >
           </multiselect>
 
           <div v-if="$v.form.branch_id.$error">
-            <p v-if="!$v.form.branch_id.required" class="errorMsg">Branch is required</p>
+            <p v-if="!$v.form.branch_id.required" class="errorMsg">
+              Branch is required
+            </p>
           </div>
         </CCol>
 
         <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
-          <CSelect label="Status" :options="options.status" :value.sync="form.status" />
+          <CSelect
+            label="Status"
+            :options="options.status"
+            :value.sync="form.status"
+          />
         </CCol>
       </CRow>
       <div>
@@ -137,7 +135,9 @@
               @input="$v.form.user_role.$touch()"
             />
             <div v-if="$v.form.user_role.$error">
-              <p v-if="!$v.form.user_role.required" class="errorMsg">Role is required</p>
+              <p v-if="!$v.form.user_role.required" class="errorMsg">
+                Role is required
+              </p>
             </div>
           </CCol>
           <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
@@ -170,12 +170,18 @@
               <a href="#" @click.prevent="pickImage()">
                 <CImg
                   v-bind:src="
-                    form.preview_pic ? form.preview_pic : '/img/images/no-logo.png'
+                    form.preview_pic
+                      ? form.preview_pic
+                      : '/img/images/no-logo.png'
                   "
                   block
                   class="mb-2 imger"
                   width="100%"
-                  style="border-style: solid; padding: 10px; border-color: #999999"
+                  style="
+                    border-style: solid;
+                    padding: 10px;
+                    border-color: #999999;
+                  "
                 />
               </a>
               <CButton
@@ -231,7 +237,6 @@ export default {
     form: {
       id: "",
       emp_id: "",
-      serial_no: "",
       full_name: "",
       gender: "",
       phone_number: "",
@@ -258,7 +263,9 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
-      user_role: [{ value: "", label: "Choose Role", disabled: true, selected: "" }],
+      user_role: [
+        { value: "", label: "Choose Role", disabled: true, selected: "" },
+      ],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },
@@ -279,7 +286,6 @@ export default {
           phone_number: { required, numeric, minLength: minLength(8) },
           email: { email },
           branch_id: { required },
-          serial_no: { required },
           user_name: { required },
           user_email: { required },
           user_role: { required },
@@ -292,7 +298,6 @@ export default {
           phone_number: { required, numeric, minLength: minLength(8) },
           email: { email },
           branch_id: { required },
-          serial_no: { required },
           user_name: { required },
           user_email: { required },
           user_pass: { required },
@@ -380,7 +385,10 @@ export default {
                   data.employee.uuid &&
                   data.employee.uuid === this.$store.state.employee_id
                 ) {
-                  this.$store.dispatch("setPorfileImage", res.data.personal_photo);
+                  this.$store.dispatch(
+                    "setPorfileImage",
+                    res.data.personal_photo
+                  );
                   // this.$store.commit("set_profile_img", data.employee.personal_photo);
                 }
               }
@@ -470,7 +478,6 @@ export default {
         this.form.id = data.uuid;
         if (data.employee) {
           this.form.emp_id = data.employee.uuid ?? "";
-          this.form.serial_no = data.employee.serial_no ?? "";
           this.form.full_name = data.employee.full_name ?? "";
           this.form.gender = data.employee.gender ?? "";
           this.form.phone_number = data.employee.phone_number ?? "";

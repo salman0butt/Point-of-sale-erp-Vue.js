@@ -25,21 +25,32 @@
                     color="warning"
                     >Edit <CIcon :content="$options.cilPencil"
                   /></CButton>
-                  <CButton @click="defaultRow(item.uuid)" class="btn-sm" color="success"
+                  <CButton
+                    @click="defaultRow(item.uuid)"
+                    class="btn-sm"
+                    color="success"
                     >Default</CButton
                   >
-                  <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
+                  <CButton
+                    @click="deleteRow(item.uuid)"
+                    class="btn-sm"
+                    color="danger"
+                  >
                     <CIcon :content="$options.cilTrash" />
                   </CButton>
                 </CButtonGroup>
               </td>
             </template>
           </CDataTable>
-          <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+          <CPagination
+            v-show="pages > 1"
+            :pages="pages"
+            :active-page.sync="activePage"
+          />
         </CCol>
       </CRow>
       <CRow>
-        <CCol sm="4" md="4" class="pt-2">
+        <!-- <CCol sm="4" md="4" class="pt-2">
           <CInputCheckbox custom :checked="true" label="Prices Include Tax:" />
         </CCol>
         <CCol sm="4" md="4" class="pt-2">
@@ -51,7 +62,7 @@
             :checked="true"
             label="Use Tax Values At ALL Branches:"
           />
-        </CCol>
+        </CCol> -->
       </CRow>
     </CCol>
   </CRow>

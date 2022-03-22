@@ -35,7 +35,9 @@
               ><CIcon :content="$options.cilPencil"
             /></CButton>
             <CButton
-              v-if="$can('delete users')"
+              v-if="
+                $can('delete users') && item.roleDetail.name != 'super-admin'
+              "
               @click="deleteRow(item.uuid)"
               class="btn-sm"
               color="danger"
@@ -46,7 +48,11 @@
         </td>
       </template>
     </CDataTable>
-    <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+    <CPagination
+      v-show="pages > 1"
+      :pages="pages"
+      :active-page.sync="activePage"
+    />
   </div>
 </template>
 
@@ -156,7 +162,9 @@ export default {
                     text: "User Deleted Successfully",
                     timer: 3600,
                   });
-                  this.UserData = this.UserData.filter((item) => item.uuid != uuid);
+                  this.UserData = this.UserData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })
