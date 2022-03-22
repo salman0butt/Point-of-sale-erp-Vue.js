@@ -44,6 +44,7 @@
 <script>
 import SupplierServices from "@/services/contacts/supplier/SupplierServices";
 import General from "@/components/contacts/supplier/General";
+import Receiving from "@/components/contacts/supplier/Receiving";
 import Address from "@/components/contacts/supplier/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 import Email from "@/components/general/Email/Email";
@@ -59,6 +60,7 @@ export default {
     Address,
     Contact,
     Email,
+    Receiving,
   },
   data() {
     return {
@@ -72,6 +74,7 @@ export default {
         { key: "Address", name: "Address" },
         { key: "Contact", name: "Contact" },
         { key: "Email", name: "Email" },
+        { key: "Receiving", name: "Receiving" },
 
         // {
         //   key: "CreditPaymentAccount",

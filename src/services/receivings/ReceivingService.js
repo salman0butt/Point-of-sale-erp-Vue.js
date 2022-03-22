@@ -13,6 +13,14 @@ class ReceivingService extends Helper {
 
         return http.get(url, super.selectedBranch());
     }
+    getAllBySupplier(page, per_page, id) {
+        let url = `/receivings-by-supplier/${id}`;
+        if (page !== '' && page !== undefined && page !== null)
+            url = super.updateQueryStringParameter(url, "page", page);
+        if (per_page !== '' && per_page !== undefined && per_page !== null)
+            url = super.updateQueryStringParameter(url, "per_page", per_page);
+        return http.get(url);
+    }
 
     get(id) {
         return http.get(`/receivings/${id}`, super.selectedBranch());
@@ -33,12 +41,12 @@ class ReceivingService extends Helper {
     }
 
     create(data, config) {
-      config = Object.assign({}, config, super.selectedBranch());
+        config = Object.assign({}, config, super.selectedBranch());
         return http.post("/receivings", data, config);
     }
 
     update(id, data, config) {
-      config = Object.assign({}, config, super.selectedBranch());
+        config = Object.assign({}, config, super.selectedBranch());
         return http.post(`/receivings/${id}`, data, config);
     }
 
