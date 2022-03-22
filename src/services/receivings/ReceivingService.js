@@ -19,7 +19,7 @@ class ReceivingService extends Helper {
             url = super.updateQueryStringParameter(url, "page", page);
         if (per_page !== '' && per_page !== undefined && per_page !== null)
             url = super.updateQueryStringParameter(url, "per_page", per_page);
-        return http.get(url);
+        return http.get(url, super.selectedBranch());
     }
 
     get(id) {

@@ -48,6 +48,8 @@ import Receiving from "@/components/contacts/supplier/Receiving";
 import Address from "@/components/contacts/supplier/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 import Email from "@/components/general/Email/Email";
+import PurchaseOrder from "@/components/contacts/supplier/PurchaseOrder";
+
 // import CreditPaymentAccount from "@/components/contacts/customers/CreditPaymentAccount";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
@@ -61,6 +63,7 @@ export default {
     Contact,
     Email,
     Receiving,
+    PurchaseOrder,
   },
   data() {
     return {
@@ -75,6 +78,7 @@ export default {
         { key: "Contact", name: "Contact" },
         { key: "Email", name: "Email" },
         { key: "Receiving", name: "Receiving" },
+        { key: "PurchaseOrder", name: "Purchase Order" },
 
         // {
         //   key: "CreditPaymentAccount",

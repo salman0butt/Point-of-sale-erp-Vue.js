@@ -36,11 +36,7 @@
         </CCard>
       </CCol>
       <CCol xs="12" lg="9">
-        <component
-          v-bind:is="activeTab"
-          module="supplier"
-          :readOnly="true"
-        ></component>
+        <component v-bind:is="activeTab" module="supplier" :readOnly="true"></component>
       </CCol>
     </CRow>
   </div>
@@ -52,6 +48,7 @@ import Address from "@/components/contacts/supplier/AddressTab";
 import Contact from "@/components/general/Contact/Contact";
 import Email from "@/components/general/Email/Email";
 import Receiving from "@/components/contacts/supplier/Receiving";
+import PurchaseOrder from "@/components/contacts/supplier/PurchaseOrder";
 
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 
@@ -65,6 +62,7 @@ export default {
     Contact,
     Email,
     Receiving,
+    PurchaseOrder,
   },
   data() {
     return {
@@ -79,6 +77,8 @@ export default {
         { key: "Contact", name: "Contact" },
         { key: "Email", name: "Email" },
         { key: "Receiving", name: "Receiving" },
+        { key: "PurchaseOrder", name: "Purchase Order" },
+
         // { key: "Returns", name: "Returns" },
         // { key: "Payments", name: "Payments" },
       ],

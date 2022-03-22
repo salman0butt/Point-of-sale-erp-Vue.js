@@ -7,7 +7,7 @@
           <CCardBody>
             <div>
               <router-link
-                v-if="$can('create receivings')"
+                v-if="!readOnly && $can('create receivings')"
                 class="btn btn-success"
                 to="/receivings/create"
                 style="float: right"
@@ -90,6 +90,12 @@ export default {
   cilPencil,
   cilTrash,
   cilEye,
+  props: {
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       ReceivingData: [],

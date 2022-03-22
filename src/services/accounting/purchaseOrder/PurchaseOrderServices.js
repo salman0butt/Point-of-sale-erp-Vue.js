@@ -13,6 +13,17 @@ class PurchaseOrderServices extends Helper {
         return http.get(url);
     }
 
+    getPurchaseOrderBySupplier(id, page = null, per_page = null) {
+      let url = `/purchase-orders-by-supplier/${id}`;
+      if (page !== '')
+      url = super.updateQueryStringParameter(url, "page", page);
+
+    if (per_page !== '')
+      url = super.updateQueryStringParameter(url, "per_page", per_page);
+
+      return http.get(url, super.selectedBranch());
+    }
+
     getAllSuppliers() {
         return http.get("/supplier?all_data=true");
     }
