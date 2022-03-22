@@ -40,7 +40,9 @@
                 @input="$v.form.group.$touch()"
               />
               <div v-if="$v.form.group.$error">
-                <p v-if="!$v.form.group.required" class="errorMsg">Group is required</p>
+                <p v-if="!$v.form.group.required" class="errorMsg">
+                  Group is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="6" class="pt-2">
@@ -68,7 +70,9 @@
                 @input="$v.form.email.$touch()"
               />
               <div v-if="$v.form.email.$error">
-                <p v-if="!$v.form.email.required" class="errorMsg">Email is required</p>
+                <p v-if="!$v.form.email.required" class="errorMsg">
+                  Email is required
+                </p>
                 <p v-if="!$v.form.email.email" class="errorMsg">
                   Please Enter a valid email
                 </p>
@@ -77,22 +81,31 @@
             <CCol sm="6" md="6" class="pt-2">
               <CInput label="Tax ID" v-model="form.tax_id" />
             </CCol>
-            <CCol sm="12" md="12" class="pt-2">
-              <CInput
-                label="Address"
-                v-model="form.address"
-                :class="{ error: $v.form.address.$error }"
-                @input="$v.form.address.$touch()"
-              />
-              <div v-if="$v.form.address.$error">
-                <p v-if="!$v.form.address.required" class="errorMsg">
-                  Address is required
-                </p>
-              </div>
+          </CRow>
+          <CRow>
+            <CCol sm="4" md="4" class="pt-2">
+              <CInput label="Flat" v-model="form.flat" />
+            </CCol>
+            <CCol sm="4" md="4" class="pt-2">
+              <CInput label="Floor" v-model="form.floor" />
+            </CCol>
+            <CCol sm="4" md="4" class="pt-2">
+              <CInput label="building" v-model="form.building" />
+            </CCol>
+            <CCol sm="4" md="4" class="pt-2">
+              <CInput label="Street" v-model="form.street" />
+            </CCol>
+            <CCol sm="4" md="4" class="pt-2">
+              <CInput label="Block" v-model="form.block" />
+            </CCol>
+            <CCol sm="4" md="4" class="pt-2">
+              <CInput label="Area" v-model="form.area" />
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <!-- <CRow class="mt-4"> -->
 
           <!-- <CButton
@@ -141,12 +154,19 @@ export default {
       group: "",
       contact: "",
       email: "",
-      address: "",
       tax_id: "",
+      flat: "",
+      floor: "",
+      building: "",
+      street: "",
+      block: "",
+      area: "",
     },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
-      group: [{ value: "", label: "Choose Group", disabled: true, selected: "" }],
+      group: [
+        { value: "", label: "Choose Group", disabled: true, selected: "" },
+      ],
     },
     type_selected: false,
   }),
@@ -158,7 +178,6 @@ export default {
         group: { required },
         contact: { required, numeric },
         email: { required, email },
-        address: { required },
       },
     };
   },

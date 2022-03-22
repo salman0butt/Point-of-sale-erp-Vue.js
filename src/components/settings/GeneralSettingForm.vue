@@ -32,6 +32,78 @@
                     </p>
                   </div>
                 </CCol>
+
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Payment Terms On Quotation"
+                    :options="options.show_payment_term_on_quotation"
+                    :value.sync="form.show_payment_term_on_quotation"
+                  />
+                </CCol>
+
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Terms And Conditions On Quotation"
+                    :options="options.show_terms_and_conditions_on_quotation"
+                    :value.sync="form.show_terms_and_conditions_on_quotation"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Note On Quotation"
+                    :options="options.show_note_on_quotation"
+                    :value.sync="form.show_note_on_quotation"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Attachment On Quotation"
+                    :options="options.show_attachment_on_quotation"
+                    :value.sync="form.show_attachment_on_quotation"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Delivery On Quotation"
+                    :options="options.show_delivery_on_quotation"
+                    :value.sync="form.show_delivery_on_quotation"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Payment Term On Invoice"
+                    :options="options.show_payment_term_on_invoice"
+                    :value.sync="form.show_payment_term_on_invoice"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Terms And Conditions On Invoice"
+                    :options="options.show_terms_and_conditions_on_invoice"
+                    :value.sync="form.show_terms_and_conditions_on_invoice"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Note On Invoice"
+                    :options="options.show_note_on_invoice"
+                    :value.sync="form.show_note_on_invoice"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Attachment On Invoice"
+                    :options="options.show_attachment_on_invoice"
+                    :value.sync="form.show_attachment_on_invoice"
+                  />
+                </CCol>
+                <CCol sm="6" md="6" class="pt-2">
+                  <CSelect
+                    label="Show Delivery On Invoice"
+                    :options="options.show_delivery_on_invoice"
+                    :value.sync="form.show_delivery_on_invoice"
+                  />
+                </CCol>
               </CRow>
 
               <CRow class="mt-4 d-block">
@@ -65,6 +137,16 @@ export default {
     form: {
       enable_tax: "",
       open_and_close: "",
+      show_payment_term_on_quotation: "",
+      show_terms_and_conditions_on_quotation: "",
+      show_note_on_quotation: "",
+      show_attachment_on_quotation: "",
+      show_delivery_on_quotation: "",
+      show_payment_term_on_invoice: "",
+      show_terms_and_conditions_on_invoice: "",
+      show_note_on_invoice: "",
+      show_attachment_on_invoice: "",
+      show_delivery_on_invoice: "",
     },
     options: {
       enable_tax: [
@@ -74,6 +156,46 @@ export default {
       ],
       open_and_close: [
         { value: "", label: "Choose Type", disabled: true, selected: "" },
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_payment_term_on_quotation: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_terms_and_conditions_on_quotation: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_note_on_quotation: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_attachment_on_quotation: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_delivery_on_quotation: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_payment_term_on_invoice: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_terms_and_conditions_on_invoice: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_note_on_invoice: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_attachment_on_invoice: [
+        { value: "on", label: "ON" },
+        { value: "off", label: "OFF" },
+      ],
+      show_delivery_on_invoice: [
         { value: "on", label: "ON" },
         { value: "off", label: "OFF" },
       ],
@@ -102,6 +224,28 @@ export default {
                 this.form.enable_tax = item.value;
               } else if (item.key === "open_and_close") {
                 this.form.open_and_close = item.value;
+              } else if (item.key === "show_payment_term_on_quotation") {
+                this.form.show_payment_term_on_quotation = item.value;
+              } else if (
+                item.key === "show_terms_and_conditions_on_quotation"
+              ) {
+                this.form.show_terms_and_conditions_on_quotation = item.value;
+              } else if (item.key === "show_note_on_quotation") {
+                this.form.show_note_on_quotation = item.value;
+              } else if (item.key === "show_attachment_on_quotation") {
+                this.form.show_attachment_on_quotation = item.value;
+              } else if (item.key === "show_delivery_on_quotation") {
+                this.form.show_delivery_on_quotation = item.value;
+              } else if (item.key === "show_payment_term_on_invoice") {
+                this.form.show_payment_term_on_invoice = item.value;
+              } else if (item.key === "show_terms_and_conditions_on_invoice") {
+                this.form.show_terms_and_conditions_on_invoice = item.value;
+              } else if (item.key === "show_note_on_invoice") {
+                this.form.show_note_on_invoice = item.value;
+              } else if (item.key === "show_attachment_on_invoice") {
+                this.form.show_attachment_on_invoice = item.value;
+              } else if (item.key === "show_delivery_on_invoice") {
+                this.form.show_delivery_on_invoice = item.value;
               }
             });
           }
@@ -118,7 +262,11 @@ export default {
         this.$store.commit("set_loader");
         this.settingData = [];
         for (const key in this.form) {
-          this.settingData.push({ key: key, value: this.form[key], type: "general" });
+          this.settingData.push({
+            key: key,
+            value: this.form[key],
+            type: "general",
+          });
         }
         let data = this.settingData;
         SettingService.update(data)

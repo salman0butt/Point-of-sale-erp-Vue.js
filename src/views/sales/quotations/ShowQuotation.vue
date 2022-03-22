@@ -8,7 +8,11 @@
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
-        <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
+        <a
+          class="btn btn-sm btn-info ml-1"
+          @click.prevent="print"
+          style="color: #fff"
+        >
           <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
       </div>
@@ -31,7 +35,12 @@
         <section slot="pdf-content" md="12" style="padding: 0 20px">
           <CRow class="mb-4">
             <CCol sm="4">
-              <CImg v-bind:src="business.logo" block class="mb-2 imger" width="100%" />
+              <CImg
+                v-bind:src="business.logo"
+                block
+                class="mb-2 imger"
+                width="100%"
+              />
               <h6 class="mb-3">To:</h6>
               <div>
                 <strong>{{ customer.name }}</strong>
@@ -68,7 +77,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(product, index) in invoice.products" :key="product.uuid">
+                <tr
+                  v-for="(product, index) in invoice.products"
+                  :key="product.uuid"
+                >
                   <td class="center">{{ index + 1 }}</td>
                   <td class="left">{{ product.product.name.en }}</td>
                   <td class="left">{{ product.description }}</td>
@@ -76,7 +88,11 @@
                   <td class="right">{{ product.selling_price }}</td>
                   <td class="right">{{ product.tax }}</td>
                   <td class="right">
-                    {{ product.discount_per ? product.discount + "%" : product.discount }}
+                    {{
+                      product.discount_per
+                        ? product.discount + "%"
+                        : product.discount
+                    }}
                   </td>
                   <td class="right">{{ product.total }}</td>
                 </tr>
@@ -85,7 +101,11 @@
                   <td><b>Delivery</b></td>
                   <td>
                     <b>
-                      {{ invoice.delivery.name.en ? invoice.delivery.name.en : "-" }}
+                      {{
+                        invoice.delivery.name.en
+                          ? invoice.delivery.name.en
+                          : "-"
+                      }}
                     </b>
                   </td>
                   <td colspan="4">
@@ -99,18 +119,30 @@
           <CRow>
             <CCol lg="4" sm="5">
               <div>
-                <label><b> Payment Terms :</b></label>
+                <label v-if="show.show_payment_term_on_quotation"
+                  ><b> Payment Terms :</b></label
+                >
 
-                <span v-html="invoice.payment_terms"></span>
+                <span
+                  v-if="show.show_payment_term_on_quotation"
+                  v-html="invoice.payment_terms"
+                ></span>
               </div>
               <div>
-                <label><b>Terms & Conditions :</b></label>
+                <label v-if="show.show_terms_and_conditions_on_quotation"
+                  ><b>Terms & Conditions :</b></label
+                >
 
-                <span v-html="invoice.terms_and_conditions"></span>
+                <span
+                  v-if="show.show_terms_and_conditions_on_quotation"
+                  v-html="invoice.terms_and_conditions"
+                ></span>
               </div>
               <div>
-                <label><b> Note : </b></label>
-                {{ invoice.note }}
+                <label v-if="show.show_note_on_quotation"
+                  ><b> Note : </b>
+                  {{ invoice.note }}
+                </label>
               </div>
             </CCol>
 
@@ -165,6 +197,7 @@ import QuotationService from "@/services/sale/QuotationService";
 // import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import Loader from "@/components/layouts/Loader";
 import VueHtml2pdf from "vue-html2pdf";
+import SettingService from "@/services/settings/SettingService";
 
 export default {
   name: "Invoice",
@@ -201,6 +234,13 @@ export default {
         address: "",
         contact_number: "",
         email: "",
+      },
+      show: {
+        show_payment_term_on_quotation: false,
+        show_terms_and_conditions_on_quotation: false,
+        show_note_on_quotation: false,
+        show_attachment_on_quotation: false,
+        show_delivery_on_quotation: false,
       },
     };
   },
@@ -248,7 +288,8 @@ export default {
           this.invoice.delivery = data.delivery;
           this.invoice.delivery_method_price = data.delivery_method_price;
           this.invoice.address_for_delivery = data.address_for_delivery;
-          this.invoice.total_price_with_delivery = data.total_price_with_delivery;
+          this.invoice.total_price_with_delivery =
+            data.total_price_with_delivery;
 
           data.products.map((item, id) => {
             serverproducts.push(item);
@@ -271,6 +312,35 @@ export default {
         .catch((err) => {
           this.$store.commit("close_loader");
           console.log(err);
+        });
+
+      // Setting of Quotation
+      SettingService.getAll("general")
+        .then(({ data }) => {
+          if (data) {
+            data.forEach((item) => {
+              if (item.key == "show_payment_term_on_quotation") {
+                this.show.show_payment_term_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_terms_and_conditions_on_quotation") {
+                this.show.show_terms_and_conditions_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_note_on_quotation") {
+                this.show.show_note_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_attachment_on_quotation") {
+                this.show.show_attachment_on_quotation =
+                  item.value == "on" ? true : false;
+              } else if (item.key == "show_delivery_on_quotation") {
+                this.show.show_delivery_on_quotation =
+                  item.value == "on" ? true : false;
+              }
+            });
+          }
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+          console.log(error);
         });
     },
   },

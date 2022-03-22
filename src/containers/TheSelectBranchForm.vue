@@ -2,6 +2,7 @@
   <div>
     <form>
       <CSelect
+        v-if="show"
         :options="options.branches"
         :value.sync="form.branches"
         @change="saveBranch()"
@@ -20,8 +21,11 @@ export default {
         branches: "",
       },
       options: {
-        branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
+        branches: [
+          { value: "", label: "Choose Branch", disabled: true, selected: "" },
+        ],
       },
+      show: false,
     };
   },
   watch: {
@@ -34,6 +38,10 @@ export default {
   },
   created() {
     this.getbranches(this.$store.getters.branchLists);
+    let branches = this.$store.getters.branchLists;
+    if (branches && branches.length > 1) {
+      this.show = true;
+    }
   },
   computed: {
     listBranches() {
@@ -46,7 +54,10 @@ export default {
   methods: {
     saveBranch() {
       if (this.form.branches !== "" && this.form.branches !== undefined) {
-        localStorage.setItem("selected_branches", JSON.stringify([this.form.branches]));
+        localStorage.setItem(
+          "selected_branches",
+          JSON.stringify([this.form.branches])
+        );
         this.$store.commit("set_show_branch_model", false);
         this.$store.commit("set_branches", this.form.branches);
         this.$swal.fire({
@@ -65,7 +76,9 @@ export default {
       ];
       let branches = this.options.branches;
       if (branch_list) {
-        const selected_branch = JSON.parse(localStorage.getItem("selected_branches"));
+        const selected_branch = JSON.parse(
+          localStorage.getItem("selected_branches")
+        );
         if (selected_branch) {
           this.form.branches = selected_branch[0];
         }

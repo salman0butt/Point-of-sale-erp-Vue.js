@@ -68,18 +68,14 @@ export default {
         { key: "General", name: "General" },
         { key: "Address", name: "Address" },
         { key: "Contact", name: "Contact" },
-        { key: "Notes", name: "Notes", disabled: true },
-        { key: "Quotations", name: "Quotations", disabled: true },
-        { key: "Invoice", name: "Invoice", disabled: true },
-        { key: "Sales", name: "Sales", disabled: true },
-        { key: "Payments", name: "Payments", disabled: true },
-        { key: "Returns", name: "Returns", disabled: true },
+        { key: "Email", name: "Email" },
+
+        // { key: "Notes", name: "Notes", disabled: true },
         // {
         //   key: "Credit Account Payment",
         //   name: "Credit Account Payment",
         //   disabled: true,
         // },
-        { key: "Discounts", name: "Discounts", disabled: true },
       ],
     };
   },

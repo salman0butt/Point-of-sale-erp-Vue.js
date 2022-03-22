@@ -35,8 +35,29 @@
         v-on-clickaway="hideDropdown"
         v-if="isVisible"
         ref="dropdown"
-        style="position: absolute; z-index: 9999999; padding-left: 0px"
-        class="absolute normal-case z-30 font-normal xs:left-0 lg:right-0 bg-white shadow overflow-hidden rounded w-48 border mt-2 py-1 lg:z-20"
+        style="
+          position: absolute;
+          z-index: 9999999;
+          padding-left: 0px;
+          padding-right: 0px;
+        "
+        class="
+          absolute
+          normal-case
+          z-30
+          font-normal
+          xs:left-0
+          lg:right-0
+          bg-white
+          shadow
+          overflow-hidden
+          rounded
+          w-48
+          border
+          mt-2
+          py-1
+          lg:z-20
+        "
       >
         <li style="padding: 5px">
           <a
@@ -56,7 +77,7 @@
               alt="english flag"
               class="h-8 w-8"
             />
-            <span class="ml-2">English</span>
+            <span class="ml-2 mr-2">English</span>
           </a>
         </li>
         <li style="padding: 5px">
@@ -75,9 +96,9 @@
               src="/img/images/flag_ar.png"
               style="max-width: 20px"
               alt="Bahrain flag"
-              class="h-8 w-8"
+              class="h-8 w-8 pr-0"
             />
-            <span class="ml-2">Arabic</span>
+            <span class="ml-2 mr-2">Arabic</span>
           </a>
         </li>
       </ul>

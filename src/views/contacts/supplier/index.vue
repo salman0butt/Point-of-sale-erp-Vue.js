@@ -65,8 +65,8 @@
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
-                      >View</CButton
-                    >
+                      ><CIcon :content="$options.cilEye"
+                    /></CButton>
                     <CButton
                       v-if="$can('edit suppliers')"
                       @click="editRow(item.uuid)"
