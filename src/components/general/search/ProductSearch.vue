@@ -15,7 +15,7 @@
       <tbody v-if="form.items && form.items.length > 0">
         <tr v-for="(item, k) in form.items" :key="k">
           <th style="position: relative">
-            <CInput
+            <!-- <CInput
               placeholder="Products"
               v-model="item.name"
               @input="searchProduct(k)"
@@ -32,7 +32,15 @@
               >
                 {{ i.label }}
               </li>
-            </ul>
+            </ul> -->
+            <ProductSearchSelect
+              @product-change="updateProductSearch($event, k)"
+              :previousValue="
+                item && item.uuid && item.name
+                  ? { value: item.uuid, label: item.name, type: 'product' }
+                  : { value: '', label: item.name, type: 'empty' }
+              "
+            />
           </th>
           <td>
             <!-- <CSelect
@@ -115,9 +123,11 @@ import AccountDropdown from "@/components/general/AccountDropdown.vue";
 import PurchaseService from "@/services/accounting/purchaseOrder/PurchaseOrderServices";
 import ReceivingService from "@/services/receivings/ReceivingService";
 import { cilTrash, cisCaretBottom, cisFile } from "@coreui/icons-pro";
+import ProductSearchSelect from "@/components/general/search/ProductSearchSelect.vue";
+
 export default {
   name: "ProductSearch",
-  components: { AccountDropdown },
+  components: { AccountDropdown, ProductSearchSelect },
   props: {
     previousValue: {
       type: Array,
@@ -162,9 +172,8 @@ export default {
     previousValue: {
       handler: function (val) {
         if (val) {
-          if (val) {
-            this.form.items = val;
-          }
+          console.log(val);
+          this.form.items = val;
         }
       },
       deep: true,
@@ -194,140 +203,140 @@ export default {
     getAccountDropDown(val, key) {
       this.form.items[key].account = val.value;
     },
-    searchProduct(k) {
-      if (!this.form.items[k].name) {
-        this.resetSearch();
-        return;
-      }
-      this.products_list = [];
-      this.unit_form = [];
-      ReceivingService.searchProduct(this.form.items[k].name)
-        .then(({ data }) => {
-          if (data !== undefined && data !== "") {
-            this.form.items[k].options.products = [];
-            data.map((product) => {
-              if (product) {
-                if (product.quantity_units && product.quantity_units.length > 0) {
-                  product.quantity_units.map((unit) => {
-                    if (product.variations && product.variations.length > 0) {
-                      this.form.items[k].options.products.push({
-                        value: product.uuid,
-                        type: "variation",
-                        label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                        is_unit: true,
-                        unit_id: unit.uuid,
-                        unit_qty: unit.qty ?? 1,
-                        unit_cost_price: unit.price?.cost_price,
-                        unit_selling_price: unit.price?.selling_price_without_tax,
-                      });
-                    } else {
-                      this.form.items[k].options.products.push({
-                        value: product.uuid,
-                        type: "product",
-                        label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                        is_unit: true,
-                        unit_id: unit.uuid,
-                        unit_qty: unit.qty ?? 1,
-                        unit_cost_price: unit.price?.cost_price,
-                        unit_selling_price: unit.price?.selling_price_without_tax,
-                      });
-                    }
-                  });
-                }
-                if (product.variations && product.variations.length > 0) {
-                  product.variations.map((variation) => {
-                    this.form.items[k].options.products.push({
-                      value: variation.uuid,
-                      type: "variation",
-                      label: `${product.name} (Variation: ${
-                        JSON.parse(variation.name)?.en
-                      } | Stock:  ${
-                        variation.inventory && variation.inventory.length
-                          ? variation.inventory[0]?.current_quantity
-                          : 0
-                      })`,
-                    });
-                  });
-                } else {
-                  this.form.items[k].options.products.push({
-                    value: product.uuid,
-                    type: "product",
-                    label: `${product.name} (Stock:  ${
-                      product.inventory && product.inventory.length
-                        ? product.inventory[0]?.current_quantity
-                        : 0
-                    })`,
-                  });
-                }
+    // searchProduct(k) {
+    //   if (!this.form.items[k].name) {
+    //     this.resetSearch();
+    //     return;
+    //   }
+    //   this.products_list = [];
+    //   this.unit_form = [];
+    //   ReceivingService.searchProduct(this.form.items[k].name)
+    //     .then(({ data }) => {
+    //       if (data !== undefined && data !== "") {
+    //         this.form.items[k].options.products = [];
+    //         data.map((product) => {
+    //           if (product) {
+    //             if (product.quantity_units && product.quantity_units.length > 0) {
+    //               product.quantity_units.map((unit) => {
+    //                 if (product.variations && product.variations.length > 0) {
+    //                   this.form.items[k].options.products.push({
+    //                     value: product.uuid,
+    //                     type: "variation",
+    //                     label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
+    //                     is_unit: true,
+    //                     unit_id: unit.uuid,
+    //                     unit_qty: unit.qty ?? 1,
+    //                     unit_cost_price: unit.price?.cost_price,
+    //                     unit_selling_price: unit.price?.selling_price_without_tax,
+    //                   });
+    //                 } else {
+    //                   this.form.items[k].options.products.push({
+    //                     value: product.uuid,
+    //                     type: "product",
+    //                     label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
+    //                     is_unit: true,
+    //                     unit_id: unit.uuid,
+    //                     unit_qty: unit.qty ?? 1,
+    //                     unit_cost_price: unit.price?.cost_price,
+    //                     unit_selling_price: unit.price?.selling_price_without_tax,
+    //                   });
+    //                 }
+    //               });
+    //             }
+    //             if (product.variations && product.variations.length > 0) {
+    //               product.variations.map((variation) => {
+    //                 this.form.items[k].options.products.push({
+    //                   value: variation.uuid,
+    //                   type: "variation",
+    //                   label: `${product.name} (Variation: ${
+    //                     JSON.parse(variation.name)?.en
+    //                   } | Stock:  ${
+    //                     variation.inventory && variation.inventory.length
+    //                       ? variation.inventory[0]?.current_quantity
+    //                       : 0
+    //                   })`,
+    //                 });
+    //               });
+    //             } else {
+    //               this.form.items[k].options.products.push({
+    //                 value: product.uuid,
+    //                 type: "product",
+    //                 label: `${product.name} (Stock:  ${
+    //                   product.inventory && product.inventory.length
+    //                     ? product.inventory[0]?.current_quantity
+    //                     : 0
+    //                 })`,
+    //               });
+    //             }
 
-                this.products_list.push({ ...product });
-              }
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    addOptions(item, k) {
-      this.form.product_id = item.value;
-      let option = item;
-      if (
-        !["", undefined].includes(option.is_unit) &&
-        !["", undefined].includes(option.unit_id)
-      ) {
-        if (this.products_list && this.products_list.length > 0) {
-          this.products_list.find((product) => {
-            if (option.type === "product") {
-              this.pro_unit = true;
-              this.addProduct(option);
-            }
-          });
-        }
-      } else {
-        if (option.type === "product") {
-          this.addProduct({}, k);
-        }
-      }
-    },
-    addProduct(option = {}, k = null) {
-      if (this.form.product_id !== "" && this.form.product_id !== undefined) {
-        let product = this.products_list.find(
-          (product) => product.uuid === this.form.product_id
-        );
+    //             this.products_list.push({ ...product });
+    //           }
+    //         });
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // },
+    // addOptions(item, k) {
+    //   this.form.product_id = item.value;
+    //   let option = item;
+    //   if (
+    //     !["", undefined].includes(option.is_unit) &&
+    //     !["", undefined].includes(option.unit_id)
+    //   ) {
+    //     if (this.products_list && this.products_list.length > 0) {
+    //       this.products_list.find((product) => {
+    //         if (option.type === "product") {
+    //           this.pro_unit = true;
+    //           this.addProduct(option);
+    //         }
+    //       });
+    //     }
+    //   } else {
+    //     if (option.type === "product") {
+    //       this.addProduct({}, k);
+    //     }
+    //   }
+    // },
+    // addProduct(option = {}, k = null) {
+    //   if (this.form.product_id !== "" && this.form.product_id !== undefined) {
+    //     let product = this.products_list.find(
+    //       (product) => product.uuid === this.form.product_id
+    //     );
 
-        if (Object.keys(option).length === 0 && option.constructor === Object) {
-          Object.assign(option, { unit_qty: 1 });
-          if (product.price) {
-            Object.assign(option, {
-              unit_cost_price: product.price.cost_price,
-            });
-            Object.assign(option, {
-              unit_selling_price: product.price.selling_price_without_tax,
-            });
-            Object.assign(option, {
-              tax_price:
-                parseFloat(product.price.selling_price_without_tax) *
-                (parseFloat(product.price.tax.percentage) / 100),
-            });
-          }
-        }
+    //     if (Object.keys(option).length === 0 && option.constructor === Object) {
+    //       Object.assign(option, { unit_qty: 1 });
+    //       if (product.price) {
+    //         Object.assign(option, {
+    //           unit_cost_price: product.price.cost_price,
+    //         });
+    //         Object.assign(option, {
+    //           unit_selling_price: product.price.selling_price_without_tax,
+    //         });
+    //         Object.assign(option, {
+    //           tax_price:
+    //             parseFloat(product.price.selling_price_without_tax) *
+    //             (parseFloat(product.price.tax.percentage) / 100),
+    //         });
+    //       }
+    //     }
 
-        if (k !== null) {
-          let item = this.form.items[k];
-          item.uuid = product.uuid;
-          // item.type = "product";
-          item.name = product.name;
-          item.account = Object;
-          item.rate = option.unit_cost_price;
-          item.qty = option.unit_qty;
-          item.amount = "";
-        }
+    //     if (k !== null) {
+    //       let item = this.form.items[k];
+    //       item.uuid = product.uuid;
+    //       // item.type = "product";
+    //       item.name = product.name;
+    //       item.account = Object;
+    //       item.rate = option.unit_cost_price;
+    //       item.qty = option.unit_qty;
+    //       item.amount = "";
+    //     }
 
-        this.calculateAmount(k);
-        this.resetSearch();
-      }
-    },
+    //     this.calculateAmount(k);
+    //     this.resetSearch();
+    //   }
+    // },
     calculateAllItems() {
       this.form.items.map((item, key) => {
         this.calculateAmount(key);
@@ -378,6 +387,32 @@ export default {
         sub_total: this.form.subTotal,
         total_tax: this.form.total_tax,
       });
+    },
+    updateProductSearch(data, k) {
+      if (data) {
+        console.log(data);
+        const { product } = data;
+        if (data.searchType === "product") {
+          let item = this.form.items[k];
+          item.uuid = product.uuid;
+          item.name = product.name;
+          item.account = Object;
+          item.rate = product.price?.cost_price;
+          item.qty = 1;
+          item.amount = product.price?.cost_price * item.qty;
+        } else if (data.searchType === "empty") {
+          let item = this.form.items[k];
+          item.uuid = "";
+          item.name = data.label;
+          item.account = Object;
+          item.rate = 0;
+          item.qty = 1;
+          item.amount = "";
+        }
+      }
+      this.calculateTotalTax();
+      this.calculateAllItems();
+      this.updateAmount();
     },
     getTaxes() {
       this.$store.commit("set_loader");
