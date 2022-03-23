@@ -359,6 +359,7 @@ export default {
                       });
                     });
                   } else {
+                    console.log(product);
                     this.options.products.push({
                       value: product.uuid,
                       type: "product",
