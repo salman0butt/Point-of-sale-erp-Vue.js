@@ -46,7 +46,23 @@
                   <color-panel v-model="form.color"></color-panel>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <app-upload
+                  <label for="category_logo">Logo</label>
+                  <div class="mb-2">
+                    <CImg
+                      v-bind:src="display_images"
+                      block
+                      class="mb-2 imger"
+                      width="100%"
+                      style="max-width: 300px"
+                    />
+                  </div>
+                  <input
+                    class="form-control"
+                    type="file"
+                    @change="pickFile"
+                    style="padding: 3px"
+                  />
+                  <!-- <app-upload
                     ref="fileUpload"
                     :max="1"
                     fileType="image/jpg,image/jpeg,image/png"
@@ -75,7 +91,7 @@
                         ></span>
                       </li>
                     </ul>
-                  </div>
+                  </div> -->
                 </CCol>
               </CRow>
 
@@ -113,14 +129,14 @@
 <script>
 import ProductCategoryService from "@/services//catalogs/category/ProductCategoryService";
 import { required } from "vuelidate/lib/validators";
-import AppUpload from "@/components/uploads/Upload.vue";
+// import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 
 export default {
   name: "CreateOrUpdateProductCategory",
   components: {
-    AppUpload,
+    // AppUpload,
     Loader,
   },
   props: {
@@ -141,7 +157,7 @@ export default {
       image: "",
       status: "active",
     },
-    display_images: null,
+    display_images: "/img/images/no-logo.png",
     options: {
       parent_categories: [
         { value: "", label: "Choose Parent", disabled: true, selected: "" },
@@ -391,12 +407,23 @@ export default {
           }
         });
     },
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.form.image = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.display_images = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+      }
+    },
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";
       }
       this.isEditing = false;
-      this.$refs.fileUpload.reset();
+      // this.$refs.fileUpload.reset();
     },
   },
 };

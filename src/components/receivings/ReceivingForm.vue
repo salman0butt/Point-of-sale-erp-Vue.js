@@ -27,14 +27,16 @@
                 @input="$v.form.date.$touch()"
               />
               <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
+                <p v-if="!$v.form.date.required" class="errorMsg">
+                  Date is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
-                label="Receiving Status"
-                :options="options.receiving_status"
-                :value.sync="form.receiving_status"
+                label="Status"
+                :options="options.status"
+                :value.sync="form.status"
               />
             </CCol>
           </CRow>
@@ -57,7 +59,11 @@
             </CCol>
 
             <CCol sm="12" md="12" class="pt-2">
-              <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
+              <CTextarea
+                label="Note"
+                placeholder="Content..."
+                v-model="form.note"
+              />
             </CCol>
           </CRow>
           <CRow>
@@ -102,7 +108,9 @@
               </div>
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -118,7 +126,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -153,21 +166,17 @@ export default {
       note: "",
       reference_id: "",
       total_cost: "",
-      receiving_status: "",
+      status: "",
       items: [],
       product_id: "",
       images: [],
     },
     display_images: [],
     options: {
-      suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
-      receiving_status: [
-        {
-          value: "",
-          label: "Choose receiving Status",
-          disabled: true,
-          selected: "",
-        },
+      suppliers: [
+        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
+      ],
+      status: [
         { value: "pending", label: "Pending" },
         { value: "completed", label: "Completed" },
       ],
@@ -319,7 +328,7 @@ export default {
       formData.append("note", this.form.note);
       formData.append("reference_id", this.form.reference_id);
       formData.append("total_cost", this.form.total_cost);
-      formData.append("receiving_status", this.form.receiving_status);
+      formData.append("status", this.form.status);
       formData.append("items", JSON.stringify(this.form.items));
 
       if (this.form.images && this.form.images.length > 0) {
@@ -353,7 +362,7 @@ export default {
         this.form.note = data.note;
         this.form.reference_id = data.reference_id;
         this.form.total_cost = data.total_cost;
-        this.form.receiving_status = data.receiving_status;
+        this.form.status = data.status;
 
         this.display_images = [];
         if (data.images && data.images.length > 0) {

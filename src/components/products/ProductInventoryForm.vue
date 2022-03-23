@@ -34,20 +34,20 @@
                 </CCol> -->
                 <CCol sm="6" md="6" class="pt-2">
                   <CInput
-                    label="Add/Subtract Stock"
+                    label="Add Stock"
                     type="number"
-                    @change="addSubtract()"
+                    @change="addStock()"
                     placeholder="0"
-                    v-model="form.add_subtract_stock"
-                    :class="{ error: $v.form.add_subtract_stock.$error }"
-                    @input="$v.form.add_subtract_stock.$touch()"
+                    v-model="form.add_stock"
+                    :class="{ error: $v.form.add_stock.$error }"
+                    @input="$v.form.add_stock.$touch()"
                   />
-                  <div v-if="$v.form.add_subtract_stock.$error">
-                    <p v-if="!$v.form.add_subtract_stock.required" class="errorMsg">
-                      Add/Subtract Stock is required
+                  <div v-if="$v.form.add_stock.$error">
+                    <p v-if="!$v.form.add_stock.required" class="errorMsg">
+                      Add Stock is required
                     </p>
-                    <p v-if="!$v.form.add_subtract_stock.minValue" class="errorMsg">
-                      Add/Subtract Stock greater then 0
+                    <p v-if="!$v.form.add_stock.minValue" class="errorMsg">
+                      Add Stock greater then 0
                     </p>
                   </div>
                 </CCol>
@@ -120,11 +120,11 @@
 
                   <CCol sm="6" md="4" class="pt-2">
                     <CInput
-                      label="Add/Subtract Stock"
+                      label="Add Stock"
                       type="number"
-                      @change="addSubtractVariation(k)"
+                      @change="addStockVariation(k)"
                       placeholder="0"
-                      v-model="input.add_subtract_stock"
+                      v-model="input.add_stock"
                     />
                   </CCol>
                   <CCol sm="2" md="2" class="pt-2 mt-4">
@@ -208,7 +208,7 @@ export default {
       product_id: "",
       current_quantity: "",
       original_stock: "",
-      add_subtract_stock: "",
+      add_stock: "",
       // damage_qty: "",
       // damage_reason: "",
     },
@@ -220,7 +220,7 @@ export default {
     return {
       form: {
         product_id: { required },
-        add_subtract_stock: { required, minValueValue: minValue(1) },
+        add_stock: { required, minValueValue: minValue(1) },
       },
     };
   },
@@ -282,7 +282,7 @@ export default {
                 });
               }
             });
-            this.form.add_subtract_stock = "";
+            this.form.add_stock = "";
             // this.form.damage_qty = "";
             // this.form.damage_reason = "";
           }
@@ -294,29 +294,29 @@ export default {
           this.$router.push("/products");
         });
     },
-    addSubtract() {
+    addStock() {
       this.form.current_quantity =
-        Number(this.form.original_stock) + Number(this.form.add_subtract_stock);
+        Number(this.form.original_stock) + Number(this.form.add_stock);
     },
-    addSubtractVariation(key) {
+    addStockVariation(key) {
       this.variations_form[key].current_quantity =
         Number(this.variations_form[key].original_stock) +
-        Number(this.variations_form[key].add_subtract_stock);
+        Number(this.variations_form[key].add_stock);
     },
     // addDamage() {
     //   this.form.current_quantity =
     //     Number(this.form.original_stock) - Number(this.form.damage_qty);
-    //   this.form.add_subtract_stock = "-" + Number(this.form.damage_qty);
+    //   this.form.add_stock = "-" + Number(this.form.damage_qty);
     //   if (this.form.damage_qty == "") {
-    //     this.form.add_subtract_stock = "";
+    //     this.form.add_stock = "";
     //   }
     // },
     currentStock() {
-      this.form.add_subtract_stock =
+      this.form.add_stock =
         Number(this.form.current_quantity) - Number(this.form.original_stock);
     },
     currentVariationStock(key) {
-      this.variations_form[key].add_subtract_stock =
+      this.variations_form[key].add_stock =
         Number(this.variations_form[key].current_quantity) -
         Number(this.variations_form[key].original_stock);
     },
@@ -324,10 +324,10 @@ export default {
     //   this.variations_form[key].current_quantity =
     //     Number(this.variations_form[key].original_stock) -
     //     Number(this.variations_form[key].damage_qty);
-    //   this.variations_form[key].add_subtract_stock =
+    //   this.variations_form[key].add_stock =
     //     "-" + Number(this.variations_form[key].damage_qty);
     //   if (this.variations_form[key].damage_qty == "") {
-    //     this.variations_form[key].add_subtract_stock = "";
+    //     this.variations_form[key].add_stock = "";
     //   }
     // },
     getVariationsInventory() {
@@ -342,7 +342,7 @@ export default {
                 product_variation_id: element.uuid,
                 current_quantity: element.inventory[0]?.current_quantity ?? 0,
                 original_stock: element.inventory[0]?.current_quantity ?? 0,
-                add_subtract_stock: 0,
+                add_stock: 0,
                 is_expiry: false,
                 expiry_date: "",
                 // damage_qty: "",

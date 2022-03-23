@@ -72,11 +72,18 @@
                 <strong>{{ customer.name }}</strong>
               </div>
               <div v-if="customer.address">
-                Address : {{ customer.address.street.en }}
+                Address : {{ customer.address }}
               </div>
               <div v-if="customer.email">Email: {{ customer.email.email }}</div>
-              <div v-if="customer.contact_number">
-                Phone: {{ customer.contact_number.number.en }}
+              <div
+                v-if="customer.contact_number && customer.contact_number.number"
+              >
+                Phone:
+                {{
+                  customer.contact_number.number.en
+                    ? customer.contact_number.number.en
+                    : customer.contact_number.number
+                }}
               </div>
             </CCol>
             <CCol sm="8" class="mt-5" style="text-align: right">
@@ -108,7 +115,11 @@
                   :key="product.uuid"
                 >
                   <td class="center">{{ index + 1 }}</td>
-                  <td class="left">{{ product.product.name.en }}</td>
+                  <td class="left">
+                    {{
+                      product.product.name.en ? product.product.name.en : "-"
+                    }}
+                  </td>
                   <td class="left">{{ product.description }}</td>
                   <td class="center">{{ product.qty }}</td>
                   <td class="right">{{ product.selling_price }}</td>
@@ -291,71 +302,78 @@ export default {
       this.$refs.html2Pdf.generatePdf();
     },
     getServerData() {
+      this.$store.commit("set_loader");
       // Quotation Data
       this.uuid = this.$route.params.id;
       QuotationService.get(this.uuid)
         .then(({ data }) => {
-          // invoice
-          this.invoice.quotation_ref_no = data.quotation_ref_no;
-          this.invoice.dated = data.dated;
-          this.invoice.due_date = data.due_date;
-          this.invoice.sub_total = data.sub_total;
-          this.invoice.total_tax = data.total_tax;
-          this.invoice.total_discount = data.total_discount;
-          this.invoice.grand_total = data.grand_total;
-          this.invoice.note = data.note;
-          this.invoice.payment_terms = data.payment_terms;
-          this.invoice.terms_and_conditions = data.terms_and_conditions;
+          if (data) {
+            // invoice
+            this.invoice.quotation_ref_no = data.quotation_ref_no;
+            this.invoice.dated = data.dated;
+            this.invoice.due_date = data.due_date;
+            this.invoice.sub_total = data.sub_total;
+            this.invoice.total_tax = data.total_tax;
+            this.invoice.total_discount = data.total_discount;
+            this.invoice.grand_total = data.grand_total;
+            this.invoice.note = data.note;
+            this.invoice.payment_terms = data.payment_terms;
+            this.invoice.terms_and_conditions = data.terms_and_conditions;
 
-          // customer
-          this.customer.name = data.customer.full_name;
-          this.customer.address = data.customer.default_address;
-          this.customer.email = data.customer.default_email;
-          let serverproducts = this.invoice.products;
-          if (
-            data.customer &&
-            data.customer.all_contacts &&
-            data.customer.all_contacts.length > 0
-          ) {
-            if (data.customer.all_contacts.length === 1) {
-              const number =
-                data.customer.contact.country.dialCode +
-                data.customer.contact.number.en;
-              this.customer.contact_number = number;
-              this.whatsapp.name = data.customer.full_name;
-              this.whatsapp.number = number;
+            // customer
+            this.customer.name = data.customer.full_name;
+            this.customer.address = data.customer.address_for_delivery;
+            this.customer.email = data.customer.default_email;
+            if (
+              data.customer &&
+              data.customer.all_contacts &&
+              data.customer.all_contacts.length > 0
+            ) {
+              if (data.customer.all_contacts.length === 1) {
+                const number =
+                  data.customer.contact.country.dialCode +
+                  data.customer.contact.number.en;
+                this.customer.contact_number = number;
+                this.whatsapp.name = data.customer.full_name;
+                this.whatsapp.number = number;
 
-              this.sms.name = data.customer.full_name;
-              this.sms.number = number;
-            } else {
-              let contacts = this.options.contacts;
-              data.customer.all_contacts.map(function (item) {
-                contacts.push({
-                  label:
-                    item.country.dialCode +
-                    item.number.en +
-                    " (" +
-                    item.name.en +
-                    ")",
-                  value: JSON.stringify({
-                    uuid: item.uuid,
-                    name: data.customer.full_name,
-                    number: item.country.dialCode + item.number.en,
-                  }),
+                this.sms.name = data.customer.full_name;
+                this.sms.number = number;
+              } else {
+                let contacts = this.options.contacts;
+                data.customer.all_contacts.map(function (item) {
+                  contacts.push({
+                    label:
+                      item.country.dialCode +
+                      item.number.en +
+                      " (" +
+                      item.name.en +
+                      ")",
+                    value: JSON.stringify({
+                      uuid: item.uuid,
+                      name: data.customer.full_name,
+                      number: item.country.dialCode + item.number.en,
+                    }),
+                  });
                 });
+              }
+            }
+
+            let serverproducts = this.invoice.products;
+            // Products
+            if (data.products.length > 0) {
+              data.products.map((item, id) => {
+                serverproducts.push(item);
               });
             }
-          }
-          data.products.map((item, id) => {
-            serverproducts.push(item);
-          });
 
-          // delivery
-          this.invoice.delivery = data.delivery;
-          this.invoice.delivery_method_price = data.delivery_method_price;
-          this.invoice.address_for_delivery = data.address_for_delivery;
-          this.invoice.total_price_with_delivery =
-            data.total_price_with_delivery;
+            // delivery
+            this.invoice.delivery = data.delivery;
+            this.invoice.delivery_method_price = data.delivery_method_price;
+            this.invoice.address_for_delivery = data.address_for_delivery;
+            this.invoice.total_price_with_delivery =
+              data.total_price_with_delivery;
+          }
         })
 
         .catch((err) => {
@@ -372,7 +390,6 @@ export default {
           }
         })
         .catch((err) => {
-          this.$store.commit("close_loader");
           console.log(err);
         });
 
@@ -399,9 +416,9 @@ export default {
               }
             });
           }
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
-          this.$store.commit("close_loader");
           console.log(error);
         });
     },

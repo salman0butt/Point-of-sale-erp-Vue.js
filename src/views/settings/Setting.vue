@@ -69,7 +69,7 @@ export default {
         { key: "DashboardSettingForm", name: "Dashboard" },
         // { key: "HrSettingForm", name: "HR" },
         { key: "AccountingSettingForm", name: "Accounting" },
-        { key: "CustomerSettingForm", name: "Customer" },
+        // { key: "CustomerSettingForm", name: "Customer" },
         { key: "DeliverySettingForm", name: "Delivery" },
         { key: "CurrencySettingForm", name: "Currency" },
       ],

@@ -261,7 +261,6 @@ export default {
       //   if (!this.$v.$invalid) {
       this.$store.commit("set_loader");
       let data = this.form;
-      console.log(data);
       DashboardSettingService.updateDashboardSettings(data)
         .then((res) => {
           if (res.status == 200) {

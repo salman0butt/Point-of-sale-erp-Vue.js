@@ -56,8 +56,23 @@
                     <CCol sm="6" md="4" class="pt-2">
                       <color-panel v-model="form.color"></color-panel>
                     </CCol>
-                    <CCol sm="6" md="8" class="pt-2">
-                      <app-upload
+                    <CCol sm="4" md="4" class="pt-2">
+                      <label for="category_logo">Logo</label>
+                      <div class="mb-2">
+                        <CImg
+                          v-bind:src="display_images"
+                          block
+                          class="mb-2 imger"
+                          width="100%"
+                        />
+                      </div>
+                      <input
+                        class="form-control"
+                        type="file"
+                        @change="pickFile"
+                        style="padding: 3px"
+                      />
+                      <!-- <app-upload
                         ref="fileUpload"
                         :max="1"
                         fileType="image/jpg,image/jpeg,image/png"
@@ -86,7 +101,7 @@
                             ></span>
                           </li>
                         </ul>
-                      </div>
+                      </div> -->
                     </CCol>
                   </CRow>
 
@@ -148,7 +163,7 @@ export default {
       image: "",
       status: "active",
     },
-    display_images: null,
+    display_images: "/img/images/no-logo.png",
     options: {
       parent_categories: [],
       status: [],
@@ -337,62 +352,75 @@ export default {
           this.form.parent_id = data.parent.uuid ?? "";
         }
         this.form.status = data.status;
-        this.display_images = data.image ?? "";
+        if (data.image && data.image.path) {
+          this.display_images = data.image.path;
+        }
         this.form.image = "";
       }
     },
-    handleFile(files) {
-      this.form.image = files[0];
+    pickFile(e) {
+      let file = e.target.files;
+      if (file && file[0]) {
+        this.form.image = file[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.display_images = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+      }
     },
-    deleteAttachment(uuid) {
-      this.$swal
-        .fire({
-          title: this.$t("general.attachment.delete.title"),
-          text: this.$t("general.attachment.delete.msg"),
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: this.$t("general.swal.confirmDelButtonText"),
-          cancelButtonText: this.$t("general.swal.cancelButtonText"),
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            this.$store
-              .dispatch("deleteAttachment", uuid)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$store.commit("set_loader");
-                  this.$swal.fire({
-                    icon: "success",
-                    title: this.$t("general.swal.success"),
-                    text: this.$t("general.attachment.delete.successMsg"),
-                    timer: 3600,
-                    timerProgressBar: true,
-                    confirmButtonText: this.$t("general.swal.ok"),
-                  });
-                  this.display_images = null;
-                  this.$store.commit("close_loader");
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-                this.$swal.fire({
-                  icon: "error",
-                  title: this.$t("general.swal.error"),
-                  text: this.$t("general.attachment.delete.errorMsg"),
-                  timer: 3600,
-                });
-                this.$store.commit("close_loader");
-                console.log(err);
-              });
-          }
-        });
-    },
+    // handleFile(files) {
+    //   this.form.image = files[0];
+    // },
+    // deleteAttachment(uuid) {
+    //   this.$swal
+    //     .fire({
+    //       title: this.$t("general.attachment.delete.title"),
+    //       text: this.$t("general.attachment.delete.msg"),
+    //       showCancelButton: true,
+    //       confirmButtonColor: "#e55353",
+    //       confirmButtonText: this.$t("general.swal.confirmDelButtonText"),
+    //       cancelButtonText: this.$t("general.swal.cancelButtonText"),
+    //     })
+    //     .then((result) => {
+    //       if (result.isConfirmed) {
+    //         this.$store
+    //           .dispatch("deleteAttachment", uuid)
+    //           .then((res) => {
+    //             if (res.status == 200) {
+    //               this.$store.commit("set_loader");
+    //               this.$swal.fire({
+    //                 icon: "success",
+    //                 title: this.$t("general.swal.success"),
+    //                 text: this.$t("general.attachment.delete.successMsg"),
+    //                 timer: 3600,
+    //                 timerProgressBar: true,
+    //                 confirmButtonText: this.$t("general.swal.ok"),
+    //               });
+    //               this.display_images = null;
+    //               this.$store.commit("close_loader");
+    //             }
+    //           })
+    //           .catch((err) => {
+    //             console.log(err);
+    //             this.$swal.fire({
+    //               icon: "error",
+    //               title: this.$t("general.swal.error"),
+    //               text: this.$t("general.attachment.delete.errorMsg"),
+    //               timer: 3600,
+    //             });
+    //             this.$store.commit("close_loader");
+    //             console.log(err);
+    //           });
+    //       }
+    //     });
+    // },
     resetForm() {
       for (let index in this.form) {
         this.form[index] = "";
       }
       this.isEditing = false;
-      this.$refs.fileUpload.reset();
+      // this.$refs.fileUpload.reset();
     },
   },
 };

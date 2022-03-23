@@ -149,14 +149,18 @@ export default {
   },
   methods: {
     createMethod() {
+      this.$store.commit("set_loader");
+
       let denominations = this.form.currency_denominations;
       CurrencyDenominationService.getAll()
         .then(({ data }) => {
           data.map((value) => {
             denominations.push(value);
           });
+          this.$store.commit("close_loader");
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           console.log(error);
         });
     },

@@ -648,13 +648,40 @@ export default {
     },
     customerSelected(customer) {
       this.form.customer = customer.value;
-      if (
-        customer &&
-        customer.defaultAddress &&
-        customer.defaultAddress.street &&
-        customer.defaultAddress.street.en
-      ) {
-        this.form.address_for_delivery = customer.defaultAddress.street.en;
+      if (customer && customer.defaultAddress) {
+        let address = "";
+        if (customer.defaultAddress.flat) {
+          address +=
+            "Flat #" + customer.defaultAddress.flat.en + ", " ??
+            customer.defaultAddress.flat + ", ";
+        }
+        if (customer.defaultAddress.floor) {
+          address +=
+            "Floor #" + customer.defaultAddress.floor.en + ", " ??
+            customer.defaultAddress.floor + ", ";
+        }
+        if (customer.defaultAddress.building) {
+          address +=
+            "Building #" + customer.defaultAddress.building.en + ", " ??
+            customer.defaultAddress.building + ", ";
+        }
+        if (customer.defaultAddress.street) {
+          address +=
+            "Street #" + customer.defaultAddress.street.en + ", " ??
+            customer.defaultAddress.street + ", ";
+        }
+        if (customer.defaultAddress.block) {
+          address +=
+            "Block #" + customer.defaultAddress.block.en + ", " ??
+            customer.defaultAddress.block + ", ";
+        }
+        if (customer.defaultAddress.area) {
+          address +=
+            "Area #" + customer.defaultAddress.area.en + ", " ??
+            customer.defaultAddress.area + ", ";
+        }
+
+        this.form.address_for_delivery = address;
       } else {
         this.form.address_for_delivery = "";
       }

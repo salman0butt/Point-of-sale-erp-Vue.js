@@ -133,7 +133,9 @@ export default {
     },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
-      group: [{ value: "", label: "Choose Group", disabled: true, selected: "" }],
+      group: [
+        { value: "", label: "Choose Group", disabled: true, selected: "" },
+      ],
       status: [
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
