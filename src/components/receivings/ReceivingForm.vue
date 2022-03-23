@@ -166,7 +166,7 @@ export default {
       note: "",
       reference_id: "",
       total_cost: "",
-      status: "",
+      status: "pending",
       items: [],
       product_id: "",
       images: [],

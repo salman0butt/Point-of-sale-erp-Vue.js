@@ -60,11 +60,17 @@
                   />
                 </CCol>
                 <CCol v-if="form.is_expiry" sm="3" md="3" class="pt-2">
-                  <CInput label="Expiry Date" type="date" v-model="form.expiry_date" />
+                  <CInput
+                    label="Expiry Date"
+                    type="date"
+                    v-model="form.expiry_date"
+                  />
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+              <p v-if="$v.$anyError" class="errorMsg">
+                Please Fill the required data
+              </p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -88,7 +94,11 @@
               >
                 <CRow v-for="(input, k) in variations_form" :key="k">
                   <CCol sm="6" md="4" class="pt-2">
-                    <CInput label="Name" v-model="input.variation_name" disabled />
+                    <CInput
+                      label="Name"
+                      v-model="input.variation_name"
+                      disabled
+                    />
                   </CCol>
                   <!-- <CCol sm="6" md="2" class="pt-2">
                   <CInput label="Value" v-model="input.product_attribute" disabled />
@@ -136,11 +146,17 @@
                     />
                   </CCol>
                   <CCol v-if="input.is_expiry" sm="3" md="3" class="pt-2">
-                    <CInput label="Expiry Date" type="date" v-model="input.expiry_date" />
+                    <CInput
+                      label="Expiry Date"
+                      type="date"
+                      v-model="input.expiry_date"
+                    />
                   </CCol>
                 </CRow>
 
-                <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+                <p v-if="$v.$anyError" class="errorMsg">
+                  Please Fill the required data
+                </p>
                 <CRow class="mt-4 d-block">
                   <CButton
                     progress
@@ -158,14 +174,14 @@
             <div>
               <br />
               <br />
-              <CDataTable :items="stockHistory" :fields="fields" :loading="loading">
+              <CDataTable
+                :items="stockHistory"
+                :fields="fields"
+                :loading="loading"
+              >
                 <template #variation_name="{ item }">
                   <td v-if="item.variation_name">
-                    {{
-                      item.variation_name && JSON.parse(item.variation_name)
-                        ? JSON.parse(item.variation_name).en
-                        : ""
-                    }}
+                    {{ item.variation_name }}
                   </td>
                   <td v-else></td>
                 </template>
@@ -246,7 +262,8 @@ export default {
       this.form.is_expiry = !this.form.is_expiry;
     },
     toggleVariationIsExpiry(key) {
-      this.variations_form[key].is_expiry = !this.variations_form[key].is_expiry;
+      this.variations_form[key].is_expiry =
+        !this.variations_form[key].is_expiry;
     },
     getProductInventory() {
       this.$store.commit("set_loader");
@@ -256,7 +273,8 @@ export default {
             this.stockHistory = [];
             data.forEach((item) => {
               if (item.type === "product" && item.current_quantity !== 0) {
-                this.form.current_quantity = Number(item.current_quantity) ?? "";
+                this.form.current_quantity =
+                  Number(item.current_quantity) ?? "";
                 this.form.original_stock = Number(item.current_quantity) ?? "";
               }
               if (item.type === "variation" && item.inventable) {
@@ -270,11 +288,19 @@ export default {
                   expiry_date: item.expiry_date ?? "",
                 });
               }
-              if (item.type === "product" && item.inventable) {
+              if (item.type === "product") {
                 let date = item.date;
                 let qty = item.qty;
+                let variation_name = "";
+                // console.log(qty);
+                if (qty > 0) {
+                  variation_name = "Receiving";
+                } else {
+                  variation_name = "Sales";
+                }
+
                 this.stockHistory.push({
-                  variation_name: "",
+                  variation_name: variation_name,
                   date: date,
                   qty: qty,
                   balance: item.balance ?? "",
