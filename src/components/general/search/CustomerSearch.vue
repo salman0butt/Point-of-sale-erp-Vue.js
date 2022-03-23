@@ -170,7 +170,7 @@ export default {
     newData(item) {
       const obj = {
         value: item.uuid,
-        label: item.full_name + " (mobile: " + contacts + ")",
+        label: item.full_name + " (mobile: " + item.contact.number.en + ")",
         defaultAddress: item.defaultAddress,
       };
       this.options.customers.push(obj);
