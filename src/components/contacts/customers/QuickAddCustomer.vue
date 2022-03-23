@@ -42,9 +42,7 @@
                 @input="$v.form.group.$touch()"
               />
               <div v-if="$v.form.group.$error">
-                <p v-if="!$v.form.group.required" class="errorMsg">
-                  Group is required
-                </p>
+                <p v-if="!$v.form.group.required" class="errorMsg">Group is required</p>
               </div>
             </CCol>
 
@@ -73,9 +71,6 @@
                 @input="$v.form.email.$touch()"
               />
               <div v-if="$v.form.email.$error">
-                <p v-if="!$v.form.email.required" class="errorMsg">
-                  Email is required
-                </p>
                 <p v-if="!$v.form.email.email" class="errorMsg">
                   Please Enter a valid email
                 </p>
@@ -117,9 +112,7 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <!-- <CRow class="mt-4"> -->
 
           <!-- <CButton
@@ -180,9 +173,7 @@ export default {
     },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
-      group: [
-        { value: "", label: "Choose Group", disabled: true, selected: "" },
-      ],
+      group: [{ value: "", label: "Choose Group", disabled: true, selected: "" }],
     },
     type_selected: false,
   }),
@@ -193,7 +184,7 @@ export default {
         type: { required },
         group: { required },
         contact: { required, numeric },
-        email: { required, email },
+        email: { email },
       },
     };
   },
