@@ -16,6 +16,8 @@ import {mixin} from './mixins/mixin';
 import Skeleton from 'vue-loading-skeleton';
 import { ColorPicker, ColorPanel } from 'one-colorpicker'
 import VueHtmlToPaper from 'vue-html-to-paper';
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 const { errorHandler,  Can} = mixin.methods;
 
@@ -36,7 +38,11 @@ const options = {
 }
 
 Vue.use(VueHtmlToPaper, options);
-
+Vue.use(Toast, {
+  transition: "Vue-Toastification__bounce",
+  maxToasts: 20,
+  newestOnTop: true
+});
 
 Vue.use(ColorPanel)
 Vue.use(ColorPicker)
