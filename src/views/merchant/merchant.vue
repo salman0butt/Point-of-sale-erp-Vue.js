@@ -22,7 +22,14 @@
                           horizontal
                           autocomplete="name"
                           v-model="general_items.business_name"
+                          :class="{ error: $v.general_items.business_name.$error }"
+                         @input="$v.general_items.business_name.$touch()"
                         />
+                         <div v-if="$v.general_items.business_name.$error">
+                      <p v-if="!$v.general_items.business_name.required" class="errorMsg">
+                        Business Name is required
+                      </p>
+                    </div>
                         <CInput
                           label="Bussiness Activity : "
                           horizontal
@@ -44,12 +51,29 @@
                           label="Email : "
                           horizontal
                           v-model="general_items.email"
+                                 :class="{ error: $v.general_items.email.$error }"
+                         @input="$v.general_items.email.$touch()"
                         />
+                      <div v-if="$v.general_items.email.$error">
+                      <p v-if="!$v.general_items.email.required" class="errorMsg">
+                        Email is required
+                      </p>
+                      <p v-if="!$v.general_items.email.email" class="errorMsg">
+                        Please enter the valid email
+                      </p>
+                    </div>
                         <CInput
                           label="Mobile : "
                           horizontal
                           v-model="general_items.mobile"
+                                 :class="{ error: $v.general_items.mobile.$error }"
+                         @input="$v.general_items.mobile.$touch()"
                         />
+                               <div v-if="$v.general_items.mobile.$error">
+                      <p v-if="!$v.general_items.mobile.required" class="errorMsg">
+                        Mobile is required
+                      </p>
+                    </div>
                         <CInput
                           label="Country : "
                           horizontal
@@ -112,7 +136,7 @@
                   </CCol>
                 </CRow>
               </CTab>
-              <CTab>
+              <!-- <CTab>
                 <template slot="title">
                   {{ tabs[1] }}
                 </template>
@@ -203,10 +227,10 @@
                     </CCardBody>
                   </CCol>
                 </CRow>
-              </CTab>
+              </CTab> -->
               <CTab >
                 <template slot="title">
-                  {{ tabs[2] }}
+                  {{ tabs[1] }}
                 </template>
                 <CCardHeader>
                   <strong>Plugin</strong>
@@ -291,6 +315,7 @@ import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import ModuleService from "@/services/merchant/ModuleService";
 import CustomPluginModel from "@/components/merchant/CustomPluginModel";
+import { required, email, numeric, minLength } from "vuelidate/lib/validators";
 
 export default {
   name: "Tabs",
@@ -316,7 +341,7 @@ export default {
         stamp: "",
       },
       imageData: "",
-      tabs: ["General", "Billing", "Plugins"],
+      tabs: ["General",  "Plugins"],//"Billing",
       InvoiceLst: [
         { InvoiceNum: "#123122", InvoiceDate: "07/04/2021", action: "Paid" },
         { InvoiceNum: "#234244", InvoiceDate: "07/07/2021", action: "Unpaid" },
@@ -325,7 +350,16 @@ export default {
       activeTab: 1,
     };
   },
+ validations() {
+      return {
+        general_items: {
+          business_name: { required },
+          email: { required,email },
+          mobile: { required },
 
+        }
+      }
+    },
   mounted: function () {
     this.$el.querySelector(".col-sm-4").classList.add("col-sm-2");
     this.$el.querySelector(".col-sm-4").classList.remove("col-sm-4");
@@ -368,9 +402,17 @@ export default {
     },
     displayData(data = null) {
       if (data) {
-        this.general_items.business_name = data.business_name
+        if(typeof data.business_name === 'string' && data.business_name){
+          this.general_items.business_name = data.business_name
+          ? JSON.parse(data.business_name).en
+          : "";
+          console.log("1",JSON.parse(data.business_name).en);
+        }else {
+          this.general_items.business_name = data.business_name
           ? data.business_name.en
           : "";
+          console.log("2",data.business_name);
+        }
         this.general_items.business_activity =
           data.business_activity && JSON.parse(data.business_activity)
             ? JSON.parse(data.business_activity).en
@@ -451,7 +493,7 @@ export default {
           if (error.response && error.response.status == 422) {
             let errors = error.response.data.errors;
             for (const err in errors) {
-              this.set_errors(errors[err][0]);
+              this.$toast.error(errors[err][0]);
             }
           }
         });

@@ -396,6 +396,54 @@ export default {
           value: "grain",
           label: "Grain",
         },
+        {
+          value: "each",
+          label: "Each",
+        },
+        {
+          value: "gallon",
+          label: "Gallon",
+        },
+        {
+          value: "hour",
+          label: "Hour",
+        },
+        {
+          value: "sheet",
+          label: "Sheet",
+        },
+        {
+          value: "piece",
+          label: "Piece",
+        },
+        {
+          value: "inch",
+          label: "Inch",
+        },
+        {
+          value: "centimeter",
+          label: "Centimeter",
+        },
+        {
+          value: "meter",
+          label: "Meter",
+        },
+        {
+          value: "foot",
+          label: "Foot",
+        },
+        {
+          value: "cm",
+          label: "Centimeter",
+        },
+        {
+          value: "m",
+          label: "Meter",
+        },
+        {
+          value: "qty",
+          label: "Qty",
+        },
       ];
     },
     getProductOptions() {

@@ -66,10 +66,12 @@
               <CRow class="mb-4">
                 <CCol sm="4">
                   <CImg
-                    v-bind:src="business.logo"
+                    v-if="businessLogo"
+                    :src="businessLogo"
                     block
                     class="mb-2 imger"
                     width="100%"
+                    style="max-width: 150px"
                   />
                   <div>
                     <strong>{{ branch.name }}</strong>
@@ -111,9 +113,7 @@
                       </td>
                       <td class="left" v-if="payment.customer">
                         {{
-                          payment.customer.full_name
-                            ? payment.customer.full_name
-                            : "-"
+                          payment.customer.full_name ? payment.customer.full_name : "-"
                         }}
                       </td>
                       <td class="center" v-if="payment.invoice">
@@ -125,9 +125,7 @@
                       </td>
                       <td class="right" v-if="payment.paymentMethod">
                         {{
-                          payment.paymentMethod.name
-                            ? payment.paymentMethod.name
-                            : "-"
+                          payment.paymentMethod.name ? payment.paymentMethod.name : "-"
                         }}
                       </td>
                       <td class="right">
@@ -240,6 +238,11 @@ export default {
   created() {
     this.getServerData();
   },
+  computed: {
+    businessLogo() {
+      return this.$store.getters.getBusinessLogo;
+    },
+  },
   methods: {
     async print() {
       await this.$htmlToPaper("printMe");
@@ -275,11 +278,7 @@ export default {
                 data.customer.all_contacts.map(function (item) {
                   contacts.push({
                     label:
-                      item.country.dialCode +
-                      item.number.en +
-                      " (" +
-                      item.name.en +
-                      ")",
+                      item.country.dialCode + item.number.en + " (" + item.name.en + ")",
                     value: JSON.stringify({
                       uuid: item.uuid,
                       name: data.customer.full_name,
@@ -300,20 +299,20 @@ export default {
       });
       this.$store.commit("set_loader");
       // Business logo
-      this.$store.commit("set_loader");
-      let business_id = localStorage.getItem("business_id");
-      this.$http
-        .get("/business/" + business_id)
-        .then(({ data }) => {
-          if (data.logo && data.logo.path) {
-            this.business.logo = data.logo.path;
-          }
-          this.$store.commit("close_loader");
-        })
-        .catch((err) => {
-          this.$store.commit("close_loader");
-          console.log(err);
-        });
+      // this.$store.commit("set_loader");
+      // let business_id = localStorage.getItem("business_id");
+      // this.$http
+      //   .get("/business/" + business_id)
+      //   .then(({ data }) => {
+      //     if (data.logo && data.logo.path) {
+      //       this.business.logo = data.logo.path;
+      //     }
+      //     this.$store.commit("close_loader");
+      //   })
+      //   .catch((err) => {
+      //     this.$store.commit("close_loader");
+      //     console.log(err);
+      //   });
 
       // Payment Terms
       let type = "accounting";
