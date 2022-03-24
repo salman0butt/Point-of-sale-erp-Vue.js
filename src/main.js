@@ -12,14 +12,14 @@ import i18n from './i18n.js'
 import http from '../src/http-common';
 import Swal from "sweetalert2";
 import Vuelidate from 'vuelidate'
-import {mixin} from './mixins/mixin';
+import { mixin } from './mixins/mixin';
 import Skeleton from 'vue-loading-skeleton';
 import { ColorPicker, ColorPanel } from 'one-colorpicker'
 import VueHtmlToPaper from 'vue-html-to-paper';
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
-const { errorHandler,  Can} = mixin.methods;
+const { errorHandler, Can } = mixin.methods;
 
 const options = {
   name: '_blank',
@@ -69,7 +69,7 @@ http.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
   let routerPath = router.app?._router?.history?.current.path !== '/login';
-  if(error && error.response && routerPath) {
+  if (error && error.response && routerPath) {
     errorHandler(error.response.status);
   }
 

@@ -41,10 +41,11 @@ export default {
   },
   watch: {
     previousSalesPersons(newValue, oldValue) {
-      let users = this.form.user;
+      var users = [];
       newValue.map(function (item) {
         users.push({ label: item.name, value: item.uuid });
       });
+      this.form.user = users;
     },
   },
   data: () => ({

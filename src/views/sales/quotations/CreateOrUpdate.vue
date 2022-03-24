@@ -356,7 +356,7 @@ export default {
     ],
     sales_persons: [],
     display_images: [],
-    previousSalesPersons: Array,
+    previousSalesPersons: [],
     delivery_check: false,
     saveAndExit: false,
     show: {
@@ -437,8 +437,108 @@ export default {
         this.delivery_check = false;
       }
     },
-    createMethod() {
+    async createMethod() {
       this.$store.commit("set_loader");
+
+      await new Promise((resolve, reject) => {
+        // Setting of Quotation
+        SettingService.getAll("general")
+          .then(({ data }) => {
+            if (data) {
+              data.forEach((item) => {
+                if (item.key == "show_payment_term_on_quotation") {
+                  this.show.show_payment_term_on_quotation =
+                    item.value == "on" ? true : false;
+                } else if (
+                  item.key == "show_terms_and_conditions_on_quotation"
+                ) {
+                  this.show.show_terms_and_conditions_on_quotation =
+                    item.value == "on" ? true : false;
+                } else if (item.key == "show_note_on_quotation") {
+                  this.show.show_note_on_quotation =
+                    item.value == "on" ? true : false;
+                } else if (item.key == "show_attachment_on_quotation") {
+                  this.show.show_attachment_on_quotation =
+                    item.value == "on" ? true : false;
+                } else if (item.key == "show_delivery_on_quotation") {
+                  this.show.show_delivery_on_quotation =
+                    item.value == "on" ? true : false;
+                }
+              });
+            }
+          })
+          .catch((error) => {
+            this.$store.commit("close_loader");
+            console.log(error);
+          });
+
+        // Payment Terms
+        PaymentTermService.getAll(1, 1000)
+          .then(({ data }) => {
+            let paymentTerms = this.options.payment_terms;
+            data.data.map((value, index) => {
+              paymentTerms.push({
+                label: value.name,
+                value: value.description,
+              });
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+        // Terms And Conditions
+        var terms_and_conditions = this.form.terms_and_conditions;
+        SettingService.getAll("accounting")
+          .then(({ data }) => {
+            if (data) {
+              data.map((item) => {
+                this.terms.map((term) => {
+                  if (term.key === item.key) {
+                    if (item.key == "quotation_term_and_condition") {
+                      let testing = item.value;
+                      terms_and_conditions = testing;
+                    }
+                  }
+                });
+              });
+            }
+            this.$store.commit("close_loader");
+            this.form.terms_and_conditions = terms_and_conditions;
+          })
+          .catch((error) => {
+            this.$store.commit("close_loader");
+            console.log(error);
+          });
+
+        // Delivery
+        let delivery_methods = this.options.delivery_methods;
+        this.$store.commit("set_loader");
+        DeliveryService.getAll(1, 50)
+          .then(({ data }) => {
+            if (data && data.data && data.data.length > 0) {
+              data.data.map((item, id) => {
+                delivery_methods.push({
+                  label: item.name,
+                  value: item.uuid,
+                  attrs: {
+                    rate_on_customer: item.rate_on_customer,
+                    id: item.uuid,
+                  },
+                });
+              });
+            }
+
+            this.$store.commit("close_loader");
+          })
+          .catch((error) => {
+            console.log(error);
+            this.$store.commit("close_loader");
+          });
+
+        resolve();
+      });
+
       this.form.id = this.$route.params.id;
       this.form.dated = this.calculateTodayDate();
       this.form.due_date = this.calculateDueDate();
@@ -447,95 +547,105 @@ export default {
         this.isEditing = true;
         this.getEditData();
       }
-
-      // Setting of Quotation
-      SettingService.getAll("general")
-        .then(({ data }) => {
-          if (data) {
-            data.forEach((item) => {
-              if (item.key == "show_payment_term_on_quotation") {
-                this.show.show_payment_term_on_quotation =
-                  item.value == "on" ? true : false;
-              } else if (item.key == "show_terms_and_conditions_on_quotation") {
-                this.show.show_terms_and_conditions_on_quotation =
-                  item.value == "on" ? true : false;
-              } else if (item.key == "show_note_on_quotation") {
-                this.show.show_note_on_quotation =
-                  item.value == "on" ? true : false;
-              } else if (item.key == "show_attachment_on_quotation") {
-                this.show.show_attachment_on_quotation =
-                  item.value == "on" ? true : false;
-              } else if (item.key == "show_delivery_on_quotation") {
-                this.show.show_delivery_on_quotation =
-                  item.value == "on" ? true : false;
-              }
-            });
-          }
-        })
-        .catch((error) => {
-          this.$store.commit("close_loader");
-          console.log(error);
-        });
-
-      // Payment Terms
-      PaymentTermService.getAll(1, 1000)
-        .then(({ data }) => {
-          let paymentTerms = this.options.payment_terms;
-          data.data.map((value, index) => {
-            paymentTerms.push({ label: value.name, value: value.description });
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      // Terms And Conditions
-      var terms_and_conditions = this.form.terms_and_conditions;
-      SettingService.getAll("accounting")
-        .then(({ data }) => {
-          if (data) {
-            data.map((item) => {
-              this.terms.map((term) => {
-                if (term.key === item.key) {
-                  if (item.key == "quotation_term_and_condition") {
-                    let testing = item.value;
-                    terms_and_conditions = testing;
-                  }
-                }
-              });
-            });
-          }
-          this.$store.commit("close_loader");
-          this.form.terms_and_conditions = terms_and_conditions;
-        })
-        .catch((error) => {
-          this.$store.commit("close_loader");
-          console.log(error);
-        });
-
-      // Delivery
-      let delivery_methods = this.options.delivery_methods;
+    },
+    getEditData() {
       this.$store.commit("set_loader");
-      DeliveryService.getAll(1, 50)
-        .then(({ data }) => {
-          if (data && data.data && data.data.length > 0) {
-            data.data.map((item, id) => {
-              delivery_methods.push({
-                label: item.name,
-                value: item.uuid,
-                attrs: {
-                  rate_on_customer: item.rate_on_customer,
-                  id: item.uuid,
-                },
-              });
-            });
-          }
+      QuotationService.get(this.form.id)
+        .then((res) => {
+          if (res.status == 200) {
+            this.isEditing = true;
+            this.form.previousValue = {
+              value: res.data.customer.uuid,
+              label:
+                res.data.customer.full_name +
+                " (mobile: " +
+                res.data.customer.contact.number.en +
+                ")",
+              defaultAddress: res.data.address_for_delivery,
+            };
 
-          this.$store.commit("close_loader");
+            this.form.dated = res.data.dated;
+            this.form.due_date = res.data.due_date;
+            this.form.note = res.data.note;
+            this.form.quotation_status = res.data.quotation_status;
+            this.form.payment_terms = res.data.payment_terms;
+            this.form.terms_and_conditions = res.data.terms_and_conditions;
+            if (res.data.products && res.data.products.length > 0) {
+              var Items = this.form.items;
+              res.data.products.map((item) => {
+                let total_each = 0;
+                if (!item.discount_per) {
+                  total_each =
+                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                      parseInt(Math.abs(item.qty)) -
+                    parseFloat(item.discount);
+                } else {
+                  total_each =
+                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                    parseInt(Math.abs(item.qty));
+                  total_each = total_each - total_each * (item.discount / 100);
+                }
+
+                Items.push({
+                  uuid: item.product.uuid,
+                  type: "product",
+                  name: item.product.name.en,
+                  unit_price: item.selling_price ?? 0,
+                  tax_price: item.tax ?? 0,
+                  qty: Math.abs(item.qty),
+                  description: item.description,
+                  weight_unit: item.product.weight_unit,
+                  discount: item.discount_per
+                    ? item.discount + "%"
+                    : item.discount,
+                  total: total_each,
+                });
+              });
+            }
+
+            if (res.data.delivery && res.data.delivery.uuid) {
+              this.delivery_check = true;
+              this.form.delivery_method = res.data.delivery.uuid;
+              this.form.delivery_method_price = res.data.delivery_method_price;
+              this.form.total_price_with_delivery =
+                res.data.total_price_with_delivery;
+            }
+
+            this.form.sales_persons = [];
+            if (res.data.salespersons && res.data.salespersons.length > 0) {
+              let sales_persons = this.form.sales_persons;
+              let previousSalesPersons = this.previousSalesPersons;
+              res.data.salespersons.map(function (item) {
+                sales_persons.push(item.uuid);
+                previousSalesPersons.push(item);
+              });
+            }
+
+            this.display_images = [];
+            if (res.data.attachments && res.data.attachments.length > 0) {
+              let display_images = this.display_images;
+              res.data.attachments.map(function (item) {
+                display_images.push(item);
+              });
+            }
+            this.$store.commit("set_quotation_sub_total", res.data.sub_total);
+            this.$store.commit("set_quotation_tax_total", res.data.total_tax);
+            this.$store.commit(
+              "set_quotation_total_discount",
+              res.data.total_discount
+            );
+            this.$store.commit("set_quotation_total", res.data.grand_total);
+          }
         })
         .catch((error) => {
           console.log(error);
           this.$store.commit("close_loader");
+          this.$swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something Went Wrong.",
+            timer: 3600,
+          });
         });
     },
     formSubmit() {
@@ -680,8 +790,12 @@ export default {
             "Area #" + customer.defaultAddress.area.en + ", " ??
             customer.defaultAddress.area + ", ";
         }
-
-        this.form.address_for_delivery = address;
+        //for previous address from invoice otherwise the default address for customer
+        if (typeof customer.defaultAddress == "string") {
+          this.form.address_for_delivery = customer.defaultAddress;
+        } else {
+          this.form.address_for_delivery = address;
+        }
       } else {
         this.form.address_for_delivery = "";
       }
@@ -728,103 +842,6 @@ export default {
                 console.log(err);
               });
           }
-        });
-    },
-    getEditData() {
-      this.$store.commit("set_loader");
-      QuotationService.get(this.form.id)
-        .then((res) => {
-          if (res.status == 200) {
-            this.isEditing = true;
-            this.form.previousValue = {
-              value: res.data.customer.uuid,
-              label:
-                res.data.customer.full_name +
-                " (mobile: " +
-                res.data.customer.contact.number.en +
-                ")",
-            };
-            this.form.dated = res.data.dated;
-            this.form.due_date = res.data.due_date;
-            this.form.note = res.data.note;
-            this.form.quotation_status = res.data.quotation_status;
-            this.form.payment_terms = res.data.payment_terms;
-            this.form.terms_and_conditions = res.data.terms_and_conditions;
-            if (res.data.products && res.data.products.length > 0) {
-              var Items = this.form.items;
-              res.data.products.map((item) => {
-                let total_each = 0;
-                if (!item.discount_per) {
-                  total_each =
-                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                      parseInt(Math.abs(item.qty)) -
-                    parseFloat(item.discount);
-                } else {
-                  total_each =
-                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                    parseInt(Math.abs(item.qty));
-                  total_each = total_each - total_each * (item.discount / 100);
-                }
-
-                Items.push({
-                  uuid: item.product.uuid,
-                  type: "product",
-                  name: item.product.name.en,
-                  unit_price: item.selling_price ?? 0,
-                  tax_price: item.tax ?? 0,
-                  qty: Math.abs(item.qty),
-                  description: item.description,
-                  weight_unit: item.product.weight_unit,
-                  discount: item.discount_per
-                    ? item.discount + "%"
-                    : item.discount,
-                  total: total_each,
-                });
-              });
-            }
-
-            if (res.data.delivery && res.data.delivery.uuid) {
-              this.delivery_check = true;
-              this.form.delivery_method = res.data.delivery.uuid;
-              this.form.delivery_method_price = res.data.delivery_method_price;
-              this.form.total_price_with_delivery =
-                res.data.total_price_with_delivery;
-              this.form.address_for_delivery = res.data.address_for_delivery;
-            }
-            this.form.sales_persons = [];
-            if (res.data.salespersons && res.data.salespersons.length > 0) {
-              let sales_persons = this.form.sales_persons;
-              res.data.salespersons.map(function (item) {
-                sales_persons.push(item.uuid);
-              });
-            }
-
-            this.display_images = [];
-            if (res.data.attachments && res.data.attachments.length > 0) {
-              let display_images = this.display_images;
-              res.data.attachments.map(function (item) {
-                display_images.push(item);
-              });
-            }
-            this.$store.commit("set_quotation_sub_total", res.data.sub_total);
-            this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-            this.$store.commit(
-              "set_quotation_total_discount",
-              res.data.total_discount
-            );
-            this.$store.commit("set_quotation_total", res.data.grand_total);
-            this.previousSalesPersons = res.data.salespersons;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$store.commit("close_loader");
-          this.$swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something Went Wrong.",
-            timer: 3600,
-          });
         });
     },
   },
