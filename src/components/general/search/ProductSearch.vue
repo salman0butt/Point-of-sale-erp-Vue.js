@@ -34,7 +34,9 @@
               </li>
             </ul> -->
             <ProductSearchSelect
+              ref="selectProduct"
               @product-change="updateProductSearch($event, k)"
+              @add-new="addItem()"
               :previousValue="
                 item && item.uuid && item.name && item.qty
                   ? {
@@ -199,6 +201,30 @@ export default {
           products: [],
         },
       });
+
+      let last_index = this.form.items.length - 1;
+      this.$nextTick(() => {
+        this.$refs.selectProduct[last_index].open();
+      });
+
+      // this.form.items.push({
+      //   uuid: "",
+      //   name: "",
+      //   // type: "",
+      //   account: "",
+      //   previousAccount: {},
+      //   qty: "",
+      //   rate: "",
+      //   tax: "",
+      //   amount: "",
+      //   options: {
+      //     products: [],
+      //   },
+      // });
+      // let last_index = this.form.items.length - 1;
+      // this.$nextTick(() => {
+      //   this.$refs.selectProduct[last_index].open();
+      // });
     },
     removeItem(index) {
       this.form.items.splice(index, 1);

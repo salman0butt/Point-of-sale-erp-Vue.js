@@ -329,11 +329,6 @@ export default {
             if (error.response && error.response.status === 422) {
               let errors = error.response.data.errors;
               for (const err in errors) {
-                // this.errors.push({
-                //   title: "Error",
-                //   content: errors[err][0],
-                //   class: "error",
-                // });
                 this.$toast.error(errors[err][0]);
               }
             } else {
@@ -392,11 +387,7 @@ export default {
             if (error.response && error.response.status === 422) {
               let errors = error.response.data.errors;
               for (const err in errors) {
-                this.errors.push({
-                  title: "Error",
-                  content: errors[err][0],
-                  class: "error",
-                });
+                this.$toast.error(errors[err][0]);
               }
             } else {
               this.$swal.fire({
