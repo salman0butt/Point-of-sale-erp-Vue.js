@@ -6,8 +6,7 @@
       :options="options.products"
       :multiple="false"
       :close-on-select="true"
-      :clear-on-select="false"
-      :preserve-search="true"
+      :clear-on-select="true"
       :loading="loading"
       placeholder="Search..."
       label="label"
@@ -17,6 +16,8 @@
       :preselect-first="true"
       :limit="10"
       @search-change="searchProducts"
+      ref="proSelect"
+      :block-keys="['Tab', 'Enter']"
     >
       <template slot="selection" slot-scope="{ values, search, isOpen }">
         <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
@@ -44,8 +45,9 @@ export default {
   },
 
   data: () => ({
+    onTouch: false,
     form: {
-      product: [],
+      product: null,
     },
     options: {
       products: [],
@@ -76,19 +78,39 @@ export default {
         if (val && val.label) {
           this.form.product = val;
         }
+        this.$nextTick();
       },
       deep: true,
+      immediate: true,
     },
   },
   methods: {
-    addTag(newTag) {
-      const tag = {
-        value: "",
-        label: newTag,
-        searchType: "empty",
-      };
-      this.options.products.unshift(tag);
-      this.form.product = tag;
+    addTag(newTag, isBarcode = false) {
+      console.log(newTag);
+      let tag = null;
+      if (!isBarcode) {
+        tag = {
+          value: "",
+          label: newTag,
+          searchType: "empty",
+        };
+        if (tag) {
+          this.options.products.unshift(tag);
+          this.form.product = tag;
+        }
+      } else {
+        tag = {
+          value: newTag.value,
+          label: newTag.label,
+          searchType: "product",
+          product: newTag.product,
+        };
+        if (tag) {
+          // this.options.products.unshift(tag);
+          this.form.product = tag;
+          this.$refs.proSelect.deactivate();
+        }
+      }
     },
     getProducts() {
       store.commit("set_loader");
@@ -112,29 +134,49 @@ export default {
           console.log(error);
         });
     },
-    searchProducts(searchQuery) {
+    async searchProducts(searchQuery) {
       if (searchQuery && searchQuery.length > 0) {
         store.commit("set_loader");
+        let barcode_item = null;
         this.options.products = [];
         let products = this.options.products;
-        ProductService.search(searchQuery)
-          .then(function ({ data }) {
-            if (data) {
-              data.map(function (item) {
-                products.push({
-                  value: item.uuid,
-                  label: item.name + " (serial: " + item.serial_number + ")",
-                  product: item,
-                  searchType: "product",
+        await new Promise(function (resolve, reject) {
+          ProductService.search(searchQuery)
+            .then(function ({ data }) {
+              if (data) {
+                data.map(function (item) {
+                  products.push({
+                    value: item.uuid,
+                    label: item.name + " (serial: " + item.serial_number + ")",
+                    product: item,
+                    searchType: "product",
+                  });
                 });
-              });
-            }
-            store.commit("close_loader");
-          })
-          .catch((error) => {
-            store.commit("close_loader");
-            console.log(error);
-          });
+                barcode_item = data.find((item) => item.barcode === searchQuery);
+                resolve();
+              }
+
+              store.commit("close_loader");
+            })
+            .catch((error) => {
+              store.commit("close_loader");
+              console.log(error);
+            });
+        });
+
+        if (barcode_item) {
+          let serial = barcode_item.serial_number;
+          // console.log("🚀 ~ serial", serial);
+          let data = {
+            value: barcode_item.uuid,
+            label: barcode_item.name + " (serial: " + serial + ")",
+            product: barcode_item,
+            searchType: "product",
+          };
+          this.addTag(data, true);
+          // console.log(data);
+          this.$emit("product-change", data);
+        }
       }
     },
   },
