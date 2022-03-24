@@ -286,6 +286,11 @@ export default {
       ],
       products: [],
     },
+
+    // timeout
+    //value: "",
+    //outputValue: "",
+    timeout: null,
   }),
   created() {
     this.form.id = this.$route.params.id;
@@ -306,61 +311,25 @@ export default {
   },
   methods: {
     searchProduct() {
-      if (this.search !== "") {
-        this.products_list = [];
-        this.options.products = [];
-        this.unit_form = [];
-        ReceivingService.searchProduct(this.search)
-          .then(({ data }) => {
-            if (data !== undefined && data !== "") {
-              this.options.products = [];
-              data.map((product) => {
-                if (product) {
-                  if (
-                    product.quantity_units &&
-                    product.quantity_units.length > 0
-                  ) {
-                    product.quantity_units.map((unit) => {
-                      if (product.variations && product.variations.length > 0) {
-                        this.options.products.push({
-                          value: product.uuid,
-                          type: "variation",
-                          label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                          is_unit: true,
-                          unit_id: unit.uuid,
-                          unit_qty: unit.qty ?? 1,
-                          unit_cost_price: unit.price?.cost_price,
-                          unit_selling_price:
-                            unit.price?.selling_price_without_tax,
-                        });
-                      } else {
-                        this.options.products.push({
-                          value: product.uuid,
-                          type: "product",
-                          label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                          is_unit: true,
-                          unit_id: unit.uuid,
-                          unit_qty: unit.qty ?? 1,
-                          unit_cost_price: unit.price?.cost_price,
-                          unit_selling_price:
-                            unit.price?.selling_price_without_tax,
-                        });
-                      }
-                    });
-                  }
-                  if (product.variations && product.variations.length > 0) {
-                    product.variations.map((variation) => {
-                      this.options.products.push({
-                        value: variation.uuid,
-                        type: "variation",
-                        label: `${product.name} (Variation: ${
-                          JSON.parse(variation.name)?.en
-                        } | Stock: ${product.current_qty.balance})`,
-                      });
-                    });
-                  } else {
-                    console.log(product);
-                    this.options.products.push({
+      clearTimeout(this.timeout);
+
+      var self = this.search;
+      var that = this;
+      var options_products = [];
+      var products_list = [];
+
+      this.timeout = setTimeout(function () {
+        if (self !== "") {
+          products_list = [];
+          options_products = [];
+          ReceivingService.searchProduct(self)
+            .then(({ data }) => {
+              if (data !== undefined && data !== "") {
+                // For barcode
+                if (!isNaN(parseInt(self)) && data.length == 1) {
+                  // console.log("one prodcut found");
+                  data.map((product) => {
+                    that.addOptions({
                       value: product.uuid,
                       type: "product",
                       label: `${product.name} (Stock:  ${
@@ -369,19 +338,37 @@ export default {
                           : 0
                       })`,
                     });
-                  }
-
-                  this.products_list.push({ ...product });
+                  });
                 }
-              });
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } else {
-        this.resetSearch();
-      }
+
+                data.map((product) => {
+                  if (product) {
+                    options_products.push({
+                      value: product.uuid,
+                      type: "product",
+                      label: `${product.name} (Stock:  ${
+                        product.current_qty && product.current_qty.balance
+                          ? product.current_qty.balance
+                          : 0
+                      })`,
+                    });
+
+                    products_list.push({ ...product });
+                  }
+                });
+                // this.options.products = options_products;
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          that.resetSearch();
+        }
+
+        that.products_list = products_list;
+        that.options.products = options_products;
+      }, 1000);
     },
     removeProduct(index) {
       this.form.items.splice(index, 1);
@@ -393,6 +380,7 @@ export default {
       }
     },
     addOptions(item) {
+      alert("someone called me");
       this.form.product_id = item.value;
       this.unit_form = [];
       let option = item;
@@ -544,6 +532,7 @@ export default {
       }
     },
     addProduct(option = {}) {
+      alert("we re in add prodcut also ");
       if (this.form.product_id !== "" && this.form.product_id !== undefined) {
         let product = this.products_list.find(
           (product) => product.uuid === this.form.product_id
@@ -610,6 +599,7 @@ export default {
             });
           } else if (this.searchType === "quotation") {
             // console.log(product.weight_unit);
+            alert("we are in quotation column also");
             this.form.items.push({
               uuid: product.uuid,
               type: "product",

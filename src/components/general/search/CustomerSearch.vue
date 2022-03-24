@@ -117,14 +117,22 @@ export default {
                 }
                 customers.push({
                   value: item.uuid,
-                  label: item.full_name + " (mobile: " + contacts + ")",
+                  label:
+                    item.full_name +
+                    " (mobile: " +
+                    item.contact.number.en +
+                    ")",
                   defaultAddress: item.defaultAddress,
                 });
                 if (item.full_name == "Walk In Customer" && create_only) {
                   // eslint-disable-next-line no-unused-vars
                   default_data = {
-                    label: item.full_name + " (mobile: " + contacts + ")",
                     value: item.uuid,
+                    label:
+                      item.full_name +
+                      " (mobile: " +
+                      item.contact.number.en +
+                      ")",
                     defaultAddress: item.defaultAddress,
                   };
                   //assign object to default_data
@@ -154,7 +162,11 @@ export default {
               data.map(function (item) {
                 customers.push({
                   value: item.uuid,
-                  label: item.full_name + " (mobile: " + contacts + ")",
+                  label:
+                    item.full_name +
+                    " (mobile: " +
+                    item.contact.number.en +
+                    ")",
                   defaultAddress: item.defaultAddress,
                 });
               });
@@ -170,7 +182,7 @@ export default {
     newData(item) {
       const obj = {
         value: item.uuid,
-        label: item.full_name + " (mobile: " + contacts + ")",
+        label: item.full_name + " (mobile: " + item.contact.number.en + ")",
         defaultAddress: item.defaultAddress,
       };
       this.options.customers.push(obj);
