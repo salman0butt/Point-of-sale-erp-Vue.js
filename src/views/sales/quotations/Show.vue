@@ -121,7 +121,7 @@
                     }}
                   </td>
                   <td class="left">{{ product.description }}</td>
-                  <td class="center">{{ product.qty }}</td>
+                  <td class="center">{{ Math.abs(product.qty) }}</td>
                   <td class="right">{{ product.selling_price }}</td>
                   <td class="right">{{ product.tax }}</td>
                   <td class="right">

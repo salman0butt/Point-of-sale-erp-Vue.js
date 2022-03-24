@@ -685,29 +685,13 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             this.isEditing = true;
-
-            // Getting contacts of customers
-            let contacts = "";
-            if (
-              res.data.customer.all_contacts &&
-              res.data.customer.all_contacts.length > 0
-            ) {
-              res.data.customer.all_contacts.map(function (contact, index) {
-                if (index > 0) {
-                  contacts += ",";
-                }
-                if (typeof contact.number == "object") {
-                  contacts += contact.number.en;
-                } else {
-                  contacts += contact.number;
-                }
-              });
-            }
-
             this.form.previousValue = {
               value: res.data.customer.uuid,
               label:
-                res.data.customer.full_name + " (mobile : " + contacts + ")",
+                res.data.customer.full_name +
+                " (mobile: " +
+                res.data.customer.contact.number.en +
+                ")",
             };
             this.form.id = res.data.uuid;
             this.form.dated = res.data.dated;
@@ -744,12 +728,12 @@ export default {
                 if (!item.discount_per) {
                   total_each =
                     (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                      parseInt(item.qty) -
+                      parseInt(Math.abs(item.qty)) -
                     parseFloat(item.discount);
                 } else {
                   total_each =
                     (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                    parseInt(item.qty);
+                    parseInt(Math.abs(item.qty));
                   total_each = total_each - total_each * (item.discount / 100);
                 }
 
@@ -759,7 +743,7 @@ export default {
                   name: item.product.name.en,
                   unit_price: item.selling_price ?? 0,
                   tax_price: item.tax ?? 0,
-                  qty: item.qty,
+                  qty: Math.abs(item.qty),
                   description: item.description,
                   weight_unit: item.product.weight_unit,
                   discount: item.discount_per

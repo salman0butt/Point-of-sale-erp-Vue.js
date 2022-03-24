@@ -736,28 +736,13 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             this.isEditing = true;
-
-            // Getting contacts of customers
-            let contacts = "";
-            if (
-              res.data.customer.all_contacts &&
-              res.data.customer.all_contacts.length > 0
-            ) {
-              res.data.customer.all_contacts.map(function (contact, index) {
-                if (index > 0) {
-                  contacts += ",";
-                }
-                if (typeof contact.number == "object") {
-                  contacts += contact.number.en;
-                } else {
-                  contacts += contact.number;
-                }
-              });
-            }
-
             this.form.previousValue = {
               value: res.data.customer.uuid,
-              label: res.data.customer.full_name + " (mobile:" + contacts + ")",
+              label:
+                res.data.customer.full_name +
+                " (mobile: " +
+                res.data.customer.contact.number.en +
+                ")",
             };
             this.form.dated = res.data.dated;
             this.form.due_date = res.data.due_date;
@@ -765,12 +750,45 @@ export default {
             this.form.quotation_status = res.data.quotation_status;
             this.form.payment_terms = res.data.payment_terms;
             this.form.terms_and_conditions = res.data.terms_and_conditions;
+            if (res.data.products && res.data.products.length > 0) {
+              var Items = this.form.items;
+              res.data.products.map((item) => {
+                let total_each = 0;
+                if (!item.discount_per) {
+                  total_each =
+                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                      parseInt(Math.abs(item.qty)) -
+                    parseFloat(item.discount);
+                } else {
+                  total_each =
+                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
+                    parseInt(Math.abs(item.qty));
+                  total_each = total_each - total_each * (item.discount / 100);
+                }
+
+                Items.push({
+                  uuid: item.product.uuid,
+                  type: "product",
+                  name: item.product.name.en,
+                  unit_price: item.selling_price ?? 0,
+                  tax_price: item.tax ?? 0,
+                  qty: Math.abs(item.qty),
+                  description: item.description,
+                  weight_unit: item.product.weight_unit,
+                  discount: item.discount_per
+                    ? item.discount + "%"
+                    : item.discount,
+                  total: total_each,
+                });
+              });
+            }
+
             if (res.data.delivery && res.data.delivery.uuid) {
+              this.delivery_check = true;
               this.form.delivery_method = res.data.delivery.uuid;
               this.form.delivery_method_price = res.data.delivery_method_price;
               this.form.total_price_with_delivery =
                 res.data.total_price_with_delivery;
-              this.delivery_check = true;
               this.form.address_for_delivery = res.data.address_for_delivery;
             }
             this.form.sales_persons = [];
@@ -780,44 +798,13 @@ export default {
                 sales_persons.push(item.uuid);
               });
             }
+
             this.display_images = [];
             if (res.data.attachments && res.data.attachments.length > 0) {
               let display_images = this.display_images;
               res.data.attachments.map(function (item) {
                 display_images.push(item);
               });
-            }
-            if (res.data.products && res.data.products.length > 0) {
-              res.data.products.map((item) => {
-                let total_each = 0;
-                if (!item.discount_per) {
-                  total_each =
-                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                      parseInt(item.qty) -
-                    parseFloat(item.discount);
-                } else {
-                  total_each =
-                    (parseFloat(item.selling_price) + parseFloat(item.tax)) *
-                    parseInt(item.qty);
-                  total_each = total_each - total_each * (item.discount / 100);
-                }
-
-                this.form.items.push({
-                  uuid: item.product.uuid,
-                  type: "product",
-                  name: item.product.name.en,
-                  unit_price: item.selling_price ?? 0,
-                  tax_price: item.tax ?? 0,
-                  qty: item.qty,
-                  description: item.description,
-                  weight_unit: item.product.weight_unit,
-                  discount: item.discount_per
-                    ? item.discount + "%"
-                    : item.discount,
-                  total: total_each,
-                });
-              });
-              // this.$store.commit("set_search_product_items", itemsData);
             }
             this.$store.commit("set_quotation_sub_total", res.data.sub_total);
             this.$store.commit("set_quotation_tax_total", res.data.total_tax);
