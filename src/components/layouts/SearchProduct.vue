@@ -306,22 +306,29 @@ export default {
                   // console.log("one prodcut found");
                   data.map((product) => {
                     if (product.barcode === self) {
-                      let tax_price =
-                        parseFloat(product.price.selling_price_without_tax) *
-                        (parseFloat(product.price.tax.percentage) / 100);
-                      let unit_price = product.price?.selling_price_without_tax;
-                      that.form.items.push({
-                        uuid: product.uuid,
-                        type: "product",
-                        name: product.name,
-                        unit_price: unit_price?.toFixed(3),
-                        tax_price: tax_price?.toFixed(3),
-                        qty: 1,
-                        discount: 0,
-                        description: "",
-                        weight_unit: product.weight_unit,
-                        total: product.price?.selling_price_with_tax,
-                      });
+                      let product_exist = that.form.items.find(
+                        (item) => item.uuid === product.uuid
+                      );
+                      if (product_exist) {
+                        product_exist.qty = parseInt(product_exist.qty) + 1;
+                      } else {
+                        let tax_price =
+                          parseFloat(product.price.selling_price_without_tax) *
+                          (parseFloat(product.price.tax.percentage) / 100);
+                        let unit_price = product.price?.selling_price_without_tax;
+                        that.form.items.push({
+                          uuid: product.uuid,
+                          type: "product",
+                          name: product.name,
+                          unit_price: unit_price?.toFixed(3),
+                          tax_price: tax_price?.toFixed(3),
+                          qty: 1,
+                          discount: 0,
+                          description: "",
+                          weight_unit: product.weight_unit,
+                          total: product.price?.selling_price_with_tax,
+                        });
+                      }
                     }
                   });
                   that.resetSearch();
