@@ -36,8 +36,12 @@
             <ProductSearchSelect
               @product-change="updateProductSearch($event, k)"
               :previousValue="
-                item && item.uuid && item.name
-                  ? { value: item.uuid, label: item.name, type: 'product' }
+                item && item.uuid && item.name && item.qty
+                  ? {
+                      value: item.uuid,
+                      label: item.name,
+                      type: 'product',
+                    }
                   : { value: '', label: item.name, type: 'empty' }
               "
             />
@@ -121,7 +125,7 @@
 // import Multiselect from "vue-multiselect";
 import AccountDropdown from "@/components/general/AccountDropdown.vue";
 import PurchaseService from "@/services/accounting/purchaseOrder/PurchaseOrderServices";
-import ReceivingService from "@/services/receivings/ReceivingService";
+// import ReceivingService from "@/services/receivings/ReceivingService";
 import { cilTrash, cisCaretBottom, cisFile } from "@coreui/icons-pro";
 import ProductSearchSelect from "@/components/general/search/ProductSearchSelect.vue";
 
@@ -172,7 +176,7 @@ export default {
     previousValue: {
       handler: function (val) {
         if (val) {
-          console.log(val);
+          // console.log(val);
           this.form.items = val;
         }
       },
@@ -390,13 +394,13 @@ export default {
     },
     updateProductSearch(data, k) {
       if (data) {
-        console.log(data);
+        // console.log(data);
         const { product } = data;
         if (data.searchType === "product") {
           let item = this.form.items[k];
           item.uuid = product.uuid;
-          item.name = product.name;
-          item.account = Object;
+          (item.name = product.name + " (serial: " + product.serial_number + ")"),
+            (item.account = Object);
           item.rate = product.price?.cost_price;
           item.qty = 1;
           item.amount = product.price?.cost_price * item.qty;

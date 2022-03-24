@@ -36,6 +36,10 @@ class RolesAndPermissionsService extends Helper {
     }
 
 
+    delete(id) {
+        return http.delete(`/roles/${id}`);
+    }
+
 }
 
 export default new RolesAndPermissionsService();

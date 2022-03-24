@@ -356,19 +356,6 @@ export default {
           disabled: true,
           selected: "",
         },
-        // {
-        //   value: "g",
-        //   label: "Gram",
-        // },
-        // {
-        //   value: "kg",
-        //   label: "Kilogram",
-        // },
-        // {
-        //   value: "ouance",
-        //   label: "Ouance",
-        // },
-        // all weight units list
         {
           value: "g",
           label: "Gram",
@@ -378,16 +365,20 @@ export default {
           label: "Kilogram",
         },
         {
-          value: "ounce",
+          value: "ouance",
           label: "Ouance",
         },
         {
-          value: "pound",
+          value: "mg",
+          label: "Milligram",
+        },
+        {
+          value: "lb",
           label: "Pound",
         },
         {
-          value: "stone",
-          label: "Stone",
+          value: "oz",
+          label: "Ounce",
         },
         {
           value: "ton",
@@ -397,194 +388,13 @@ export default {
           value: "tonne",
           label: "Tonne",
         },
-        // other weight units
         {
           value: "carat",
           label: "Carat",
         },
         {
-          value: "centner",
-          label: "Centner",
-        },
-        {
-          value: "dram",
-          label: "Dram",
-        },
-        {
           value: "grain",
           label: "Grain",
-        },
-        {
-          value: "gram",
-          label: "Gram",
-        },
-        {
-          value: "hundredweight",
-          label: "Hundredweight",
-        },
-        {
-          value: "kilogram",
-          label: "Kilogram",
-        },
-        {
-          value: "longton",
-          label: "Longton",
-        },
-        {
-          value: "metric_ton",
-          label: "Metric Ton",
-        },
-        {
-          value: "microgram",
-          label: "Microgram",
-        },
-        {
-          value: "milligram",
-          label: "Milligram",
-        },
-        {
-          value: "milliliter",
-          label: "Milliliter",
-        },
-        {
-          value: "millilitre",
-          label: "Millilitre",
-        },
-        {
-          value: "ounce",
-          label: "Ounce",
-        },
-        {
-          value: "pennyweight",
-          label: "Pennyweight",
-        },
-        {
-          value: "pound",
-          label: "Pound",
-        },
-        {
-          value: "quarter",
-          label: "Quarter",
-        },
-        {
-          value: "short_ton",
-          label: "Short Ton",
-        },
-        {
-          value: "slug",
-          label: "Slug",
-        },
-        {
-          value: "stone",
-          label: "Stone",
-        },
-        {
-          value: "ton",
-          label: "Ton",
-        },
-        {
-          value: "tonne",
-          label: "Tonne",
-        },
-        {
-          value: "ton",
-          label: "Ton",
-        },
-        {
-          value: "ton_long",
-          label: "Ton Long",
-        },
-        {
-          value: "ton_short",
-          label: "Ton Short",
-        },
-        {
-          value: "troy_ounce",
-          label: "Troy Ounce",
-        },
-        {
-          value: "troy_pound",
-          label: "Troy Pound",
-        },
-        {
-          value: "troy_ton",
-          label: "Troy Ton",
-        },
-        {
-          value: "troy_tonne",
-          label: "Troy Tonne",
-        },
-        {
-          value: "us_gallon",
-          label: "US Gallon",
-        },
-        {
-          value: "us_gallon_imperial",
-          label: "US Gallon Imperial",
-        },
-        {
-          value: "us_quart",
-          label: "US Quart",
-        },
-        {
-          value: "us_ton",
-          label: "US Ton",
-        },
-        {
-          value: "us_ton_long",
-          label: "US Ton Long",
-        },
-        {
-          value: "us_ton_short",
-          label: "US Ton Short",
-        },
-        {
-          value: "us_wine_cup",
-          label: "US Wine Cup",
-        },
-        {
-          value: "us_wine_glass",
-          label: "US Wine Glass",
-        },
-        {
-          value: "us_wine_ounce",
-          label: "US Wine Ounce",
-        },
-        {
-          value: "us_wine_pint",
-          label: "US Wine Pint",
-        },
-        {
-          value: "us_wine_quart",
-          label: "US Wine Quart",
-        },
-        {
-          value: "us_wine_tablespoon",
-          label: "US Wine Tablespoon",
-        },
-        {
-          value: "us_wine_teaspoon",
-          label: "US Wine Teaspoon",
-        },
-        {
-          value: "yard",
-          label: "Yard",
-        },
-        {
-          value: "yard_foot",
-          label: "Yard Foot",
-        },
-        {
-          value: "yard_inch",
-          label: "Yard Inch",
-        },
-        {
-          value: "yard_mile",
-          label: "Yard Mile",
-        },
-        {
-          value: "yard_yard",
-          label: "Yard Yard",
         },
       ];
     },

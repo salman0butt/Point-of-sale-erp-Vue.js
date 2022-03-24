@@ -1,10 +1,5 @@
 <template>
   <div>
-    <vue-element-loading
-      :active="isLoading"
-      spinner="mini-spinner"
-      color="#FF6700"
-    />
     <CRow>
       <CCol xs="12" lg="12">
         <form @submit.prevent="isUpdatePage ? updateData() : saveData()">
@@ -13,6 +8,7 @@
             <CCardHeader v-else>Edit Role</CCardHeader>
             <CCardBody>
               <CRow>
+                <Loader />
                 <CCol sm="6" md="4" class="pt-2">
                   <CInput
                     label="Role Name"
@@ -32,6 +28,15 @@
               </CRow>
 
               <h2><u> Permissions</u></h2>
+              <label class="mr-4 font-lg"
+                ><strong> Select All Permissions</strong>
+              </label>
+              <CSwitch
+                class="mx-1 pt-2"
+                color="success"
+                :checked.sync="selectAll"
+                shape="pill"
+              />
               <div v-for="module in modules" :key="module.id">
                 <h4>
                   <u> {{ module }}</u>
@@ -56,20 +61,19 @@
                   </CCol>
                 </CRow>
               </div>
+              <CRow class="mt-4">
+                <CButton
+                  progress
+                  timeout="2000"
+                  block
+                  color="success"
+                  style="float: right; width: 200px; margin-left: 20px"
+                  type="submit"
+                  >Save</CButton
+                >
+              </CRow>
             </CCardBody>
           </CCard>
-
-          <CRow class="mt-4">
-            <CButton
-              progress
-              timeout="2000"
-              block
-              color="success"
-              style="float: right; width: 200px; margin-left: 20px"
-              type="submit"
-              >Save</CButton
-            >
-          </CRow>
         </form>
       </CCol>
     </CRow>
@@ -82,15 +86,16 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 
 import { required, minLength } from "vuelidate/lib/validators";
-import VueElementLoading from "vue-element-loading";
+import Loader from "@/components/layouts/Loader";
 
 export default {
   name: "UpdateOrCreateRole",
   components: {
-    VueElementLoading,
+    Loader,
   },
   data: () => ({
-    isLoading: false,
+    selectAll: false,
+
     isUpdatePage: false,
     form: {
       items: [],
@@ -98,7 +103,19 @@ export default {
     },
     modules: [],
   }),
-
+  watch: {
+    selectAll(val) {
+      if (val) {
+        this.form.items.forEach((item) => {
+          item.value = true;
+        });
+      } else {
+        this.form.items.forEach((item) => {
+          item.value = false;
+        });
+      }
+    },
+  },
   validations() {
     return {
       form: {
@@ -112,6 +129,7 @@ export default {
   },
   methods: {
     getSetting() {
+      this.$store.commit("set_loader");
       RolesAndPermissionsService.getAllPermissions()
         .then((res) => {
           for (let index = 0; index < Object.keys(res.data).length; index++) {
@@ -126,9 +144,11 @@ export default {
               });
             });
           }
+          this.$store.commit("close_loader");
           this.getEditData();
         })
         .catch((error) => {
+          this.$store.commit("close_loader");
           this.$swal.fire({
             icon: "error",
             title: "Error",
@@ -138,6 +158,7 @@ export default {
         });
     },
     getEditData() {
+      // this.$store.commit("set_loader");
       if (this.$route.params.id) {
         this.isUpdatePage = true;
         RolesAndPermissionsService.get(this.$route.params.id)
@@ -154,8 +175,10 @@ export default {
                 });
               });
             }
+            // this.$store.commit("close_loader");
           })
           .catch((error) => {
+            // this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: error.message,
@@ -170,7 +193,8 @@ export default {
     saveData() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        this.isLoading = true;
+        this.$store.commit("set_loader");
+
         let data = this.form;
         RolesAndPermissionsService.create(data)
           .then((res) => {
@@ -181,13 +205,15 @@ export default {
                 text: "Role Created Successfully",
                 timer: 3600,
               });
-              this.isLoading = false;
+
               this.$v.$reset();
               this.$router.push({ name: "Index Roles" });
             }
+            this.$store.commit("close_loader");
           })
           .catch((error) => {
-            this.isLoading = false;
+            this.$store.commit("close_loader");
+
             this.$swal.fire({
               icon: "error",
               title: error.message,
@@ -200,7 +226,7 @@ export default {
     updateData() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        this.isLoading = true;
+        this.$store.commit("set_loader");
         let data = this.form;
         let id = this.$route.params.id;
         RolesAndPermissionsService.update(id, data)
@@ -213,13 +239,14 @@ export default {
                 text: "Role Updated Successfully",
                 timer: 3600,
               });
-              this.isLoading = false;
+
               this.$v.$reset();
               this.$router.push({ name: "Index Roles" });
             }
+            this.$store.commit("close_loader");
           })
           .catch((error) => {
-            this.isLoading = false;
+            this.$store.commit("close_loader");
             this.$swal.fire({
               icon: "error",
               title: error.message,

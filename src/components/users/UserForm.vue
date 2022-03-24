@@ -19,11 +19,7 @@
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
-          <CSelect
-            label="Gender"
-            :options="options.gender"
-            :value.sync="form.gender"
-          />
+          <CSelect label="Gender" :options="options.gender" :value.sync="form.gender" />
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
@@ -59,103 +55,90 @@
             :preselect-first="true"
           >
             <template slot="selection" slot-scope="{ values, search, isOpen }">
-              <span
-                class="multiselect__single"
-                v-if="values.value &amp;&amp; !isOpen"
+              <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
                 >{{ values.length }} options selected</span
               ></template
             >
           </multiselect>
 
           <div v-if="$v.form.branch_id.$error">
-            <p v-if="!$v.form.branch_id.required" class="errorMsg">
-              Branch is required
-            </p>
+            <p v-if="!$v.form.branch_id.required" class="errorMsg">Branch is required</p>
           </div>
         </CCol>
 
         <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
+          <CSelect label="Status" :options="options.status" :value.sync="form.status" />
+        </CCol>
+
+        <CCol sm="6" md="4" class="pt-2">
+          <CInput
+            label="Username"
+            :value.sync="form.user_name"
+            :class="{ error: $v.form.user_name.$error }"
+            @input="$v.form.user_name.$touch()"
+          />
+          <div v-if="$v.form.user_name.$error">
+            <p v-if="!$v.form.user_name.required" class="errorMsg">
+              Username is required
+            </p>
+          </div>
+        </CCol>
+        <CCol sm="6" md="4" class="pt-2">
+          <CInput
+            label="User Email"
+            :value.sync="form.user_email"
+            :class="{ error: $v.form.user_email.$error }"
+            @input="$v.form.user_email.$touch()"
+          />
+          <div v-if="$v.form.user_email.$error">
+            <p v-if="!$v.form.user_email.required" class="errorMsg">
+              User Email is required
+            </p>
+          </div>
+        </CCol>
+        <CCol sm="6" md="4" class="pt-2">
+          <CInput
+            label="Password"
+            type="password"
+            :value.sync="form.user_pass"
+            :class="{ error: !isEditing && $v.form.user_pass.$error }"
+            @input="$v.form.user_pass.$touch()"
+          />
+          <div v-if="!isEditing && $v.form.user_pass.$error">
+            <p v-if="!$v.form.user_pass.required" class="errorMsg">
+              Password is required
+            </p>
+          </div>
+        </CCol>
+
+        <CCol sm="6" md="4" class="pt-2">
+          <CSelect
+            label="Role"
+            :options="options.user_role"
+            :value.sync="form.user_role"
+            :class="{ error: $v.form.user_role.$error }"
+            @input="$v.form.user_role.$touch()"
+          />
+          <div v-if="$v.form.user_role.$error">
+            <p v-if="!$v.form.user_role.required" class="errorMsg">Role is required</p>
+          </div>
+        </CCol>
+        <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
           <CSelect
             label="Status"
-            :options="options.status"
-            :value.sync="form.status"
+            :options="options.user_status"
+            :value.sync="form.user_status"
+          />
+        </CCol>
+        <CCol sm="6" md="4" class="pt-2">
+          <CSelect
+            label="Select Language"
+            :options="options.user_language"
+            :value.sync="form.user_language"
           />
         </CCol>
       </CRow>
-      <div>
-        <CRow>
-          <CCol sm="6" md="4" class="pt-2">
-            <CInput
-              label="Username"
-              :value.sync="form.user_name"
-              :class="{ error: $v.form.user_name.$error }"
-              @input="$v.form.user_name.$touch()"
-            />
-            <div v-if="$v.form.user_name.$error">
-              <p v-if="!$v.form.user_name.required" class="errorMsg">
-                Username is required
-              </p>
-            </div>
-          </CCol>
-          <CCol sm="6" md="4" class="pt-2">
-            <CInput
-              label="User Email"
-              :value.sync="form.user_email"
-              :class="{ error: $v.form.user_email.$error }"
-              @input="$v.form.user_email.$touch()"
-            />
-            <div v-if="$v.form.user_email.$error">
-              <p v-if="!$v.form.user_email.required" class="errorMsg">
-                User Email is required
-              </p>
-            </div>
-          </CCol>
-          <CCol sm="6" md="4" class="pt-2">
-            <CInput
-              label="Password"
-              type="password"
-              :value.sync="form.user_pass"
-              :class="{ error: !isEditing && $v.form.user_pass.$error }"
-              @input="$v.form.user_pass.$touch()"
-            />
-            <div v-if="!isEditing && $v.form.user_pass.$error">
-              <p v-if="!$v.form.user_pass.required" class="errorMsg">
-                Password is required
-              </p>
-            </div>
-          </CCol>
-        </CRow>
-        <CRow>
-          <CCol sm="6" md="4" class="pt-2">
-            <CSelect
-              label="Role"
-              :options="options.user_role"
-              :value.sync="form.user_role"
-              :class="{ error: $v.form.user_role.$error }"
-              @input="$v.form.user_role.$touch()"
-            />
-            <div v-if="$v.form.user_role.$error">
-              <p v-if="!$v.form.user_role.required" class="errorMsg">
-                Role is required
-              </p>
-            </div>
-          </CCol>
-          <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
-            <CSelect
-              label="Status"
-              :options="options.user_status"
-              :value.sync="form.user_status"
-            />
-          </CCol>
-          <CCol sm="6" md="4" class="pt-2">
-            <CSelect
-              label="Select Language"
-              :options="options.user_language"
-              :value.sync="form.user_language"
-            />
-          </CCol>
-        </CRow>
-      </div>
+
       <CRow>
         <CCol sm="6" md="3" class="pt-2">
           <CCardBody>
@@ -170,18 +153,12 @@
               <a href="#" @click.prevent="pickImage()">
                 <CImg
                   v-bind:src="
-                    form.preview_pic
-                      ? form.preview_pic
-                      : '/img/images/no-logo.png'
+                    form.preview_pic ? form.preview_pic : '/img/images/no-logo.png'
                   "
                   block
                   class="mb-2 imger"
                   width="100%"
-                  style="
-                    border-style: solid;
-                    padding: 10px;
-                    border-color: #999999;
-                  "
+                  style="border-style: solid; padding: 10px; border-color: #999999"
                 />
               </a>
               <CButton
@@ -232,6 +209,7 @@ export default {
   name: "UserForm",
   components: { Loader, Multiselect },
   data: () => ({
+    errors: [],
     isEditing: false,
     saveAndExit: false,
     form: {
@@ -263,9 +241,7 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
-      user_role: [
-        { value: "", label: "Choose Role", disabled: true, selected: "" },
-      ],
+      user_role: [{ value: "", label: "Choose Role", disabled: true, selected: "" }],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },
@@ -350,13 +326,24 @@ export default {
             }
           })
           .catch((error) => {
-            console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                // this.errors.push({
+                //   title: "Error",
+                //   content: errors[err][0],
+                //   class: "error",
+                // });
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong.",
+                timer: 3600,
+              });
+            }
           });
       }
     },
@@ -385,10 +372,7 @@ export default {
                   data.employee.uuid &&
                   data.employee.uuid === this.$store.state.employee_id
                 ) {
-                  this.$store.dispatch(
-                    "setPorfileImage",
-                    res.data.personal_photo
-                  );
+                  this.$store.dispatch("setPorfileImage", res.data.personal_photo);
                   // this.$store.commit("set_profile_img", data.employee.personal_photo);
                 }
               }
@@ -405,13 +389,23 @@ export default {
             }
           })
           .catch((error) => {
-            console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.errors.push({
+                  title: "Error",
+                  content: errors[err][0],
+                  class: "error",
+                });
+              }
+            } else {
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong.",
+                timer: 3600,
+              });
+            }
           });
       }
     },
@@ -430,9 +424,6 @@ export default {
       }
       if (update) {
         formData.append("_method", "PATCH");
-      }
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
       }
       return formData;
     },

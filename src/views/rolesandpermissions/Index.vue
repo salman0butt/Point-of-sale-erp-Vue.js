@@ -48,8 +48,7 @@
                     > -->
                     <CButton
                       v-if="
-                        $can('edit roles-and-permissions') &&
-                        item.name != 'super-admin'
+                        $can('edit roles-and-permissions') && item.name != 'super-admin'
                       "
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -59,8 +58,7 @@
                     /></CButton>
                     <CButton
                       v-if="
-                        $can('delete roles-and-permissions') &&
-                        item.name != 'super-admin'
+                        $can('delete roles-and-permissions') && item.name != 'super-admin'
                       "
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
@@ -164,20 +162,13 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            this.$swal
-              .fire({
-                icon: "success",
-                title: "Success",
-                text: "Role Deleted Successfully",
-                timer: 3600,
+            RolesAndPermissionsService.delete(this.deleteRows)
+              .then((response) => {
+                this.$swal.fire("Deleted!", "Your record has been deleted.", "success");
+                this.serverData = this.serverData.filter((item) => item.uuid !== uuid);
               })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
+              .catch((err) => {
+                console.log(err);
               });
             this.deleteRows = [];
           }
