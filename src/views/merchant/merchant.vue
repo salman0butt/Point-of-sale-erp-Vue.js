@@ -490,12 +490,14 @@ export default {
           }
         })
         .catch((error) => {
-          if (error.response && error.response.status == 422) {
-            let errors = error.response.data.errors;
-            for (const err in errors) {
-              this.$toast.error(errors[err][0]);
+           if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
             }
-          }
         });
     },
     pickFile(e) {
@@ -534,7 +536,7 @@ export default {
                   ? item.image
                   : "/img/images/photo-not-available.png",
                 content: item.description,
-                status: item.status == "active" ? "Deactivate" : "Activate",
+                status: item.pivot.status == "active" ? "Deactivate" : "Activate",
               });
             });
             // this.pluginname = "";

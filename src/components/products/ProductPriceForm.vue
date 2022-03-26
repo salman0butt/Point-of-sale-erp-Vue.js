@@ -5,11 +5,7 @@
         <CCard>
           <CCardHeader> Prices </CCardHeader>
           <CCardBody>
-            <form
-              @submit.prevent="
-                isEditing ? updateProductPrice() : saveProductPrice()
-              "
-            >
+            <form @submit.prevent="isEditing ? updateProductPrice() : saveProductPrice()">
               <CRow>
                 <Loader />
                 <CCol sm="2" md="2" class="pt-2">
@@ -39,10 +35,7 @@
                       error: $v.product.selling_price_without_tax.$error,
                     }"
                     @input="
-                      [
-                        $v.product.selling_price_without_tax.$touch(),
-                        calculateTotal(),
-                      ]
+                      [$v.product.selling_price_without_tax.$touch(), calculateTotal()]
                     "
                   />
                   <div v-if="$v.product.selling_price_without_tax.$error">
@@ -127,18 +120,10 @@
               >
                 <CRow>
                   <CCol sm="12" md="12" class="pt-2">
-                    <div
-                      class="form-group"
-                      v-for="(input, k) in variations"
-                      :key="k"
-                    >
+                    <div class="form-group" v-for="(input, k) in variations" :key="k">
                       <CRow>
                         <CCol sm="6" md="3" class="pt-2">
-                          <CInput
-                            label="Name"
-                            readonly
-                            :value.sync="input.name"
-                          />
+                          <CInput label="Name" readonly :value.sync="input.name" />
                         </CCol>
                         <!-- <CCol sm="6" md="3" class="pt-2">
                         <CInput label="Attributes" readonly :value.sync="input.values" />
@@ -171,25 +156,18 @@
                             v-model="input.selling_price_without_tax"
                             :class="{
                               error:
-                                $v.variations.$each[k].selling_price_without_tax
-                                  .$error,
+                                $v.variations.$each[k].selling_price_without_tax.$error,
                             }"
                             @input="
-                              $v.variations.$each[
-                                k
-                              ].selling_price_without_tax.$touch()
+                              $v.variations.$each[k].selling_price_without_tax.$touch()
                             "
                           />
                           <div
-                            v-if="
-                              $v.variations.$each[k].selling_price_without_tax
-                                .$error
-                            "
+                            v-if="$v.variations.$each[k].selling_price_without_tax.$error"
                           >
                             <p
                               v-if="
-                                !$v.variations.$each[k]
-                                  .selling_price_without_tax.required
+                                !$v.variations.$each[k].selling_price_without_tax.required
                               "
                               class="errorMsg"
                             >
@@ -336,12 +314,10 @@ export default {
         this.product.tax = data.tax?.uuid;
         if (data.inclusive_tax) {
           this.product.org_selling = data.selling_price_without_tax ?? 0;
-          this.product.selling_price_without_tax =
-            data.selling_price_with_tax ?? 0;
+          this.product.selling_price_without_tax = data.selling_price_with_tax ?? 0;
           this.calculateTotal();
         } else {
-          this.product.selling_price_without_tax =
-            data.selling_price_without_tax ?? 0;
+          this.product.selling_price_without_tax = data.selling_price_without_tax ?? 0;
           this.calculateTotal();
         }
       }
@@ -350,12 +326,7 @@ export default {
       this.$store.commit("set_loader");
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
-          if (
-            data !== "" &&
-            data !== null &&
-            data !== undefined &&
-            data.length
-          ) {
+          if (data !== "" && data !== null && data !== undefined && data.length) {
             this.isVariationEditing = true;
             this.variations = [];
             data.forEach((element) => {
@@ -363,10 +334,8 @@ export default {
                 uuid: element.uuid,
                 name: JSON.parse(element.name).en,
                 cost_price: element.price?.cost_price ?? 0,
-                selling_price_without_tax:
-                  element.price?.selling_price_without_tax ?? 0,
-                inclusive_tax:
-                  element.price?.inclusive_tax === 1 ? true : false,
+                selling_price_without_tax: element.price?.selling_price_without_tax ?? 0,
+                inclusive_tax: element.price?.inclusive_tax === 1 ? true : false,
               });
             });
           }
@@ -400,12 +369,14 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -465,12 +436,14 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something went Wrong",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -559,8 +532,7 @@ export default {
         if (percentage) {
           let total_price_with_tax =
             parseFloat(selling_price_without_tax) +
-            (parseFloat(selling_price_without_tax) * parseFloat(percentage)) /
-              100;
+            (parseFloat(selling_price_without_tax) * parseFloat(percentage)) / 100;
           this.product.selling_price_with_tax = total_price_with_tax
             ? total_price_with_tax.toFixed(3)
             : 0;

@@ -8,7 +8,7 @@
           <CCardBody>
             <div>
               <router-link
-                v-if="$can('create branches')"
+                v-if="isBranchPlugin && $can('create branches')"
                 class="btn btn-success"
                 to="/branch/create"
                 style="text-align: center; float: right"
@@ -80,9 +80,12 @@ export default {
     return {
       Branches: [],
       fields,
+      isBranchPlugin: false,
     };
   },
-  created() {},
+  created() {
+    this.checkBranchPlugin();
+  },
   computed: {
     branches() {
       return this.Branches;
@@ -128,6 +131,26 @@ export default {
 
     deleteRow(uuid) {
       alert("Page not ready sorry");
+    },
+    checkBranchPlugin() {
+      const serial_number = JSON.stringify(["branch"]);
+      this.$http
+        .get(`/modules/${serial_number}`)
+        .then((response) => {
+          if (response.status === 200) {
+            if (response.data && response.data.length > 0) {
+              response.data.map((item) => {
+                if (item.status === "active") {
+                  console.log(item);
+                  this.isBranchPlugin = true;
+                }
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
   mounted() {

@@ -250,19 +250,16 @@ export default {
             }
           })
           .catch((error) => {
-            if (error.response.status == 422) {
+            if (error.response && error.response.status === 422) {
               let errors = error.response.data.errors;
-              this.$swal.fire({
-                icon: "error",
-                title: "Serial No",
-                text: errors.serial_no,
-                timer: 3600,
-              });
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
             } else {
               this.$swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Something Went Wrong",
+                text: "Something Went Wrong.",
                 timer: 3600,
               });
             }
@@ -296,12 +293,19 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong.",
+                timer: 3600,
+              });
+            }
           });
       }
     },
