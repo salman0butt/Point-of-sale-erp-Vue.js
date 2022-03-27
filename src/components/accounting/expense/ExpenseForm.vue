@@ -22,9 +22,7 @@
                 @input="$v.form.amount.$touch()"
               />
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">
-                  Amount is required
-                </p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -36,9 +34,7 @@
                 @input="$v.form.date.$touch()"
               />
               <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">
-                  Date is required
-                </p>
+                <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -61,9 +57,7 @@
                 @input="$v.form.status.$touch()"
               />
               <div v-if="$v.form.status.$error">
-                <p v-if="!$v.form.status.required" class="errorMsg">
-                  Status is required
-                </p>
+                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
               </div>
             </CCol>
           </CRow>
@@ -79,11 +73,7 @@
                     class="display-attachment-row"
                   >
                     <CIcon :content="$options.cisFile" />
-                    <a
-                      v-bind:href="doc.path"
-                      target="_blank"
-                      class="name-attachment"
-                    >
+                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
                       {{ doc.name }}</a
                     >
                     <a
@@ -97,9 +87,7 @@
               </div>
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -115,12 +103,7 @@
               timeout="2000"
               block
               color="danger"
-              style="
-                float: right;
-                width: 140px;
-                margin-left: 20px;
-                margin-top: 0;
-              "
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -181,9 +164,7 @@ export default {
       // categories: [
       //   { value: "", label: "Choose Category", disabled: true, selected: "" },
       // ],
-      accounts: [
-        { value: "", label: "Choose Account", disabled: true, selected: "" },
-      ],
+      accounts: [{ value: "", label: "Choose Account", disabled: true, selected: "" }],
     },
   }),
   validations() {
@@ -241,12 +222,14 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -282,12 +265,14 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },

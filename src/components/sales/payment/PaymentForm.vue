@@ -274,7 +274,7 @@ export default {
       }
     },
     editData(val) {
-      if (val) {
+      if (val && val.uuid) {
         this.isEditing = true;
         this.form.id = val.uuid;
         if (val.invoice) {
@@ -305,6 +305,8 @@ export default {
         this.$nextTick(() => {
           this.$v.$touch();
         });
+      } else {
+        this.isEditing = false;
       }
     },
   },

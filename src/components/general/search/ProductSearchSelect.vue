@@ -64,6 +64,9 @@ export default {
   created() {
     this.getProducts();
   },
+  mounted() {
+    this.$refs.proSelect.activate();
+  },
   watch: {
     products: {
       handler: function (val) {
@@ -86,7 +89,6 @@ export default {
   },
   methods: {
     addTag(newTag, isBarcode = false) {
-      console.log(newTag);
       let tag = null;
       if (!isBarcode) {
         tag = {
@@ -109,8 +111,14 @@ export default {
           // this.options.products.unshift(tag);
           this.form.product = tag;
           this.$refs.proSelect.deactivate();
+          this.$emit("add-new");
         }
       }
+    },
+    open() {
+      setTimeout(() => {
+        this.$refs.proSelect.activate();
+      }, 2000);
     },
     getProducts() {
       store.commit("set_loader");

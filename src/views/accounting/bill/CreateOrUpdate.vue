@@ -354,12 +354,14 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -392,12 +394,14 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },

@@ -199,6 +199,7 @@ export default {
       this.getServerData(PaymentInvoiceService, page, per_page);
     },
     addPayment() {
+      this.editData = {};
       this.$store.commit("set_payment_model", true);
     },
     viewRow(uuid) {

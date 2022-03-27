@@ -286,6 +286,11 @@ export default {
       ],
       products: [],
     },
+
+    // timeout
+    //value: "",
+    //outputValue: "",
+    timeout: null,
   }),
   created() {
     this.form.id = this.$route.params.id;
@@ -306,61 +311,58 @@ export default {
   },
   methods: {
     searchProduct() {
-      if (this.search !== "") {
-        this.products_list = [];
-        this.options.products = [];
-        this.unit_form = [];
-        ReceivingService.searchProduct(this.search)
-          .then(({ data }) => {
-            if (data !== undefined && data !== "") {
-              this.options.products = [];
-              data.map((product) => {
-                if (product) {
-                  if (
-                    product.quantity_units &&
-                    product.quantity_units.length > 0
-                  ) {
-                    product.quantity_units.map((unit) => {
-                      if (product.variations && product.variations.length > 0) {
-                        this.options.products.push({
-                          value: product.uuid,
-                          type: "variation",
-                          label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                          is_unit: true,
-                          unit_id: unit.uuid,
-                          unit_qty: unit.qty ?? 1,
-                          unit_cost_price: unit.price?.cost_price,
-                          unit_selling_price:
-                            unit.price?.selling_price_without_tax,
-                        });
+      clearTimeout(this.timeout);
+
+      var self = this.search;
+      var that = this;
+      var options_products = [];
+      var products_list = [];
+
+      this.timeout = setTimeout(function () {
+        if (self !== "") {
+          products_list = [];
+          options_products = [];
+          ReceivingService.searchProduct(self)
+            .then(({ data }) => {
+              if (data) {
+                // For barcode
+                if (!isNaN(parseInt(self)) && data.length == 1) {
+                  // console.log("one prodcut found");
+                  data.map((product) => {
+                    if (product.barcode === self) {
+                      let product_exist = that.form.items.find(
+                        (item) => item.uuid === product.uuid
+                      );
+                      if (product_exist) {
+                        product_exist.qty = parseInt(product_exist.qty) + 1;
                       } else {
-                        this.options.products.push({
-                          value: product.uuid,
+                        let tax_price =
+                          parseFloat(product.price.selling_price_without_tax) *
+                          (parseFloat(product.price.tax.percentage) / 100);
+                        let unit_price =
+                          product.price?.selling_price_without_tax;
+                        that.form.items.push({
+                          uuid: product.uuid,
                           type: "product",
-                          label: `${product.name} (Unit: ${unit.name} | Qty: ${unit.qty})`,
-                          is_unit: true,
-                          unit_id: unit.uuid,
-                          unit_qty: unit.qty ?? 1,
-                          unit_cost_price: unit.price?.cost_price,
-                          unit_selling_price:
-                            unit.price?.selling_price_without_tax,
+                          name: product.name,
+                          unit_price: unit_price?.toFixed(3),
+                          tax_price: tax_price?.toFixed(3),
+                          qty: 1,
+                          discount: 0,
+                          description: "",
+                          weight_unit: product.weight_unit,
+                          total: product.price?.selling_price_with_tax,
                         });
                       }
-                    });
-                  }
-                  if (product.variations && product.variations.length > 0) {
-                    product.variations.map((variation) => {
-                      this.options.products.push({
-                        value: variation.uuid,
-                        type: "variation",
-                        label: `${product.name} (Variation: ${
-                          JSON.parse(variation.name)?.en
-                        } | Stock: ${product.current_qty.balance})`,
-                      });
-                    });
-                  } else {
-                    console.log(product);
-                    this.options.products.push({
+                    }
+                  });
+                  that.resetSearch();
+                  return;
+                }
+
+                data.map((product) => {
+                  if (product) {
+                    options_products.push({
                       value: product.uuid,
                       type: "product",
                       label: `${product.name} (Stock:  ${
@@ -369,19 +371,23 @@ export default {
                           : 0
                       })`,
                     });
-                  }
 
-                  this.products_list.push({ ...product });
-                }
-              });
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } else {
-        this.resetSearch();
-      }
+                    products_list.push({ ...product });
+                  }
+                });
+                // this.options.products = options_products;
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          that.resetSearch();
+        }
+
+        that.products_list = products_list;
+        that.options.products = options_products;
+      }, 500);
     },
     removeProduct(index) {
       this.form.items.splice(index, 1);
@@ -393,6 +399,7 @@ export default {
       }
     },
     addOptions(item) {
+      console.log("🚀 ~ item", item);
       this.form.product_id = item.value;
       this.unit_form = [];
       let option = item;
@@ -615,7 +622,7 @@ export default {
               type: "product",
               name: product.name,
               unit_price: option.unit_selling_price.toFixed(3) ?? 0,
-              tax_price: option.tax_price.toFixed(3) ?? 0,
+              tax_price: option.tax_price?.toFixed(3) ?? 0,
               qty: 1,
               discount: 0,
               description: "",

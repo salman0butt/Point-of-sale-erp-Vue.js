@@ -34,11 +34,7 @@
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
-        <a
-          class="btn btn-sm btn-info ml-1"
-          @click.prevent="print"
-          style="color: #fff"
-        >
+        <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
           <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
       </div>
@@ -62,27 +58,25 @@
           <CRow class="mb-4">
             <CCol sm="4">
               <CImg
-                v-bind:src="business.logo"
+                v-if="businessLogo"
+                :src="businessLogo"
                 block
                 class="mb-2 imger"
                 width="100%"
+                style="max-width: 150px"
               />
               <h6 class="mb-3">To:</h6>
               <div>
                 <strong>{{ customer.name }}</strong>
               </div>
-              <div v-if="customer.address">
-                Address : {{ customer.address }}
-              </div>
+              <div v-if="customer.address">Address : {{ customer.address }}</div>
               <div v-if="customer.email">Email: {{ customer.email.email }}</div>
-              <div
-                v-if="customer.contact_number && customer.contact_number.number"
-              >
+              <div v-if="customer.contact_number && customer.contact_number.number">
                 Phone:
                 {{
-                  customer.contact_number.number.en
+                  customer.contact_number && customer.contact_number.number
                     ? customer.contact_number.number.en
-                    : customer.contact_number.number
+                    : ""
                 }}
               </div>
             </CCol>
@@ -110,26 +104,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(product, index) in invoice.products"
-                  :key="product.uuid"
-                >
+                <tr v-for="(product, index) in invoice.products" :key="product.uuid">
                   <td class="center">{{ index + 1 }}</td>
                   <td class="left">
-                    {{
-                      product.product.name.en ? product.product.name.en : "-"
-                    }}
+                    {{ product.product.name ? product.product.name.en : "-" }}
                   </td>
                   <td class="left">{{ product.description }}</td>
-                  <td class="center">{{ product.qty }}</td>
+                  <td class="center">{{ Math.abs(product.qty) }}</td>
                   <td class="right">{{ product.selling_price }}</td>
                   <td class="right">{{ product.tax }}</td>
                   <td class="right">
-                    {{
-                      product.discount_per
-                        ? product.discount + "%"
-                        : product.discount
-                    }}
+                    {{ product.discount_per ? product.discount + "%" : product.discount }}
                   </td>
                   <td class="right">{{ product.total }}</td>
                 </tr>
@@ -138,11 +123,7 @@
                   <td><b>Delivery</b></td>
                   <td>
                     <b>
-                      {{
-                        invoice.delivery.name.en
-                          ? invoice.delivery.name.en
-                          : "-"
-                      }}
+                      {{ invoice.delivery.name ? invoice.delivery.name.en : "-" }}
                     </b>
                   </td>
                   <td colspan="4">
@@ -293,6 +274,11 @@ export default {
   created() {
     this.getServerData();
   },
+  computed: {
+    businessLogo() {
+      return this.$store.getters.getBusinessLogo;
+    },
+  },
   methods: {
     async print() {
       // Pass the element id here
@@ -330,9 +316,11 @@ export default {
               data.customer.all_contacts.length > 0
             ) {
               if (data.customer.all_contacts.length === 1) {
-                const number =
-                  data.customer.contact.country.dialCode +
-                  data.customer.contact.number.en;
+                let num =
+                  data.customer.contact && data.customer.contact.number
+                    ? data.customer.contact.number.en
+                    : "";
+                const number = data.customer.contact.country.dialCode + num;
                 this.customer.contact_number = number;
                 this.whatsapp.name = data.customer.full_name;
                 this.whatsapp.number = number;
@@ -345,14 +333,14 @@ export default {
                   contacts.push({
                     label:
                       item.country.dialCode +
-                      item.number.en +
+                      item.number?.en +
                       " (" +
-                      item.name.en +
+                      item.name?.en +
                       ")",
                     value: JSON.stringify({
                       uuid: item.uuid,
                       name: data.customer.full_name,
-                      number: item.country.dialCode + item.number.en,
+                      number: item.country.dialCode + item.number?.en,
                     }),
                   });
                 });
@@ -371,26 +359,13 @@ export default {
             this.invoice.delivery = data.delivery;
             this.invoice.delivery_method_price = data.delivery_method_price;
             this.invoice.address_for_delivery = data.address_for_delivery;
-            this.invoice.total_price_with_delivery =
-              data.total_price_with_delivery;
+            this.invoice.total_price_with_delivery = data.total_price_with_delivery;
           }
         })
 
         .catch((err) => {
           console.log(err);
           this.$router.push({ path: "/not-found" });
-        });
-
-      let business_id = localStorage.getItem("business_id");
-      this.$http
-        .get("/business/" + business_id)
-        .then(({ data }) => {
-          if (data && data.logo && data.logo.path) {
-            this.business.logo = data.logo.path;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
         });
 
       // Setting of Quotation
@@ -405,14 +380,12 @@ export default {
                 this.show.show_terms_and_conditions_on_quotation =
                   item.value == "on" ? true : false;
               } else if (item.key == "show_note_on_quotation") {
-                this.show.show_note_on_quotation =
-                  item.value == "on" ? true : false;
+                this.show.show_note_on_quotation = item.value == "on" ? true : false;
               } else if (item.key == "show_attachment_on_quotation") {
                 this.show.show_attachment_on_quotation =
                   item.value == "on" ? true : false;
               } else if (item.key == "show_delivery_on_quotation") {
-                this.show.show_delivery_on_quotation =
-                  item.value == "on" ? true : false;
+                this.show.show_delivery_on_quotation = item.value == "on" ? true : false;
               }
             });
           }

@@ -185,6 +185,7 @@ export default {
       this.getServerData(BillPaymentService, page, per_page);
     },
     addPayment() {
+      this.editData = {};
       this.$store.commit("set_bill_payment_model", true);
     },
     viewRow(uuid) {

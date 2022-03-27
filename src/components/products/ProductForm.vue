@@ -396,6 +396,54 @@ export default {
           value: "grain",
           label: "Grain",
         },
+        {
+          value: "each",
+          label: "Each",
+        },
+        {
+          value: "gallon",
+          label: "Gallon",
+        },
+        {
+          value: "hour",
+          label: "Hour",
+        },
+        {
+          value: "sheet",
+          label: "Sheet",
+        },
+        {
+          value: "piece",
+          label: "Piece",
+        },
+        {
+          value: "inch",
+          label: "Inch",
+        },
+        {
+          value: "centimeter",
+          label: "Centimeter",
+        },
+        {
+          value: "meter",
+          label: "Meter",
+        },
+        {
+          value: "foot",
+          label: "Foot",
+        },
+        {
+          value: "cm",
+          label: "Centimeter",
+        },
+        {
+          value: "m",
+          label: "Meter",
+        },
+        {
+          value: "qty",
+          label: "Qty",
+        },
       ];
     },
     getProductOptions() {
@@ -519,12 +567,14 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: this.$t("general.swal.error"),
-              text: this.$t("general.swal.errorMsg"),
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -559,12 +609,14 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: this.$t("general.swal.error"),
-              text: this.$t("general.swal.errorMsg"),
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },

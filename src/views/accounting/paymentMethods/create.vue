@@ -42,9 +42,7 @@
                     <p v-if="!$v.form.percent.required" class="errorMsg">
                       Percent is required
                     </p>
-                    <p v-if="!$v.form.percent.decimal" class="errorMsg">
-                      Must be Digit
-                    </p>
+                    <p v-if="!$v.form.percent.decimal" class="errorMsg">Must be Digit</p>
                     <p v-if="!$v.form.percent.minValue" class="errorMsg">
                       Minimum number must be zero
                     </p>
@@ -64,9 +62,7 @@
                     <p v-if="!$v.form.amount.required" class="errorMsg">
                       Fix amount is required
                     </p>
-                    <p v-if="!$v.form.amount.decimal" class="errorMsg">
-                      Must be Digit
-                    </p>
+                    <p v-if="!$v.form.amount.decimal" class="errorMsg">Must be Digit</p>
                     <p v-if="!$v.form.amount.minValue" class="errorMsg">
                       Minimum number must be zero
                     </p>
@@ -106,12 +102,7 @@
 import PaymentMethodsServices from "@/services/accounting/paymentMethods/PaymentMethodsServices";
 import AccountDropdown from "@/components/general/AccountDropdown";
 
-import {
-  required,
-  minValue,
-  minLength,
-  decimal,
-} from "vuelidate/lib/validators";
+import { required, minValue, minLength, decimal } from "vuelidate/lib/validators";
 
 export default {
   name: "CreatePaymentMethods",
@@ -170,12 +161,14 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },

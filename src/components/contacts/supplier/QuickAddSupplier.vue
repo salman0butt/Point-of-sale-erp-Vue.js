@@ -40,9 +40,7 @@
                 @input="$v.form.group.$touch()"
               />
               <div v-if="$v.form.group.$error">
-                <p v-if="!$v.form.group.required" class="errorMsg">
-                  Group is required
-                </p>
+                <p v-if="!$v.form.group.required" class="errorMsg">Group is required</p>
               </div>
             </CCol>
             <CCol sm="6" md="6" class="pt-2">
@@ -70,9 +68,7 @@
                 @input="$v.form.email.$touch()"
               />
               <div v-if="$v.form.email.$error">
-                <p v-if="!$v.form.email.required" class="errorMsg">
-                  Email is required
-                </p>
+                <p v-if="!$v.form.email.required" class="errorMsg">Email is required</p>
                 <p v-if="!$v.form.email.email" class="errorMsg">
                   Please Enter a valid email
                 </p>
@@ -103,9 +99,7 @@
             </CCol>
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">
-            Please Fill the required data
-          </p>
+          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
           <!-- <CRow class="mt-4"> -->
 
           <!-- <CButton
@@ -164,9 +158,7 @@ export default {
     },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
-      group: [
-        { value: "", label: "Choose Group", disabled: true, selected: "" },
-      ],
+      group: [{ value: "", label: "Choose Group", disabled: true, selected: "" }],
     },
     type_selected: false,
   }),
@@ -258,21 +250,13 @@ export default {
             }
           })
           .catch((error) => {
-            if (error.response.status == 422) {
+            if (error.response && error.response.status === 422) {
               let errors = error.response.data.errors;
-              this.$swal.fire({
-                icon: "error",
-                title: "Serial No",
-                text: errors.serial_no,
-                timer: 3600,
-              });
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
             } else {
-              this.$swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Something Went Wrong",
-                timer: 3600,
-              });
+              this.$toast.error("Something went wrong.");
             }
           });
       }
