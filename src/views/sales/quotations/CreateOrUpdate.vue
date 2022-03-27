@@ -519,15 +519,15 @@ export default {
       this.$store.commit("set_loader");
       QuotationService.get(this.form.id)
         .then((res) => {
-          if (res.status == 200) {
+          if (res.status == 200 && res.data) {
             this.isEditing = true;
+            let cont =
+              res.data.customer && res.data.customer.contact
+                ? res.data.customer.contact.number.en
+                : "";
             this.form.previousValue = {
               value: res.data.customer.uuid,
-              label:
-                res.data.customer.full_name +
-                " (mobile: " +
-                res.data.customer.contact.number.en +
-                ")",
+              label: res.data.customer.full_name + " (mobile: " + cont + ")",
               defaultAddress: res.data.address_for_delivery,
             };
 
