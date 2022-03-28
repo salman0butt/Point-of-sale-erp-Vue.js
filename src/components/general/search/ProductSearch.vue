@@ -44,7 +44,7 @@
                       label: item.name,
                       type: 'product',
                     }
-                  : { value: '', label: item.name, type: 'empty' }
+                  : {}
               "
             />
           </th>
@@ -377,14 +377,14 @@ export default {
       if (this.form.items[k].qty && this.form.items[k].rate) {
         amount = parseFloat(this.form.items[k].qty) * parseFloat(this.form.items[k].rate);
         // calculate tax
-        if (this.form.items[k].tax) {
-          let tax = this.options.taxes.find(
-            (tax) => tax.value === this.form.items[k].tax
-          );
-          if (tax) {
-            amount = amount + amount * (parseFloat(tax.percentage) / 100);
-          }
-        }
+        // if (this.form.items[k].tax) {
+        //   let tax = this.options.taxes.find(
+        //     (tax) => tax.value === this.form.items[k].tax
+        //   );
+        //   if (tax) {
+        //     amount = amount + amount * (parseFloat(tax.percentage) / 100);
+        //   }
+        // }
         this.form.items[k].amount = amount;
       }
       this.calculateTotalTax();
@@ -409,14 +409,18 @@ export default {
     updateAmount() {
       let sub_total = 0;
       this.form.items.map((item) => {
-        sub_total = sub_total + parseFloat(item.amount);
+        if (item.amount) {
+          sub_total = sub_total + parseFloat(item.amount);
+        }
       });
       this.form.subTotal = sub_total;
-      this.$emit("update-items", {
-        items: this.form.items,
-        sub_total: this.form.subTotal,
-        total_tax: this.form.total_tax,
-      });
+      if (this.form.subTotal) {
+        this.$emit("update-items", {
+          items: this.form.items,
+          sub_total: this.form.subTotal,
+          total_tax: this.form.total_tax,
+        });
+      }
     },
     updateProductSearch(data, k) {
       if (data) {

@@ -11,8 +11,6 @@
       placeholder="Search..."
       label="label"
       track-by="label"
-      :taggable="true"
-      @tag="addTag"
       :preselect-first="true"
       :limit="10"
       @search-change="searchProducts"

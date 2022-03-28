@@ -80,7 +80,7 @@
                     </CCol>
                   </CRow>
                   <CRow>
-                    <CCol xs="6" lg="4" class="pt-2">
+                    <!-- <CCol xs="6" lg="4" class="pt-2">
                       <CInput
                         label="Purchase Order #"
                         v-model="form.po"
@@ -90,19 +90,9 @@
                       <div v-if="$v.form.po.$error">
                         <p v-if="!$v.form.po.required" class="errorMsg">PO is required</p>
                       </div>
-                    </CCol>
+                    </CCol> -->
                     <CCol xs="6" md="4" class="pt-2">
-                      <CInput
-                        label="Reference#"
-                        v-model="form.ref"
-                        :class="{ error: $v.form.ref.$error }"
-                        @input="$v.form.ref.$touch()"
-                      />
-                      <div v-if="$v.form.ref.$error">
-                        <p v-if="!$v.form.ref.required" class="errorMsg">
-                          Reference is required
-                        </p>
-                      </div>
+                      <CInput label="Reference#" v-model="form.ref" />
                     </CCol>
                     <CCol xs="6" md="4" class="pt-2">
                       <CInput
@@ -118,8 +108,7 @@
                         </p>
                       </div>
                     </CCol>
-                  </CRow>
-                  <CRow>
+
                     <CCol xs="6" lg="4" class="pt-2">
                       <CInput
                         type="date"
@@ -138,7 +127,7 @@
                       </div>
                     </CCol>
 
-                    <CCol xs="6" md="4" class="pt-2">
+                    <!-- <CCol xs="6" md="4" class="pt-2">
                       <CSelect
                         label="Payment Terms"
                         :options="options.payment_terms"
@@ -151,20 +140,18 @@
                           Payment Terms is required
                         </p>
                       </div>
-                    </CCol>
+                    </CCol> -->
 
                     <CCol xs="6" md="4" class="pt-2">
                       <CInput
                         label="Shipment Preference"
                         v-model="form.shipment_preference"
-                        :class="{ error: $v.form.shipment_preference.$error }"
-                        @input="$v.form.shipment_preference.$touch()"
                       />
-                      <div v-if="$v.form.shipment_preference.$error">
+                      <!-- <div v-if="$v.form.shipment_preference.$error">
                         <p v-if="!$v.form.shipment_preference.required" class="errorMsg">
                           Shipment Preference is required
                         </p>
-                      </div>
+                      </div> -->
                     </CCol>
                   </CRow>
                   <CRow>
@@ -341,7 +328,7 @@ export default {
       product_id: "",
       id: "",
       date: "",
-      po: "",
+      // po: "",
       ref: "",
       supplier_id: "",
       deliver_to: "organization",
@@ -356,7 +343,7 @@ export default {
       terms_and_conditions: "",
       shipment_preference: "",
       expected_delivery_date: "",
-      payment_terms: "",
+      // payment_terms: "",
       status: "",
 
       items: [
@@ -386,12 +373,12 @@ export default {
       ],
       branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
       customers: [{ value: "", label: "Choose Customer", disabled: true, selected: "" }],
-      payment_terms: [
-        { value: "", label: "Choose Payment Term", disabled: true, selected: "" },
-        { value: "1", label: "Payment Term 1" },
-        { value: "2", label: "Payment Term 2" },
-        { value: "3", label: "Payment Term 3" },
-      ],
+      // payment_terms: [
+      //   { value: "", label: "Choose Payment Term", disabled: true, selected: "" },
+      //   { value: "1", label: "Payment Term 1" },
+      //   { value: "2", label: "Payment Term 2" },
+      //   { value: "3", label: "Payment Term 3" },
+      // ],
       // accounts: [
       //   {
       //     value: "",
@@ -407,16 +394,16 @@ export default {
       return {
         form: {
           date: { required },
-          po: { required },
-          ref: { required },
+          // po: { required },
+          // ref: { required },
           deliver_to: { required },
           supplier_id: { required },
           branch_id: { required },
           subTotal: { required },
           total: { required },
-          shipment_preference: { required },
+          // shipment_preference: { required },
           expected_delivery_date: { required },
-          payment_terms: { required },
+          // payment_terms: { required },
           items: { required },
         },
       };
@@ -431,9 +418,9 @@ export default {
           customer_id: { required },
           subTotal: { required },
           total: { required },
-          shipment_preference: { required },
+          // shipment_preference: { required },
           expected_delivery_date: { required },
-          payment_terms: { required },
+          // payment_terms: { required },
           items: { required },
         },
       };
@@ -441,6 +428,7 @@ export default {
   },
   async created() {
     this.form.date = this.calculateTodayDate();
+    this.form.expected_delivery_date = this.calculateTodayDate();
     // await this.getAccounts();
     await this.getAllSuppliers();
     await this.getAllBranches();
@@ -814,7 +802,9 @@ export default {
       let discount = 0;
       let total = 0;
       this.form.items.map((item) => {
-        sub_total = sub_total + parseFloat(item.amount);
+        if (item.amount) {
+          sub_total = sub_total + parseFloat(item.amount);
+        }
       });
       this.form.subTotal = sub_total.toFixed(2);
       if (this.form.discount) {
@@ -830,7 +820,13 @@ export default {
       } else {
         total = sub_total.toFixed(2);
       }
-      this.form.total = total;
+      if (this.form.total_tax) {
+        this.form.total = (parseFloat(total) + parseFloat(this.form.total_tax)).toFixed(
+          3
+        );
+      } else {
+        this.form.total = parseFloat(total).toFixed(3);
+      }
     },
 
     // resetSearch() {
@@ -1006,7 +1002,7 @@ export default {
       formData.append("supplier_id", this.form.supplier_id);
       formData.append("branch_id", this.form.branch_id);
       formData.append("customer_id", this.form.customer_id);
-      formData.append("purchase_order_id", this.form.po);
+      // formData.append("purchase_order_id", this.form.po);
       formData.append("reference", this.form.ref);
       formData.append("deliver_to", this.form.deliver_to);
       formData.append("date", this.form.date);
@@ -1018,7 +1014,7 @@ export default {
       formData.append("customer_note", this.form.customer_notes);
       formData.append("terms_and_conditions", this.form.terms_and_conditions);
       formData.append("shipment_preference", this.form.shipment_preference);
-      formData.append("payment_terms", this.form.payment_terms);
+      // formData.append("payment_terms", this.form.payment_terms);
       formData.append("sub_total", this.form.subTotal);
       formData.append("items", JSON.stringify(this.form.items));
 
@@ -1055,7 +1051,7 @@ export default {
         this.form.supplier_id = data.supplier?.uuid ?? "";
         this.form.branch_id = data.branch?.uuid ?? "";
         this.form.customer_id = data.customer?.uuid ?? "";
-        this.form.po = data.purchase_order_id;
+        // this.form.po = data.purchase_order_id;
         this.form.ref = data.reference;
         this.form.deliver_to = data.deliver_to ? data.deliver_to : "organization";
         this.form.date = data.date;
@@ -1066,7 +1062,7 @@ export default {
         this.form.customer_notes = data.customer_note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.shipment_preference = data.shipment_preference;
-        this.form.payment_terms = data.payment_term;
+        // this.form.payment_terms = data.payment_term;
         this.form.subTotal = parseFloat(data.sub_total);
         this.displayAttachment = [];
 

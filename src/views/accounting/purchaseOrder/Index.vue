@@ -138,11 +138,11 @@ export default {
     convertBill(uuid) {
       this.$swal
         .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
+          title: "Do you want to Convert this record to Bill?",
+          text: "This will be Convert Purchase Order to Bill",
           showCancelButton: true,
           confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, remove it it!",
+          confirmButtonText: "Yes, Convert it!",
         })
         .then((result) => {
           if (result.isConfirmed) {

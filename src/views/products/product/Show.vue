@@ -31,9 +31,7 @@
           <CCol sm="6" md="3">
             <h6>{{ product.short_name }}</h6>
             <!-- <img src="/img/images/barcode.png" alt="barcode" style="width: 60%" /> -->
-            <barcode v-bind:value="product.barcode">
-              Show this if the rendering fails.
-            </barcode>
+            <barcode v-bind:value="product.barcode"> barcode unable to load </barcode>
             <h6 class="mt-2"><strong>Alert Qty:</strong> {{ product.alert_qty }}</h6>
             <h6><strong>Weight Unit:</strong> {{ product.weight_unit }}</h6>
             <h6>
@@ -44,6 +42,17 @@
         </CRow>
       </CCardBody>
     </CCard>
+    <CRow>
+      <CCol sm="12" md="12" class="mb-2">
+        <CButton
+          color="success"
+          style="float: right; width: 150px; margin-right: 20px"
+          @click="showBarcode()"
+        >
+          Print
+        </CButton>
+      </CCol>
+    </CRow>
     <CRow>
       <CCol sm="12" md="6">
         <CCard>
@@ -241,6 +250,11 @@ export default {
           this.errorHandler(err.status);
           // this.$router.push("/products/index");
         });
+    },
+    showBarcode() {
+      this.$router.push({
+        path: "/products/show-barcode/" + this.productId,
+      });
     },
     getProductInventory() {
       this.$store.commit("set_loader");
