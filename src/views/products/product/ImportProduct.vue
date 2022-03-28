@@ -28,7 +28,7 @@
                         >
                           Submit</CLoadingButton
                         >
-                        <a :href="sample_link" class="btn btn-danger ml-2"
+                        <a :href="sample_link" class="btn btn-danger ml-2" target="blank"
                           >Download Sample</a
                         >
                       </CCol>
