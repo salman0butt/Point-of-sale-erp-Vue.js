@@ -19,7 +19,10 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput :label="$t('products.form.short_name')" v-model="form.short_name" />
+              <CInput
+                :label="$t('products.form.short_name')"
+                v-model="form.short_name"
+              />
             </CCol>
             <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -34,8 +37,10 @@
               </div>
             </CCol> -->
 
-            <CCol sm="6" md="4" class="pt-2">
-              <label class="typo__label">{{ $t("products.form.suppliers") }}</label>
+            <!-- <CCol sm="6" md="4" class="pt-2">
+              <label class="typo__label">{{
+                $t("products.form.suppliers")
+              }}</label>
               <multiselect
                 v-model="form.suppliers"
                 :options="options.suppliers"
@@ -50,9 +55,15 @@
                 :class="{ error: $v.form.suppliers.$error }"
                 @input="$v.form.suppliers.$touch()"
               >
-                <template slot="selection" slot-scope="{ values, search, isOpen }">
-                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
+                <template
+                  slot="selection"
+                  slot-scope="{ values, search, isOpen }"
+                >
+                  <span
+                    class="multiselect__single"
+                    v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }}
+                    {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
@@ -61,9 +72,9 @@
                   Supplier is required
                 </p>
               </div>
-            </CCol>
-          </CRow>
-          <CRow>
+            </CCol> -->
+            <!-- </CRow>
+          <CRow> -->
             <CCol sm="6" md="4" class="pt-2">
               <CSelect
                 :label="$t('products.form.brand')"
@@ -78,7 +89,9 @@
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2" id="categories">
-              <label class="typo__label"> {{ $t("products.form.category") }}</label>
+              <label class="typo__label">
+                {{ $t("products.form.category") }}</label
+              >
               <multiselect
                 v-model="form.categories"
                 :options="options.categories"
@@ -93,9 +106,15 @@
                 :class="{ error: $v.form.categories.$error }"
                 @input="$v.form.categories.$touch()"
               >
-                <template slot="selection" slot-scope="{ values, search, isOpen }">
-                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
+                <template
+                  slot="selection"
+                  slot-scope="{ values, search, isOpen }"
+                >
+                  <span
+                    class="multiselect__single"
+                    v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }}
+                    {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
@@ -106,7 +125,9 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <label class="typo__label">{{ $t("products.form.branches") }}</label>
+              <label class="typo__label">{{
+                $t("products.form.branches")
+              }}</label>
               <multiselect
                 v-model="form.branches"
                 :options="options.branches"
@@ -121,9 +142,15 @@
                 :class="{ error: $v.form.branches.$error }"
                 @input="$v.form.branches.$touch()"
               >
-                <template slot="selection" slot-scope="{ values, search, isOpen }">
-                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
+                <template
+                  slot="selection"
+                  slot-scope="{ values, search, isOpen }"
+                >
+                  <span
+                    class="multiselect__single"
+                    v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }}
+                    {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
@@ -134,7 +161,10 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput :label="$t('products.form.barcode')" :value.sync="form.barcode" />
+              <CInput
+                :label="$t('products.form.barcode')"
+                :value.sync="form.barcode"
+              />
             </CCol>
             <CCol sm="6" md="4" class="pt-2" v-if="isEdit">
               <CInput
@@ -175,7 +205,9 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2 short_desc">
-              <label class="typo__label"> {{ $t("products.form.description") }}</label>
+              <label class="typo__label">
+                {{ $t("products.form.description") }}</label
+              >
               <vue-editor v-model="form.short_description"></vue-editor>
             </CCol>
             <!-- <CCol sm="12" md="12" class="pt-2">
@@ -213,7 +245,9 @@
             />
           </CRow>
 
-          <p v-if="$v.$anyError" class="errorMsg">{{ $t("general.validationError") }}</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            {{ $t("general.validationError") }}
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -229,7 +263,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >{{ $t("products.form.saveAndExit") }}</CButton
@@ -266,7 +305,7 @@ export default {
     form: {
       name: "",
       short_name: "",
-      suppliers: "",
+      // suppliers: "",
       brand_id: "",
       barcode: "",
       serial_number: "",
@@ -285,7 +324,7 @@ export default {
     },
     productId: null,
     options: {
-      suppliers: [],
+      //   suppliers: [],
       brands: [],
       weight_units: [],
       categories: [],
@@ -322,7 +361,7 @@ export default {
       form: {
         name: { required },
         // brand_id: { required },
-        suppliers: { required },
+        //  suppliers: { required },
         categories: { required },
         branches: { required },
         alert_qty: { required },
@@ -449,16 +488,16 @@ export default {
     getProductOptions() {
       ProductService.getProductOptions()
         .then(({ data }) => {
-          let suppliers = this.options.suppliers;
+          //   let suppliers = this.options.suppliers;
           let brands = this.options.brands;
           let categories = this.options.categories;
           let branches = this.options.branches;
 
-          if (data.suppliers) {
-            data.suppliers.map(function (val) {
-              suppliers.push({ value: val.uuid, label: val.name });
-            });
-          }
+          // if (data.suppliers) {
+          //   data.suppliers.map(function (val) {
+          //     suppliers.push({ value: val.uuid, label: val.name });
+          //   });
+          // }
 
           if (data.brands) {
             data.brands.map(function (val) {
@@ -517,9 +556,9 @@ export default {
         this.form.categories = data.categories.map(function (item) {
           return { label: item.name, value: item.uuid };
         });
-        this.form.suppliers = data.suppliers.map(function (item) {
-          return { label: item.name, value: item.uuid };
-        });
+        // this.form.suppliers = data.suppliers.map(function (item) {
+        //   return { label: item.name, value: item.uuid };
+        // });
         this.form.branches = data.branches.map(function (item) {
           return { label: item.name, value: item.uuid };
         });
@@ -633,17 +672,19 @@ export default {
               formData.append("categories[]", cts);
             }
           }
-        } else if (index === "suppliers") {
-          const suppliers = this.form.suppliers;
-          if (suppliers !== "" && suppliers !== undefined) {
-            const get_suppliers = suppliers?.map(function (item) {
-              return item.value;
-            });
-            for (const sup of get_suppliers) {
-              formData.append("suppliers[]", sup);
-            }
-          }
-        } else if (index === "branches") {
+        }
+        // else if (index === "suppliers") {
+        //   const suppliers = this.form.suppliers;
+        //   if (suppliers !== "" && suppliers !== undefined) {
+        //     const get_suppliers = suppliers?.map(function (item) {
+        //       return item.value;
+        //     });
+        //     for (const sup of get_suppliers) {
+        //       formData.append("suppliers[]", sup);
+        //     }
+        //   }
+        // }
+        else if (index === "branches") {
           const branches = this.form.branches;
           if (branches !== "" && branches !== undefined) {
             const get_branchs = branches?.map(function (item) {

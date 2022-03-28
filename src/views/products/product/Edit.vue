@@ -22,7 +22,9 @@
                 }"
               >
                 <CIcon :content="$options.cilUser" />&nbsp; {{ tab.name }}
-                <CBadge v-if="tab.disabled" color="danger"> coming soon</CBadge></a
+                <CBadge v-if="tab.disabled" color="danger">
+                  coming soon</CBadge
+                ></a
               >
             </div>
           </CCardBody>

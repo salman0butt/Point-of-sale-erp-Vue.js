@@ -19,7 +19,11 @@
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
-          <CSelect label="Gender" :options="options.gender" :value.sync="form.gender" />
+          <CSelect
+            label="Gender"
+            :options="options.gender"
+            :value.sync="form.gender"
+          />
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
@@ -55,19 +59,27 @@
             :preselect-first="true"
           >
             <template slot="selection" slot-scope="{ values, search, isOpen }">
-              <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+              <span
+                class="multiselect__single"
+                v-if="values.value &amp;&amp; !isOpen"
                 >{{ values.length }} options selected</span
               ></template
             >
           </multiselect>
 
           <div v-if="$v.form.branch_id.$error">
-            <p v-if="!$v.form.branch_id.required" class="errorMsg">Branch is required</p>
+            <p v-if="!$v.form.branch_id.required" class="errorMsg">
+              Branch is required
+            </p>
           </div>
         </CCol>
 
         <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
-          <CSelect label="Status" :options="options.status" :value.sync="form.status" />
+          <CSelect
+            label="Status"
+            :options="options.status"
+            :value.sync="form.status"
+          />
         </CCol>
 
         <CCol sm="6" md="4" class="pt-2">
@@ -120,7 +132,9 @@
             @input="$v.form.user_role.$touch()"
           />
           <div v-if="$v.form.user_role.$error">
-            <p v-if="!$v.form.user_role.required" class="errorMsg">Role is required</p>
+            <p v-if="!$v.form.user_role.required" class="errorMsg">
+              Role is required
+            </p>
           </div>
         </CCol>
         <CCol v-if="isEditing" sm="6" md="4" class="pt-2">
@@ -153,12 +167,18 @@
               <a href="#" @click.prevent="pickImage()">
                 <CImg
                   v-bind:src="
-                    form.preview_pic ? form.preview_pic : '/img/images/no-logo.png'
+                    form.preview_pic
+                      ? form.preview_pic
+                      : '/img/images/no-logo.png'
                   "
                   block
                   class="mb-2 imger"
                   width="100%"
-                  style="border-style: solid; padding: 10px; border-color: #999999"
+                  style="
+                    border-style: solid;
+                    padding: 10px;
+                    border-color: #999999;
+                  "
                 />
               </a>
               <CButton
@@ -241,7 +261,9 @@ export default {
         { value: "active", label: "Active" },
         { value: "inactive", label: "InActive" },
       ],
-      user_role: [{ value: "", label: "Choose Role", disabled: true, selected: "" }],
+      user_role: [
+        { value: "", label: "Choose Role", disabled: true, selected: "" },
+      ],
       user_status: [
         { value: "", label: "Choose Status", disabled: true, selected: "" },
         { value: "1", label: "Active" },
@@ -367,7 +389,10 @@ export default {
                   data.employee.uuid &&
                   data.employee.uuid === this.$store.state.employee_id
                 ) {
-                  this.$store.dispatch("setPorfileImage", res.data.personal_photo);
+                  this.$store.dispatch(
+                    "setPorfileImage",
+                    res.data.personal_photo
+                  );
                   // this.$store.commit("set_profile_img", data.employee.personal_photo);
                 }
               }

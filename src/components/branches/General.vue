@@ -10,7 +10,9 @@
               :class="{ error: $v.form.name.$error }"
             />
             <div v-if="$v.form.name.$error">
-              <p v-if="!$v.form.name.required" class="errorMsg">Fullname is required</p>
+              <p v-if="!$v.form.name.required" class="errorMsg">
+                Fullname is required
+              </p>
               <p v-if="!$v.form.name.minLength" class="errorMsg">
                 Fullname should be at least 4 character
               </p>
@@ -20,7 +22,9 @@
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="Adress" v-model="form.address" />
             <div v-if="$v.form.address.$error">
-              <p v-if="!$v.form.address.required" class="errorMsg">Address is required</p>
+              <p v-if="!$v.form.address.required" class="errorMsg">
+                Address is required
+              </p>
               <p v-if="!$v.form.address.minLength" class="errorMsg">
                 Address should be at least 4 character
               </p>
@@ -29,7 +33,9 @@
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="Area" v-model="form.area" />
             <div v-if="$v.form.area.$error">
-              <p v-if="!$v.form.area.required" class="errorMsg">Area is required</p>
+              <p v-if="!$v.form.area.required" class="errorMsg">
+                Area is required
+              </p>
               <p v-if="!$v.form.area.minLength" class="errorMsg">
                 Area should be at least 4 character
               </p>
@@ -40,7 +46,9 @@
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="Telephone" v-model="form.tel" type="number" />
             <div v-if="$v.form.tel.$error">
-              <p v-if="!$v.form.tel.required" class="errorMsg">Telephone is required</p>
+              <p v-if="!$v.form.tel.required" class="errorMsg">
+                Telephone is required
+              </p>
               <p v-if="!$v.form.tel.numeric" class="errorMsg">
                 Telephone must be numeric
               </p>
@@ -91,7 +99,11 @@
           </CCol>
 
           <CCol sm="6" md="4" class="pt-2">
-            <CSelect label="Status" :options="status" :value.sync="form.status" />
+            <CSelect
+              label="Status"
+              :options="status"
+              :value.sync="form.status"
+            />
           </CCol>
         </CRow>
 
@@ -247,7 +259,6 @@ export default {
       this.$http
         .get("/branches/" + this.url_data)
         .then(({ data }) => {
-          console.log(data);
           this.form.name = data.name;
           this.form.address = data.address;
           this.form.area = data.area;
@@ -271,20 +282,32 @@ export default {
         this.$http
           .put("branches/" + this.url_data, data)
           .then((res) => {
-            this.$swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Branch Updated Successfully",
-              timer: 3600,
-            });
-            if (this.saveAndExit) {
-              this.$router.push({ path: "/branches" });
-            } else {
-              // alert("sec");
+            if (res.status == 200) {
+              this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Branch Updated Successfully",
+                timer: 3600,
+              });
+              if (this.saveAndExit) {
+                this.$router.push({ path: "/branches" });
+              }
             }
           })
           .catch((error) => {
-            console.log(error);
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err]);
+              }
+            } else {
+              this.$swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Something Went Wrong.",
+                timer: 3600,
+              });
+            }
           });
       }
     },
