@@ -28,6 +28,9 @@
                         >
                           Submit</CLoadingButton
                         >
+                        <a :href="sample_link" class="btn btn-danger ml-2" target="blank"
+                          >Download Sample</a
+                        >
                       </CCol>
                     </CRow>
                   </form>
@@ -98,6 +101,7 @@
   </div>
 </template>
 <script>
+import SettingService from "@/services/settings/SettingService";
 const fields = [
   {
     key: "database_fields",
@@ -152,6 +156,7 @@ export default {
       activeTab: 0,
       fields,
       fields2,
+      sample_link: "",
       loading: false,
       items: items.map((item, id) => {
         return { ...item, id };
@@ -175,6 +180,9 @@ export default {
         file: "",
       },
     };
+  },
+  created() {
+    this.sampleFile();
   },
   methods: {
     uploadFile() {
@@ -224,6 +232,26 @@ export default {
     },
     onChange(event, item) {
       item.spreadsheet_column = event.target.value;
+    },
+    sampleFile() {
+      let type = "product";
+      this.$store.commit("set_loader");
+      SettingService.getAll(type)
+        .then(({ data }) => {
+          if (data) {
+            data.map((item) => {
+              if (item && item.key === "sample_product_import_link") {
+                this.sample_link = item.value;
+                console.log(this.sample_link);
+              }
+            });
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+          console.log(error);
+        });
     },
     mapAndContinue() {
       this.check = 0;
