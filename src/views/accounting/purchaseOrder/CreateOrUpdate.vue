@@ -168,9 +168,9 @@
                         <CCol xs="12" md="6" class="pt-2">
                           <CTextarea
                             class="mt-4"
-                            label="Customer Notes"
+                            label="Supplier Notes"
                             placeholder="Will be displayed on purchase order"
-                            v-model="form.customer_notes"
+                            v-model="form.supplier_notes"
                           />
                         </CCol>
                         <CCol xs="12" md="4" class="pt-2 offset-md-2">
@@ -339,7 +339,7 @@ export default {
       discount_val: 0.0,
       total_tax: "",
       total: 0.0,
-      customer_notes: "",
+      supplier_notes: "",
       terms_and_conditions: "",
       shipment_preference: "",
       expected_delivery_date: "",
@@ -820,6 +820,9 @@ export default {
       } else {
         total = sub_total.toFixed(2);
       }
+      if (!this.form.discount) {
+        this.form.discount_val = "";
+      }
       if (this.form.total_tax) {
         this.form.total = (parseFloat(total) + parseFloat(this.form.total_tax)).toFixed(
           3
@@ -1011,7 +1014,7 @@ export default {
       formData.append("discount_val", this.form.discount_val);
       formData.append("total_tax", this.form.total_tax);
       formData.append("total", this.form.total);
-      formData.append("customer_note", this.form.customer_notes);
+      formData.append("supplier_note", this.form.supplier_notes);
       formData.append("terms_and_conditions", this.form.terms_and_conditions);
       formData.append("shipment_preference", this.form.shipment_preference);
       // formData.append("payment_terms", this.form.payment_terms);
@@ -1059,7 +1062,7 @@ export default {
         this.form.discount = data.discount ? data.discount : "";
         this.form.total_tax = parseFloat(data.total_tax) ?? "";
         this.form.total = parseFloat(data.total);
-        this.form.customer_notes = data.customer_note;
+        this.form.supplier_notes = data.supplier_note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.shipment_preference = data.shipment_preference;
         // this.form.payment_terms = data.payment_term;

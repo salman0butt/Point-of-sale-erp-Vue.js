@@ -432,17 +432,27 @@ export default {
           (item.name = product.name + " (serial: " + product.serial_number + ")"),
             (item.account = Object);
           item.rate = product.price?.cost_price;
+          if (product.price?.purchase_account) {
+            item.previousAccount = {
+              label: product.price.purchase_account.name,
+              value: product.price.purchase_account.uuid,
+            };
+          }
+          if (product.price?.tax) {
+            item.tax = product.price.tax.uuid;
+          }
           item.qty = 1;
           item.amount = product.price?.cost_price * item.qty;
-        } else if (data.searchType === "empty") {
-          let item = this.form.items[k];
-          item.uuid = "";
-          item.name = data.label;
-          item.account = Object;
-          item.rate = 0;
-          item.qty = 1;
-          item.amount = "";
         }
+        // else if (data.searchType === "empty") {
+        //   let item = this.form.items[k];
+        //   item.uuid = "";
+        //   item.name = data.label;
+        //   item.account = Object;
+        //   item.rate = 0;
+        //   item.qty = 1;
+        //   item.amount = "";
+        // }
       }
       this.calculateTotalTax();
       this.calculateAllItems();
