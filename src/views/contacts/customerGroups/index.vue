@@ -8,7 +8,7 @@
             <router-link
               v-if="$can('create groups')"
               class="btn btn-success"
-              to="/groups/create"
+              to="/customerGroups/create/customer"
               style="float: right"
               >Create Group</router-link
             >

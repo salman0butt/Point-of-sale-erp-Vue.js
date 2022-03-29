@@ -3,7 +3,7 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader>New Group</CCardHeader>
+          <CCardHeader>Customer Group</CCardHeader>
           <CCardBody>
             <form @submit.prevent="saveData">
               <CRow>
@@ -101,7 +101,6 @@ export default {
   },
   created() {
     const type = this.$route.params.type;
-    console.log("🚀 ~ type", type);
     if (type) {
       this.showType = false;
       this.form.type = type;
@@ -123,7 +122,7 @@ export default {
               });
               this.$v.$reset();
 
-              this.$router.push({ path: "/groups/index" });
+              this.$router.push({ path: "/customerGroups/index" });
             }
           })
           .catch((error) => {

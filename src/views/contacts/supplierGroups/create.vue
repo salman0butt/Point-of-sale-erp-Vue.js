@@ -123,7 +123,7 @@ export default {
               });
               this.$v.$reset();
 
-              this.$router.push({ path: "/groups/index" });
+              this.$router.push({ path: "/supplierGroups/index" });
             }
           })
           .catch((error) => {

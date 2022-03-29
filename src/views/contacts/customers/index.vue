@@ -5,13 +5,13 @@
         <CCard>
           <CCardHeader> Customers </CCardHeader>
           <CCardBody>
-            <router-link
+            <!-- <router-link
               v-if="$can('create groups')"
               class="btn btn-success"
-              to="/groups/create/customer"
+              to="/customerGroups/create/customer"
               style="float: right; margin-right: 10px"
               >Create Groups</router-link
-            >
+            > -->
             <!-- <router-link
               class="btn btn-success"
               to="/customers/quick-add"
