@@ -130,7 +130,7 @@ export default {
             });
             this.$v.$reset();
 
-            this.$router.push({ path: "/groups/index" });
+            this.$router.push({ path: "/customerGroups/index" });
           })
           .catch((error) => {
             console.log(error);

@@ -3,27 +3,16 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Invoices </CCardHeader>
+          <CCardHeader> Groups </CCardHeader>
           <CCardBody>
-            <!-- <router-link
-              v-if="$can('create invoices')"
+            <router-link
+              v-if="$can('create groups')"
               class="btn btn-success"
-              to="/sales/invoices/create"
+              to="/customerGroups/create/customer"
               style="float: right"
-              >Create Invoice</router-link
-            > -->
-
-            <CButton
-              v-if="$can('create invoices')"
-              color="success"
-              style="float: right"
-              @click="opening()"
+              >Create Group</router-link
             >
-              Create Invoice</CButton
-            >
-
             <div style="clear: both; margin-bottom: 20px"></div>
-            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -35,19 +24,9 @@
               pagination
               clickable-rows
               hover
+              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
-              :noItemsView="{
-                noResults: this.$t('table.noResults'),
-                noItems: this.$t('table.noItems'),
-              }"
-              :itemsPerPageSelect="{
-                label: this.$t('table.itemsPerPageSelect.label'),
-              }"
-              :tableFilter="{
-                label: this.$t('table.tableFilter.label'),
-                placeholder: this.$t('table.tableFilter.placeholder'),
-              }"
             >
               <template #select="{ item }">
                 <td>
@@ -61,23 +40,21 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      v-if="$can('show invoices')"
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
+                      v-if="$can('edit groups')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      v-if="$can('edit invoices')"
                     >
-                      <CIcon :content="$options.cilPencil"
+                      Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      v-if="$can('delete invoices')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
@@ -97,27 +74,19 @@
         </CCard>
       </CCol>
     </CRow>
-    <OpeningModel />
   </div>
 </template>
-
 <script>
-import InvoiceService from "@/services/sale/InvoiceService";
+import GroupServices from "@/services/groups/GroupServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-import OpeningModel from "@/components/dashboard/OpeningModel";
-import Loader from "@/components/layouts/Loader";
 const fields = [
-  { key: "invoice_ref_no", label: "Ref No", _style: "min-width:15%;" },
-  { key: "customer", label: "Customer", _style: "min-width:40%" },
-  { key: "dated", label: "Dated", _style: "min-width:40%" },
-  { key: "due_date", label: "Due Date", _style: "min-width:15%;" },
-  { key: "grand_total", label: "Grand Total", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
-
 export default {
-  name: "IndexQuotations",
-  components: { OpeningModel, Loader },
+  name: "IndexAccounts",
   cilPencil,
   cilTrash,
   cilEye,
@@ -125,6 +94,7 @@ export default {
     return {
       serverData: [],
       fields,
+      loading: false,
       // cards: {
       //   employees_count: 0,
       //   female_count: 0,
@@ -132,13 +102,15 @@ export default {
       //   departments_count: 0,
       //   manager_count: 0,
       // },
-      // deleteRows: [],
+      deleteRows: [],
       activePage: 1,
       pages: 0,
       perPage: 10,
     };
   },
   created() {
+    this.loading = true;
+    // this.getTotalCardData();
     this.getServerData();
   },
   watch: {
@@ -153,26 +125,25 @@ export default {
   },
   methods: {
     getServerData() {
-      this.$store.commit("set_loader");
-      InvoiceService.getAll(this.activePage, this.perPage)
+      GroupServices.getAllCustomerGroups(this.activePage, this.perPage)
         .then(({ data }) => {
+          this.loading = true;
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.customer = item.customer.full_name;
               this.serverData.push({ ...item, id });
             });
+            this.loading = false;
           }
           if (data.meta) {
             this.setPagination(data.meta);
           }
-          this.$store.commit("close_loader");
         })
         .catch((err) => {
-          this.$store.commit("close_loader");
           console.log(err);
         });
     },
+
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
@@ -183,10 +154,11 @@ export default {
       this.$set(this.usersData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      this.$router.push({ path: "/sales/invoices/show/" + uuid });
+      alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+      let id = uuid;
+      this.$router.push({ path: "edit/" + id });
     },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
@@ -200,16 +172,18 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            InvoiceService.delete(this.deleteRows)
+            GroupServices.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Quotation Deleted Successfully",
+                    text: "Group Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
+                  this.serverData = this.serverData.filter(
+                    (item) => item.uuid != uuid
+                  );
                 }
               })
               .catch((error) => {
@@ -224,20 +198,11 @@ export default {
           }
         });
     },
-    opening() {
-      // check terminal id exist in localstorage
-      if (localStorage.getItem("terminal_id")) {
-        this.$router.push({ path: "/sales/invoices/create" });
-      } else {
-        this.$store.commit("set_opening_model", true);
-      }
-    },
     setPagination(meta) {
       this.activePage = parseInt(meta.current_page);
       this.pages = parseInt(meta.last_page);
       this.perPage = parseInt(meta.per_page);
     },
-
     changePagination(value) {
       this.perPage = parseInt(value);
       this.getServerData(this.activePage, this.perPage);

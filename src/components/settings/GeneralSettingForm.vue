@@ -226,9 +226,7 @@ export default {
                 this.form.open_and_close = item.value;
               } else if (item.key === "show_payment_term_on_quotation") {
                 this.form.show_payment_term_on_quotation = item.value;
-              } else if (
-                item.key === "show_terms_and_conditions_on_quotation"
-              ) {
+              } else if (item.key === "show_terms_and_conditions_on_quotation") {
                 this.form.show_terms_and_conditions_on_quotation = item.value;
               } else if (item.key === "show_note_on_quotation") {
                 this.form.show_note_on_quotation = item.value;
@@ -278,6 +276,13 @@ export default {
                 text: "Settings Updated Successfully",
                 timer: 3600,
               });
+              if (res.data && res.data.length > 0) {
+                data.map((item) => {
+                  if (item.key === "open_and_close" && item.value === "off") {
+                    localStorage.removeItem("terminal_id");
+                  }
+                });
+              }
 
               this.$v.$reset();
               this.$store.commit("close_loader");

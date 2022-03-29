@@ -5,7 +5,9 @@
         <CCard>
           <CCardHeader
             >{{
-              isEditing ? $t("categories.form.editTitle") : $t("categories.form.newTitle")
+              isEditing
+                ? $t("categories.form.editTitle")
+                : $t("categories.form.newTitle")
             }}
           </CCardHeader>
           <CCardBody>
@@ -32,7 +34,10 @@
                       </div>
                     </CCol>
                     <CCol
-                      v-if="options.parent_categories && options.parent_categories.length"
+                      v-if="
+                        options.parent_categories &&
+                        options.parent_categories.length
+                      "
                       sm="6"
                       md="4"
                       class="pt-2"
@@ -123,7 +128,12 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                      style="
+                        float: right;
+                        width: 140px;
+                        margin-left: 20px;
+                        margin-top: 0;
+                      "
                       @click="saveAndExit = true"
                       type="submit"
                       >{{ $t("categories.form.saveAndExit") }}</CButton
@@ -239,6 +249,7 @@ export default {
               this.resetForm();
               this.displayData(res.data);
               this.$store.commit("close_loader");
+              // this.getProductCategoryOptions();
 
               if (this.saveAndExit) {
                 this.$router.push({ path: "/catalogs/category/index" });

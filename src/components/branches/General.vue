@@ -71,7 +71,7 @@
               </p>
             </div>
           </CCol>
-          <CCol sm="6" md="4" class="pt-2">
+          <!-- <CCol sm="6" md="4" class="pt-2">
             <CInput label="Google Location" v-model="form.location">
               <template #append>
                 <CButton type="button" color="default">
@@ -91,9 +91,9 @@
                 </CButton>
               </template>
             </CInput>
-          </CCol>
-        </CRow>
-        <CRow>
+          </CCol> -->
+          <!-- </CRow>
+        <CRow> -->
           <CCol sm="6" md="4" class="pt-2">
             <CInput label="CR Number" v-model="form.cr" />
           </CCol>
@@ -176,7 +176,7 @@ export default {
         area: "",
         tel: "",
         mob: "",
-        location: "",
+        // location: "",
         opening_date: "",
         closing_date: "",
         cr: "",
@@ -264,7 +264,7 @@ export default {
           this.form.area = data.area;
           this.form.tel = data.tel;
           this.form.mob = data.mob;
-          this.form.location = data.location;
+          // this.form.location = data.location;
           this.form.cr = data.cr;
           // this.form.opening_date = data.opening_date;
           // this.form.closing_date = data.closing_date;
