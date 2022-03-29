@@ -209,9 +209,7 @@ export default {
                     text: "Quotation Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {

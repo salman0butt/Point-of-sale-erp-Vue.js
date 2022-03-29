@@ -160,11 +160,10 @@ export default {
         SettingService.get(type)
           .then(async ({ data }) => {
             if (data && data.open_and_close) {
+              // check branch exist
+              const selected_branch = this.getSelectedBranch();
+              if (!selected_branch) return;
               if (data.open_and_close === "on") {
-                // check branch exist
-                const selected_branch = this.getSelectedBranch();
-                if (!selected_branch) return;
-
                 BranchServices.get(selected_branch[0])
                   .then(({ data }) => {
                     if (data && data.uuid) {
@@ -221,8 +220,22 @@ export default {
                     console.log(error);
                     this.isContinue = false;
                   });
+              } else if (data.open_and_close === "off") {
+                BranchServices.get(selected_branch[0])
+                  .then(({ data }) => {
+                    if (data && data.uuid) {
+                      BranchTerminalServices.get(selected_branch[0]).then(({ data }) => {
+                        if (data && data.length > 0) {
+                          localStorage.setItem("terminal_id", data[0].uuid);
+                        }
+                      });
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    this.isContinue = false;
+                  });
               } else {
-                console.log("workig");
                 this.isContinue = true;
                 this.$store.commit("set_opening_model", false);
                 this.$router.push({ path: "/sales/invoices/create" });
