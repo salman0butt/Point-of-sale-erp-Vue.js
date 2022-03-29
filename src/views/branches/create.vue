@@ -89,7 +89,7 @@
                           </p>
                         </div>
                       </CCol>
-                      <CCol sm="6" md="4" class="pt-2">
+                      <!-- <CCol sm="6" md="4" class="pt-2">
                         <CInput label="Google Location" v-model="form.location">
                           <template #append>
                             <CButton
@@ -113,9 +113,8 @@
                             </CButton>
                           </template>
                         </CInput>
-                      </CCol>
-                    </CRow>
-                    <CRow>
+                      </CCol> -->
+
                       <CCol sm="6" md="4" class="pt-2">
                         <CInput label="CR Number" v-model="form.cr" />
                       </CCol>

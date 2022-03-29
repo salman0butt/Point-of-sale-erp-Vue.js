@@ -52,10 +52,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButton
-                    v-if="
-                      $can('edit quotations') &&
-                      item.quotation_status == 'pending'
-                    "
+                    v-if="$can('edit quotations') && !item.invoice_status"
                     @click="approveQuotation(item.uuid)"
                     class="btn-sm mr-3"
                     color="success"
