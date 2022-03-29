@@ -8,6 +8,15 @@
             <form @submit.prevent="isEditing ? updateProductPrice() : saveProductPrice()">
               <CRow>
                 <Loader />
+                <CCol sm="4" md="4" class="pt-2">
+                  <AccountDropdown
+                    :labelText="'While Purchase Account'"
+                    :previousValue="product.purchase_account_id"
+                    :isCreate="isEditing ? false : true"
+                    defaultSelect="-- Cost Of Goods Sold"
+                    @getAccountDropdown="getAccountDropdown($event, 'purchase')"
+                  />
+                </CCol>
                 <CCol sm="2" md="2" class="pt-2">
                   <CInput
                     label="Cost Price"
@@ -23,6 +32,15 @@
                       Cost Price is required
                     </p>
                   </div>
+                </CCol>
+                <CCol sm="4" md="4" class="pt-2">
+                  <AccountDropdown
+                    :labelText="'While Sale Account'"
+                    defaultSelect="-- Sales"
+                    :isCreate="isEditing ? false : true"
+                    :previousValue="product.sale_account_id"
+                    @getAccountDropdown="getAccountDropdown($event, 'sale')"
+                  />
                 </CCol>
                 <CCol sm="2" md="2" class="pt-2">
                   <CInput
@@ -217,16 +235,19 @@ import TaxService from "@/services/TaxService";
 import ProductVariationService from "@/services/products/ProductVariationService";
 import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader";
+import AccountDropdown from "@/components/general/AccountDropdown";
 
 export default {
   name: "ProductPriceForm",
-  components: { Loader },
+  components: { Loader, AccountDropdown },
   data: () => ({
     isEditing: false,
     isVariationEditing: false,
     product: {
       id: "",
       product_id: "",
+      purchase_account_id: "",
+      sale_account_id: "",
       type: "product",
       cost_price: "",
       selling_price_without_tax: "",
@@ -320,6 +341,19 @@ export default {
           this.product.selling_price_without_tax = data.selling_price_without_tax ?? 0;
           this.calculateTotal();
         }
+
+        if (data.purchase_account) {
+          this.product.purchase_account_id = {
+            label: data.purchase_account.name,
+            value: data.purchase_account.uuid,
+          };
+        }
+        if (data.sale_account) {
+          this.product.sale_account_id = {
+            label: data.sale_account.name,
+            value: data.sale_account.uuid,
+          };
+        }
       }
     },
     getProductVariation() {
@@ -346,6 +380,13 @@ export default {
           this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
+    },
+    getAccountDropdown(value, type) {
+      if (type === "purchase") {
+        this.product.purchase_account_id = value.value;
+      } else {
+        this.product.sale_account_id = value.value;
+      }
     },
     saveProductPrice() {
       this.$v.product.$touch();

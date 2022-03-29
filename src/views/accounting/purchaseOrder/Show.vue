@@ -121,6 +121,10 @@
                     <td class="left"><strong>Discount </strong></td>
                     <td class="right">{{ purchaseOrder.total_discount }}</td>
                   </tr>
+                  <tr v-if="purchaseOrder.total_tax">
+                    <td class="left"><strong>Total Tax </strong></td>
+                    <td class="right">{{ purchaseOrder.total_tax }}</td>
+                  </tr>
 
                   <tr>
                     <td class="left"><strong>Total</strong></td>
@@ -169,6 +173,7 @@ export default {
         sub_total: "",
         total_discount: "",
         grand_total: "",
+        total_tax: "",
         attachment: [],
       },
       options: {},
@@ -213,6 +218,7 @@ export default {
             }
 
             this.purchaseOrder.grand_total = data.total;
+            this.purchaseOrder.total_tax = data.total_tax;
             this.purchaseOrder.attachment = data.attachment;
             this.purchaseOrder.supplier = data.supplier;
             this.purchaseOrder.deliver_to = data.deliver_to;
