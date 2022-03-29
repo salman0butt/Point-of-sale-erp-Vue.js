@@ -2,8 +2,22 @@ import http from "../../http-common";
 import Helper from "@/helpers/Helper";
 
 class GroupServices extends Helper {
-    getAll(page, per_page) {
-        let url = "/groups";
+    getAllCustomerGroups(page, per_page) {
+        let url = "/groups?module_type=customer";
+        if (page !== '')
+            url = super.updateQueryStringParameter(url, "page", page);
+
+        if (per_page !== '')
+            url = super.updateQueryStringParameter(url, "per_page", per_page);
+
+        return http.get(url, {
+            headers: {
+                "selected-branches": localStorage.getItem("selected_branches"),
+            },
+        });
+    }
+    getAllSupplierGroups(page, per_page) {
+        let url = "/groups?module_type=supplier";
         if (page !== '')
             url = super.updateQueryStringParameter(url, "page", page);
 

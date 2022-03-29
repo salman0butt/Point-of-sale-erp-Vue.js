@@ -29,7 +29,8 @@ import accountingRoutes from '@/router/accounting/accountingRoutes';
 import rolesandpermissions from '@/router/rolesandpermissions/RolesAndPermissionsRoutes';
 import customersRoutes from '@/router/contacts/customers/customersRoutes';
 import supplierRoutes from '@/router/contacts/supplier/supplierRoutes';
-import groupRoutes from '@/router/contacts/groups/groupRoutes';
+import customerGroupsRoutes from '@/router/contacts/customerGroups/customerGroupsRoutes';
+import supplierGroupsRoutes from '@/router/contacts/supplierGroups/supplierGroupsRoutes';
 import productRoutes from '@/router/products/productRoutes';
 import productCategoryRoutes from '@/router/catalogs/category/productCategoryRoutes';
 import brandRoutes from '@/router/catalogs/brands/brandRoutes';
@@ -242,7 +243,8 @@ const router = new Router({
         leaveRoutes,
         rolesandpermissions,
         customersRoutes,
-        groupRoutes,
+        customerGroupsRoutes,
+        supplierGroupsRoutes,
         supplierRoutes,
         productRoutes,
         productCategoryRoutes,
