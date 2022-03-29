@@ -54,13 +54,13 @@
                     >
                       Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <!-- <CButton
+                    <CButton
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
                     >
                       <CIcon :content="$options.cilTrash" />
-                    </CButton> -->
+                    </CButton>
                   </CButtonGroup>
                 </td>
               </template>
@@ -102,7 +102,7 @@ export default {
       //   departments_count: 0,
       //   manager_count: 0,
       // },
-      // deleteRows: [],
+      deleteRows: [],
       activePage: 1,
       pages: 0,
       perPage: 10,
@@ -181,10 +181,9 @@ export default {
                     text: "Group Deleted Successfully",
                     timer: 3600,
                   });
-                  this.usersData = this.usersData.filter(
+                  this.serverData = this.serverData.filter(
                     (item) => item.uuid != uuid
                   );
-                  this.getTotalCardData();
                 }
               })
               .catch((error) => {

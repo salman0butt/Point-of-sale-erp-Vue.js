@@ -9,7 +9,7 @@ const EditSupplierGroups = () => import('@/views/contacts/supplierGroups/edit')
 const supplierGroupsRoutes =
 {
     path: 'supplierGroups',
-    name: 'Index Groups',
+    name: 'Index Supplier Groups',
     beforeEnter: auth,
     redirect: '/supplierGroups/index',
     component: {
@@ -23,12 +23,12 @@ const supplierGroupsRoutes =
         },
         {
             path: 'create/:type?',
-            name: 'Create Groups',
+            name: 'Create Supplier Groups',
             component: CreateSupplierGroups
         },
         {
             path: 'edit/:id',
-            name: 'Edit Groups',
+            name: 'Edit Supplier Groups',
             component: EditSupplierGroups
         },
 

@@ -57,6 +57,10 @@ class GroupServices extends Helper {
         return http.patch(`/groups/${id}`, data);
     }
 
+    delete(id) {
+        return http.delete(`/groups/${id}`);
+    }
+
 
 }
 

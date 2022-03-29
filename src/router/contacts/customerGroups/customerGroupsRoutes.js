@@ -8,7 +8,7 @@ const EditCustomerGroups = () => import('@/views/contacts/customerGroups/edit')
 const customerGroupsRoutes =
 {
     path: 'customerGroups',
-    name: 'Index Groups',
+    name: 'Index Customer Groups',
     beforeEnter: auth,
     redirect: '/customerGroups/index',
     component: {
@@ -22,12 +22,12 @@ const customerGroupsRoutes =
         },
         {
             path: 'create/:type?',
-            name: 'Create Groups',
+            name: 'Create Customer Groups',
             component: CreateCustomerGroups
         },
         {
             path: 'edit/:id',
-            name: 'Edit Groups',
+            name: 'Edit Customer Groups',
             component: EditCustomerGroups
         },
 
