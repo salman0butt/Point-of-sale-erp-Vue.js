@@ -37,7 +37,7 @@
 import BillPaymentForm from "./BillPaymentForm";
 
 export default {
-  name: "PaymentModel",
+  name: "BillPaymentModel",
   components: {
     BillPaymentForm,
   },

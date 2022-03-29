@@ -31,9 +31,7 @@
           <CCol sm="6" md="3">
             <h6>{{ product.short_name }}</h6>
             <!-- <img src="/img/images/barcode.png" alt="barcode" style="width: 60%" /> -->
-            <barcode v-bind:value="product.barcode">
-              Show this if the rendering fails.
-            </barcode>
+            <barcode v-bind:value="product.barcode"> barcode unable to load </barcode>
             <h6 class="mt-2"><strong>Alert Qty:</strong> {{ product.alert_qty }}</h6>
             <h6><strong>Weight Unit:</strong> {{ product.weight_unit }}</h6>
             <h6>
@@ -44,6 +42,17 @@
         </CRow>
       </CCardBody>
     </CCard>
+    <CRow>
+      <CCol sm="12" md="12" class="mb-2">
+        <CButton
+          color="success"
+          style="float: right; width: 150px; margin-right: 20px"
+          @click="showBarcode()"
+        >
+          Print
+        </CButton>
+      </CCol>
+    </CRow>
     <CRow>
       <CCol sm="12" md="6">
         <CCard>
@@ -57,6 +66,9 @@
               :border="true"
               :small="true"
             >
+              <template #user="{ item }">
+                <td>{{ item.user ? item.user : "" }}</td>
+              </template>
             </CDataTable>
           </CCardBody>
         </CCard>
@@ -100,7 +112,7 @@ import { cilUser, cisCircle } from "@coreui/icons-pro";
 import ProductService from "@/services/products/ProductService";
 import VueBarcode from "vue-barcode";
 import Loader from "@/components/layouts/Loader";
-
+import ProductInventoryService from "@/services/products/ProductInventoryService";
 const inventoryFields = [
   { key: "date", label: "Date", _style: "min-width:40%" },
   { key: "user", label: "User", _style: "min-width:15%;" },
@@ -167,6 +179,7 @@ export default {
   created() {
     this.productId = this.$route.params.id;
     this.getProductData();
+    this.getProductInventory();
   },
   methods: {
     getProductData() {
@@ -197,17 +210,17 @@ export default {
             this.product.barcode = data.barcode;
             this.product.image = data.images[0]?.path ?? "/img/images/no-logo.png";
 
-            if (data.inventory && data.inventory.length) {
-              data.inventory.map((item) => {
-                this.inventory.push({
-                  date: item.date ?? "",
-                  user: item.created_by?.name,
-                  stock: item.qty ?? "",
-                  expiry: item.expiry_date ?? "",
-                });
-              });
-            }
-            // this.units = [];
+            // if (data.inventory && data.inventory.length) {
+            //   data.inventory.map((item) => {
+            //     this.inventory.push({
+            //       date: item.date ?? "",
+            //       user: item.created_by?.name,
+            //       stock: item.qty ?? "",
+            //       expiry: item.expiry_date ?? "",
+            //     });
+            //   });
+            // }
+            this.units = [];
             if (data.quantity_units && data.quantity_units.length) {
               data.quantity_units.map((unit) => {
                 this.units.push({
@@ -236,6 +249,35 @@ export default {
           this.$store.commit("close_loader");
           this.errorHandler(err.status);
           // this.$router.push("/products/index");
+        });
+    },
+    showBarcode() {
+      this.$router.push({
+        path: "/products/show-barcode/" + this.productId,
+      });
+    },
+    getProductInventory() {
+      this.$store.commit("set_loader");
+      ProductInventoryService.get(this.productId)
+        .then(({ data }) => {
+          if (data !== "" && data !== undefined && data.length) {
+            data.forEach((item) => {
+              if (item.type === "product") {
+                this.inventory.push({
+                  date: item.date ?? "",
+                  user: item.created_by?.name,
+                  stock: item.qty ?? "",
+                  expiry: item.expiry_date ?? "",
+                });
+              }
+            });
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+          console.log(error);
+          this.$router.push("/products");
         });
     },
   },

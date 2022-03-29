@@ -253,6 +253,7 @@ export default {
   },
   created() {
     this.getDates();
+    this.checkBranchPlugin();
   },
 
   methods: {
@@ -288,7 +289,14 @@ export default {
             // }
           })
           .catch((error) => {
-            console.log(error);
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -299,6 +307,26 @@ export default {
       }
       this.dates = array;
       this.form.closing_date = 31;
+    },
+    checkBranchPlugin() {
+      const serial_number = JSON.stringify(["branch"]);
+      this.$http
+        .get(`/modules/${serial_number}`)
+        .then((response) => {
+          if (response.status === 200) {
+            if (response.data && response.data.length > 0) {
+              response.data.map((item) => {
+                if (item.status !== "active") {
+                  this.$router.push({ path: "/branches" });
+                }
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          this.$router.push({ path: "/branches/index" });
+          console.log(error);
+        });
     },
   },
 };

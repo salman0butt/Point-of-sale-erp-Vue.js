@@ -26,10 +26,7 @@
         ></template
       >
     </multiselect>
-    <CustomerModel
-      @update-table="newCustomerAdded"
-      @new-data="newData($event)"
-    />
+    <CustomerModel @update-table="newCustomerAdded" @new-data="newData($event)" />
   </div>
 </template>
 
@@ -109,30 +106,24 @@ export default {
                       contacts += ",";
                     }
                     if (typeof contact.number == "object") {
-                      contacts += contact.number.en;
+                      contacts += contact.number ? contact.number.en : "";
                     } else {
                       contacts += contact.number;
                     }
                   });
                 }
+                let num =
+                  item.contact && item.contact.number ? item.contact.number.en : "";
                 customers.push({
                   value: item.uuid,
-                  label:
-                    item.full_name +
-                    " (mobile: " +
-                    item.contact.number.en +
-                    ")",
+                  label: item.full_name + " (mobile: " + num + ")",
                   defaultAddress: item.defaultAddress,
                 });
                 if (item.full_name == "Walk In Customer" && create_only) {
                   // eslint-disable-next-line no-unused-vars
                   default_data = {
                     value: item.uuid,
-                    label:
-                      item.full_name +
-                      " (mobile: " +
-                      item.contact.number.en +
-                      ")",
+                    label: item.full_name + " (mobile: " + num + ")",
                     defaultAddress: item.defaultAddress,
                   };
                   //assign object to default_data
@@ -162,11 +153,7 @@ export default {
               data.map(function (item) {
                 customers.push({
                   value: item.uuid,
-                  label:
-                    item.full_name +
-                    " (mobile: " +
-                    item.contact.number.en +
-                    ")",
+                  label: item.full_name + " (mobile: " + item.contact.number.en + ")",
                   defaultAddress: item.defaultAddress,
                 });
               });

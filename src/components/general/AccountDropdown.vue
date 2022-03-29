@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label v-if="showLabel">Select Account</label>
+    <label v-if="showLabel">{{ labelText }}</label>
     <multiselect
       v-model="account"
       :options="options.account"
@@ -25,6 +25,18 @@ export default {
     showLabel: {
       type: Boolean,
       default: true,
+    },
+    labelText: {
+      type: String,
+      default: "Select Account",
+    },
+    defaultSelect: {
+      type: String,
+      default: "",
+    },
+    isCreate: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -67,6 +79,7 @@ export default {
     getData() {
       AccountServices.getTreeStructure()
         .then(({ data }) => {
+          let that = this;
           let account = this.options.account;
           data.map(function (val) {
             if (val) {
@@ -109,6 +122,14 @@ export default {
                   label: "-- " + value.name,
                 });
               });
+            }
+          });
+          account.map(function (val) {
+            if (val.label === that.defaultSelect && that.isCreate) {
+              // alert("working");
+              that.account = val;
+              // console.log(val);
+              // that.$emit("getAccountDropdown", val);
             }
           });
         })

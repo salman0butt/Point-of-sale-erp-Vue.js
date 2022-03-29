@@ -5,13 +5,18 @@
         <CCard>
           <CCardHeader> Prices </CCardHeader>
           <CCardBody>
-            <form
-              @submit.prevent="
-                isEditing ? updateProductPrice() : saveProductPrice()
-              "
-            >
+            <form @submit.prevent="isEditing ? updateProductPrice() : saveProductPrice()">
               <CRow>
                 <Loader />
+                <CCol sm="4" md="4" class="pt-2">
+                  <AccountDropdown
+                    :labelText="'While Purchase Account'"
+                    :previousValue="product.purchase_account_id"
+                    :isCreate="isEditing ? false : true"
+                    defaultSelect="-- Cost Of Goods Sold"
+                    @getAccountDropdown="getAccountDropdown($event, 'purchase')"
+                  />
+                </CCol>
                 <CCol sm="2" md="2" class="pt-2">
                   <CInput
                     label="Cost Price"
@@ -28,6 +33,15 @@
                     </p>
                   </div>
                 </CCol>
+                <CCol sm="4" md="4" class="pt-2">
+                  <AccountDropdown
+                    :labelText="'While Sale Account'"
+                    defaultSelect="-- Sales"
+                    :isCreate="isEditing ? false : true"
+                    :previousValue="product.sale_account_id"
+                    @getAccountDropdown="getAccountDropdown($event, 'sale')"
+                  />
+                </CCol>
                 <CCol sm="2" md="2" class="pt-2">
                   <CInput
                     label="Selling Price"
@@ -39,10 +53,7 @@
                       error: $v.product.selling_price_without_tax.$error,
                     }"
                     @input="
-                      [
-                        $v.product.selling_price_without_tax.$touch(),
-                        calculateTotal(),
-                      ]
+                      [$v.product.selling_price_without_tax.$touch(), calculateTotal()]
                     "
                   />
                   <div v-if="$v.product.selling_price_without_tax.$error">
@@ -127,18 +138,10 @@
               >
                 <CRow>
                   <CCol sm="12" md="12" class="pt-2">
-                    <div
-                      class="form-group"
-                      v-for="(input, k) in variations"
-                      :key="k"
-                    >
+                    <div class="form-group" v-for="(input, k) in variations" :key="k">
                       <CRow>
                         <CCol sm="6" md="3" class="pt-2">
-                          <CInput
-                            label="Name"
-                            readonly
-                            :value.sync="input.name"
-                          />
+                          <CInput label="Name" readonly :value.sync="input.name" />
                         </CCol>
                         <!-- <CCol sm="6" md="3" class="pt-2">
                         <CInput label="Attributes" readonly :value.sync="input.values" />
@@ -171,25 +174,18 @@
                             v-model="input.selling_price_without_tax"
                             :class="{
                               error:
-                                $v.variations.$each[k].selling_price_without_tax
-                                  .$error,
+                                $v.variations.$each[k].selling_price_without_tax.$error,
                             }"
                             @input="
-                              $v.variations.$each[
-                                k
-                              ].selling_price_without_tax.$touch()
+                              $v.variations.$each[k].selling_price_without_tax.$touch()
                             "
                           />
                           <div
-                            v-if="
-                              $v.variations.$each[k].selling_price_without_tax
-                                .$error
-                            "
+                            v-if="$v.variations.$each[k].selling_price_without_tax.$error"
                           >
                             <p
                               v-if="
-                                !$v.variations.$each[k]
-                                  .selling_price_without_tax.required
+                                !$v.variations.$each[k].selling_price_without_tax.required
                               "
                               class="errorMsg"
                             >
@@ -239,16 +235,19 @@ import TaxService from "@/services/TaxService";
 import ProductVariationService from "@/services/products/ProductVariationService";
 import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader";
+import AccountDropdown from "@/components/general/AccountDropdown";
 
 export default {
   name: "ProductPriceForm",
-  components: { Loader },
+  components: { Loader, AccountDropdown },
   data: () => ({
     isEditing: false,
     isVariationEditing: false,
     product: {
       id: "",
       product_id: "",
+      purchase_account_id: "",
+      sale_account_id: "",
       type: "product",
       cost_price: "",
       selling_price_without_tax: "",
@@ -336,13 +335,24 @@ export default {
         this.product.tax = data.tax?.uuid;
         if (data.inclusive_tax) {
           this.product.org_selling = data.selling_price_without_tax ?? 0;
-          this.product.selling_price_without_tax =
-            data.selling_price_with_tax ?? 0;
+          this.product.selling_price_without_tax = data.selling_price_with_tax ?? 0;
           this.calculateTotal();
         } else {
-          this.product.selling_price_without_tax =
-            data.selling_price_without_tax ?? 0;
+          this.product.selling_price_without_tax = data.selling_price_without_tax ?? 0;
           this.calculateTotal();
+        }
+
+        if (data.purchase_account) {
+          this.product.purchase_account_id = {
+            label: data.purchase_account.name,
+            value: data.purchase_account.uuid,
+          };
+        }
+        if (data.sale_account) {
+          this.product.sale_account_id = {
+            label: data.sale_account.name,
+            value: data.sale_account.uuid,
+          };
         }
       }
     },
@@ -350,12 +360,7 @@ export default {
       this.$store.commit("set_loader");
       ProductVariationService.get(this.productId)
         .then(({ data }) => {
-          if (
-            data !== "" &&
-            data !== null &&
-            data !== undefined &&
-            data.length
-          ) {
+          if (data !== "" && data !== null && data !== undefined && data.length) {
             this.isVariationEditing = true;
             this.variations = [];
             data.forEach((element) => {
@@ -363,10 +368,8 @@ export default {
                 uuid: element.uuid,
                 name: JSON.parse(element.name).en,
                 cost_price: element.price?.cost_price ?? 0,
-                selling_price_without_tax:
-                  element.price?.selling_price_without_tax ?? 0,
-                inclusive_tax:
-                  element.price?.inclusive_tax === 1 ? true : false,
+                selling_price_without_tax: element.price?.selling_price_without_tax ?? 0,
+                inclusive_tax: element.price?.inclusive_tax === 1 ? true : false,
               });
             });
           }
@@ -377,6 +380,13 @@ export default {
           this.$store.commit("close_loader");
           this.$router.push({ path: "/products" });
         });
+    },
+    getAccountDropdown(value, type) {
+      if (type === "purchase") {
+        this.product.purchase_account_id = value.value;
+      } else {
+        this.product.sale_account_id = value.value;
+      }
     },
     saveProductPrice() {
       this.$v.product.$touch();
@@ -400,12 +410,14 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -465,12 +477,14 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something went Wrong",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -559,8 +573,7 @@ export default {
         if (percentage) {
           let total_price_with_tax =
             parseFloat(selling_price_without_tax) +
-            (parseFloat(selling_price_without_tax) * parseFloat(percentage)) /
-              100;
+            (parseFloat(selling_price_without_tax) * parseFloat(percentage)) / 100;
           this.product.selling_price_with_tax = total_price_with_tax
             ? total_price_with_tax.toFixed(3)
             : 0;

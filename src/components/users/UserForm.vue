@@ -415,12 +415,7 @@ export default {
                 this.$toast.error(errors[err][0]);
               }
             } else {
-              this.$swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Something Went Wrong.",
-                timer: 3600,
-              });
+              this.$toast.error("Something went wrong.");
             }
           });
       }

@@ -46,9 +46,7 @@
                   <AccountDropdown @getAccountDropdown="getAccountDropdown" />
                 </CCol> -->
                 <CCol sm="6" md="4" class="pt-2">
-                  <AccountTypeDropdown
-                    @getAccountDropdown="getAccountTypeDropdown"
-                  />
+                  <AccountTypeDropdown @getAccountDropdown="getAccountTypeDropdown" />
                 </CCol>
                 <CCol sm="6" md="4" class="pt-2">
                   <CSelect
@@ -151,22 +149,16 @@ export default {
               this.$v.$reset();
               this.$router.push({ path: "/accounting" });
             }
-            if (res.status == 422) {
-              this.$swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "testlksjadfl",
-                timer: 3600,
-              });
-            }
           })
           .catch((error) => {
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },

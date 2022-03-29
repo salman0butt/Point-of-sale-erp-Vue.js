@@ -27,9 +27,10 @@ export const tableMixin = {
     },
     getServerData(Service, page, per_page) {
       this.$store.commit("set_loader");
+
       Service.getAll(page, per_page)
         .then(({ data }) => {
-          if (data !== "" && data !== undefined) {
+          if (data) {
             this.data = [];
             if (data.data) {
               data.data.map((item, id) => {
@@ -59,7 +60,7 @@ export const tableMixin = {
         })
         .catch((err) => {
           this.$store.commit("close_loader");
-          this.errorHandler(err.status);
+          // this.errorHandler(err.status);
           console.log(err);
         });
     },

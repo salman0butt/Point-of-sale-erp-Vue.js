@@ -7,9 +7,7 @@
         <CCard>
           <CCardHeader>
             Invoice
-            <strong style="text-align: center"
-              ># {{ invoice.invoice_ref_no }}</strong
-            >
+            <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
             <div class="float-center">
@@ -19,11 +17,9 @@
                   :to="`/customers/show/${customer.uuid}`"
                   v-if="$can('show customers')"
                 >
-                  <strong
-                    class="margin:auto"
-                    style="color: red; font-size: 22px"
-                    >{{ customer.name }}</strong
-                  ></router-link
+                  <strong class="margin:auto" style="color: red; font-size: 22px">{{
+                    customer.name
+                  }}</strong></router-link
                 >
               </div>
             </div>
@@ -37,8 +33,8 @@
             <form @submit.prevent="paymentSubmit()">
               <CCol sm="12" md="12" class="pt-2">
                 <Label
-                  ><CIcon style="color: green" :content="$options.cisWallet" />
-                  Payment Method</Label
+                  ><CIcon style="color: green" :content="$options.cisWallet" /> Payment
+                  Method</Label
                 >
                 <CSelect
                   :options="options.paymentMethods"
@@ -64,9 +60,7 @@
                 />
               </CCol>
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">
-                  Amount is required
-                </p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
               </div>
               <CButton
                 progress
@@ -115,11 +109,7 @@
                 <CIcon name="cib-whatsapp" /> Send WhatsApp</a
               >
 
-              <a
-                href="#"
-                class="btn btn-sm btn-info"
-                @click.prevent="savePdf()"
-              >
+              <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
                 <CIcon name="cil-save" /> Download
               </a>
               <a
@@ -162,9 +152,7 @@
                     <div v-if="customer.address">
                       Address : {{ customer.address.street }}
                     </div>
-                    <div v-if="customer.email">
-                      Email: {{ customer.email.email }}
-                    </div>
+                    <div v-if="customer.email">Email: {{ customer.email.email }}</div>
                     <div v-if="customer.contact_number">
                       Phone: {{ customer.contact_number.number }}
                     </div>
@@ -218,9 +206,7 @@
                         <td>
                           <b>
                             {{
-                              invoice.delivery.name.en
-                                ? invoice.delivery.name.en
-                                : "-"
+                              invoice.delivery.name.en ? invoice.delivery.name.en : "-"
                             }}
                           </b>
                         </td>
@@ -246,7 +232,7 @@
                     </div>
                     <div>
                       <label><b> Note : </b></label>
-                      {{ invoice.note }}
+                      {{ invoice.note ? invoice.note : "" }}
                     </div>
                   </CCol>
 
@@ -285,9 +271,7 @@
                             <strong>Total With Delivery</strong>
                           </td>
                           <td class="right">
-                            <strong>{{
-                              invoice.total_price_with_delivery
-                            }}</strong>
+                            <strong>{{ invoice.total_price_with_delivery }}</strong>
                           </td>
                         </tr>
                         <!-- <tr>
@@ -334,10 +318,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton
-                      @click="viewRow(item.uuid)"
-                      class="btn-sm"
-                      color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
@@ -347,11 +328,7 @@
                     >
                       <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -508,8 +485,7 @@ export default {
           ) {
             if (data.customer.all_contacts.length === 1) {
               const number =
-                data.customer.contact.country.dialCode +
-                data.customer.contact.number.en;
+                data.customer.contact.country.dialCode + data.customer.contact.number.en;
               this.customer.contact_number = number;
               this.whatsapp.name = data.customer.full_name;
               this.whatsapp.number = number;
@@ -521,11 +497,7 @@ export default {
               data.customer.all_contacts.map(function (item) {
                 contacts.push({
                   label:
-                    item.country.dialCode +
-                    item.number.en +
-                    " (" +
-                    item.name.en +
-                    ")",
+                    item.country.dialCode + item.number.en + " (" + item.name.en + ")",
                   value: JSON.stringify({
                     uuid: item.uuid,
                     name: data.customer.full_name,
@@ -540,8 +512,7 @@ export default {
           this.invoice.delivery = data.delivery;
           this.invoice.delivery_method_price = data.delivery_method_price;
           this.invoice.address_for_delivery = data.address_for_delivery;
-          this.invoice.total_price_with_delivery =
-            data.total_price_with_delivery;
+          this.invoice.total_price_with_delivery = data.total_price_with_delivery;
 
           data.products.map((item, id) => {
             serverproducts.push(item);
@@ -685,9 +656,7 @@ export default {
                     text: "Payment Deleted Successfully",
                     timer: 3600,
                   });
-                  this.payments = this.payments.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.payments = this.payments.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {

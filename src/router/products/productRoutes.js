@@ -6,6 +6,7 @@ const CreateProduct = () => import('@/views/products/product/Create')
 const EditProduct = () => import('@/views/products/product/Edit')
 const ImportProduct = () => import('@/views/products/product/ImportProduct')
 const ShowProduct = () => import('@/views/products/product/Show')
+const ShowBarcode = () =>  import('@/views/products/product/barcode');
 
 const productRoutes = {
   path: 'products',
@@ -42,6 +43,11 @@ const productRoutes = {
       path: 'show/:id',
       name: 'Show Product',
       component: ShowProduct
+    },
+    {
+      path: 'show-barcode/:id',
+      name: 'Show Product Barcode',
+      component: ShowBarcode
     }
   ]
 };

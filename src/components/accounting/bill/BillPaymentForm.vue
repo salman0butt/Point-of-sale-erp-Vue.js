@@ -270,10 +270,8 @@ export default {
         this.$emit("reset-submit");
       }
     },
-    //TODO: Billpayment Form Edit model
-    //TODO: Billpayment View page
     editData(val) {
-      if (val) {
+      if (val && val.uuid) {
         this.isEditing = true;
         this.form.id = val.uuid;
         if (val.bill) {
@@ -307,6 +305,8 @@ export default {
         this.$nextTick(() => {
           this.$v.$touch();
         });
+      } else {
+        this.isEditing = false;
       }
     },
   },
@@ -363,9 +363,16 @@ export default {
             }
             this.$store.commit("close_loader");
           })
-          .catch((err) => {
+          .catch((error) => {
             this.$store.commit("close_loader");
-            console.log(err);
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
@@ -405,12 +412,14 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$store.commit("close_loader");
-            this.$swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Something Went Wrong.",
-              timer: 3600,
-            });
+            if (error.response && error.response.status === 422) {
+              let errors = error.response.data.errors;
+              for (const err in errors) {
+                this.$toast.error(errors[err][0]);
+              }
+            } else {
+              this.$toast.error("Something went wrong.");
+            }
           });
       }
     },
