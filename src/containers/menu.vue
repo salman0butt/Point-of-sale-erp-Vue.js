@@ -107,15 +107,7 @@ export default {
       // contacts
       if (this.$can("read contacts")) {
         // different modules of hr
-        // if (this.$can("read group")) {
-        // this.sideBarItems_contacts.push({
-        //   _name: "CSidebarNavItem",
-        //   _attrs: { class: "hide-me" },
-        //   name: "Groups",
-        //   to: "/groups/index",
-        //   icon: "cil-lan",
-        // });
-        // }
+
         if (this.$can("read customers")) {
           this.sideBarItems_contacts.push({
             _name: "CSidebarNavItem",
@@ -131,6 +123,22 @@ export default {
             name: "- " + this.$t("menu.contacts.suppliers"),
             to: { name: "Index Supplier" },
             // icon: "cil-lan",
+          });
+        }
+
+        if (this.$can("read groups")) {
+          this.sideBarItems_contacts.push({
+            _name: "CSidebarNavItem",
+            name: "- " + "Supplier Groups",
+            to: "/groups/index",
+          });
+        }
+
+        if (this.$can("read groups")) {
+          this.sideBarItems_contacts.push({
+            _name: "CSidebarNavItem",
+            name: "- " + "Customer Groups",
+            to: "/groups/index",
           });
         }
 
