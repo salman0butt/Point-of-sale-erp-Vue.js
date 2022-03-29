@@ -34,7 +34,7 @@
                 </CCol> -->
                 <CCol sm="6" md="6" class="pt-2">
                   <CInput
-                    label="Add Stock"
+                    label="Opening Stock"
                     type="number"
                     @change="addStock()"
                     placeholder="0"
@@ -272,23 +272,11 @@ export default {
           if (data !== "" && data !== undefined && data.length) {
             this.stockHistory = [];
             data.forEach((item) => {
-              if (item.type === "product" && item.current_quantity !== 0) {
-                this.form.current_quantity =
-                  Number(item.current_quantity) ?? "";
-                this.form.original_stock = Number(item.current_quantity) ?? "";
-              }
-              if (item.type === "variation" && item.inventable) {
-                let date = item.date;
-                let qty = item.qty;
-                this.stockHistory.push({
-                  variation_name: item.inventable.name,
-                  date: date,
-                  qty: qty,
-                  balance: item.balance ?? "",
-                  expiry_date: item.expiry_date ?? "",
-                });
-              }
-              if (item.type === "product") {
+              if (
+                item.type === "receiving" ||
+                item.type === "sales" ||
+                item.type === "product"
+              ) {
                 let date = item.date;
                 let qty = item.qty;
                 let variation_name = "";
@@ -297,6 +285,10 @@ export default {
                   variation_name = "Receiving";
                 } else {
                   variation_name = "Sales";
+                }
+
+                if (item.type == "product") {
+                  variation_name = "Opening";
                 }
 
                 this.stockHistory.push({
