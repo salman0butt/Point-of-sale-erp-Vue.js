@@ -3,18 +3,16 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CCard>
-          <CCardHeader> Quotations </CCardHeader>
+          <CCardHeader> Groups </CCardHeader>
           <CCardBody>
             <router-link
-              v-if="$can('create quotations')"
+              v-if="$can('create groups')"
               class="btn btn-success"
-              to="/sales/quotations/create"
+              to="/customerGroups/create/customer"
               style="float: right"
-              >Create Quotation</router-link
+              >Create Group</router-link
             >
-
             <div style="clear: both; margin-bottom: 20px"></div>
-            <Loader />
             <CDataTable
               :items="items"
               :fields="fields"
@@ -26,19 +24,9 @@
               pagination
               clickable-rows
               hover
+              :loading="loading"
               @row-clicked="rowClicked"
               ref="externalAgent"
-              :noItemsView="{
-                noResults: this.$t('table.noResults'),
-                noItems: this.$t('table.noItems'),
-              }"
-              :itemsPerPageSelect="{
-                label: this.$t('table.itemsPerPageSelect.label'),
-              }"
-              :tableFilter="{
-                label: this.$t('table.tableFilter.label'),
-                placeholder: this.$t('table.tableFilter.placeholder'),
-              }"
             >
               <template #select="{ item }">
                 <td>
@@ -51,31 +39,22 @@
               </template>
               <template #actions="{ item }">
                 <td>
-                  <CButton
-                    v-if="$can('edit quotations') && !item.invoice_status"
-                    @click="approveQuotation(item.uuid)"
-                    class="btn-sm mr-3"
-                    color="success"
-                    >Approve</CButton
-                  >
                   <CButtonGroup>
-                    <CButton
-                      v-if="$can('show quotations')"
+                    <!-- <CButton
                       @click="viewRow(item.uuid)"
                       class="btn-sm"
                       color="success"
                       >View</CButton
-                    >
+                    > -->
                     <CButton
-                      v-if="$can('edit quotations')"
+                      v-if="$can('edit groups')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
-                      <CIcon :content="$options.cilPencil"
+                      Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
-                      v-if="$can('delete quotations')"
                       @click="deleteRow(item.uuid)"
                       class="btn-sm"
                       color="danger"
@@ -97,27 +76,17 @@
     </CRow>
   </div>
 </template>
-
 <script>
-import QuotationService from "@/services/sale/QuotationService";
+import GroupServices from "@/services/groups/GroupServices";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-import Loader from "@/components/layouts/Loader";
-
 const fields = [
-  { key: "quotation_ref_no", label: "Ref No", _style: "min-width:15%;" },
-  { key: "customer", label: "Customer", _style: "min-width:40%" },
-  { key: "dated", label: "Dated", _style: "min-width:40%" },
-  { key: "due_date", label: "Due Date", _style: "min-width:15%;" },
-  { key: "quotation_status", label: "Status", _style: "min-width:15%;" },
-  { key: "grand_total", label: "Grand Total", _style: "min-width:15%;" },
+  { key: "name", label: "NAME", _style: "min-width:40%" },
+  { key: "type", label: "TYPE", _style: "min-width:15%;" },
+  { key: "status", label: "STATUS", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
-
 export default {
-  name: "IndexQuotations",
-  components: {
-    Loader,
-  },
+  name: "IndexAccounts",
   cilPencil,
   cilTrash,
   cilEye,
@@ -125,13 +94,23 @@ export default {
     return {
       serverData: [],
       fields,
-
+      loading: false,
+      // cards: {
+      //   employees_count: 0,
+      //   female_count: 0,
+      //   male_count: 0,
+      //   departments_count: 0,
+      //   manager_count: 0,
+      // },
+      deleteRows: [],
       activePage: 1,
       pages: 0,
       perPage: 10,
     };
   },
   created() {
+    this.loading = true;
+    // this.getTotalCardData();
     this.getServerData();
   },
   watch: {
@@ -146,41 +125,25 @@ export default {
   },
   methods: {
     getServerData() {
-      this.$store.commit("set_loader");
-      QuotationService.getAll(this.activePage, this.perPage)
+      GroupServices.getAllCustomerGroups(this.activePage, this.perPage)
         .then(({ data }) => {
+          this.loading = true;
           if (data !== "" && data !== undefined) {
             this.serverData = [];
             data.data.map((item, id) => {
-              item.customer = item.customer.full_name;
               this.serverData.push({ ...item, id });
             });
+            this.loading = false;
           }
           if (data.meta) {
             this.setPagination(data.meta);
           }
-          this.$store.commit("close_loader");
         })
         .catch((err) => {
-          this.$store.commit("close_loader");
           console.log(err);
         });
     },
-    // getTotalCardData() {
-    //   EmployeeService.getTotalCount()
-    //     .then(({ data }) => {
-    //       if (data != null && data != "") {
-    //         this.cards.employees_count = data.employees_count;
-    //         this.cards.female_count = data.female_count;
-    //         this.cards.male_count = data.male_count;
-    //         this.cards.departments_count = data.departments_count;
-    //         this.cards.manager_count = data.manager_count;
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
+
     rowClicked(item, index, column, e) {
       if (!["INPUT", "LABEL"].includes(e.target.tagName)) {
         this.check(item);
@@ -191,12 +154,12 @@ export default {
       this.$set(this.usersData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      this.$router.push({ path: "/sales/quotations/show/" + uuid });
+      alert("page not ready");
     },
     editRow(uuid) {
-      this.$router.push({ path: "/sales/quotations/edit/" + uuid });
+      let id = uuid;
+      this.$router.push({ path: "edit/" + id });
     },
-
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
@@ -209,13 +172,13 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            QuotationService.delete(this.deleteRows)
+            GroupServices.delete(this.deleteRows)
               .then((res) => {
                 if (res.status == 200) {
                   this.$swal.fire({
                     icon: "success",
                     title: "Success",
-                    text: "Quotation Deleted Successfully",
+                    text: "Group Deleted Successfully",
                     timer: 3600,
                   });
                   this.serverData = this.serverData.filter(
@@ -235,48 +198,11 @@ export default {
           }
         });
     },
-
-    approveQuotation(uuid) {
-      this.$swal
-        .fire({
-          title: "Do you want to Approve this Quotation?",
-          text: "This will be generate invoice",
-          showCancelButton: true,
-          confirmButtonColor: "#e55353",
-          confirmButtonText: "Yes, Approved it!",
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            QuotationService.updateStatus(uuid)
-              .then((res) => {
-                if (res.status == 200) {
-                  this.$swal.fire({
-                    icon: "success",
-                    title: "Success",
-                    text: "Quotation Updated Successfully",
-                    timer: 3600,
-                  });
-                  this.$router.push({ path: "/sales/invoices/show/" + uuid });
-                }
-              })
-              .catch((error) => {
-                this.$swal.fire({
-                  icon: "error",
-                  title: "Error",
-                  text: "Something went Wrong",
-                  timer: 3600,
-                });
-              });
-            this.deleteRows = [];
-          }
-        });
-    },
     setPagination(meta) {
       this.activePage = parseInt(meta.current_page);
       this.pages = parseInt(meta.last_page);
       this.perPage = parseInt(meta.per_page);
     },
-
     changePagination(value) {
       this.perPage = parseInt(value);
       this.getServerData(this.activePage, this.perPage);

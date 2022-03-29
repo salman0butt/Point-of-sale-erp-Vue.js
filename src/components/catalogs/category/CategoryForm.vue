@@ -21,7 +21,10 @@
                   </div>
                 </CCol>
                 <CCol
-                  v-if="options.parent_categories && options.parent_categories.length"
+                  v-if="
+                    options.parent_categories &&
+                    options.parent_categories.length
+                  "
                   sm="6"
                   md="6"
                   class="pt-2"
@@ -249,6 +252,7 @@ export default {
               this.resetForm();
               // this.displayData(res.data);
               this.$store.commit("close_loader");
+              this.getProductCategoryOptions();
 
               // if (this.saveAndExit) {
               //   this.$router.push({ path: "/catalogs/category/index" });
@@ -271,73 +275,19 @@ export default {
           });
       }
     },
-    // updateProductCategory() {
-    //   this.$v.$touch();
-    //   if (!this.$v.$invalid) {
-    //     this.$store.commit("set_loader");
-    //     let formData = new FormData();
-    //     formData.append("name", this.form.name);
-    //     formData.append("parent_id", this.form.parent_id);
-    //     formData.append("color", this.form.color);
-    //     formData.append("image", this.form.image);
-    //     formData.append("status", this.form.status);
-    //     formData.append("_method", "PATCH");
 
-    //     const config = {
-    //       headers: { "Content-Type": "multipart/form-data" },
-    //     };
-    //     ProductCategoryService.update(this.form.id, formData, config)
-    //       .then((res) => {
-    //         if (res.status == 200) {
-    //           this.$swal.fire({
-    //             icon: "success",
-    //             title: "Success",
-    //             text: "Product Category Updated Successfully",
-    //             timer: 3600,
-    //           });
-    //           this.resetForm();
-    //           this.$v.$reset();
-    //           this.displayData(res.data);
-    //           this.$store.commit("close_loader");
-    //           if (this.saveAndExit) {
-    //             this.$router.push({ path: "/catalogs/category/index" });
-    //           }
-    //           //  else {
-    //           //   this.$router.push({
-    //           //     path: "/catalogs/category/edit/" + res.data.uuid,
-    //           //   });
-    //           // }
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //         this.$store.commit("close_loader");
-    //         this.$swal.fire({
-    //           icon: "error",
-    //           title: "Error",
-    //           text: "Something Went Wrong.",
-    //           timer: 3600,
-    //         });
-    //       });
-    //   }
-    // },
-    // getProductCategory() {
-    //   this.$store.commit("set_loader");
-    //   ProductCategoryService.get(this.form.id)
-    //     .then(({ data }) => {
-    //       this.displayData(data);
-    //       this.$store.commit("close_loader");
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       this.isEditing = false;
-    //       this.$router.push({ path: "/catalogs/category/index" });
-    //     });
-    // },
     getProductCategoryOptions() {
       ProductCategoryService.getProductCategoryOptions()
         .then(({ data }) => {
           if (data != null && data != "") {
+            this.options.parent_categories = [
+              {
+                value: "",
+                label: "Choose Parent",
+                disabled: true,
+                selected: "",
+              },
+            ];
             data.forEach((item) => {
               this.options.parent_categories.push({
                 value: item.uuid,
@@ -350,20 +300,7 @@ export default {
           console.log(error);
         });
     },
-    // displayData(data = null) {
-    //   if (data != null && data != "") {
-    //     this.isEditing = true;
-    //     this.form.id = data.uuid;
-    //     this.form.name = data.name;
-    //     this.form.color = data.color;
-    //     if (data.parent_id !== "" && data.parent_id !== null) {
-    //       this.form.parent_id = data.parent.uuid ?? "";
-    //     }
-    //     this.form.status = data.status;
-    //     this.display_images = data.image ?? "";
-    //     this.form.image = "";
-    //   }
-    // },
+
     handleFile(files) {
       this.form.image = files[0];
     },

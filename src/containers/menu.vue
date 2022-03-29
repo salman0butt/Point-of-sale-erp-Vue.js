@@ -130,7 +130,7 @@ export default {
           this.sideBarItems_contacts.push({
             _name: "CSidebarNavItem",
             name: "- " + "Supplier Groups",
-            to: "/groups/index",
+            to: "/supplierGroups/index",
           });
         }
 
@@ -138,7 +138,7 @@ export default {
           this.sideBarItems_contacts.push({
             _name: "CSidebarNavItem",
             name: "- " + "Customer Groups",
-            to: "/groups/index",
+            to: "/customerGroups/index",
           });
         }
 
