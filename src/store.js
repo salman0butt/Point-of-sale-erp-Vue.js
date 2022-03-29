@@ -246,7 +246,7 @@ const actions = {
 
     })
   },
-  logout({ commit }) {
+  logout({ commit, dispatch  }) {
     return new Promise((resolve, reject) => {
       commit('logout');
       http.post('/auth/logout').then((res) => {
@@ -254,8 +254,10 @@ const actions = {
         delete http.defaults.headers.common['Authorization'];
         resolve(res);
       }).catch((err) => {
+        dispatch('auto_logout');
         reject(err);
         // console.log(err);
+
       });
       resolve();
     })
