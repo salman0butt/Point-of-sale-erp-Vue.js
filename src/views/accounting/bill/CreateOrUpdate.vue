@@ -199,7 +199,12 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                      style="
+                        float: right;
+                        width: 140px;
+                        margin-left: 20px;
+                        margin-top: 0;
+                      "
                       @click="saveAndExit = true"
                       type="submit"
                       >Save & Exit</CButton
@@ -275,8 +280,7 @@ export default {
       status: [
         { value: "", label: "Choose Status", disabled: true, selected: true },
         { value: "draft", label: "Draft" },
-        { value: "approved", label: "Approved" },
-        { value: "rejected", label: "Rejected" },
+        { value: "approved", label: "Submitted" },
       ],
     },
   }),
@@ -411,7 +415,6 @@ export default {
     formData(update = false) {
       let formData = new FormData();
       // formData.append("bill_no", this.form.bill_no);
-      console.log(this.form.supplier_id);
       if (this.form.supplier_id && this.form.supplier_id.value) {
         formData.append("supplier_id", this.form.supplier_id.value);
       }
@@ -466,13 +469,19 @@ export default {
           //   } ?? "";
           this.previousValue = {
             value: data.supplier.uuid,
-            label: data.supplier?.name + " (serial: " + data.supplier?.serial_no + ")",
+            label:
+              data.supplier?.name +
+              " (serial: " +
+              data.supplier?.serial_no +
+              ")",
           };
         }
         this.form.date = data.date;
         this.form.due_date = data.due_date;
         this.form.discount = data.total_discount ? data.total_discount : "";
-        this.form.total = data.grand_total ? parseFloat(data.grand_total).toFixed(3) : "";
+        this.form.total = data.grand_total
+          ? parseFloat(data.grand_total).toFixed(3)
+          : "";
         this.form.supplier_notes = data.note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.subTotal = parseFloat(data.sub_total);
@@ -525,7 +534,10 @@ export default {
         let isPercentage = /%/gi;
         if (isPercentage.test(this.form.discount)) {
           discount = parseFloat(this.form.discount);
-          this.form.discount_val = ((sub_total * parseFloat(discount)) / 100).toFixed(3);
+          this.form.discount_val = (
+            (sub_total * parseFloat(discount)) /
+            100
+          ).toFixed(3);
           total = (sub_total - this.form.discount_val).toFixed(3);
         } else {
           total = sub_total - parseFloat(this.form.discount);

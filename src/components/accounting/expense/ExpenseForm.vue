@@ -5,6 +5,13 @@
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateExpense() : saveExpense()">
           <CRow>
+            <CCol xs="6" md="4" class="pt-2">
+              <SupplierSearch
+                @supplier-change="supplierChange($event)"
+                :previousValue="previousValue"
+              />
+            </CCol>
+
             <CCol sm="6" md="4" class="pt-2">
               <AccountDropdown
                 :previousValue="form.account_id"
@@ -22,7 +29,9 @@
                 @input="$v.form.amount.$touch()"
               />
               <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">Amount is required</p>
+                <p v-if="!$v.form.amount.required" class="errorMsg">
+                  Amount is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -34,7 +43,9 @@
                 @input="$v.form.date.$touch()"
               />
               <div v-if="$v.form.date.$error">
-                <p v-if="!$v.form.date.required" class="errorMsg">Date is required</p>
+                <p v-if="!$v.form.date.required" class="errorMsg">
+                  Date is required
+                </p>
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
@@ -57,7 +68,9 @@
                 @input="$v.form.status.$touch()"
               />
               <div v-if="$v.form.status.$error">
-                <p v-if="!$v.form.status.required" class="errorMsg">Status is required</p>
+                <p v-if="!$v.form.status.required" class="errorMsg">
+                  Status is required
+                </p>
               </div>
             </CCol>
           </CRow>
@@ -73,7 +86,11 @@
                     class="display-attachment-row"
                   >
                     <CIcon :content="$options.cisFile" />
-                    <a v-bind:href="doc.path" target="_blank" class="name-attachment">
+                    <a
+                      v-bind:href="doc.path"
+                      target="_blank"
+                      class="name-attachment"
+                    >
                       {{ doc.name }}</a
                     >
                     <a
@@ -87,7 +104,9 @@
               </div>
             </CCol>
           </CRow>
-          <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
+          <p v-if="$v.$anyError" class="errorMsg">
+            Please Fill the required data
+          </p>
           <CRow class="mt-4">
             <CButton
               progress
@@ -103,7 +122,12 @@
               timeout="2000"
               block
               color="danger"
-              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+              style="
+                float: right;
+                width: 140px;
+                margin-left: 20px;
+                margin-top: 0;
+              "
               @click="saveAndExit = true"
               type="submit"
               >Save & Exit</CButton
@@ -115,6 +139,8 @@
   </div>
 </template>
 <script>
+import SupplierSearch from "@/components/general/search/SupplierSearch";
+
 import ExpenseService from "@/services/accounting/expense/ExpenseService";
 import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
@@ -129,12 +155,15 @@ export default {
     AppUpload,
     Loader,
     AccountDropdown,
+    SupplierSearch,
   },
   cilTrash,
   cisFile,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
+    previousValue: null,
+
     form: {
       id: "",
       // category_id: "",
@@ -145,6 +174,8 @@ export default {
       date: "",
       status: "draft",
       description: "",
+      supplier_id: "",
+
       documents: [],
     },
     display_documents: [],
@@ -155,8 +186,7 @@ export default {
           label: "Draft",
           selected: "",
         },
-        { value: "approved", label: "Approved" },
-        { value: "rejected", label: "Rejected" },
+        { value: "approved", label: "Submitted" },
       ],
       payment_methods: [
         { value: "", label: "Choose Method", disabled: true, selected: "" },
@@ -164,7 +194,9 @@ export default {
       // categories: [
       //   { value: "", label: "Choose Category", disabled: true, selected: "" },
       // ],
-      accounts: [{ value: "", label: "Choose Account", disabled: true, selected: "" }],
+      accounts: [
+        { value: "", label: "Choose Account", disabled: true, selected: "" },
+      ],
     },
   }),
   validations() {
@@ -190,6 +222,9 @@ export default {
   methods: {
     getAccountDropdown(value) {
       this.form.account_id = value.value;
+    },
+    supplierChange(val) {
+      this.form.supplier_id = val.value;
     },
     saveExpense() {
       this.$v.$touch();
@@ -284,7 +319,6 @@ export default {
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
-
             this.form.ref_id = data.ref_id;
             this.form.amount = data.amount;
             this.form.date = data.date;
@@ -301,6 +335,17 @@ export default {
               data.documents.map(function (item) {
                 display_docs.push(item);
               });
+            }
+
+            if (data.supplier) {
+              this.previousValue = {
+                value: data.supplier.uuid,
+                label:
+                  data.supplier?.name +
+                  " (serial: " +
+                  data.supplier?.serial_no +
+                  ")",
+              };
             }
           }
           this.$store.commit("close_loader");
