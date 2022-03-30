@@ -291,4 +291,7 @@ export default {
   display: block;
   margin: 0 auto;
 }
+.vue-barcode-element {
+  max-width: 100%;
+}
 </style>
