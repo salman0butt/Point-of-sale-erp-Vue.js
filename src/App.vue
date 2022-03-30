@@ -21,9 +21,15 @@ export default {
     languageChanged() {
       return this.$store.getters.getLanguage;
     },
+    selectedBranches() {
+      return this.$store.getters.getBranches;
+    },
   },
   watch: {
     async languageChanged() {
+      this.forceRerender();
+    },
+    selectedBranches() {
       this.forceRerender();
     },
   },

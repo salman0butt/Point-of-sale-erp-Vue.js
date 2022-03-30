@@ -48,6 +48,19 @@
                 placeholder: this.$t('table.tableFilter.placeholder'),
               }"
             >
+              <template #image="{ item }">
+                <td>
+                  <img
+                    :src="
+                      item.image && item.image.path
+                        ? item.image.path
+                        : '/img/images/no-logo.png'
+                    "
+                    alt="photo"
+                    style="width: 50px; height: auto"
+                  />
+                </td>
+              </template>
               <template #status="{ item }">
                 <td>
                   <CBadge
@@ -121,11 +134,12 @@ export default {
     return {
       data: [],
       fields: [
-        { key: "name", label: this.$t("brands.index.table.name"), _style: "width:50%" },
+        { key: "image", label: "Image", _style: "width:20%" },
+        { key: "name", label: this.$t("brands.index.table.name"), _style: "width:20%" },
         {
           key: "status",
           label: this.$t("brands.index.table.status"),
-          _style: "width:30%;",
+          _style: "width:20%;",
         },
         {
           key: "actions",

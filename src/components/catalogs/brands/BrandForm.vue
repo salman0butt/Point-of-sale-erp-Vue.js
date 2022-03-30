@@ -5,7 +5,7 @@
         <CRow>
           <Loader />
           <CCol xs="12" lg="12">
-            <form @submit.prevent="saveBrand()">
+            <form @submit.prevent="saveBrand()" ref="brandForm">
               <CRow>
                 <CCol
                   :sm="isEditing ? '6' : '12'"
@@ -46,7 +46,12 @@
                       v-bind:src="display_images"
                       block
                       class="mb-2 imger"
-                      width="100%"
+                      style="
+                        max-height: 300px;
+                        width: 80%;
+                        display: block !important;
+                        margin: 0 auto;
+                      "
                     />
                   </div>
                   <input
@@ -382,6 +387,10 @@ export default {
       }
       this.isEditing = false;
       // this.$refs.fileUpload.reset();
+      this.display_images = "/img/images/no-logo.png";
+      this.form.image = null;
+      this.$refs.brandForm.reset();
+      this.form.status = "active";
     },
   },
 };

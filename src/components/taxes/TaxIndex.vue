@@ -25,28 +25,17 @@
                     color="warning"
                     >Edit <CIcon :content="$options.cilPencil"
                   /></CButton>
-                  <CButton
-                    @click="defaultRow(item.uuid)"
-                    class="btn-sm"
-                    color="success"
+                  <CButton @click="defaultRow(item.uuid)" class="btn-sm" color="success"
                     >Default</CButton
                   >
-                  <CButton
-                    @click="deleteRow(item.uuid)"
-                    class="btn-sm"
-                    color="danger"
-                  >
+                  <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                     <CIcon :content="$options.cilTrash" />
                   </CButton>
                 </CButtonGroup>
               </td>
             </template>
           </CDataTable>
-          <CPagination
-            v-show="pages > 1"
-            :pages="pages"
-            :active-page.sync="activePage"
-          />
+          <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
         </CCol>
       </CRow>
       <CRow>
@@ -151,8 +140,9 @@ export default {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
         .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
+          title: "Are you sure you want to delete this record?",
+          text: "This will be deleted from Database",
+          icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#e55353",
           confirmButtonText: "Yes, remove it it!",

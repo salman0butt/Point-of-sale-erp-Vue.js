@@ -207,27 +207,27 @@ export default {
             let itemsData = [];
             if (data.items && data.items.length > 0) {
               data.items.map((item) => {
-                if (item && item.product_variation && item.product_variation.uuid) {
-                  itemsData.push({
-                    uuid: item.product_variation.uuid,
-                    type: "variation",
-                    name:
-                      item.product.name +
-                      " (" +
-                      JSON.parse(item.product_variation.name).en +
-                      ")",
-                    qty: item.qty,
-                    reason: item.reason,
-                  });
-                } else {
-                  itemsData.push({
-                    uuid: item.product.uuid,
-                    type: "product",
-                    name: item.product.name,
-                    qty: item.qty,
-                    reason: item.reason,
-                  });
-                }
+                // if (item && item.product_variation && item.product_variation.uuid) {
+                //   itemsData.push({
+                //     uuid: item.product_variation.uuid,
+                //     type: "variation",
+                //     name:
+                //       item.product.name +
+                //       " (" +
+                //       JSON.parse(item.product_variation.name).en +
+                //       ")",
+                //     qty: item.qty,
+                //     reason: item.description,
+                //   });
+                // } else {
+                itemsData.push({
+                  uuid: item.inventable.uuid,
+                  type: "product",
+                  name: item.inventable.name,
+                  qty: item.qty,
+                  reason: item.description,
+                });
+                // }
               });
               this.$store.commit("set_search_product_items", itemsData);
             }

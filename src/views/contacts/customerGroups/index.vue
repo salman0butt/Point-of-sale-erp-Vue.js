@@ -54,11 +54,7 @@
                     >
                       Edit <CIcon :content="$options.cilPencil"
                     /></CButton>
-                    <CButton
-                      @click="deleteRow(item.uuid)"
-                      class="btn-sm"
-                      color="danger"
-                    >
+                    <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
                   </CButtonGroup>
@@ -164,8 +160,9 @@ export default {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
         .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
+          title: "Are you sure you want to delete this record?",
+          text: "This will be deleted from Database",
+          icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#e55353",
           confirmButtonText: "Yes, remove it it!",
@@ -181,9 +178,7 @@ export default {
                     text: "Group Deleted Successfully",
                     timer: 3600,
                   });
-                  this.serverData = this.serverData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.serverData = this.serverData.filter((item) => item.uuid != uuid);
                 }
               })
               .catch((error) => {

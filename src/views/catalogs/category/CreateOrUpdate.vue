@@ -5,9 +5,7 @@
         <CCard>
           <CCardHeader
             >{{
-              isEditing
-                ? $t("categories.form.editTitle")
-                : $t("categories.form.newTitle")
+              isEditing ? $t("categories.form.editTitle") : $t("categories.form.newTitle")
             }}
           </CCardHeader>
           <CCardBody>
@@ -34,10 +32,7 @@
                       </div>
                     </CCol>
                     <CCol
-                      v-if="
-                        options.parent_categories &&
-                        options.parent_categories.length
-                      "
+                      v-if="options.parent_categories && options.parent_categories.length"
                       sm="6"
                       md="4"
                       class="pt-2"
@@ -114,7 +109,7 @@
                     {{ $t("general.validationError") }}
                   </p>
                   <CRow class="mt-4">
-                    <CButton
+                    <!-- <CButton
                       progress
                       timeout="2000"
                       block
@@ -123,17 +118,12 @@
                       type="submit"
                       @click="saveAndExit = false"
                       >{{ $t("categories.form.saveAndContinue") }}</CButton
-                    >
+                    > -->
                     <CButton
                       timeout="2000"
                       block
-                      color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
+                      color="success"
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       @click="saveAndExit = true"
                       type="submit"
                       >{{ $t("categories.form.saveAndExit") }}</CButton
