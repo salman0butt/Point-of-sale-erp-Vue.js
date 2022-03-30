@@ -94,11 +94,7 @@
               >
                 <CRow v-for="(input, k) in variations_form" :key="k">
                   <CCol sm="6" md="4" class="pt-2">
-                    <CInput
-                      label="Name"
-                      v-model="input.variation_name"
-                      disabled
-                    />
+                    <CInput label="Name" v-model="input.module" disabled />
                   </CCol>
                   <!-- <CCol sm="6" md="2" class="pt-2">
                   <CInput label="Value" v-model="input.product_attribute" disabled />
@@ -179,9 +175,9 @@
                 :fields="fields"
                 :loading="loading"
               >
-                <template #variation_name="{ item }">
-                  <td v-if="item.variation_name">
-                    {{ item.variation_name }}
+                <template #module="{ item }">
+                  <td v-if="item.module">
+                    {{ item.module }}
                   </td>
                   <td v-else></td>
                 </template>
@@ -201,7 +197,8 @@ import Loader from "@/components/layouts/Loader";
 
 const fields = [
   { key: "date", label: "DATE", _style: "min-width:40%" },
-  { key: "variation_name", label: "VARIATION", _style: "min-width:15%;" },
+  { key: "user", label: "User", _style: "min-width:15%" },
+  { key: "module", label: "Module", _style: "min-width:15%;" },
   { key: "qty", label: "In/Out Qty", _style: "min-width:15%;" },
   { key: "balance", label: "Balance", _style: "min-width:15%;" },
   { key: "expiry_date", label: "EXPIRY DATE", _style: "min-width:15%" },
@@ -271,28 +268,30 @@ export default {
         .then(({ data }) => {
           if (data !== "" && data !== undefined && data.length) {
             this.stockHistory = [];
-            data.forEach((item) => {
+            data.forEach((item, index) => {
               if (
                 item.type === "receiving" ||
                 item.type === "sales" ||
+                item.type === "damage" ||
                 item.type === "product"
               ) {
                 let date = item.date;
                 let qty = item.qty;
-                let variation_name = "";
-                // console.log(qty);
-                if (qty > 0) {
-                  variation_name = "Receiving";
-                } else {
-                  variation_name = "Sales";
-                }
+                let module = "";
 
-                if (item.type == "product") {
-                  variation_name = "Opening";
+                if (item.type == "receiving") {
+                  module = "Receiving";
+                } else if (item.type == "sales") {
+                  module = "Sales";
+                } else if (item.type == "damage") {
+                  module = "Damage";
+                } else if (item.type == "product") {
+                  module = "Opening";
                 }
 
                 this.stockHistory.push({
-                  variation_name: variation_name,
+                  user: item.created_by?.name,
+                  module: module,
                   date: date,
                   qty: qty,
                   balance: item.balance ?? "",
@@ -359,7 +358,7 @@ export default {
             this.variations_form = [];
             data.forEach((element) => {
               this.variations_form.push({
-                variation_name: JSON.parse(element.name).en,
+                module: JSON.parse(element.name).en,
                 product_variation_id: element.uuid,
                 current_quantity: element.inventory[0]?.current_quantity ?? 0,
                 original_stock: element.inventory[0]?.current_quantity ?? 0,

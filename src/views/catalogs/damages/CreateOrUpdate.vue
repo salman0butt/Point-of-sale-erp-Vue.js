@@ -249,7 +249,7 @@ export default {
                   uuid: item.inventable.uuid,
                   type: "product",
                   name: item.inventable.name,
-                  qty: item.qty,
+                  qty: Math.abs(item.qty),
                   reason: item.description,
                 });
                 // }

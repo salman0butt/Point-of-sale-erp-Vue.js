@@ -34,7 +34,11 @@
         <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
-        <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
+        <a
+          class="btn btn-sm btn-info ml-1"
+          @click.prevent="print"
+          style="color: #fff"
+        >
           <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
       </div>
@@ -69,9 +73,13 @@
               <div>
                 <strong>{{ customer.name }}</strong>
               </div>
-              <div v-if="customer.address">Address : {{ customer.address }}</div>
+              <div v-if="customer.address">
+                Address : {{ customer.address }}
+              </div>
               <div v-if="customer.email">Email: {{ customer.email.email }}</div>
-              <div v-if="customer.contact_number && customer.contact_number.number">
+              <div
+                v-if="customer.contact_number && customer.contact_number.number"
+              >
                 Phone:
                 {{
                   customer.contact_number && customer.contact_number.number
@@ -81,6 +89,9 @@
               </div>
             </CCol>
             <CCol sm="8" class="mt-5" style="text-align: right">
+              <div>
+                Quotation:<strong># {{ invoice.quotation_ref_no }}</strong>
+              </div>
               <div>
                 Dated :<strong># {{ invoice.dated }}</strong>
               </div>
@@ -104,7 +115,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(product, index) in invoice.products" :key="product.uuid">
+                <tr
+                  v-for="(product, index) in invoice.products"
+                  :key="product.uuid"
+                >
                   <td class="center">{{ index + 1 }}</td>
                   <td class="left">
                     {{ product.product.name ? product.product.name.en : "-" }}
@@ -114,7 +128,11 @@
                   <td class="right">{{ product.selling_price }}</td>
                   <td class="right">{{ product.tax }}</td>
                   <td class="right">
-                    {{ product.discount_per ? product.discount + "%" : product.discount }}
+                    {{
+                      product.discount_per
+                        ? product.discount + "%"
+                        : product.discount
+                    }}
                   </td>
                   <td class="right">{{ product.total }}</td>
                 </tr>
@@ -123,7 +141,9 @@
                   <td><b>Delivery</b></td>
                   <td>
                     <b>
-                      {{ invoice.delivery.name ? invoice.delivery.name.en : "-" }}
+                      {{
+                        invoice.delivery.name ? invoice.delivery.name.en : "-"
+                      }}
                     </b>
                   </td>
                   <td colspan="4">
@@ -359,7 +379,8 @@ export default {
             this.invoice.delivery = data.delivery;
             this.invoice.delivery_method_price = data.delivery_method_price;
             this.invoice.address_for_delivery = data.address_for_delivery;
-            this.invoice.total_price_with_delivery = data.total_price_with_delivery;
+            this.invoice.total_price_with_delivery =
+              data.total_price_with_delivery;
           }
         })
 
@@ -380,12 +401,14 @@ export default {
                 this.show.show_terms_and_conditions_on_quotation =
                   item.value == "on" ? true : false;
               } else if (item.key == "show_note_on_quotation") {
-                this.show.show_note_on_quotation = item.value == "on" ? true : false;
+                this.show.show_note_on_quotation =
+                  item.value == "on" ? true : false;
               } else if (item.key == "show_attachment_on_quotation") {
                 this.show.show_attachment_on_quotation =
                   item.value == "on" ? true : false;
               } else if (item.key == "show_delivery_on_quotation") {
-                this.show.show_delivery_on_quotation = item.value == "on" ? true : false;
+                this.show.show_delivery_on_quotation =
+                  item.value == "on" ? true : false;
               }
             });
           }
