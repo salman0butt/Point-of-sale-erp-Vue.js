@@ -301,6 +301,9 @@ export default {
               }
             });
             this.form.add_stock = "";
+            if (data[0] && data[0].balance) {
+              this.form.current_quantity = data[0].balance;
+            }
             // this.form.damage_qty = "";
             // this.form.damage_reason = "";
           }
