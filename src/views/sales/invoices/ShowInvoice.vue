@@ -47,10 +47,12 @@
                 <CRow class="mb-4">
                   <CCol sm="4">
                     <CImg
-                      v-bind:src="business.logo"
+                      v-if="businessLogo"
+                      :src="businessLogo"
                       block
                       class="mb-2 imger"
                       width="100%"
+                      style="max-width: 150px"
                     />
                     <h6 class="mb-3">To:</h6>
                     <div>
@@ -273,6 +275,11 @@ export default {
   created() {
     this.getServerData();
   },
+  computed: {
+    businessLogo() {
+      return this.$store.getters.getBusinessLogo;
+    },
+  },
   methods: {
     async print() {
       // Pass the element id here
@@ -335,20 +342,20 @@ export default {
         });
 
       // Business logo
-      this.$store.commit("set_loader");
-      let business_id = localStorage.getItem("business_id");
-      this.$http
-        .get("/business/" + business_id)
-        .then(({ data }) => {
-          if (data.logo && data.logo.path) {
-            this.business.logo = data.logo.path;
-          }
-          this.$store.commit("close_loader");
-        })
-        .catch((err) => {
-          this.$store.commit("close_loader");
-          console.log(err);
-        });
+      // this.$store.commit("set_loader");
+      // let business_id = localStorage.getItem("business_id");
+      // this.$http
+      //   .get("/business/" + business_id)
+      //   .then(({ data }) => {
+      //     if (data.logo && data.logo.path) {
+      //       this.business.logo = data.logo.path;
+      //     }
+      //     this.$store.commit("close_loader");
+      //   })
+      //   .catch((err) => {
+      //     this.$store.commit("close_loader");
+      //     console.log(err);
+      //   });
 
       this.$store.commit("close_loader");
     },

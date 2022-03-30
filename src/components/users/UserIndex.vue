@@ -35,9 +35,7 @@
               ><CIcon :content="$options.cilPencil"
             /></CButton>
             <CButton
-              v-if="
-                $can('delete users') && item.roleDetail.name != 'super-admin'
-              "
+              v-if="$can('delete users') && item.roleDetail.name != 'super-admin'"
               @click="deleteRow(item.uuid)"
               class="btn-sm"
               color="danger"
@@ -48,11 +46,7 @@
         </td>
       </template>
     </CDataTable>
-    <CPagination
-      v-show="pages > 1"
-      :pages="pages"
-      :active-page.sync="activePage"
-    />
+    <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
   </div>
 </template>
 
@@ -145,8 +139,9 @@ export default {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
         .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
+          title: "Are you sure you want to delete this record?",
+          text: "This will be deleted from Database",
+          icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#e55353",
           confirmButtonText: "Yes, remove it it!",
@@ -162,9 +157,7 @@ export default {
                     text: "User Deleted Successfully",
                     timer: 3600,
                   });
-                  this.UserData = this.UserData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.UserData = this.UserData.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })

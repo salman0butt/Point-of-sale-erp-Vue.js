@@ -146,7 +146,9 @@
                       </tr>
                       <tr>
                         <td class="left"><strong>Balance </strong></td>
-                        <td class="right"></td>
+                        <td class="right">
+                          {{ payment.invoice.total_price_with_delivery - payment.amount }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>

@@ -165,12 +165,13 @@ import CustomerSearch from "@/components/general/search/CustomerSearch";
 import SelectSalePerson from "@/components/general/SelectSalePerson";
 import Multiselect from "vue-multiselect";
 import InvoiceService from "@/services/sale/InvoiceService";
-
+import { globalMixin } from "@/mixins/globalMixin";
 // import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
 
 export default {
   name: "PaymentForm",
+  mixins: [globalMixin],
   components: {
     Loader,
     CustomerSearch,
@@ -223,6 +224,7 @@ export default {
   },
   created() {
     this.form.id = this.$route.params.id;
+    this.form.dated = this.calculateTodayDate();
     // Payment Methods display
     let paymentMethods = this.options.paymentMethods;
     this.$store.commit("set_loader");
@@ -340,6 +342,7 @@ export default {
       this.form.dated = "";
       this.form.previousValue = Object;
       this.$v.$reset();
+      this.form.dated = this.calculateTodayDate();
     },
     savePayment() {
       this.$v.$touch();

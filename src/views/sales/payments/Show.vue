@@ -154,16 +154,15 @@
                           </td>
                         </tr>
                       </span>
-                      <span v-if="payment.invoice">
-                        <tr v-if="payment.invoice.delivery">
-                          <td class="left">
-                            <strong>Invoice Amount</strong>
-                          </td>
-                          <td class="right" v-if="payment.invoice">
-                            {{ payment.invoice.total_price_with_delivery }}
-                          </td>
-                        </tr>
-                      </span>
+
+                      <tr v-if="payment.invoice && payment.invoice.delivery">
+                        <td class="left">
+                          <strong>Invoice Amount</strong>
+                        </td>
+                        <td class="right" v-if="payment.invoice">
+                          {{ payment.invoice.total_price_with_delivery }}
+                        </td>
+                      </tr>
 
                       <tr>
                         <td class="left"><strong>Total Amount Paid</strong></td>
@@ -173,7 +172,9 @@
                       </tr>
                       <tr>
                         <td class="left"><strong>Balance </strong></td>
-                        <td class="right"></td>
+                        <td class="right">
+                          {{ payment.invoice.total_price_with_delivery - payment.amount }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>

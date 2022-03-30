@@ -5,7 +5,7 @@
         <CRow>
           <Loader />
           <CCol xs="12" lg="12">
-            <form @submit.prevent="saveProductCategory()">
+            <form @submit.prevent="saveProductCategory()" ref="catForm">
               <CRow>
                 <CCol sm="6" md="6" class="pt-2">
                   <CInput
@@ -21,10 +21,7 @@
                   </div>
                 </CCol>
                 <CCol
-                  v-if="
-                    options.parent_categories &&
-                    options.parent_categories.length
-                  "
+                  v-if="options.parent_categories && options.parent_categories.length"
                   sm="6"
                   md="6"
                   class="pt-2"
@@ -361,6 +358,10 @@ export default {
       }
       this.isEditing = false;
       // this.$refs.fileUpload.reset();
+      this.display_images = "/img/images/no-logo.png";
+      this.form.image = null;
+      this.$refs.catForm.reset();
+      this.form.status = "active";
     },
   },
 };
