@@ -52,6 +52,7 @@
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <CustomerSearch
+                    :isDisabled="true"
                     :previousValue="form.previousValue"
                     @customer-change="customerSelected($event)"
                     :createOnly="isEditing ? false : true"
@@ -249,6 +250,7 @@ export default {
           invoice.push({
             label: value.invoice_ref_no,
             value: value.uuid,
+            invoice: value,
           });
         });
       })
@@ -325,13 +327,31 @@ export default {
       this.form.sales_persons = person;
     },
     invoiceChange() {
-      let invoice_id = this.form.invoice_id;
-      if (invoice_id && invoice_id.value) {
+      const { invoice } = this.form.invoice_id;
+      console.log(invoice);
+      if (invoice) {
         // this.resetForm();
-        // this.getEditData(invoice_id.value);
-      } else {
-        // this.resetForm();
+        console.log(invoice);
+        if (invoice.customer) {
+          let number = invoice.customer.contact?.number?.en ?? "";
+          this.form.customer = invoice.customer.uuid;
+          this.form.previousValue = {
+            label: invoice.customer.full_name + " (mobile: " + number + ")",
+            value: invoice.customer.uuid,
+          };
+        }
+
+        if (invoice.salespersons) {
+          this.form.sales_persons = invoice.salespersons.map((value) => {
+            return value.uuid;
+          });
+        }
+
+        this.form.amount = invoice.grand_total;
       }
+      // else {
+      // this.resetForm();
+      // }
     },
     resetForm() {
       this.form.invoice_id = "";
