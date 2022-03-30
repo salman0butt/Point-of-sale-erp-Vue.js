@@ -171,4 +171,7 @@ export default {
   height: auto !important;
   background: initial !important;
 }
+.vue-barcode-element {
+  max-width: 300px;
+}
 </style>

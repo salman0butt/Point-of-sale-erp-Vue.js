@@ -25,7 +25,7 @@
         <CHeaderNavLink class="headerFont"> </CHeaderNavLink>
       </CHeaderNavItem>
     </CHeaderNav>
-    <CHeaderNav><LanguageSwitcher /> </CHeaderNav>
+    <!-- <CHeaderNav><LanguageSwitcher /> </CHeaderNav> -->
     <CHeaderNav> <TheSelectBranchForm /></CHeaderNav>
     <CHeaderNav>
       <CHeaderNavItem class="px-3 c-d-legacy-none headerFont">
