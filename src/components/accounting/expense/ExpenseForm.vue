@@ -5,35 +5,6 @@
       <CCol xs="12" lg="12">
         <form @submit.prevent="isEditing ? updateExpense() : saveExpense()">
           <CRow>
-            <CCol xs="6" md="4" class="pt-2">
-              <SupplierSearch
-                @supplier-change="supplierChange($event)"
-                :previousValue="previousValue"
-              />
-            </CCol>
-
-            <CCol sm="6" md="4" class="pt-2">
-              <AccountDropdown
-                :previousValue="form.account_id"
-                @getAccountDropdown="getAccountDropdown"
-              />
-            </CCol>
-
-            <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                label="Amount"
-                type="number"
-                placeholder="0.00"
-                v-model="form.amount"
-                :class="{ error: $v.form.amount.$error }"
-                @input="$v.form.amount.$touch()"
-              />
-              <div v-if="$v.form.amount.$error">
-                <p v-if="!$v.form.amount.required" class="errorMsg">
-                  Amount is required
-                </p>
-              </div>
-            </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CInput
                 label="Date"
@@ -51,12 +22,66 @@
             <CCol sm="6" md="4" class="pt-2">
               <CInput label="Refernce No" v-model="form.ref_id" />
             </CCol>
-            <CCol sm="6" md="4" class="pt-2">
-              <CTextarea
-                label="Description"
-                placeholder="Content..."
-                v-model="form.description"
+            <CCol xs="6" md="4" class="pt-2">
+              <SupplierSearch
+                @supplier-change="supplierChange($event)"
+                :previousValue="previousValue"
               />
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <AccountDropdown
+                :previousValue="form.account_id"
+                @getAccountDropdown="getAccountDropdown"
+                :class="{ error: $v.form.account_id.$error }"
+                @change="$v.form.account_id.$touch()"
+              />
+              <div v-if="$v.form.account_id.$error">
+                <p v-if="!$v.form.account_id.required" class="errorMsg">
+                  Account is required
+                </p>
+              </div>
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Amount Without Tax"
+                type="number"
+                placeholder="0.00"
+                v-model="form.amount_without_tax"
+                :class="{ error: $v.form.amount_without_tax.$error }"
+                @input="[$v.form.amount_without_tax.$touch(), calculation()]"
+              />
+              <div v-if="$v.form.amount_without_tax.$error">
+                <p v-if="!$v.form.amount_without_tax.required" class="errorMsg">
+                  Amount Without Tax is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CSelect
+                label="Tax"
+                :options="options.taxes"
+                :value.sync="form.tax_id"
+                @change="calculation()"
+              />
+            </CCol>
+
+            <CCol sm="6" md="4" class="pt-2">
+              <CInput
+                label="Amount With Tax"
+                disabled
+                type="number"
+                placeholder="0.00"
+                v-model="form.amount_with_tax"
+                :class="{ error: $v.form.amount_with_tax.$error }"
+                @input="[$v.form.amount_with_tax.$touch(), calculation(1)]"
+              />
+              <div v-if="$v.form.amount_with_tax.$error">
+                <p v-if="!$v.form.amount_with_tax.required" class="errorMsg">
+                  Amount Without Tax is required
+                </p>
+              </div>
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2">
@@ -72,6 +97,27 @@
                   Status is required
                 </p>
               </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <Label> Payment Method</Label>
+              <CSelect
+                :options="options.payment_methods"
+                :value.sync="form.payment_method"
+                :class="{ error: $v.form.payment_method.$error }"
+                @input="$v.form.payment_method.$touch()"
+              />
+              <div v-if="$v.form.payment_method.$error">
+                <p v-if="!$v.form.payment_method.required" class="errorMsg">
+                  Payment Method is required
+                </p>
+              </div>
+            </CCol>
+            <CCol sm="6" md="4" class="pt-2">
+              <CTextarea
+                label="Description"
+                placeholder="Content..."
+                v-model="form.description"
+              />
             </CCol>
           </CRow>
           <CRow>
@@ -140,9 +186,8 @@
 </template>
 <script>
 import SupplierSearch from "@/components/general/search/SupplierSearch";
-
 import ExpenseService from "@/services/accounting/expense/ExpenseService";
-import { required } from "vuelidate/lib/validators";
+import { required, requiredIf } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
@@ -163,21 +208,22 @@ export default {
     isEditing: false,
     saveAndExit: false,
     previousValue: null,
-
     form: {
       id: "",
-      // category_id: "",
       account_id: "",
-      // from_payment_method_id: "",
       ref_id: "",
-      amount: "",
+      payment_method: "",
+      tax: "",
+      tax_id: null,
+      amount_without_tax: "",
+      amount_with_tax: "",
       date: "",
       status: "draft",
       description: "",
       supplier_id: "",
-
       documents: [],
     },
+    last_percentage: 0,
     display_documents: [],
     options: {
       status: [
@@ -189,11 +235,10 @@ export default {
         { value: "approved", label: "Submitted" },
       ],
       payment_methods: [
-        { value: "", label: "Choose Method", disabled: true, selected: "" },
+        { value: "", label: "Choose Payment Method", selected: "" },
       ],
-      // categories: [
-      //   { value: "", label: "Choose Category", disabled: true, selected: "" },
-      // ],
+      taxes: [{ value: "", label: "Choose Tax", selected: "" }],
+
       accounts: [
         { value: "", label: "Choose Account", disabled: true, selected: "" },
       ],
@@ -202,12 +247,16 @@ export default {
   validations() {
     return {
       form: {
-        // category_id: { required },
         account_id: { required },
-        // from_payment_method_id: { required },
-        amount: { required },
+        amount_without_tax: { required },
+        amount_with_tax: { required },
         date: { required },
         status: { required },
+        payment_method: {
+          required: requiredIf(() => {
+            return this.form.status == "approved";
+          }),
+        },
       },
     };
   },
@@ -220,11 +269,78 @@ export default {
     }
   },
   methods: {
+    calculation(check = 0) {
+      if (event.target.options) {
+        var options = event.target.options;
+        if (options.selectedIndex > -1) {
+          var percentage =
+            options[options.selectedIndex].getAttribute("data-percentage");
+          if (percentage == null) {
+            percentage = 0;
+          }
+          this.last_percentage = percentage;
+          var percentage2 =
+            this.form.amount_without_tax * (parseFloat(percentage) / 100);
+          this.form.amount_with_tax = (
+            parseFloat(percentage2) + parseFloat(this.form.amount_without_tax)
+          ).toFixed(3);
+        }
+      } else {
+        var percentage2 =
+          this.form.amount_without_tax *
+          (parseFloat(this.last_percentage) / 100);
+        this.form.amount_with_tax = (
+          parseFloat(percentage2) + parseFloat(this.form.amount_without_tax)
+        ).toFixed(3);
+      }
+    },
+    getExpenseOptions() {
+      ExpenseService.getExpenseOptions()
+        .then(({ data }) => {
+          if (data != undefined && data != "") {
+            const payment_methods = this.options.payment_methods;
+            const taxes = this.options.taxes;
+
+            if (data.payment_methods) {
+              data.payment_methods.map(function (val) {
+                payment_methods.push({ value: val.uuid, label: val.name });
+              });
+            }
+            if (data.taxes) {
+              data.taxes.map(function (val) {
+                taxes.push({
+                  value: val.uuid,
+                  label: val.name,
+                  attrs: { "data-percentage": val.percentage },
+                });
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      AccountServices.getAllExpenseAccount()
+        .then(({ data }) => {
+          let account_options = this.options.accounts;
+          data.map((value, index) => {
+            account_options.push({ value: value.uuid, label: value.name });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     getAccountDropdown(value) {
       this.form.account_id = value.value;
     },
     supplierChange(val) {
-      this.form.supplier_id = val.value;
+      if (val) {
+        this.form.supplier_id = val.value;
+      } else {
+        this.form.supplier_id = null;
+      }
     },
     saveExpense() {
       this.$v.$touch();
@@ -315,19 +431,29 @@ export default {
       this.$store.commit("set_loader");
       ExpenseService.get(this.form.id)
         .then(({ data }) => {
-          // console.log(data);
           if (data != null && data != "") {
             this.isEditing = true;
             this.form.id = data.uuid;
             this.form.ref_id = data.ref_id;
-            this.form.amount = data.amount;
+            this.form.amount_without_tax = data.amount_without_tax;
+            this.form.amount_with_tax = data.amount_with_tax;
             this.form.date = data.date;
             this.form.description = data.description;
             this.form.status = data.status;
-            this.form.account_id = {
-              label: data.account.name,
-              value: data.account.uuid,
-            };
+
+            if (data.tax) {
+              this.form.tax = {
+                uuid: data.tax.uuid,
+                percentage: data.tax.percentage,
+              };
+            }
+            if (data.payment_method) {
+              this.form.payment_method = data.payment_method.uuid;
+              this.form.account_id = {
+                label: data.account.name,
+                value: data.account.uuid,
+              };
+            }
 
             if (data.documents) {
               this.display_documents = [];
@@ -372,40 +498,7 @@ export default {
       }
       return formData;
     },
-    getExpenseOptions() {
-      ExpenseService.getExpenseOptions()
-        .then(({ data }) => {
-          if (data != undefined && data != "") {
-            const payment_methods = this.options.payment_methods;
-            // const categories = this.options.categories;
 
-            if (data.payment_methods) {
-              data.payment_methods.map(function (val) {
-                payment_methods.push({ value: val.uuid, label: val.name });
-              });
-            }
-            // if (data.categories) {
-            //   data.categories.map(function (val) {
-            //     categories.push({ value: val.uuid, label: val.name });
-            //   });
-            // }
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      AccountServices.getAllExpenseAccount()
-        .then(({ data }) => {
-          let account_options = this.options.accounts;
-          data.map((value, index) => {
-            account_options.push({ value: value.uuid, label: value.name });
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
     handleFile(files) {
       this.form.documents = Object.values(files);
     },
