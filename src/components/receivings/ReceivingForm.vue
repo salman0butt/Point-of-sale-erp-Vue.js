@@ -363,31 +363,31 @@ export default {
 
         if (data.items && data.items.length > 0) {
           data.items.map((item) => {
-            if (item && item.product_variation && item.product_variation.uuid) {
-              this.form.items.push({
-                uuid: item.product_variation.uuid,
-                type: "variation",
-                name:
-                  item.product.name +
-                  " (" +
-                  JSON.parse(item.product_variation.name).en +
-                  ")",
-                cost_price: item.price?.cost_price ?? 0,
-                selling_price: item.price?.selling_price_without_tax ?? 0,
-                qty: item.qty,
-                expiry_date: item.inventory?.expiry_date ?? "",
-              });
-            } else {
-              this.form.items.push({
-                uuid: item.product.uuid,
-                type: "product",
-                name: item.product.name,
-                cost_price: item.price?.cost_price ?? 0,
-                selling_price: item.price?.selling_price_without_tax ?? 0,
-                qty: item.qty,
-                expiry_date: item.inventory?.expiry_date ?? "",
-              });
-            }
+            // if (item && item.product_variation && item.product_variation.uuid) {
+            //   this.form.items.push({
+            //     uuid: item.product_variation.uuid,
+            //     type: "variation",
+            //     name:
+            //       item.product.name +
+            //       " (" +
+            //       JSON.parse(item.product_variation.name).en +
+            //       ")",
+            //     cost_price: item.price?.cost_price ?? 0,
+            //     selling_price: item.price?.selling_price_without_tax ?? 0,
+            //     qty: item.qty,
+            //     expiry_date: item.inventory?.expiry_date ?? "",
+            //   });
+            // } else {
+            this.form.items.push({
+              uuid: item.inventable?.uuid,
+              type: "product",
+              name: item.inventable?.name,
+              cost_price: item.cost_price ?? 0,
+              selling_price: item.selling_price ?? 0,
+              qty: item.qty,
+              expiry_date: item.expiry_date ?? "",
+            });
+            // }
           });
           // this.$store.commit("set_search_product_items", itemsData);
         }
@@ -400,7 +400,7 @@ export default {
       this.$swal
         .fire({
           title: "Are You Sure You Want to Deleted This Attachment?",
-icon: "warning",
+          icon: "warning",
           text: "This will be Deleted from Database",
           showCancelButton: true,
           confirmButtonColor: "#e55353",
