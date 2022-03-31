@@ -19,7 +19,7 @@
                     placeholder="Search..."
                     label="label"
                     track-by="label"
-                    @input="[$v.form.bill.$touch()]"
+                    @input="[billChange(), $v.form.bill.$touch()]"
                     :class="{ error: $v.form.bill.$error }"
                   >
                     <template slot="selection" slot-scope="{ values, search, isOpen }">
@@ -50,6 +50,7 @@
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
                   <SupplierSearch
+                    :isDisabled="true"
                     @supplier-change="supplierChange($event)"
                     :previousValue="form.previousValue"
                     @input="$v.form.supplier_id.$touch()"
@@ -165,9 +166,11 @@ import BillService from "@/services/accounting/bill/BillService";
 import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
 // import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash } from "@coreui/icons-pro";
+import { globalMixin } from "@/mixins/globalMixin";
 
 export default {
   name: "BillPaymentForm",
+  mixins: [globalMixin],
   components: {
     Loader,
     SupplierSearch,
@@ -221,6 +224,7 @@ export default {
   created() {
     this.form.id = this.$route.params.id;
     // Payment Methods display
+    this.form.dated = this.calculateTodayDate();
     let paymentMethods = this.options.paymentMethods;
     this.$store.commit("set_loader");
     PaymentInvoiceService.create()
@@ -244,6 +248,7 @@ export default {
           bill.push({
             label: value.bill_no,
             value: value.uuid,
+            bill: value,
           });
         });
       })
@@ -342,6 +347,7 @@ export default {
       this.form.dated = "";
       this.form.previousValue = {};
       this.$v.$reset();
+      this.form.dated = this.calculateTodayDate();
     },
     savePayment() {
       this.$v.$touch();
@@ -375,6 +381,26 @@ export default {
             }
           });
       }
+    },
+    billChange() {
+      const { bill } = this.form.bill;
+      if (bill) {
+        // this.resetForm();
+        console.log(bill);
+        if (bill.supplier) {
+          let serial = bill.supplier.serial_no ?? "";
+          this.form.supplier_id = bill.supplier.uuid;
+          this.form.previousValue = {
+            label: bill.supplier.name + " (serial: " + serial + ")",
+            value: bill.supplier.uuid,
+          };
+        }
+
+        this.form.amount = bill.grand_total;
+      }
+      //  else {
+      //   this.resetForm();
+      // }
     },
     formData(update = false) {
       let data = this.form;

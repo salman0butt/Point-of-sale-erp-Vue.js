@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$can('read dashboard')">
+  <div>
     <Loader />
     <CRow v-if="cardBoxA && cardBoxA.length > 0 && $can('Card A')">
       <CCol sm="12" md="12">
@@ -57,7 +57,8 @@
         </CCardGroup>
       </CCol>
     </CRow>
-    <!-- <CRow>
+    <div v-if="$can('read dashboard')">
+      <!-- <CRow>
       <CCol sm="2" md="2">
         <CButton color="primary" class="btn-block" @click="opening()">
           <CIcon class="headerFont" name="cil-bell" />
@@ -91,78 +92,74 @@
         >
       </CCol>
     </CRow> -->
-    <br />
-    <CCard>
-      <CCardHeader class="py-0">
-        <span style="position: relative; top: 15px">Sales Income</span>
-        <CCol sm="2" md="2" class="pt-2" style="float: right; height: 3.2rem">
-          <!-- <CSelect
+      <br />
+      <CCard>
+        <CCardHeader class="py-0">
+          <span style="position: relative; top: 15px">Sales Income</span>
+          <CCol sm="2" md="2" class="pt-2" style="float: right; height: 3.2rem">
+            <!-- <CSelect
             placeholder="By Month"
             :options="options.chart"
             :value.sync="chart1"
           /> -->
+          </CCol>
+        </CCardHeader>
+        <CCardBody>
+          <BarChart
+            :dashboardMonths="barChart.months"
+            :dashboardDefaultDataset="barChart.defaultDataset"
+          />
+        </CCardBody>
+      </CCard>
+      <CRow>
+        <CCol sm="6" md="6">
+          <CCard>
+            <CCardHeader>Payment Method</CCardHeader>
+            <CCardBody>
+              <PieChart
+                :dashboardLabels="pieChart.labels"
+                :dashboardDefaultDataset="pieChart.defaultDataset"
+              />
+            </CCardBody>
+          </CCard>
         </CCol>
-      </CCardHeader>
-      <CCardBody>
-        <BarChart
-          :dashboardMonths="barChart.months"
-          :dashboardDefaultDataset="barChart.defaultDataset"
-        />
-      </CCardBody>
-    </CCard>
-    <CRow>
-      <CCol sm="6" md="6">
-        <CCard>
-          <CCardHeader>Payment Method</CCardHeader>
-          <CCardBody>
-            <PieChart
-              :dashboardLabels="pieChart.labels"
-              :dashboardDefaultDataset="pieChart.defaultDataset"
-            />
-          </CCardBody>
-        </CCard>
-      </CCol>
-      <CCol sm="6" md="6">
-        <CCard>
-          <CCardHeader> Recent Transections</CCardHeader>
-          <CCardBody style="padding-bottom: 15px">
-            <CDataTable
-              :items="recentTransactionsItems"
-              :fields="recentTransactionFields"
-              hover
-            />
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
-    <CRow>
-      <CCol sm="6" md="6">
-        <CCard>
-          <CCardHeader> Top 5 Products </CCardHeader>
-          <CCardBody>
-            <CDataTable :items="topProducts" :fields="topProductsField" hover />
-          </CCardBody>
-        </CCard>
-      </CCol>
-      <CCol sm="6" md="6">
-        <CCard>
-          <CCardHeader> Product Alert </CCardHeader>
-          <CCardBody>
-            <CDataTable
-              :items="productAlertData"
-              :fields="productAlertFields"
-              hover
-            >
-              <template slot="alert" slot-scope="{ item }">
-                <td>
-                  <CBadge color="danger" shape="pill">{{ item.alert }}</CBadge>
-                </td>
-              </template>
-            </CDataTable>
-          </CCardBody>
-        </CCard>
-      </CCol>
-      <!-- <CCol sm="6" md="4">
+        <CCol sm="6" md="6">
+          <CCard>
+            <CCardHeader> Recent Transections</CCardHeader>
+            <CCardBody style="padding-bottom: 15px">
+              <CDataTable
+                :items="recentTransactionsItems"
+                :fields="recentTransactionFields"
+                hover
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+      <CRow>
+        <CCol sm="6" md="6">
+          <CCard>
+            <CCardHeader> Top 5 Products </CCardHeader>
+            <CCardBody>
+              <CDataTable :items="topProducts" :fields="topProductsField" hover />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol sm="6" md="6">
+          <CCard>
+            <CCardHeader> Product Alert </CCardHeader>
+            <CCardBody>
+              <CDataTable :items="productAlertData" :fields="productAlertFields" hover>
+                <template slot="alert" slot-scope="{ item }">
+                  <td>
+                    <CBadge color="danger" shape="pill">{{ item.alert }}</CBadge>
+                  </td>
+                </template>
+              </CDataTable>
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <!-- <CCol sm="6" md="4">
         <CCard>
           <CCardHeader> Last 5 Deliverd Order </CCardHeader>
           <CCardBody>
@@ -176,9 +173,10 @@
           </CCardBody>
         </CCard>
       </CCol> -->
-    </CRow>
-    <!-- <OpeningModel /> -->
-    <ClosingModel />
+      </CRow>
+      <!-- <OpeningModel /> -->
+      <ClosingModel />
+    </div>
   </div>
 </template>
 
@@ -338,9 +336,7 @@ export default {
 
               data.pieChart.map(function (val) {
                 labelsPieChart.push(val.name);
-                let total = parseFloat(
-                  val.invoice_payments_sum_invoice_paymentsamount
-                );
+                let total = parseFloat(val.invoice_payments_sum_invoice_paymentsamount);
                 if (defaultDatasetPieChart[0].data) {
                   defaultDatasetPieChart[0].data.push(total);
                 }

@@ -19,10 +19,7 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                :label="$t('products.form.short_name')"
-                v-model="form.short_name"
-              />
+              <CInput :label="$t('products.form.short_name')" v-model="form.short_name" />
             </CCol>
             <!-- <CCol sm="6" md="4" class="pt-2">
               <CSelect
@@ -89,9 +86,7 @@
             </CCol>
 
             <CCol sm="6" md="4" class="pt-2" id="categories">
-              <label class="typo__label">
-                {{ $t("products.form.category") }}</label
-              >
+              <label class="typo__label"> {{ $t("products.form.category") }}</label>
               <multiselect
                 v-model="form.categories"
                 :options="options.categories"
@@ -106,15 +101,9 @@
                 :class="{ error: $v.form.categories.$error }"
                 @input="$v.form.categories.$touch()"
               >
-                <template
-                  slot="selection"
-                  slot-scope="{ values, search, isOpen }"
-                >
-                  <span
-                    class="multiselect__single"
-                    v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }}
-                    {{ $t("products.form.options_selected") }}</span
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
@@ -125,11 +114,10 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <label class="typo__label">{{
-                $t("products.form.branches")
-              }}</label>
+              <label class="typo__label">{{ $t("products.form.branches") }}</label>
               <multiselect
                 v-model="form.branches"
+                ref="branches"
                 :options="options.branches"
                 :multiple="true"
                 :close-on-select="false"
@@ -142,15 +130,20 @@
                 :class="{ error: $v.form.branches.$error }"
                 @input="$v.form.branches.$touch()"
               >
-                <template
-                  slot="selection"
-                  slot-scope="{ values, search, isOpen }"
-                >
+                <template slot="beforeList">
                   <span
-                    class="multiselect__single"
-                    v-if="values.value &amp;&amp; !isOpen"
-                    >{{ values.length }}
-                    {{ $t("products.form.options_selected") }}</span
+                    class="multiselect__element"
+                    @click="selectAllBranches()"
+                    style="border-bottom: 1px solid #d7d7d7"
+                  >
+                    <span class="multiselect__option">
+                      <span style="font-weight: bold">Select All</span></span
+                    >
+                  </span></template
+                >
+                <template slot="selection" slot-scope="{ values, search, isOpen }">
+                  <span class="multiselect__single" v-if="values.value &amp;&amp; !isOpen"
+                    >{{ values.length }} {{ $t("products.form.options_selected") }}</span
                   ></template
                 >
               </multiselect>
@@ -161,10 +154,7 @@
               </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
-              <CInput
-                :label="$t('products.form.barcode')"
-                :value.sync="form.barcode"
-              />
+              <CInput :label="$t('products.form.barcode')" :value.sync="form.barcode" />
             </CCol>
             <CCol sm="6" md="4" class="pt-2" v-if="isEdit">
               <CInput
@@ -205,9 +195,7 @@
           </CRow>
           <CRow>
             <CCol sm="12" md="12" class="pt-2 short_desc">
-              <label class="typo__label">
-                {{ $t("products.form.description") }}</label
-              >
+              <label class="typo__label"> {{ $t("products.form.description") }}</label>
               <vue-editor v-model="form.short_description"></vue-editor>
             </CCol>
             <!-- <CCol sm="12" md="12" class="pt-2">
@@ -263,12 +251,7 @@
               timeout="2000"
               block
               color="danger"
-              style="
-                float: right;
-                width: 140px;
-                margin-left: 20px;
-                margin-top: 0;
-              "
+              style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
               @click="saveAndExit = true"
               type="submit"
               >{{ $t("products.form.saveAndExit") }}</CButton
@@ -386,6 +369,10 @@ export default {
           label: this.$t("products.form.choose_brand"),
         },
       ];
+    },
+    selectAllBranches() {
+      this.form.branches = this.options.branches;
+      this.$refs.branches.deactivate();
     },
     setWeightUnits() {
       this.options.weight_units = [

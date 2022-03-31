@@ -14,6 +14,7 @@
       track-by="label"
       :preselect-first="true"
       :limit="10"
+      :disabled="isDisabled"
       @search-change="searchSuppliers"
     >
       <template slot="selection" slot-scope="{ values, search, isOpen }">
@@ -38,6 +39,10 @@ export default {
     previousValue: {
       type: [Array, Object],
       default: () => [],
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false,
     },
   },
 
