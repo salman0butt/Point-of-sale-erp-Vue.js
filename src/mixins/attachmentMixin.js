@@ -13,7 +13,8 @@ export const attachmentMixin = {
     deleteAttachment(uuid) {
       this.$swal
         .fire({
-          title: "Do you want to delete this Attachment",
+          title: "Are You Sure You Want to Deleted This Attachment?",
+icon: "warning",
           text: "This will be Deleted from Database",
           showCancelButton: true,
           confirmButtonColor: "#e55353",

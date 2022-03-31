@@ -58,6 +58,16 @@
                       </div>
                     </CCol>
                   </CRow>
+                  <CRow>
+                    <CCol sm="12" md="6" class="pt-2">
+                      <CSelect
+                        horizontal
+                        label="Status"
+                        :options="options.status"
+                        :value.sync="form.status"
+                      />
+                    </CCol>
+                  </CRow>
 
                   <!-- <CRow>
                     <CCol xs="12" md="6" class="pt-2">
@@ -91,7 +101,7 @@
                         </thead>
                         <tbody>
                           <tr v-for="(item, k) in form.items" :key="k">
-                            <th>
+                            <th style="width: 300px">
                               <AccountDropdown
                                 :showLabel="false"
                                 @getAccountDropdown="getAccountDropDown($event, k)"
@@ -203,6 +213,43 @@
                       </div>
                     </CCol>
                   </CRow>
+                  <CRow>
+                    <CCol sm="12" md="12" class="pt-2">
+                      <app-upload
+                        ref="fileUpload"
+                        @file:changed="handleFile"
+                        fileType="image/jpg,image/jpeg,image/png"
+                      />
+
+                      <div
+                        v-if="display_attachments && display_attachments.length"
+                        class="attachment-display"
+                      >
+                        <ul class="mt-5">
+                          <li
+                            v-for="(img, index) in display_attachments"
+                            v-bind:key="index"
+                            class="display-attachment-row"
+                          >
+                            <CIcon :content="$options.cisFile" />
+                            <a
+                              v-bind:href="img.path"
+                              target="_blank"
+                              class="name-attachment"
+                            >
+                              {{ img.name }}</a
+                            >
+                            <a
+                              @click.prevent="deleteAttachment(img.uuid)"
+                              class="delete-attachment"
+                            >
+                              <CIcon :content="$options.cilTrash" />
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </CCol>
+                  </CRow>
 
                   <p v-if="$v.$anyError" class="errorMsg">
                     Please Fill the required data
@@ -240,12 +287,13 @@
 <script>
 // import JournalService from "@/services/purchaseOrder/JournalService";
 import { required } from "vuelidate/lib/validators";
-import { cilTrash, cisCaretBottom } from "@coreui/icons-pro";
+import { cilTrash, cisCaretBottom, cisFile } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
 import JournalServices from "@/services/accounting/journal/JournalServices";
-import Multiselect from "vue-multiselect";
+// import Multiselect from "vue-multiselect";
 import AccountDropdown from "@/components/general/AccountDropdown";
+import AppUpload from "@/components/uploads/Upload.vue";
 
 export default {
   name: "CreateOrUpdateJournal",
@@ -253,14 +301,17 @@ export default {
     Loader,
     // Multiselect,
     AccountDropdown,
+    AppUpload,
   },
   cilTrash,
   cisCaretBottom,
+  cisFile,
   data: () => ({
     isEditing: false,
     saveAndExit: false,
     saveAsDraft: false,
     isDisabled: false,
+    display_attachments: null,
     form: {
       id: "",
       date: "",
@@ -274,6 +325,7 @@ export default {
       creditSubtotal: "0.000",
       difference: "0.000",
       status: "completed",
+      attachments: [],
       items: [
         {
           account: "",
@@ -286,6 +338,11 @@ export default {
     },
     options: {
       account: [],
+      status: [
+        { label: "Choose Status", value: "", disabled: true, selected: true },
+        { label: "Completed", value: "completed" },
+        { label: "Draft", value: "draft" },
+      ],
     },
     previousAccount: {},
   }),
@@ -420,7 +477,8 @@ export default {
         } else {
           this.form.status = "draft";
         }
-        let formData = this.form;
+        // let formData = this.form;
+        let formData = this.formData();
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
         };
@@ -454,10 +512,37 @@ export default {
           });
       }
     },
+    formData(update = false) {
+      let data = new FormData();
+      data.append("journal", this.form.journal);
+      data.append("date", this.form.date);
+      data.append("reference", this.form.reference);
+      data.append("notes", this.form.notes);
+      data.append("journal_type", this.form.journal_type);
+      data.append("status", this.form.status);
+      data.append("items", JSON.stringify(this.form.items));
+      data.append("debit_total", this.form.debitTotal);
+      data.append("credit_total", this.form.creditTotal);
+      data.append("debit_subtotal", this.form.debitSubtotal);
+      data.append("credit_subtotal", this.form.creditSubtotal);
+      data.append("difference", this.form.difference);
+      // data.append("account_id", this.form.account_id);
+
+      if (this.form.attachments) {
+        for (const i of Object.keys(this.form.attachments)) {
+          data.append("attachments[]", this.form.attachments[i]);
+        }
+      }
+      if (update) {
+        data.append("_method", "PATCH");
+      }
+      return data;
+    },
     updateJournal() {
       //   this.$v.$touch();
       this.$store.commit("set_loader");
-      let formData = this.form;
+      // let formData = this.form;
+      let formData = this.formData(true);
 
       // formData.append("_method", "PATCH");
       const config = {
@@ -496,6 +581,7 @@ export default {
       this.$store.commit("set_loader");
       JournalServices.get(this.form.id)
         .then(({ data }) => {
+          // console.log(data);
           this.displayData(data);
           this.$store.commit("close_loader");
         })
@@ -506,8 +592,49 @@ export default {
           // this.$router.push({ path: "/catalogs/brands/index" });
         });
     },
+    deleteAttachment(uuid) {
+      this.$swal
+        .fire({
+          title: "Are You Sure You Want to Deleted This Attachment?",
+          icon: "warning",
+          text: "This will be Deleted from Database",
+          showCancelButton: true,
+          confirmButtonColor: "#e55353",
+          confirmButtonText: "Yes, remove it it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$store
+              .dispatch("deleteAttachment", uuid)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Attachment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.display_images = this.display_images.filter(
+                    (item) => item.uuid != uuid
+                  );
+                }
+              })
+              .catch((error) => {
+                if (error.response && error.response.status === 422) {
+                  let errors = error.response.data.errors;
+                  for (const err in errors) {
+                    this.$toast.error(errors[err][0]);
+                  }
+                } else {
+                  this.$toast.error("Something went wrong.");
+                }
+                console.log(err);
+              });
+          }
+        });
+    },
     displayData(data = null) {
-      if (data != null && data != "") {
+      if (data) {
         this.resetForm();
         this.isEditing = true;
         this.form.id = data.uuid;
@@ -515,6 +642,7 @@ export default {
         this.form.journal = data.journal_no;
         this.form.reference = data.ref_id;
         this.form.notes = data.description;
+        this.form.status = data.status ?? "";
         if (data.transactions && data.transactions.length > 0) {
           data.transactions.map((value, index) => {
             var account_uuid = "";
@@ -540,9 +668,19 @@ export default {
 
             // console.log(this.form.items);
           });
+          if (data.attachments && data.attachments.length) {
+            this.display_attachments = [];
+            let display_attachments = this.display_attachments;
+            data.attachments.map(function (item) {
+              display_attachments.push(item);
+            });
+          }
           this.calculateTotal();
         }
       }
+    },
+    handleFile(files) {
+      this.form.attachments = Object.values(files);
     },
     resetForm() {
       // for (let index in this.form) {
@@ -550,6 +688,9 @@ export default {
       // }
       this.form.items = [];
       this.isEditing = false;
+      this.form.attachments = [];
+      this.display_attachments = [];
+      this.$refs.fileUpload.reset();
     },
     getAccountDropDown(val, key) {
       this.form.items[key].account = val.value;

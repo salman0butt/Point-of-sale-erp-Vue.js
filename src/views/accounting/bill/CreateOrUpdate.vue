@@ -28,7 +28,13 @@
                       <SupplierSearch
                         @supplier-change="supplierChange($event)"
                         :previousValue="previousValue"
+                        @input="$v.form.supplier_id.$touch()"
                       />
+                      <div v-if="$v.form.supplier_id.$error">
+                        <p v-if="!$v.form.supplier_id.required" class="errorMsg">
+                          Supplier is required
+                        </p>
+                      </div>
                     </CCol>
                     <CCol xs="6" md="4" class="pt-2">
                       <CInput
@@ -79,6 +85,7 @@
                   <CRow>
                     <CCol xs="12" md="12" class="pt-2">
                       <ProductSearch
+                        typer="bill"
                         @update-items="updateItems($event)"
                         :previousValue="form.items"
                       />
@@ -199,12 +206,7 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="
-                        float: right;
-                        width: 140px;
-                        margin-left: 20px;
-                        margin-top: 0;
-                      "
+                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                       @click="saveAndExit = true"
                       type="submit"
                       >Save & Exit</CButton
@@ -469,19 +471,13 @@ export default {
           //   } ?? "";
           this.previousValue = {
             value: data.supplier.uuid,
-            label:
-              data.supplier?.name +
-              " (serial: " +
-              data.supplier?.serial_no +
-              ")",
+            label: data.supplier?.name + " (serial: " + data.supplier?.serial_no + ")",
           };
         }
         this.form.date = data.date;
         this.form.due_date = data.due_date;
         this.form.discount = data.total_discount ? data.total_discount : "";
-        this.form.total = data.grand_total
-          ? parseFloat(data.grand_total).toFixed(3)
-          : "";
+        this.form.total = data.grand_total ? parseFloat(data.grand_total).toFixed(3) : "";
         this.form.supplier_notes = data.note;
         this.form.terms_and_conditions = data.terms_and_conditions;
         this.form.subTotal = parseFloat(data.sub_total);
@@ -510,6 +506,7 @@ export default {
               }),
               rate: parseFloat(item.rate) ?? 0,
               qty: parseFloat(item.qty),
+              description: item.description,
               tax: item && item.tax ? item.tax.uuid : "",
               amount: parseFloat(item.amount),
               options: {
@@ -527,17 +524,16 @@ export default {
       let discount = 0;
       let total = 0;
       this.form.items.map((item) => {
-        sub_total = sub_total + parseFloat(item.amount);
+        if (item.amount) {
+          sub_total = sub_total + parseFloat(item.amount);
+        }
       });
       this.form.subTotal = sub_total.toFixed(3);
       if (this.form.discount) {
         let isPercentage = /%/gi;
         if (isPercentage.test(this.form.discount)) {
           discount = parseFloat(this.form.discount);
-          this.form.discount_val = (
-            (sub_total * parseFloat(discount)) /
-            100
-          ).toFixed(3);
+          this.form.discount_val = ((sub_total * parseFloat(discount)) / 100).toFixed(3);
           total = (sub_total - this.form.discount_val).toFixed(3);
         } else {
           total = sub_total - parseFloat(this.form.discount);
@@ -546,7 +542,16 @@ export default {
       } else {
         total = sub_total.toFixed(3);
       }
-      this.form.total = total;
+      if (!this.form.discount) {
+        this.form.discount_val = "";
+      }
+      if (this.form.total_tax) {
+        this.form.total = (parseFloat(total) + parseFloat(this.form.total_tax)).toFixed(
+          3
+        );
+      } else {
+        this.form.total = parseFloat(total).toFixed(3);
+      }
     },
     resetForm() {
       for (let index in this.form) {
