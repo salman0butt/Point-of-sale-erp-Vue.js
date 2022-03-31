@@ -31,11 +31,16 @@
           <CCol sm="6" md="3">
             <h6>{{ product.short_name }}</h6>
             <!-- <img src="/img/images/barcode.png" alt="barcode" style="width: 60%" /> -->
-            <barcode v-bind:value="product.barcode"> barcode unable to load </barcode>
-            <h6 class="mt-2"><strong>Alert Qty:</strong> {{ product.alert_qty }}</h6>
+            <barcode v-bind:value="product.barcode">
+              barcode unable to load
+            </barcode>
+            <h6 class="mt-2">
+              <strong>Alert Qty:</strong> {{ product.alert_qty }}
+            </h6>
             <h6><strong>Weight Unit:</strong> {{ product.weight_unit }}</h6>
             <h6>
-              <strong>Expiry:</strong> {{ product.expiry }} | <strong>Favourite:</strong>
+              <strong>Expiry:</strong> {{ product.expiry }} |
+              <strong>Favourite:</strong>
               {{ product.favorite }}
             </h6>
           </CCol>
@@ -114,10 +119,12 @@ import VueBarcode from "vue-barcode";
 import Loader from "@/components/layouts/Loader";
 import ProductInventoryService from "@/services/products/ProductInventoryService";
 const inventoryFields = [
-  { key: "date", label: "Date", _style: "min-width:40%" },
-  { key: "user", label: "User", _style: "min-width:15%;" },
-  { key: "stock", label: "In/Out", _style: "min-width:15%;" },
-  { key: "expiry", label: "Expiry", _style: "min-width:15%;" },
+  { key: "date", label: "DATE", _style: "min-width:40%" },
+  { key: "user", label: "User", _style: "min-width:15%" },
+  { key: "module", label: "Module", _style: "min-width:15%;" },
+  { key: "qty", label: "In/Out Qty", _style: "min-width:15%;" },
+  { key: "balance", label: "Balance", _style: "min-width:15%;" },
+  { key: "expiry_date", label: "EXPIRY DATE", _style: "min-width:15%" },
 ];
 const unitFields = [
   { key: "name", label: "Name", _style: "min-width:40%" },
@@ -191,13 +198,15 @@ export default {
             this.product.description = data.short_description ?? "N/A";
             this.product.brand = data.brand.name ?? "N/A";
             this.product.category =
-              data.categories?.map((category) => category.name).join(", ") ?? "N/A";
+              data.categories?.map((category) => category.name).join(", ") ??
+              "N/A";
             this.product.branch =
               data.branches?.map((branch) => branch.name).join(", ") ?? "N/A";
             this.product.cost_price =
               parseFloat(data.price?.cost_price).toFixed(2) ?? "N/A";
             this.product.selling_price =
-              parseFloat(data.price?.selling_price_without_tax).toFixed(2) ?? "N/A";
+              parseFloat(data.price?.selling_price_without_tax).toFixed(2) ??
+              "N/A";
             this.product.profit =
               parseFloat(
                 data.price?.selling_price_without_tax - data.price?.cost_price
@@ -208,7 +217,8 @@ export default {
             this.product.favorite = data.is_favorite === "yes" ? "Yes" : "No";
             this.product.short_name = data.short_name ?? "N/A";
             this.product.barcode = data.barcode;
-            this.product.image = data.images[0]?.path ?? "/img/images/no-logo.png";
+            this.product.image =
+              data.images[0]?.path ?? "/img/images/no-logo.png";
 
             // if (data.inventory && data.inventory.length) {
             //   data.inventory.map((item) => {
@@ -262,12 +272,33 @@ export default {
         .then(({ data }) => {
           if (data !== "" && data !== undefined && data.length) {
             data.forEach((item) => {
-              if (item.type === "product") {
+              if (
+                item.type === "receiving" ||
+                item.type === "sales" ||
+                item.type === "damage" ||
+                item.type === "product"
+              ) {
+                let date = item.date;
+                let qty = item.qty;
+                let module = "";
+
+                if (item.type == "receiving") {
+                  module = "Receiving";
+                } else if (item.type == "sales") {
+                  module = "Sales";
+                } else if (item.type == "damage") {
+                  module = "Damage";
+                } else if (item.type == "product") {
+                  module = "Opening";
+                }
+
                 this.inventory.push({
-                  date: item.date ?? "",
                   user: item.created_by?.name,
-                  stock: item.qty ?? "",
-                  expiry: item.expiry_date ?? "",
+                  module: module,
+                  date: date,
+                  qty: qty,
+                  balance: item.balance ?? "",
+                  expiry_date: item.expiry_date ?? "",
                 });
               }
             });

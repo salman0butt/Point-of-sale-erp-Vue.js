@@ -16,7 +16,11 @@
                 Send WhatsApp</CButton
               > -->
               <CButton color="success" class="btn mr-2"> Pay</CButton>
-              <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
+              <a
+                href="#"
+                class="btn btn-sm btn-info"
+                @click.prevent="savePdf()"
+              >
                 <CIcon name="cil-save" /> Download
               </a>
               <a
@@ -61,12 +65,17 @@
                     <div v-if="customer.address">
                       Address : {{ customer.address.street }}
                     </div>
-                    <div v-if="customer.email">Email: {{ customer.email.email }}</div>
+                    <div v-if="customer.email">
+                      Email: {{ customer.email.email }}
+                    </div>
                     <div v-if="customer.contact_number">
                       Phone: {{ customer.contact_number.number }}
                     </div>
                   </CCol>
                   <CCol sm="8" class="mt-5" style="text-align: right">
+                    <div>
+                      Invoice :<strong># {{ invoice.invoice_ref_no }}</strong>
+                    </div>
                     <div>
                       Dated :<strong># {{ invoice.dated }}</strong>
                     </div>
@@ -97,7 +106,7 @@
                         <td class="center">{{ index + 1 }}</td>
                         <td class="left">{{ product.product.name.en }}</td>
                         <td class="left">{{ product.description }}</td>
-                        <td class="center">{{ product.qty }}</td>
+                        <td class="center">{{ Math.abs(product.qty) }}</td>
                         <td class="right">{{ product.selling_price }}</td>
                         <td class="right">{{ product.tax }}</td>
                         <td class="right">
@@ -115,7 +124,9 @@
                         <td>
                           <b>
                             {{
-                              invoice.delivery.name.en ? invoice.delivery.name.en : "-"
+                              invoice.delivery.name.en
+                                ? invoice.delivery.name.en
+                                : "-"
                             }}
                           </b>
                         </td>
@@ -180,7 +191,9 @@
                             <strong>Total With Delivery</strong>
                           </td>
                           <td class="right">
-                            <strong>{{ invoice.total_price_with_delivery }}</strong>
+                            <strong>{{
+                              invoice.total_price_with_delivery
+                            }}</strong>
                           </td>
                         </tr>
                         <!-- <tr>
@@ -328,7 +341,8 @@ export default {
           this.invoice.delivery = data.delivery;
           this.invoice.delivery_method_price = data.delivery_method_price;
           this.invoice.address_for_delivery = data.address_for_delivery;
-          this.invoice.total_price_with_delivery = data.total_price_with_delivery;
+          this.invoice.total_price_with_delivery =
+            data.total_price_with_delivery;
 
           data.products.map((item) => {
             serverproducts.push(item);

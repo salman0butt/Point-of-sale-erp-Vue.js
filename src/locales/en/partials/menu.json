@@ -3,11 +3,11 @@
     "dashboard": "Dashboard",
     "sale": {
       "name": "Sales",
-      "quotations": "Quotations",
-      "invoices": "Invoices",
+      "quotations": "Sale Quotations",
+      "invoices": "Sale Invoices",
       "customers": "Customers",
-      "returns": "Returns",
-      "payments": "Payments"
+      "returns": "Sale Returns",
+      "payments": "Sale Payments"
     },
     "contacts": {
       "name": "Contacts",
@@ -17,11 +17,11 @@
     "catalogs": {
       "name": "Catalogs",
       "products": "Products",
-      "categories": "Categories",
-      "brands": "Brands",
-      "receivings": "Receivings",
-      "damages": "Damages",
-      "offers": "Offers"
+      "categories": "Product Categories",
+      "brands": "Product Brands",
+      "receivings": "Product Receivings",
+      "damages": "Product Damages",
+      "offers": "Product Offers"
     },
     "accounting": {
       "name": "Accounting",
