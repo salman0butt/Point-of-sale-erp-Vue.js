@@ -426,6 +426,7 @@ export default {
         this.delivery_check = false;
       }
     },
+
     createMethod() {
       this.$store.commit("set_loader");
 

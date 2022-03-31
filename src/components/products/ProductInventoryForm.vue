@@ -181,6 +181,9 @@
                   </td>
                   <td v-else></td>
                 </template>
+                <template #detail="{ item }">
+                  <td v-if="item.detail"><span v-html="item.detail"></span></td>
+                </template>
               </CDataTable>
             </div>
           </CCardBody>
@@ -202,6 +205,7 @@ const fields = [
   { key: "qty", label: "In/Out Qty", _style: "min-width:15%;" },
   { key: "balance", label: "Balance", _style: "min-width:15%;" },
   { key: "expiry_date", label: "EXPIRY DATE", _style: "min-width:15%" },
+  { key: "detail", label: "Detail", _style: "min-width:15%" },
 ];
 
 export default {
@@ -277,18 +281,29 @@ export default {
               ) {
                 let date = item.date;
                 let qty = item.qty;
+                let detail = "";
                 let module = "";
-
                 if (item.type == "receiving") {
                   module = "Receiving";
+                  detail =
+                    "<a href='/receivings/edit/" +
+                    item.type_uuid +
+                    "'>Detail</a>";
                 } else if (item.type == "sales") {
+                  detail =
+                    "<a href='/sales/invoices/edit/" +
+                    item.type_uuid +
+                    "'>Detail</a>";
                   module = "Sales";
                 } else if (item.type == "damage") {
                   module = "Damage";
+                  detail =
+                    "<a href='/catalogs/damages/edit/" +
+                    item.type_uuid +
+                    "'>Detail</a>";
                 } else if (item.type == "product") {
                   module = "Opening";
                 }
-
                 this.stockHistory.push({
                   user: item.created_by?.name,
                   module: module,
@@ -296,6 +311,7 @@ export default {
                   qty: qty,
                   balance: item.balance ?? "",
                   expiry_date: item.expiry_date ?? "",
+                  detail: detail,
                 });
               }
             });
