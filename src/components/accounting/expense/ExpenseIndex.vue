@@ -73,7 +73,11 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
+        <CPagination
+          v-show="pages > 1"
+          :pages="pages"
+          :active-page.sync="activePage"
+        />
       </CCol>
     </CRow>
   </div>
@@ -92,7 +96,7 @@ const fields = [
   //   filter: false,
   // },
   { key: "account", label: "Account", _style: "min-width:15%;" },
-  { key: "amount", label: "Amount", _style: "min-width:15%;" },
+  { key: "amount_with_tax", label: "Amount", _style: "min-width:15%;" },
   { key: "date", label: "DATE", _style: "min-width:15%;" },
   { key: "ref_id", label: "REFERNCE NO", _style: "min-width:15%;" },
   { key: "status", label: "STATUS", _style: "min-width:15%;" },
@@ -196,7 +200,9 @@ export default {
                     text: "Expense Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ExpenseData = this.ExpenseData.filter((item) => item.uuid != uuid);
+                  this.ExpenseData = this.ExpenseData.filter(
+                    (item) => item.uuid != uuid
+                  );
                   this.deleteRows = [];
                 }
               })
