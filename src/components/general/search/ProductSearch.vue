@@ -5,6 +5,7 @@
         <tr>
           <th scope="col">Item Details</th>
           <th scope="col">Account</th>
+          <th scope="col" v-if="typer && typer === 'bill'">Description</th>
           <th scope="col">Quantity</th>
           <th scope="col">Rate</th>
           <th scope="col">Tax</th>
@@ -14,7 +15,7 @@
       </thead>
       <tbody v-if="form.items && form.items.length > 0">
         <tr v-for="(item, k) in form.items" :key="k">
-          <th style="position: relative">
+          <th style="position: relative; width: 300px">
             <!-- <CInput
               placeholder="Products"
               v-model="item.name"
@@ -48,7 +49,7 @@
               "
             />
           </th>
-          <td>
+          <td style="width: 200px">
             <!-- <CSelect
                                 :options="options.accounts"
                                 :value.sync="item.account"
@@ -59,6 +60,13 @@
               @getAccountDropdown="getAccountDropDown($event, k)"
               :previousValue.sync="item.previousAccount"
               :key="k"
+            />
+          </td>
+          <td v-if="typer && typer === 'bill'">
+            <CTextarea
+              placeholder="content..."
+              v-model="item.description"
+              style="height: 42px"
             />
           </td>
           <td>
@@ -84,7 +92,7 @@
               @change="calculateAmount(k)"
             />
           </td>
-          <td>
+          <td style="width: 150px">
             <CSelect
               :options="options.taxes"
               :value.sync="item.tax"
@@ -138,6 +146,10 @@ export default {
     previousValue: {
       type: Array,
       default: () => [],
+    },
+    typer: {
+      type: String,
+      default: "",
     },
   },
   cilTrash,

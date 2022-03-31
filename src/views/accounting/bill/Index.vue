@@ -31,6 +31,9 @@
               <template #status="{ item }">
                 <td>{{ item.status ? item.status : "" }}</td>
               </template>
+              <template #balance="{ item }">
+                <td>{{ item.balance ? item.balance : "" }}</td>
+              </template>
 
               <template #actions="{ item }">
                 <td>
@@ -76,10 +79,11 @@ import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import { tableMixin } from "@/mixins/tableMixin";
 import Loader from "@/components/layouts/Loader";
 const fields = [
-  { key: "bill_no", label: "Bill No", _style: "width:30%" },
+  { key: "bill_no", label: "Bill No", _style: "width:15%" },
   { key: "date", label: "Date", _style: "width:15%;" },
   { key: "sub_total", label: "Sub Total", _style: "width:15%;" },
   { key: "grand_total", label: "Grand Total", _style: "width:15%;" },
+  { key: "balance", label: "Balance", _style: "width:15%;" },
   { key: "status", label: "STATUS", _style: "width:15%;" },
   { key: "actions", label: "ACTION", _style: "width:25%;" },
 ];

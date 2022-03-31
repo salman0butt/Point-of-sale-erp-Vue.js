@@ -104,6 +104,23 @@
                     <span class="ml-2">{{ journal.description }}</span>
                   </strong>
                 </div>
+                <div
+                  v-if="display_attachments && display_attachments.length"
+                  class="attachment-display"
+                >
+                  <ul class="mt-5">
+                    <li
+                      v-for="(img, index) in display_attachments"
+                      v-bind:key="index"
+                      class="display-attachment-row"
+                    >
+                      <CIcon :content="$options.cisFile" />
+                      <a v-bind:href="img.path" target="_blank" class="name-attachment">
+                        {{ img.name }}</a
+                      >
+                    </li>
+                  </ul>
+                </div>
               </CCol>
               <CCol lg="4" sm="5" class="ml-auto">
                 <table class="table table-clear">
@@ -142,9 +159,8 @@
 <script>
 import JournalServices from "@/services/accounting/journal/JournalServices.js";
 
-import { cisWallet } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
-import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
+import { cilPencil, cilTrash, cilEye, cisFile, cisWallet } from "@coreui/icons-pro";
 
 import VueHtml2pdf from "vue-html2pdf";
 
@@ -154,6 +170,7 @@ export default {
   cilPencil,
   cilTrash,
   cilEye,
+  cisFile,
   components: {
     Loader,
     VueHtml2pdf,
@@ -167,6 +184,7 @@ export default {
       total_credit: 0,
       total_debit: 0,
       total_differnce: 0,
+      display_attachments: null,
       // options: {
       //   contacts: [{ label: "Choose Contact", value: "" }],
       // },
@@ -208,6 +226,13 @@ export default {
                   }
                 });
                 this.total_differnce = this.total_credit - this.total_debit;
+              }
+              if (data.attachments && data.attachments.length) {
+                this.display_attachments = [];
+                let display_attachments = this.display_attachments;
+                data.attachments.map(function (item) {
+                  display_attachments.push(item);
+                });
               }
             }
 
