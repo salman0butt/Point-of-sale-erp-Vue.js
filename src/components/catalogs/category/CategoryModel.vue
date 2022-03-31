@@ -12,6 +12,7 @@
         <h6 class="modal-title">{{ $t("categories.form.modelTitle") }}</h6>
       </template>
       <CategoryForm
+        ref="catgoryFormRef"
         :submit="isSubmit"
         @reset-model="resetModel()"
         @reset-submit="resetSubmit()"
@@ -58,6 +59,7 @@ export default {
       this.$emit("update-table");
     },
     closeModel() {
+      this.$refs.catgoryFormRef.resetForm();
       this.isSubmit = false;
       this.$store.commit("set_category_model", false);
     },

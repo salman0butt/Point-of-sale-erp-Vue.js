@@ -27,6 +27,20 @@
                         </p>
                       </div>
                     </CCol>
+                    <CCol sm="6" md="4" class="pt-2">
+                      <CSelect
+                        label="Status"
+                        :options="options.status"
+                        :value.sync="form.status"
+                        @change="$v.form.status.$touch()"
+                        :class="{ error: $v.form.status.$error }"
+                      />
+                      <div v-if="$v.form.status.$error">
+                        <p v-if="!$v.form.status.required" class="errorMsg">
+                          Status is required
+                        </p>
+                      </div>
+                    </CCol>
                   </CRow>
 
                   <p v-if="$v.$anyError" class="errorMsg">
@@ -82,12 +96,21 @@ export default {
       // reason: "",
       items: [],
       product_id: "",
+      status: "pending",
+    },
+    options: {
+      status: [
+        { label: "Choose Status", value: "", disabled: true },
+        { label: "Pending", value: "pending" },
+        { label: "Completed", value: "completed" },
+      ],
     },
   }),
   validations() {
     return {
       form: {
         date: { required },
+        status: { required },
         items: {
           required: true,
           $each: {
@@ -199,35 +222,37 @@ export default {
     getDamage() {
       DamageService.get(this.form.id)
         .then(({ data }) => {
-          if (data != null && data != "") {
+          if (data) {
             this.isEditing = true;
             this.form.id = data.uuid;
+            this.form.status = data.status;
             this.form.date = data.date;
+
             // this.form.reason = data.reason;
             let itemsData = [];
             if (data.items && data.items.length > 0) {
               data.items.map((item) => {
-                if (item && item.product_variation && item.product_variation.uuid) {
-                  itemsData.push({
-                    uuid: item.product_variation.uuid,
-                    type: "variation",
-                    name:
-                      item.product.name +
-                      " (" +
-                      JSON.parse(item.product_variation.name).en +
-                      ")",
-                    qty: item.qty,
-                    reason: item.reason,
-                  });
-                } else {
-                  itemsData.push({
-                    uuid: item.product.uuid,
-                    type: "product",
-                    name: item.product.name,
-                    qty: item.qty,
-                    reason: item.reason,
-                  });
-                }
+                // if (item && item.product_variation && item.product_variation.uuid) {
+                //   itemsData.push({
+                //     uuid: item.product_variation.uuid,
+                //     type: "variation",
+                //     name:
+                //       item.product.name +
+                //       " (" +
+                //       JSON.parse(item.product_variation.name).en +
+                //       ")",
+                //     qty: item.qty,
+                //     reason: item.description,
+                //   });
+                // } else {
+                itemsData.push({
+                  uuid: item.inventable.uuid,
+                  type: "product",
+                  name: item.inventable.name,
+                  qty: item.qty,
+                  reason: item.description,
+                });
+                // }
               });
               this.$store.commit("set_search_product_items", itemsData);
             }

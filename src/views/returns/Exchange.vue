@@ -612,7 +612,7 @@ export default {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
         .fire({
-          title: "Do you want to delete this record",
+          title: "Are you sure you want to delete this record?",
           text: "This will be record from Database",
           showCancelButton: true,
           confirmButtonColor: "#e55353",

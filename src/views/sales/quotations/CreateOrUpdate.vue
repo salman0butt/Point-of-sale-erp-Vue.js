@@ -573,6 +573,7 @@ export default {
               this.form.delivery_method = res.data.delivery.uuid;
               this.form.delivery_method_price = res.data.delivery_method_price;
               this.form.total_price_with_delivery = res.data.total_price_with_delivery;
+              this.form.address_for_delivery = res.data.address_for_delivery;
             }
 
             this.form.sales_persons = [];

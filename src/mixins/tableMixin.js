@@ -71,6 +71,7 @@ export const tableMixin = {
           title: this.$t('general.swal.delete'),
           text: this.$t('general.swal.delMsg'),
           showCancelButton: true,
+          icon: "warning",
           confirmButtonColor: "#e55353",
           confirmButtonText: this.$t("general.swal.confirmDelButtonText"),
           cancelButtonText: this.$t("general.swal.cancelButtonText"),

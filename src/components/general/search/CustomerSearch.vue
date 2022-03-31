@@ -16,6 +16,7 @@
       placeholder="Search..."
       label="label"
       track-by="label"
+      :disabled="isDisabled"
       :preselect-first="true"
       :limit="10"
       @search-change="searchCustomers"
@@ -49,6 +50,10 @@ export default {
   props: {
     previousValue: [Object, String, Function],
     createOnly: {
+      type: Boolean,
+      default: false,
+    },
+    isDisabled: {
       type: Boolean,
       default: false,
     },

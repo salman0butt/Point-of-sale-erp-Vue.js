@@ -12,19 +12,27 @@
 
         <form @submit.prevent="saveData()" v-if="!isContinue && form.terminal">
           <CRow>
-            <CCol sm="6" md="6" class="pt-2">
-              <CRow v-for="(value, index) in form.serverValues" :key="index">
-                <CCol sm="6" md="4" class="pt-2 bolder">
-                  {{ value.denominations }}
-                </CCol>
-                <CCol sm="6" md="8" class="pt-2">
-                  <CInput
-                    type="number"
-                    v-model="form.formValues[index].input"
-                    @change="calculate()"
-                  />
-                </CCol>
-              </CRow>
+            <CCol sm="12" md="12" class="pt-2">
+              <CCol
+                sm="6"
+                md="6"
+                v-for="(value, index) in form.serverValues"
+                :key="index"
+                class="floater"
+              >
+                <CRow>
+                  <CCol sm="6" md="3" class="pt-2 bolder">
+                    {{ value.denominations }}
+                  </CCol>
+                  <CCol sm="6" md="8" class="pt-2">
+                    <CInput
+                      type="number"
+                      v-model="form.formValues[index].input"
+                      @change="calculate()"
+                    />
+                  </CCol>
+                </CRow>
+              </CCol>
             </CCol>
           </CRow>
         </form>
@@ -55,6 +63,7 @@ export default {
     isContinue: false,
     showTerminalOptions: false,
     list_terminals: [],
+    devide: "",
     form: {
       serverValues: [],
       formValues: [],
@@ -282,6 +291,9 @@ export default {
       let formValues = this.form.formValues;
       CurrencyDenominationService.getAll()
         .then(({ data }) => {
+          if (data && data.length) {
+            this.devide = Math.round(data.length / 2);
+          }
           data.map((value) => {
             denominations.push(value);
             formValues.push({
@@ -298,3 +310,9 @@ export default {
   },
 };
 </script>
+<style scoped>
+.floater {
+  display: block !important;
+  float: left !important;
+}
+</style>

@@ -21,9 +21,7 @@ export default {
         branches: "",
       },
       options: {
-        branches: [
-          { value: "", label: "Choose Branch", disabled: true, selected: "" },
-        ],
+        branches: [{ value: "", label: "Choose Branch", disabled: true, selected: "" }],
       },
       show: false,
     };
@@ -54,10 +52,7 @@ export default {
   methods: {
     saveBranch() {
       if (this.form.branches !== "" && this.form.branches !== undefined) {
-        localStorage.setItem(
-          "selected_branches",
-          JSON.stringify([this.form.branches])
-        );
+        localStorage.setItem("selected_branches", JSON.stringify([this.form.branches]));
         this.$store.commit("set_show_branch_model", false);
         this.$store.commit("set_branches", this.form.branches);
         this.$swal.fire({
@@ -66,7 +61,7 @@ export default {
           text: "Branch Updated Successfully",
           timer: 3600,
         });
-        this.$router.go(this.$router.currentRoute);
+        // this.$router.go(this.$router.currentRoute);
       }
     },
     getbranches(list) {
@@ -76,9 +71,7 @@ export default {
       ];
       let branches = this.options.branches;
       if (branch_list) {
-        const selected_branch = JSON.parse(
-          localStorage.getItem("selected_branches")
-        );
+        const selected_branch = JSON.parse(localStorage.getItem("selected_branches"));
         if (selected_branch) {
           this.form.branches = selected_branch[0];
         }

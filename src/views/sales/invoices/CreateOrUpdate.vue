@@ -597,9 +597,10 @@ export default {
         customer.defaultAddress.street.en
       ) {
         this.form.address_for_delivery = customer.defaultAddress.street.en;
-      } else {
-        this.form.address_for_delivery = "";
       }
+      // else {
+      // this.form.address_for_delivery = "";
+      // }
     },
     salesPersonSelected(person) {
       this.form.sales_persons = person;
@@ -674,6 +675,7 @@ export default {
               this.form.total_price_with_delivery = res.data.total_price_with_delivery;
               this.delivery_check = true;
               this.form.address_for_delivery = res.data.address_for_delivery;
+              console.log(this.form.address_for_delivery);
             }
             this.form.sales_persons = [];
             if (res.data.salespersons && res.data.salespersons.length > 0) {

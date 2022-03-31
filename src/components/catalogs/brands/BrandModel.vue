@@ -12,6 +12,7 @@
         <h6 class="modal-title">{{ $t("brands.form.modelTitle") }}</h6>
       </template>
       <BrandForm
+        ref="brandFormRef"
         :submit="isSubmit"
         @reset-model="resetModel()"
         @reset-submit="resetSubmit()"
@@ -59,6 +60,7 @@ export default {
       this.$emit("update-table");
     },
     closeModel() {
+      this.$refs.brandFormRef.resetForm();
       this.isSubmit = false;
       this.$store.commit("set_brand_model", false);
     },

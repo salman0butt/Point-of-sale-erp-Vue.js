@@ -73,11 +73,7 @@
             </td>
           </template>
         </CDataTable>
-        <CPagination
-          v-show="pages > 1"
-          :pages="pages"
-          :active-page.sync="activePage"
-        />
+        <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
       </CCol>
     </CRow>
   </div>
@@ -182,8 +178,9 @@ export default {
       this.deleteRows = JSON.stringify([uuid]);
       this.$swal
         .fire({
-          title: "Do you want to delete this record",
-          text: "This will be record from Database",
+          title: "Are you sure you want to delete this record?",
+          text: "This will be deleted from Database",
+          icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#e55353",
           confirmButtonText: "Yes, remove it it!",
@@ -199,9 +196,7 @@ export default {
                     text: "Expense Deleted Successfully",
                     timer: 3600,
                   });
-                  this.ExpenseData = this.ExpenseData.filter(
-                    (item) => item.uuid != uuid
-                  );
+                  this.ExpenseData = this.ExpenseData.filter((item) => item.uuid != uuid);
                   this.deleteRows = [];
                 }
               })
