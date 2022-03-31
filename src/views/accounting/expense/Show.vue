@@ -21,7 +21,11 @@
               <tbody>
                 <tr>
                   <td>{{ expense.account ? expense.account.name : "-" }}</td>
-                  <td>{{ expense.amount ? expense.amount : "-" }}</td>
+                  <td>
+                    {{
+                      expense.amount_with_tax ? expense.amount_with_tax : "-"
+                    }}
+                  </td>
                   <td>{{ expense.date ? expense.date : "-" }}</td>
                   <td>{{ expense.ref_id ? expense.ref_id : "-" }}</td>
                   <td>{{ expense.status ? expense.status : "-" }}</td>
@@ -50,7 +54,11 @@
                   class="display-attachment-row"
                 >
                   <CIcon :content="$options.cisFile" />
-                  <a v-bind:href="doc.path" target="_blank" class="name-attachment">
+                  <a
+                    v-bind:href="doc.path"
+                    target="_blank"
+                    class="name-attachment"
+                  >
                     {{ doc.name }}</a
                   >
                 </li>
@@ -65,7 +73,13 @@
 <script>
 import ExpenseService from "@/services/accounting/expense/ExpenseService";
 import Loader from "@/components/layouts/Loader.vue";
-import { cilPencil, cilTrash, cilEye, cisFile, cisWallet } from "@coreui/icons-pro";
+import {
+  cilPencil,
+  cilTrash,
+  cilEye,
+  cisFile,
+  cisWallet,
+} from "@coreui/icons-pro";
 
 export default {
   name: "ShowExpense",

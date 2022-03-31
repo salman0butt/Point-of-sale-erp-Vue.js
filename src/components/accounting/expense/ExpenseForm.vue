@@ -62,7 +62,7 @@
               <CSelect
                 label="Tax"
                 :options="options.taxes"
-                :value.sync="form.tax"
+                :value.sync="form.tax_id"
                 @change="calculation()"
               />
             </CCol>
@@ -103,12 +103,14 @@
               <CSelect
                 :options="options.payment_methods"
                 :value.sync="form.payment_method"
+                :class="{ error: $v.form.payment_method.$error }"
+                @input="$v.form.payment_method.$touch()"
               />
-              <!-- <div v-if="$v.form.payment_method.$error">
+              <div v-if="$v.form.payment_method.$error">
                 <p v-if="!$v.form.payment_method.required" class="errorMsg">
                   Payment Method is required
                 </p>
-              </div> -->
+              </div>
             </CCol>
             <CCol sm="6" md="4" class="pt-2">
               <CTextarea
@@ -185,7 +187,7 @@
 <script>
 import SupplierSearch from "@/components/general/search/SupplierSearch";
 import ExpenseService from "@/services/accounting/expense/ExpenseService";
-import { required } from "vuelidate/lib/validators";
+import { required, requiredIf } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import { cilTrash, cisFile } from "@coreui/icons-pro";
 import AccountServices from "@/services/accounting/accounts/AccountServices";
@@ -221,6 +223,7 @@ export default {
       supplier_id: "",
       documents: [],
     },
+    last_percentage: 0,
     display_documents: [],
     options: {
       status: [
@@ -234,7 +237,7 @@ export default {
       payment_methods: [
         { value: "", label: "Choose Payment Method", selected: "" },
       ],
-      taxes: [{ label: "Choose Tax", selected: "" }],
+      taxes: [{ value: "", label: "Choose Tax", selected: "" }],
 
       accounts: [
         { value: "", label: "Choose Account", disabled: true, selected: "" },
@@ -249,6 +252,11 @@ export default {
         amount_with_tax: { required },
         date: { required },
         status: { required },
+        payment_method: {
+          required: requiredIf(() => {
+            return this.form.status == "approved";
+          }),
+        },
       },
     };
   },
@@ -262,16 +270,28 @@ export default {
   },
   methods: {
     calculation(check = 0) {
-      if (this.form.tax.percentage) {
-        let tax_amount =
-          this.form.amount_without_tax * (this.form.tax.percentage / 100);
-        this.form.amount_with_tax = (
-          parseFloat(this.form.amount_without_tax) + parseFloat(tax_amount)
-        ).toFixed(3);
-        this.form.tax_id = this.form.tax.uuid;
+      if (event.target.options) {
+        var options = event.target.options;
+        if (options.selectedIndex > -1) {
+          var percentage =
+            options[options.selectedIndex].getAttribute("data-percentage");
+          if (percentage == null) {
+            percentage = 0;
+          }
+          this.last_percentage = percentage;
+          var percentage2 =
+            this.form.amount_without_tax * (parseFloat(percentage) / 100);
+          this.form.amount_with_tax = (
+            parseFloat(percentage2) + parseFloat(this.form.amount_without_tax)
+          ).toFixed(3);
+        }
       } else {
-        this.form.tax_id = "";
-        this.form.amount_with_tax = this.form.amount_without_tax;
+        var percentage2 =
+          this.form.amount_without_tax *
+          (parseFloat(this.last_percentage) / 100);
+        this.form.amount_with_tax = (
+          parseFloat(percentage2) + parseFloat(this.form.amount_without_tax)
+        ).toFixed(3);
       }
     },
     getExpenseOptions() {
@@ -289,8 +309,9 @@ export default {
             if (data.taxes) {
               data.taxes.map(function (val) {
                 taxes.push({
-                  value: { uuid: val.uuid, percentage: val.percentage },
+                  value: val.uuid,
                   label: val.name,
+                  attrs: { "data-percentage": val.percentage },
                 });
               });
             }
@@ -419,15 +440,20 @@ export default {
             this.form.date = data.date;
             this.form.description = data.description;
             this.form.status = data.status;
-            this.form.tax = {
-              uuid: data.tax.uuid,
-              percentage: data.tax.percentage,
-            };
-            this.form.payment_method = data.payment_method.uuid;
-            this.form.account_id = {
-              label: data.account.name,
-              value: data.account.uuid,
-            };
+
+            if (data.tax) {
+              this.form.tax = {
+                uuid: data.tax.uuid,
+                percentage: data.tax.percentage,
+              };
+            }
+            if (data.payment_method) {
+              this.form.payment_method = data.payment_method.uuid;
+              this.form.account_id = {
+                label: data.account.name,
+                value: data.account.uuid,
+              };
+            }
 
             if (data.documents) {
               this.display_documents = [];
