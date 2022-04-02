@@ -32,15 +32,20 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      v-if="$can('show receivings')"
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
-                    > -->
+                    >
                     <CButton
                       v-if="$can('edit receivings')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      >Edit <CIcon :content="$options.cilPencil"
+                    >
+                      <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
                       v-if="$can('delete receivings')"
@@ -149,7 +154,7 @@ export default {
       this.$set(this.ReceivingData[item.id], "_selected", !val);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/receivings/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/receivings/edit/" + uuid });
