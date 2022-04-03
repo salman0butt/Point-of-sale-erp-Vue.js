@@ -74,6 +74,9 @@
               <template #user="{ item }">
                 <td>{{ item.user ? item.user : "" }}</td>
               </template>
+              <template #detail="{ item }">
+                <td v-if="item.detail"><span v-html="item.detail"></span></td>
+              </template>
             </CDataTable>
           </CCardBody>
         </CCard>
@@ -125,6 +128,7 @@ const inventoryFields = [
   { key: "qty", label: "In/Out Qty", _style: "min-width:15%;" },
   { key: "balance", label: "Balance", _style: "min-width:15%;" },
   { key: "expiry_date", label: "EXPIRY DATE", _style: "min-width:15%" },
+  { key: "detail", label: "Detail", _style: "min-width:15%" },
 ];
 const unitFields = [
   { key: "name", label: "Name", _style: "min-width:40%" },
@@ -281,13 +285,26 @@ export default {
                 let date = item.date;
                 let qty = item.qty;
                 let module = "";
+                let detail = "";
 
                 if (item.type == "receiving") {
                   module = "Receiving";
+                  detail =
+                    "<a href='/receivings/show/" +
+                    item.type_uuid +
+                    "'>Detail</a>";
                 } else if (item.type == "sales") {
+                  detail =
+                    "<a href='/sales/invoices/show/" +
+                    item.type_uuid +
+                    "'>Detail</a>";
                   module = "Sales";
                 } else if (item.type == "damage") {
                   module = "Damage";
+                  detail =
+                    "<a href='/catalogs/damages/show/" +
+                    item.type_uuid +
+                    "'>Detail</a>";
                 } else if (item.type == "product") {
                   module = "Opening";
                 }
@@ -299,6 +316,7 @@ export default {
                   qty: qty,
                   balance: item.balance ?? "",
                   expiry_date: item.expiry_date ?? "",
+                  detail: detail,
                 });
               }
             });

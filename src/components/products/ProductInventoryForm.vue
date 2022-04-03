@@ -286,19 +286,19 @@ export default {
                 if (item.type == "receiving") {
                   module = "Receiving";
                   detail =
-                    "<a href='/receivings/edit/" +
+                    "<a href='/receivings/show/" +
                     item.type_uuid +
                     "'>Detail</a>";
                 } else if (item.type == "sales") {
                   detail =
-                    "<a href='/sales/invoices/edit/" +
+                    "<a href='/sales/invoices/show/" +
                     item.type_uuid +
                     "'>Detail</a>";
                   module = "Sales";
                 } else if (item.type == "damage") {
                   module = "Damage";
                   detail =
-                    "<a href='/catalogs/damages/edit/" +
+                    "<a href='/catalogs/damages/show/" +
                     item.type_uuid +
                     "'>Detail</a>";
                 } else if (item.type == "product") {
