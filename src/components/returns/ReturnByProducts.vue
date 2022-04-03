@@ -33,7 +33,9 @@
                         <td>{{ item.name }}</td>
                         <td>{{ item.barcode }}</td>
                         <td>{{ item.serial_number }}</td>
-                        <td>{{ item.price ? item.price.cost_price : "N/A" }}</td>
+                        <td>
+                          {{ item.price ? item.price.selling_price_with_tax : "N/A" }}
+                        </td>
                         <td>
                           <CButton block color="success" @click="addReturn(index)"
                             >Add Return</CButton
