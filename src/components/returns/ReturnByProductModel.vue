@@ -20,10 +20,10 @@
       />
       <template #footer>
         <CButton @click="closeModel()" color="danger">Close</CButton>
-        <CButton v-if="!isReplace" @click="saveReturnByInvoice()" color="success"
+        <CButton v-if="!isReplace" @click="saveReturnByProduct()" color="success"
           >Save</CButton
         >
-        <CButton v-else @click="nextReturnByInvoice()" color="success">Next</CButton>
+        <CButton v-else @click="nextReturnByProduct()" color="success">Next</CButton>
       </template>
     </CModal>
   </div>
@@ -73,7 +73,7 @@ export default {
     changeReplacement(val) {
       this.isReplace = val;
     },
-    nextReturnByInvoice() {
+    nextReturnByProduct() {
       const id = this.product.uuid;
       this.$store.commit("set_return_by_product_model", false);
       this.$router.push({ path: "/returns/new/" + id });
