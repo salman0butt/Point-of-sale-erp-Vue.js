@@ -4,6 +4,7 @@ import auth from '@/middleware/auth'
 const IndexReceiving = () => import('@/views/receivings/Index')
 const CreateReceiving = () => import('@/views/receivings/Create')
 const EditReceiving = () => import('@/views/receivings/Edit')
+const ShowReceiving = () => import('@/views/receivings/Show')
 
 const receivingRoutes =  {
     path: 'receivings',
@@ -28,6 +29,11 @@ const receivingRoutes =  {
         path: 'edit/:id',
         name: 'EditReceiving',
         component: EditReceiving
+      },
+      {
+        path: 'show/:id',
+        name: 'ShowReceiving',
+        component: ShowReceiving
       }
     ]
 };

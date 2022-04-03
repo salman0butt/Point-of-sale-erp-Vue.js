@@ -69,10 +69,14 @@
                     placeholder="0.000"
                     :class="{ error: $v.form.amount.$error }"
                     @input="$v.form.amount.$touch()"
+                    min="0"
                   />
                   <div v-if="$v.form.amount.$error">
                     <p v-if="!$v.form.amount.required" class="errorMsg">
                       Amount is required
+                    </p>
+                    <p v-if="!$v.form.amount.minValue" class="errorMsg">
+                      Amount Should be greater then 0.
                     </p>
                   </div>
                 </CCol>
@@ -158,7 +162,7 @@
 <script>
 import Loader from "@/components/layouts/Loader.vue";
 import BillPaymentService from "@/services/accounting/bill/BillPaymentService";
-import { required } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 import SupplierSearch from "@/components/general/search/SupplierSearch";
 // import SelectSalePerson from "@/components/general/SelectSalePerson";
 import Multiselect from "vue-multiselect";
@@ -216,7 +220,7 @@ export default {
         supplier_id: { required },
         // sales_persons: { required },
         payment_method_id: { required },
-        amount: { required },
+        amount: { required, minValue: minValue(1) },
         dated: { required },
       },
     };
@@ -241,20 +245,7 @@ export default {
         console.log(err);
       });
 
-    BillService.getAll(1, 100)
-      .then(({ data }) => {
-        let bill = this.options.bills;
-        data.data.map((value, index) => {
-          bill.push({
-            label: value.bill_no,
-            value: value.uuid,
-            bill: value,
-          });
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.getBills();
 
     // if (this.form.id !== "" && this.form.id !== undefined) {
     //   this.isEditing = true;
@@ -322,6 +313,23 @@ export default {
     },
   },
   methods: {
+    getBills() {
+      this.options.bills = [];
+      BillService.getAll(1, 100)
+        .then(({ data }) => {
+          let bill = this.options.bills;
+          data.data.map((value, index) => {
+            bill.push({
+              label: value.bill_no,
+              value: value.uuid,
+              bill: value,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     supplierChange(val) {
       this.form.supplier_id = val;
     },
@@ -366,6 +374,7 @@ export default {
               });
 
               this.resetForm();
+              this.getBills();
             }
             this.$store.commit("close_loader");
           })
@@ -396,7 +405,7 @@ export default {
           };
         }
 
-        this.form.amount = bill.grand_total;
+        this.form.amount = bill.balance;
       }
       //  else {
       //   this.resetForm();
