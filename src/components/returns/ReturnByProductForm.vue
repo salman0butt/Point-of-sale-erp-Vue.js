@@ -237,8 +237,7 @@ export default {
     },
     updateQty() {
       this.form.total_price = (
-        parseFloat(this.form.qty) *
-        parseFloat(this.product.price.selling_price_without_tax)
+        parseFloat(this.form.qty) * parseFloat(this.product.price.selling_price_with_tax)
       ).toFixed(3);
       this.form.return_cash = this.form.total_price;
     },

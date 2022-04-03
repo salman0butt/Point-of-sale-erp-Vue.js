@@ -7,11 +7,11 @@
             <CCol sm="6" md="6" class="pt-2">
               <CRow>
                 <CCol sm="6" md="4" class="pt-2 bolder"> Date: </CCol>
-                <CCol sm="6" md="8" class="pt-2"> 00/00/2022 </CCol>
+                <CCol sm="6" md="8" class="pt-2"> {{ form.date }} </CCol>
               </CRow>
               <CRow>
                 <CCol sm="6" md="4" class="pt-2 bolder"> Time: </CCol>
-                <CCol sm="6" md="8" class="pt-2"> 00:00 AM </CCol>
+                <CCol sm="6" md="8" class="pt-2"> {{ form.time }} </CCol>
               </CRow>
             </CCol>
           </CRow>
@@ -92,12 +92,14 @@
 // import { required } from "vuelidate/lib/validators";
 // import { smsMixin } from "@/mixins/plugins/smsMixin";
 // import SmsPluginModel from "@/components/plugins/sms/SmsPluginModel";
+import { globalMixin } from "@/mixins/globalMixin";
+
 export default {
   name: "OpeningForm",
   // components: {
   //   SmsPluginModel,
   // },
-  // mixins: [smsMixin],
+  mixins: [globalMixin],
   props: {
     submit: {
       type: Boolean,
@@ -106,7 +108,9 @@ export default {
   },
   data: () => ({
     form: {
-      name: "",
+      date: "",
+      time: "",
+      total_sales: "",
     },
     options: {
       type: [{ value: "", label: "Choose type", disabled: true, selected: "" }],
@@ -130,10 +134,17 @@ export default {
         this.$emit("reset-model");
       }
     },
+    showClosingModel() {
+      this.form.date = this.calculateTodayDate();
+      this.form.time = new Date().toLocaleTimeString();
+    },
   },
   computed: {
     submitForm() {
       return this.submit;
+    },
+    showClosingModel() {
+      return this.$store.getters.getClosingModel;
     },
   },
   methods: {
