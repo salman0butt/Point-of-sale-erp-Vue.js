@@ -77,6 +77,9 @@
                     <p v-if="!$v.form.amount.required" class="errorMsg">
                       Amount is required
                     </p>
+                    <p v-if="!$v.form.amount.minValue" class="errorMsg">
+                      Amount Should be greater then 0.
+                    </p>
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
@@ -161,7 +164,7 @@
 <script>
 import Loader from "@/components/layouts/Loader.vue";
 import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
-import { required } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 import CustomerSearch from "@/components/general/search/CustomerSearch";
 import SelectSalePerson from "@/components/general/SelectSalePerson";
 import Multiselect from "vue-multiselect";
@@ -218,7 +221,7 @@ export default {
         customer: { required },
         sales_persons: { required },
         paymentMethod: { required },
-        amount: { required },
+        amount: { required, minValue: minValue(1) },
         dated: { required },
       },
     };
@@ -243,20 +246,7 @@ export default {
         console.log(err);
       });
 
-    InvoiceService.getAll(1, 100)
-      .then(({ data }) => {
-        let invoice = this.options.invoice;
-        data.data.map((value, index) => {
-          invoice.push({
-            label: value.invoice_ref_no,
-            value: value.uuid,
-            invoice: value,
-          });
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.getInvoices();
 
     // if (this.form.id !== "" && this.form.id !== undefined) {
     //   this.isEditing = true;
@@ -320,6 +310,23 @@ export default {
     },
   },
   methods: {
+    getInvoices() {
+      this.options.invoice = [];
+      InvoiceService.getAll(1, 100)
+        .then(({ data }) => {
+          let invoice = this.options.invoice;
+          data.data.map((value, index) => {
+            invoice.push({
+              label: value.invoice_ref_no,
+              value: value.uuid,
+              invoice: value,
+            });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     customerSelected(customer) {
       this.form.customer = customer.value;
     },
@@ -347,7 +354,7 @@ export default {
           });
         }
 
-        this.form.amount = invoice.grand_total;
+        this.form.amount = invoice.balance;
       }
       // else {
       // this.resetForm();
@@ -381,6 +388,7 @@ export default {
               });
 
               this.resetForm();
+              this.getInvoices();
             }
             this.$store.commit("close_loader");
           })

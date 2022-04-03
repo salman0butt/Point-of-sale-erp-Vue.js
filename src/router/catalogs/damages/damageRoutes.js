@@ -4,6 +4,7 @@ import auth from '@/middleware/auth'
 const IndexDamage = () => import('@/views/catalogs/damages/Index')
 const CreateDamage = () => import('@/views/catalogs/damages/CreateOrUpdate')
 const EditDamage = () => import('@/views/catalogs/damages/CreateOrUpdate')
+const ShowDamage = () => import('@/views/catalogs/damages/Show')
 
 const damageRoutes =  {
     path: '/catalogs/damages',
@@ -28,6 +29,11 @@ const damageRoutes =  {
         path: '/catalogs/damages/edit/:id',
         name: 'Edit Damage',
         component: EditDamage
+      },
+      {
+        path: '/catalogs/damages/show/:id',
+        name: 'Show Damage',
+        component: ShowDamage
       }
     ]
 };

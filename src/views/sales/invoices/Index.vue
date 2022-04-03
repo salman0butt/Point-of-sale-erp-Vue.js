@@ -58,6 +58,11 @@
                   />
                 </td>
               </template>
+              <template #balance="{ item }">
+                <td>
+                  {{ item.balance ? item.balance : "" }}
+                </td>
+              </template>
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
@@ -112,6 +117,7 @@ const fields = [
   { key: "dated", label: "Dated", _style: "min-width:40%" },
   { key: "due_date", label: "Due Date", _style: "min-width:15%;" },
   { key: "grand_total", label: "Grand Total", _style: "min-width:15%;" },
+  { key: "balance", label: "Balance", _style: "min-width:15%;" },
   { key: "actions", label: "ACTIONS", _style: "min-width:15%;" },
 ];
 

@@ -7,7 +7,6 @@
           <CCardBody>
             <div>
               <router-link
-                v-if="$can('create product-damages')"
                 class="btn btn-success"
                 to="/catalogs/damages/create"
                 style="float: right"
@@ -32,15 +31,20 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton
+                      v-if="$can('show product-damages')"
+                      @click="viewRow(item.uuid)"
+                      class="btn-sm"
+                      color="success"
                       >View</CButton
-                    > -->
+                    >
                     <CButton
                       v-if="$can('edit product-damages')"
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
-                      >Edit <CIcon :content="$options.cilPencil"
+                    >
+                      <CIcon :content="$options.cilPencil"
                     /></CButton>
                     <CButton
                       v-if="$can('delete product-damages')"
@@ -108,7 +112,7 @@ export default {
       this.getServerData(DamageService, page, per_page);
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/catalogs/damages/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/catalogs/damages/edit/" + uuid });
