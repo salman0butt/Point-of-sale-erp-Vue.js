@@ -112,9 +112,7 @@
                     <tr>
                       <td class="left"><strong>Balance</strong></td>
                       <td class="right">
-                        {{
-                          payment.amount ? payment.bill.grand_total - payment.amount : "-"
-                        }}
+                        {{ payment.bill ? payment.bill.balance : "-" }}
                       </td>
                     </tr>
                   </tbody>

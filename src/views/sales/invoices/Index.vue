@@ -14,6 +14,15 @@
             > -->
 
             <CButton
+              v-if="showClosingButton"
+              color="warning"
+              style="float: right; margin-left: 5px; color: #fff"
+              @click="closing()"
+            >
+              Closing</CButton
+            >
+
+            <CButton
               v-if="$can('create invoices')"
               color="success"
               style="float: right"
@@ -103,6 +112,7 @@
       </CCol>
     </CRow>
     <OpeningModel />
+    <ClosingModel />
   </div>
 </template>
 
@@ -111,6 +121,9 @@ import InvoiceService from "@/services/sale/InvoiceService";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
 import OpeningModel from "@/components/dashboard/OpeningModel";
 import Loader from "@/components/layouts/Loader";
+import ClosingModel from "@/components/dashboard/ClosingModel";
+import SettingService from "@/services/settings/SettingService";
+
 const fields = [
   { key: "invoice_ref_no", label: "Ref No", _style: "min-width:15%;" },
   { key: "customer", label: "Customer", _style: "min-width:40%" },
@@ -123,13 +136,14 @@ const fields = [
 
 export default {
   name: "IndexQuotations",
-  components: { OpeningModel, Loader },
+  components: { OpeningModel, Loader, ClosingModel },
   cilPencil,
   cilTrash,
   cilEye,
   data() {
     return {
       serverData: [],
+      showClosingButton: false,
       fields,
       // cards: {
       //   employees_count: 0,
@@ -146,6 +160,7 @@ export default {
   },
   created() {
     this.getServerData();
+    this.checkOpeningSettings();
   },
   watch: {
     activePage() {
@@ -239,6 +254,25 @@ export default {
         this.$store.commit("set_opening_model", true);
       }
     },
+    checkOpeningSettings() {
+      let type = "general";
+      this.$store.commit("set_loader");
+      SettingService.getAll(type)
+        .then(({ data }) => {
+          if (data) {
+            data.map((item) => {
+              if (item.key === "open_and_close" && item.value === "on") {
+                this.showClosingButton = true;
+              }
+            });
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((error) => {
+          this.$store.commit("close_loader");
+          console.log(error);
+        });
+    },
     setPagination(meta) {
       this.activePage = parseInt(meta.current_page);
       this.pages = parseInt(meta.last_page);
@@ -248,6 +282,9 @@ export default {
     changePagination(value) {
       this.perPage = parseInt(value);
       this.getServerData(this.activePage, this.perPage);
+    },
+    closing() {
+      this.$store.commit("set_closing_model", true);
     },
   },
 };

@@ -175,7 +175,7 @@
       </CCol> -->
       </CRow>
       <!-- <OpeningModel /> -->
-      <ClosingModel />
+      <!-- <ClosingModel /> -->
     </div>
   </div>
 </template>
@@ -183,8 +183,8 @@
 <script>
 import BarChart from "@/components/dashboard/BarChart";
 import PieChart from "@/components/dashboard/PieChart";
-import OpeningModel from "@/components/dashboard/OpeningModel";
-import ClosingModel from "@/components/dashboard/ClosingModel";
+// import OpeningModel from "@/components/dashboard/OpeningModel";
+// import ClosingModel from "@/components/dashboard/ClosingModel";
 import DashboardService from "@/services/dashboard/DashboardService";
 import Loader from "@/components/layouts/Loader";
 const recentTransactionFields = [
@@ -227,7 +227,7 @@ const monthNames = [
 ];
 export default {
   name: "Dashboard",
-  components: { BarChart, PieChart, OpeningModel, ClosingModel, Loader },
+  components: { BarChart, PieChart, Loader },
   data() {
     return {
       recentTransactions: [],
