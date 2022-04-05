@@ -248,12 +248,16 @@ export default {
                         .catch((error) => {
                           console.log(error);
                           this.isContinue = false;
+                          this.$store.commit("set_show_closing_button", false);
+                          this.$store.commit("set_show_opening_form", true);
                         });
                     }
                   })
                   .catch((error) => {
                     console.log(error);
                     this.isContinue = false;
+                    this.$store.commit("set_show_closing_button", false);
+                    this.$store.commit("set_show_opening_form", true);
                   });
               } else if (data.open_and_close === "off") {
                 BranchServices.get(selected_branch[0])
@@ -262,6 +266,8 @@ export default {
                       BranchTerminalServices.get(selected_branch[0]).then(({ data }) => {
                         if (data && data.length > 0) {
                           localStorage.setItem("terminal_id", data[0].uuid);
+                          this.$store.commit("set_show_closing_button", false);
+                          this.$store.commit("set_show_opening_form", true);
                         }
                       });
                     }
