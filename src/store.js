@@ -53,6 +53,8 @@ const state = {
   smsCredits: 0,
   smsPluginModel: false,
   billPaymentModel: false,
+  showClosingButton: false,
+  showOpeningForm: false,
 }
 
 const mutations = {
@@ -201,7 +203,14 @@ const mutations = {
   },
   set_bill_payment_model(state, status) {
     state.billPaymentModel = status;
+  },
+  set_show_closing_button(state, status) {
+    state.showClosingButton = status;
+  },
+  set_show_opening_form(state, status) {
+    state.showOpeningForm = status;
   }
+
 
 
 
@@ -343,7 +352,8 @@ const getters = {
   getSmsCredits: state => state.smsCredits,
   getSmsPluginModel: state => state.smsPluginModel,
   getBillPaymentModel: state => state.billPaymentModel,
-
+  getShowClosingButton: state => state.showClosingButton,
+  getShowOpeningForm: state => state.showOpeningForm,
 }
 
 export default new Vuex.Store({

@@ -18,6 +18,10 @@ class BranchTerminalServices extends Helper {
         return http.get(`/branch-terminals/${id}`);
     }
 
+    getTerminalByBranch(id) {
+        return http.get(`/branch-terminals-branch/${id}`);
+    }
+
     create(data) {
         return http.post("/branch-terminals", data, super.selectedBranch());
     }

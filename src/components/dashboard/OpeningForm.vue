@@ -63,7 +63,6 @@ export default {
     isContinue: false,
     showTerminalOptions: false,
     list_terminals: [],
-    devide: "",
     form: {
       serverValues: [],
       formValues: [],
@@ -79,7 +78,6 @@ export default {
     submitForm() {
       if (this.submit) {
         this.saveOpening();
-        this.$emit("reset-model");
       }
     },
     continue(val) {
@@ -87,6 +85,16 @@ export default {
     },
     branchChnaged(val) {
       this.getDependencies();
+    },
+    showOpeningForm(val) {
+      if (val) {
+        this.isContinue = false;
+      }
+    },
+    showClosingButton(val) {
+      if (val) {
+        this.isContinue = false;
+      }
     },
   },
   computed: {
@@ -98,6 +106,12 @@ export default {
     },
     branchChnaged() {
       return this.$store.getters.getBranches;
+    },
+    showClosingButton() {
+      return this.$store.getters.getShowClosingButton;
+    },
+    showOpeningForm() {
+      return this.$store.getters.getShowOpeningForm;
     },
   },
   methods: {
@@ -142,6 +156,7 @@ export default {
               text: "Opening Created Successfully",
               timer: 3600,
             });
+            this.$emit("reset-model");
             this.getDependencies();
             this.$emit("hide-total");
             this.$store.commit("set_opening_model", false);
@@ -164,7 +179,7 @@ export default {
     getDependencies() {
       this.$store.commit("set_loader");
       const terminal_id = localStorage.getItem("terminal_id");
-      if (!terminal_id) {
+      if (terminal_id) {
         let type = JSON.stringify(["open_and_close"]);
         SettingService.get(type)
           .then(async ({ data }) => {
@@ -176,7 +191,7 @@ export default {
                 BranchServices.get(selected_branch[0])
                   .then(({ data }) => {
                     if (data && data.uuid) {
-                      BranchTerminalServices.get(selected_branch[0])
+                      BranchTerminalServices.getTerminalByBranch(selected_branch[0])
                         .then(({ data }) => {
                           if (data && data.length > 0) {
                             let list_terminal = this.list_terminals;
@@ -194,27 +209,38 @@ export default {
                                 const type = records[0].type;
                                 if (type === "open") {
                                   this.isContinue = true;
+                                  this.$store.commit("set_show_opening_form", false);
+                                  this.$store.commit("set_show_closing_button", true);
                                   localStorage.setItem("terminal_id", data[0].uuid);
                                 } else {
                                   localStorage.setItem("terminal_id", data[0].uuid);
+                                  this.$store.commit("set_show_closing_button", false);
+                                  this.$store.commit("set_show_opening_form", true);
                                   this.isContinue = false;
                                   this.form.terminal = data[0].uuid;
                                 }
+                                // console.log("working 1");
                               } else {
+                                // console.log("working 2");
                                 // console.log(data[0]);
                                 this.isContinue = false;
                                 this.form.terminal = data[0].uuid;
                                 localStorage.setItem("terminal_id", data[0].uuid);
+                                this.$store.commit("set_show_opening_form", true);
+                                this.$store.commit("set_show_closing_button", false);
                               }
                             } else {
                               let terminals = this.options.terminals;
-                              data.map(function (item, id) {
-                                terminals.push({
-                                  label: item.name,
-                                  value: item.uuid,
-                                  id,
+                              if (data && data.length > 0) {
+                                data.map(function (item, id) {
+                                  terminals.push({
+                                    label: item.name,
+                                    value: item.uuid,
+                                    id,
+                                  });
                                 });
-                              });
+                              }
+
                               this.showTerminalOptions = true;
                             }
                           }
@@ -273,17 +299,24 @@ export default {
       ) {
         let type = terminal.records[0].type;
         if (type === "open") {
+          this.$store.commit("set_show_closing_button", true);
+          this.$store.commit("set_show_opening_form", false);
+
           localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = true;
           this.$store.commit("set_opening_model", false);
           this.$router.push({ path: "/sales/invoices/create" });
         } else {
+          this.$store.commit("set_show_closing_button", false);
+          this.$store.commit("set_show_opening_form", true);
           localStorage.setItem("terminal_id", terminal.uuid);
           this.isContinue = false;
         }
       } else {
         localStorage.setItem("terminal_id", terminal.uuid);
         this.isContinue = false;
+        this.$store.commit("set_show_closing_button", false);
+        this.$store.commit("set_show_opening_form", true);
       }
     },
     createMethod() {
@@ -292,16 +325,15 @@ export default {
       CurrencyDenominationService.getAll()
         .then(({ data }) => {
           if (data && data.length) {
-            this.devide = Math.round(data.length / 2);
-          }
-          data.map((value) => {
-            denominations.push(value);
-            formValues.push({
-              input: 0,
-              value: value.value,
-              denominations: value.denominations,
+            data.map((value) => {
+              denominations.push(value);
+              formValues.push({
+                input: 0,
+                value: value.value,
+                denominations: value.denominations,
+              });
             });
-          });
+          }
         })
         .catch((error) => {
           console.log(error);

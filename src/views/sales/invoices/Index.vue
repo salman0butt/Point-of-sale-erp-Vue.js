@@ -112,7 +112,7 @@
       </CCol>
     </CRow>
     <OpeningModel />
-    <ClosingModel />
+    <ClosingModel v-if="showClosingButton" @hide-button="hideButton($event)" />
   </div>
 </template>
 
@@ -143,7 +143,6 @@ export default {
   data() {
     return {
       serverData: [],
-      showClosingButton: false,
       fields,
       // cards: {
       //   employees_count: 0,
@@ -170,6 +169,15 @@ export default {
   computed: {
     items() {
       return this.serverData;
+    },
+    terminalId() {
+      return localStorage.getItem("terminal_id");
+    },
+    showClosingButton() {
+      return this.$store.getters.getShowClosingButton;
+    },
+    showOpeningForm() {
+      return this.$store.getters.getShowOpeningForm;
     },
   },
   methods: {
@@ -208,6 +216,9 @@ export default {
     },
     editRow(uuid) {
       this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    },
+    hideButton() {
+      this.$store.commit("set_show_closing_button", false);
     },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
@@ -248,7 +259,7 @@ export default {
     },
     opening() {
       // check terminal id exist in localstorage
-      if (localStorage.getItem("terminal_id")) {
+      if (localStorage.getItem("terminal_id") && !this.showOpeningForm) {
         this.$router.push({ path: "/sales/invoices/create" });
       } else {
         this.$store.commit("set_opening_model", true);
@@ -262,7 +273,9 @@ export default {
           if (data) {
             data.map((item) => {
               if (item.key === "open_and_close" && item.value === "on") {
-                this.showClosingButton = true;
+                this.$store.commit("set_show_closing_button", true);
+              } else {
+                this.$store.commit("set_show_closing_button", false);
               }
             });
           }
