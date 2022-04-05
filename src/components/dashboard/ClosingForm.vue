@@ -351,7 +351,7 @@ export default {
                 text: "Closing Created Successfully",
                 timer: 3600,
               });
-              this.$router.go(this.$router.currentRoute);
+              // this.$router.go(this.$router.currentRoute);
               this.resetForm();
               this.$store.commit("set_closing_model", false);
             }

@@ -111,7 +111,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <OpeningModel />
+    <OpeningModel :key="componentKey" />
     <ClosingModel v-if="showClosingButton" @hide-button="hideButton($event)" />
   </div>
 </template>
@@ -143,6 +143,7 @@ export default {
   data() {
     return {
       serverData: [],
+      componentKey: 0,
       fields,
       // cards: {
       //   employees_count: 0,
@@ -165,6 +166,11 @@ export default {
     activePage() {
       this.getServerData(this.activePage, this.perPage);
     },
+    showClosingButton(val) {
+      // if (val) {
+      this.forceRerender();
+      // }
+    },
   },
   computed: {
     items() {
@@ -181,6 +187,9 @@ export default {
     },
   },
   methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
     getServerData() {
       this.$store.commit("set_loader");
       InvoiceService.getAll(this.activePage, this.perPage)
