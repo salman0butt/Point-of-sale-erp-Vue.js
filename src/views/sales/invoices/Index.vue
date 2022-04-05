@@ -111,8 +111,8 @@
         </CCard>
       </CCol>
     </CRow>
-    <OpeningModel />
-    <ClosingModel />
+    <OpeningModel :key="componentKey" />
+    <ClosingModel v-if="showClosingButton" @hide-button="hideButton($event)" />
   </div>
 </template>
 
@@ -143,7 +143,7 @@ export default {
   data() {
     return {
       serverData: [],
-      showClosingButton: false,
+      componentKey: 0,
       fields,
       // cards: {
       //   employees_count: 0,
@@ -166,13 +166,30 @@ export default {
     activePage() {
       this.getServerData(this.activePage, this.perPage);
     },
+    showClosingButton(val) {
+      // if (val) {
+      this.forceRerender();
+      // }
+    },
   },
   computed: {
     items() {
       return this.serverData;
     },
+    terminalId() {
+      return localStorage.getItem("terminal_id");
+    },
+    showClosingButton() {
+      return this.$store.getters.getShowClosingButton;
+    },
+    showOpeningForm() {
+      return this.$store.getters.getShowOpeningForm;
+    },
   },
   methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
     getServerData() {
       this.$store.commit("set_loader");
       InvoiceService.getAll(this.activePage, this.perPage)
@@ -208,6 +225,9 @@ export default {
     },
     editRow(uuid) {
       this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    },
+    hideButton() {
+      this.$store.commit("set_show_closing_button", false);
     },
     deleteRow(uuid) {
       this.deleteRows = JSON.stringify([uuid]);
@@ -248,7 +268,7 @@ export default {
     },
     opening() {
       // check terminal id exist in localstorage
-      if (localStorage.getItem("terminal_id")) {
+      if (localStorage.getItem("terminal_id") && !this.showOpeningForm) {
         this.$router.push({ path: "/sales/invoices/create" });
       } else {
         this.$store.commit("set_opening_model", true);
@@ -262,7 +282,9 @@ export default {
           if (data) {
             data.map((item) => {
               if (item.key === "open_and_close" && item.value === "on") {
-                this.showClosingButton = true;
+                this.$store.commit("set_show_closing_button", true);
+              } else {
+                this.$store.commit("set_show_closing_button", false);
               }
             });
           }

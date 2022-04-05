@@ -18,12 +18,16 @@
           data-dismiss="modal"
           aria-label="Close"
           style="outline: none"
-          @click="closeModel"
+          @click="closeModel()"
         >
           <CIcon :content="$options.cisX" />
         </button>
       </template>
-      <ClosingForm :submit="isSubmit" @reset-model="resetModel()" />
+      <ClosingForm
+        :submit="isSubmit"
+        @reset-model="resetModel()"
+        @hide-button="hideButton()"
+      />
 
       <template #footer> </template>
     </CModal>
@@ -50,6 +54,9 @@ export default {
     },
   },
   methods: {
+    hideButton() {
+      this.$emit("hide-button");
+    },
     resetModel() {
       this.isSubmit = false;
       this.$store.commit("set_closing_model", false);
