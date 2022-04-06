@@ -24,6 +24,9 @@ export default {
     selectedBranches() {
       return this.$store.getters.getBranches;
     },
+    closing() {
+      return this.$store.getters.getClosingDone;
+    },
   },
   watch: {
     async languageChanged() {
@@ -31,6 +34,12 @@ export default {
     },
     selectedBranches() {
       this.forceRerender();
+    },
+    closing(val) {
+      if (val) {
+        this.forceRerender();
+        this.$store.commit("set_closing_done", false);
+      }
     },
   },
   methods: {

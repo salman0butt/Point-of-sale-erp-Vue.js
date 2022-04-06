@@ -185,10 +185,11 @@ export default {
   },
   watch: {
     submitForm() {
-      alert("submit");
       // this.$v.$touch(); //&& !this.$v.$invalid
       if (this.submit) {
         this.saveData();
+        this.$emit("reset-model");
+      } else {
         this.$emit("reset-model");
       }
     },
@@ -217,7 +218,7 @@ export default {
         .then(({ data }) => {
           if (data) {
             this.form.items = data.data;
-            console.log(this.form.items);
+            // console.log(this.form.items);
 
             // this.form.payment_methods = data.data[0].payment_method;
             this.form.total_amount = data.total_amount;
@@ -328,7 +329,7 @@ export default {
         const data = {
           terminal_id: terminal_id,
           type: "close",
-          total: this.form.total,
+          total: this.form.total_new_opening,
           details: storeValue,
           note: this.form.note,
           date: this.form.date,
@@ -336,7 +337,7 @@ export default {
           total_amount: this.form.total_amount,
           total_cash: this.form.total_cash,
           total_opening_amount: this.form.total_opening,
-          grand_total: this.form.grand_total,
+          grand_total: this.form.total,
           payment_methods: this.form.items,
         };
         this.$http
@@ -354,6 +355,7 @@ export default {
               // this.$router.go(this.$router.currentRoute);
               this.resetForm();
               this.$store.commit("set_closing_model", false);
+              this.$store.commit("set_closing_done", true);
             }
           })
           .catch((error) => {

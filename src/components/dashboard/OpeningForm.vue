@@ -179,6 +179,7 @@ export default {
     getDependencies() {
       this.$store.commit("set_loader");
       const terminal_id = localStorage.getItem("terminal_id");
+      console.log(terminal_id);
       if (terminal_id) {
         let type = JSON.stringify(["open_and_close"]);
         SettingService.get(type)
@@ -263,18 +264,22 @@ export default {
                 BranchServices.get(selected_branch[0])
                   .then(({ data }) => {
                     if (data && data.uuid) {
-                      BranchTerminalServices.get(selected_branch[0]).then(({ data }) => {
-                        if (data && data.length > 0) {
-                          localStorage.setItem("terminal_id", data[0].uuid);
-                          this.$store.commit("set_show_closing_button", false);
-                          this.$store.commit("set_show_opening_form", true);
+                      BranchTerminalServices.getTerminalByBranch(selected_branch[0]).then(
+                        ({ data }) => {
+                          if (data && data.length > 0) {
+                            localStorage.setItem("terminal_id", data[0].uuid);
+                            this.$store.commit("set_show_closing_button", false);
+                            this.$store.commit("set_show_opening_form", true);
+                          }
                         }
-                      });
+                      );
                     }
                   })
                   .catch((error) => {
                     console.log(error);
                     this.isContinue = false;
+                    this.$store.commit("set_opening_model", false);
+                    this.$router.push({ path: "/sales/invoices/create" });
                   });
               } else {
                 this.isContinue = true;
@@ -287,7 +292,56 @@ export default {
             console.log(error);
           });
       } else {
-        this.isContinue = true;
+        const selected_branch = this.getSelectedBranch();
+        BranchServices.get(selected_branch[0])
+          .then(({ data }) => {
+            if (data && data.uuid) {
+              BranchTerminalServices.getTerminalByBranch(selected_branch[0]).then(
+                ({ data }) => {
+                  if (data && data.length > 0) {
+                    let list_terminal = this.list_terminals;
+                    data.map(function (item, id) {
+                      list_terminal.push({ ...item, id });
+                    });
+
+                    if (
+                      data[0] &&
+                      data[0].records &&
+                      data[0].records[0] &&
+                      data[0].records[0].type
+                    ) {
+                      const records = data[0].records;
+                      const type = records[0].type;
+                      if (type === "open") {
+                        this.isContinue = true;
+                        this.$store.commit("set_show_opening_form", false);
+                        this.$store.commit("set_show_closing_button", true);
+                        localStorage.setItem("terminal_id", data[0].uuid);
+                        this.form.terminal = data[0].uuid;
+                      } else {
+                        localStorage.setItem("terminal_id", data[0].uuid);
+                        this.$store.commit("set_show_closing_button", false);
+                        this.$store.commit("set_show_opening_form", true);
+                        this.isContinue = false;
+                        this.form.terminal = data[0].uuid;
+                      }
+                    } else {
+                      localStorage.setItem("terminal_id", data[0].uuid);
+                      this.$store.commit("set_show_closing_button", false);
+                      this.$store.commit("set_show_opening_form", true);
+                      this.isContinue = false;
+                      this.form.terminal = data[0].uuid;
+                    }
+                  }
+                }
+              );
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.isContinue = false;
+            this.$store.commit("set_opening_model", false);
+          });
       }
       this.$store.commit("close_loader");
     },
