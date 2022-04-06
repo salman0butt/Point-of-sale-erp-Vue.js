@@ -8,7 +8,7 @@
             <form @submit.prevent="isEditing ? updateProductPrice() : saveProductPrice()">
               <CRow>
                 <Loader />
-                <CCol sm="4" md="4" class="pt-2">
+                <CCol sm="6" md="6" class="pt-2">
                   <AccountDropdown
                     :labelText="'While Purchase Account'"
                     :previousValue="product.purchase_account_id"
@@ -17,7 +17,7 @@
                     @getAccountDropdown="getAccountDropdown($event, 'purchase')"
                   />
                 </CCol>
-                <CCol sm="2" md="2" class="pt-2">
+                <CCol sm="6" md="6" class="pt-2">
                   <CInput
                     label="Cost Price"
                     type="number"
@@ -33,7 +33,9 @@
                     </p>
                   </div>
                 </CCol>
-                <CCol sm="4" md="4" class="pt-2">
+              </CRow>
+              <CRow>
+                <CCol sm="6" md="6" class="pt-2">
                   <AccountDropdown
                     :labelText="'While Sale Account'"
                     defaultSelect="-- Sales"
@@ -42,7 +44,7 @@
                     @getAccountDropdown="getAccountDropdown($event, 'sale')"
                   />
                 </CCol>
-                <CCol sm="2" md="2" class="pt-2">
+                <CCol sm="6" md="6" class="pt-2">
                   <CInput
                     label="Selling Price"
                     type="number"
@@ -65,6 +67,8 @@
                     </p>
                   </div>
                 </CCol>
+              </CRow>
+              <CRow>
                 <CCol sm="3" md="3" class="pt-2">
                   <CSelect
                     label="Tax Type"
@@ -334,7 +338,7 @@ export default {
         this.product.inclusive_tax = data.inclusive_tax === 1 ? true : false;
         this.product.tax = data.tax?.uuid;
         if (data.inclusive_tax) {
-          this.product.org_selling = data.selling_price_without_tax ?? 0;
+          this.product.org_selling = data.selling_price_without_tax?.toFixed(3) ?? 0;
           this.product.selling_price_without_tax = data.selling_price_with_tax ?? 0;
           this.calculateTotal();
         } else {
@@ -558,7 +562,7 @@ export default {
         if (percentage) {
           let org_selling =
             selling_price_without_tax / (1 + parseFloat(percentage) / 100);
-          this.product.org_selling = org_selling;
+          this.product.org_selling = org_selling?.toFixed(3);
           let total_price_with_tax = parseFloat(selling_price_without_tax);
           this.product.selling_price_with_tax = total_price_with_tax
             ? total_price_with_tax.toFixed(3)
