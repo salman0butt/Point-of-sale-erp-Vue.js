@@ -111,7 +111,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <OpeningModel :key="componentKey" />
+    <OpeningModel />
     <ClosingModel v-if="showClosingButton" @hide-button="hideButton($event)" />
   </div>
 </template>
@@ -165,11 +165,6 @@ export default {
   watch: {
     activePage() {
       this.getServerData(this.activePage, this.perPage);
-    },
-    showClosingButton(val) {
-      // if (val) {
-      this.forceRerender();
-      // }
     },
   },
   computed: {

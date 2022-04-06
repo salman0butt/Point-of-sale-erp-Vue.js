@@ -55,6 +55,7 @@ const state = {
   billPaymentModel: false,
   showClosingButton: false,
   showOpeningForm: false,
+  closingDone: false,
 }
 
 const mutations = {
@@ -209,7 +210,11 @@ const mutations = {
   },
   set_show_opening_form(state, status) {
     state.showOpeningForm = status;
+  },
+  set_closing_done(state, status) {
+    state.closingDone = status;
   }
+
 
 
 
@@ -354,6 +359,7 @@ const getters = {
   getBillPaymentModel: state => state.billPaymentModel,
   getShowClosingButton: state => state.showClosingButton,
   getShowOpeningForm: state => state.showOpeningForm,
+  getClosingDone: state => state.closingDone,
 }
 
 export default new Vuex.Store({
