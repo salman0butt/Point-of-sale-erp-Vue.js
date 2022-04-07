@@ -127,52 +127,62 @@
                 <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
                   <CInput label="Address" v-model="form.address_for_delivery" />
                 </CCol>
+              </CRow>
+              <CRow>
+                <CCol md="8" sm="4">
+                  <CCol sm="12" md="12" class="p-0">
+                    <Label>Payment Terms </Label>
+                    <vue-editor
+                      id="editor1"
+                      v-model="form.payment_terms"
+                      :editor-toolbar="customToolbar"
+                    ></vue-editor>
+                  </CCol>
+                  <CCol sm="12" md="12" class="p-0 mt-2">
+                    <Label>Terms And Conditions </Label>
+                    <vue-editor
+                      id="editor2"
+                      v-model="form.terms_and_conditions"
+                      :editor-toolbar="customToolbar"
+                    ></vue-editor>
+                  </CCol>
+                </CCol>
+                <CCol md="4" sm="4">
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Sub Total" readonly :value="subTotal" />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Tax Total" readonly :value="taxTotal" />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Total Discount" readonly :value="totalDiscount" />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Total" readonly :value="allTotal" />
+                  </CCol>
 
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Sub Total" readonly :value="subTotal" />
+                  <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                    <CInput
+                      label="Delivery"
+                      readonly
+                      :value="form.delivery_method_price"
+                    />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                    <CInput
+                      label="Total Price With Delivery"
+                      readonly
+                      :value="form.total_price_with_delivery"
+                    />
+                  </CCol>
                 </CCol>
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Tax Total" readonly :value="taxTotal" />
-                </CCol>
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Total Discount" readonly :value="totalDiscount" />
-                </CCol>
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Total" readonly :value="allTotal" />
-                </CCol>
-
-                <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
-                  <CInput label="Delivery" readonly :value="form.delivery_method_price" />
-                </CCol>
-                <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
-                  <CInput
-                    label="Total Price With Delivery"
-                    readonly
-                    :value="form.total_price_with_delivery"
-                  />
-                </CCol>
-
-                <CCol sm="12" md="12" class="pt-2">
-                  <Label>Payment Terms </Label>
-                  <vue-editor
-                    id="editor1"
-                    v-model="form.payment_terms"
-                    :editor-toolbar="customToolbar"
-                  ></vue-editor>
-                </CCol>
-                <CCol sm="12" md="12" class="pt-2">
-                  <Label>Terms And Conditions </Label>
-                  <vue-editor
-                    id="editor2"
-                    v-model="form.terms_and_conditions"
-                    :editor-toolbar="customToolbar"
-                  ></vue-editor>
-                </CCol>
-                <CCol sm="12" md="12" class="pt-2">
+              </CRow>
+              <CRow>
+                <CCol sm="6" md="6" class="pt-2">
                   <CTextarea label="Note" placeholder="Content..." v-model="form.note" />
                 </CCol>
 
-                <CCol sm="12" md="12" class="pt-2">
+                <CCol sm="6" md="6" class="pt-2">
                   <app-upload ref="fileUpload" @file:changed="handleFile" />
 
                   <div
@@ -780,6 +790,9 @@ export default {
   height: 120px;
 }
 #editor2 {
-  height: 120px;
+  height: 250px;
+}
+.quotation-page label {
+  font-weight: bold !important;
 }
 </style>

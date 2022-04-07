@@ -3,17 +3,23 @@
     <CRow>
       <CCol xs="12" lg="12">
         <CRow>
-          <CCol sm="12" md="12" class="pt-2">
+          <CCol sm="12" md="12">
             <CInput
               label="Products"
               v-model="search"
+              class="product-input"
               @input="searchProduct()"
-              placeholder="Search..."
+              placeholder="Please add products to order list"
               v-on:keydown.enter.prevent="enterKey()"
-            /><br />
+            >
+              <template #prepend-content
+                ><CIcon :content="$options.cilBarcode"
+              /></template>
+            </CInput>
+
             <ul
               v-if="options.products && options.products.length > 0"
-              class="search-content"
+              class="search-content col-md-12"
             >
               <li
                 v-for="(item, key) in options.products"
@@ -26,19 +32,11 @@
           </CCol>
         </CRow>
         <hr v-if="form.items && form.items.length > 0" />
-        <CRow
-          v-if="
-            searchType == 'receivings' && form.items && form.items.length > 0
-          "
-        >
+        <CRow v-if="searchType == 'receivings' && form.items && form.items.length > 0">
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput
-                  label="Product"
-                  class="col-md-3"
-                  :value.sync="input.name"
-                />
+                <CInput label="Product" class="col-md-3" :value.sync="input.name" />
                 <CInput
                   label="Qty"
                   class="col-md-2"
@@ -84,17 +82,11 @@
           </CCol>
         </CRow>
 
-        <CRow
-          v-if="searchType === 'damage' && form.items && form.items.length > 0"
-        >
+        <CRow v-if="searchType === 'damage' && form.items && form.items.length > 0">
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow>
-                <CInput
-                  label="Product"
-                  class="col-md-4"
-                  :value.sync="input.name"
-                />
+                <CInput label="Product" class="col-md-4" :value.sync="input.name" />
                 <CInput
                   label="Damage Qty"
                   class="col-md-3"
@@ -104,11 +96,7 @@
                   v-model="input.qty"
                   required
                 />
-                <CInput
-                  label="Reason"
-                  class="col-md-4"
-                  :value.sync="input.reason"
-                />
+                <CInput label="Reason" class="col-md-4" :value.sync="input.reason" />
                 <CButton
                   @click="removeProduct(k)"
                   class="btn-sm del-btn"
@@ -121,11 +109,7 @@
           </CCol>
         </CRow>
 
-        <CRow
-          v-if="
-            searchType == 'quotation' && form.items && form.items.length > 0
-          "
-        >
+        <CRow v-if="searchType == 'quotation' && form.items && form.items.length > 0">
           <CCol sm="12" md="12" class="pt-2">
             <div class="form-group" v-for="(input, k) in form.items" :key="k">
               <CRow class="display: flex;justify-content: space-between;">
@@ -189,20 +173,20 @@
                   :value.sync="input.total"
                 />
                 <CInput
-                  label="Description of Product"
-                  class="col-md-11 col-lg-10"
+                  class="col-md-10 col-lg-10"
                   type="text"
                   placeholder="Description of produt"
                   :value.sync="input.description"
                 />
                 <CButton
                   @click="removeProduct(k)"
-                  class="btn-sm del-btn"
+                  class="btn-sm del-btn mt-0"
                   style="background: transparent"
                 >
                   <CIcon :content="$options.cilTrash" style="color: red" />
                 </CButton>
               </CRow>
+              <hr class="dashed" v-show="!(k == form.items.length - 1)" />
             </div>
           </CCol>
         </CRow>
@@ -250,11 +234,12 @@
 </template>
 <script>
 import ReceivingService from "@/services/receivings/ReceivingService";
-import { cilTrash } from "@coreui/icons-pro";
+import { cilTrash, cilBarcode } from "@coreui/icons-pro";
 
 export default {
   name: "SearchProduct",
   cilTrash,
+  cilBarcode,
   props: {
     searchType: String,
     itemsData: Array,
@@ -272,9 +257,7 @@ export default {
     search: "",
     products_list: [],
     options: {
-      suppliers: [
-        { value: "", label: "Choose Supplier", disabled: true, selected: "" },
-      ],
+      suppliers: [{ value: "", label: "Choose Supplier", disabled: true, selected: "" }],
       receiving_status: [
         {
           value: "",
@@ -344,8 +327,7 @@ export default {
                         let tax_price =
                           parseFloat(product.price.selling_price_without_tax) *
                           (parseFloat(product.price.tax.percentage) / 100);
-                        let unit_price =
-                          product.price?.selling_price_without_tax;
+                        let unit_price = product.price?.selling_price_without_tax;
                         that.form.items.push({
                           uuid: product.uuid,
                           type: "product",
@@ -502,14 +484,11 @@ export default {
                       parseFloat(this.form.items[key].qty) + unit?.qty ?? 1;
                     unit?.qty ?? 1;
                     this.form.items[key].cost_price = unit?.cost_price ?? 0;
-                    this.form.items[key].selling_price =
-                      unit?.selling_price ?? 0;
+                    this.form.items[key].selling_price = unit?.selling_price ?? 0;
                   }
                 });
               } else {
-                let unit = this.unit_form.find(
-                  (item) => item.uuid === variation.uuid
-                );
+                let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
                 if (this.searchType === "damage") {
                   this.form.items.push({
                     uuid: variation.uuid,
@@ -521,9 +500,7 @@ export default {
                     reason: "",
                   });
                 } else if (this.searchType === "receivings") {
-                  let unit = this.unit_form.find(
-                    (item) => item.uuid === variation.uuid
-                  );
+                  let unit = this.unit_form.find((item) => item.uuid === variation.uuid);
                   this.form.items.push({
                     uuid: variation.uuid,
                     type: "variation",
@@ -653,8 +630,7 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name:
-                    product.name + " (" + JSON.parse(variation.name).en + ")",
+                  name: product.name + " (" + JSON.parse(variation.name).en + ")",
                   qty: 1,
                   reason: "",
                 });
@@ -662,12 +638,9 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: `${product.name} (Variation: ${
-                    JSON.parse(variation.name)?.en
-                  })`,
+                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
                   cost_price: variation.price?.cost_price ?? 0,
-                  selling_price:
-                    variation.price?.selling_price_without_tax ?? 0,
+                  selling_price: variation.price?.selling_price_without_tax ?? 0,
                   qty: 1,
                   expiry_date: "",
                 });
@@ -675,9 +648,7 @@ export default {
                 data.push({
                   uuid: variation.uuid,
                   type: "variation",
-                  name: `${product.name} (Variation: ${
-                    JSON.parse(variation.name)?.en
-                  })`,
+                  name: `${product.name} (Variation: ${JSON.parse(variation.name)?.en})`,
                   unit_price: variation.price?.selling_price_without_tax ?? 0,
                   qty: 1,
                   discount: "",
@@ -695,8 +666,7 @@ export default {
         ) {
           this.form.items.map((item, key) => {
             if (item.uuid === data[0].uuid) {
-              this.form.items[key].qty =
-                parseFloat(this.form.items[key].qty) + 1;
+              this.form.items[key].qty = parseFloat(this.form.items[key].qty) + 1;
             }
           });
         } else {
@@ -760,17 +730,12 @@ export default {
             }
           }
           totalSum =
-            parseFloat(subTotal) +
-            parseFloat(taxTotal) -
-            parseFloat(totalDiscount);
+            parseFloat(subTotal) + parseFloat(taxTotal) - parseFloat(totalDiscount);
         });
 
         store.commit("set_quotation_sub_total", subTotal.toFixed(3));
         store.commit("set_quotation_tax_total", taxTotal.toFixed(3));
-        store.commit(
-          "set_quotation_total_discount",
-          totalDiscount.toFixed(3) ?? 0
-        );
+        store.commit("set_quotation_total_discount", totalDiscount.toFixed(3) ?? 0);
         store.commit("set_quotation_total", totalSum.toFixed(3));
         resolve();
       });
@@ -790,7 +755,9 @@ export default {
   position: absolute;
   top: 4rem;
   width: 99%;
-  background-color: #fff !important;
+  /* background-color: #fff !important; */
+  background-color: #fffacf !important;
+  font-weight: bold !important;
   z-index: 99;
   padding: 10px 20px;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
@@ -809,5 +776,20 @@ span#basic-addon2 {
   background: transparent;
   height: fit-content;
   margin-top: 2rem;
+}
+</style>
+<style>
+.product-input {
+  margin-bottom: 0 !important;
+}
+.product-input label {
+  font-weight: bold !important;
+}
+.product-input input {
+  background-color: #fffacf !important;
+  font-weight: bold !important;
+}
+hr.dashed {
+  border-top: 1px dashed rgba(0, 0, 21, 0.2);
 }
 </style>

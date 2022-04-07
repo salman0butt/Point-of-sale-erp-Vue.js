@@ -133,6 +133,8 @@ import {
   cilLibraryBooks,
   cibWhatsapp,
   cisMobileSms,
+  cilBarcode,
+  cisBriefcase,
 
 } from "@coreui/icons-pro"
 import { logo } from './logo'
@@ -270,5 +272,7 @@ export const iconsSet = Object.assign({}, { logo }, {
   cibStripe,
   cibPaypal,
   cibGooglePay,
-  cibCcAmex
+  cibCcAmex,
+  cilBarcode,
+  cisBriefcase,
 })

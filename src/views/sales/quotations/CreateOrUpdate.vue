@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="quotation-page">
     <CRow>
       <Loader />
       <CCol xs="12" lg="12">
@@ -72,7 +72,9 @@
                     :value.sync="form.payment_terms"
                   />
                 </CCol>
-
+              </CRow>
+              <hr />
+              <CRow>
                 <CCol sm="6" md="4" class="pt-2" v-if="isEditing">
                   <CSelect
                     label="Status"
@@ -82,19 +84,13 @@
                     :class="{ error: $v.form.quotation_status.$error }"
                   />
                   <div v-if="$v.form.quotation_status.$error">
-                    <p
-                      v-if="!$v.form.quotation_status.required"
-                      class="errorMsg"
-                    >
+                    <p v-if="!$v.form.quotation_status.required" class="errorMsg">
                       Status is required
                     </p>
                   </div>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2">
-                  <SearchProduct
-                    searchType="quotation"
-                    :itemsData="form.items"
-                  />
+                  <SearchProduct searchType="quotation" :itemsData="form.items" />
                 </CCol>
                 <CCol sm="12" md="12">
                   <div v-if="$v.form.items.$error">
@@ -114,76 +110,77 @@
                     label="Delivery"
                     :options="options.delivery_methods"
                     :value.sync="form.delivery_method"
-                  />
+                  >
+                    <template #prepend-content
+                      ><CIcon :content="$options.cisBriefcase"
+                    /></template>
+                  </CSelect>
                 </CCol>
                 <CCol sm="6" md="6" class="pt-2" v-if="delivery_check">
                   <CInput label="Address" v-model="form.address_for_delivery" />
                 </CCol>
+              </CRow>
+              <CRow>
+                <CCol md="8" sm="4">
+                  <CCol
+                    sm="12"
+                    md="12"
+                    class="p-0"
+                    v-if="show.show_payment_term_on_quotation"
+                  >
+                    <Label>Payment Terms </Label>
+                    <vue-editor
+                      id="editor1"
+                      v-model="form.payment_terms"
+                      :editor-toolbar="customToolbar"
+                    ></vue-editor>
+                  </CCol>
+                  <CCol
+                    sm="12"
+                    md="12"
+                    class="p-0 mt-2"
+                    v-if="show.show_terms_and_conditions_on_quotation"
+                  >
+                    <Label>Terms And Conditions </Label>
+                    <vue-editor
+                      id="editor2"
+                      v-model="form.terms_and_conditions"
+                      :editor-toolbar="customToolbar"
+                    ></vue-editor>
+                  </CCol>
+                </CCol>
+                <CCol md="4" sm="4">
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Sub Total" readonly :value="subTotal" />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Tax Total" readonly :value="taxTotal" />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Total Discount" readonly :value="totalDiscount" />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2">
+                    <CInput label="Total" readonly :value="allTotal" />
+                  </CCol>
 
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Sub Total" readonly :value="subTotal" />
+                  <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                    <CInput
+                      label="Delivery"
+                      readonly
+                      :value="form.delivery_method_price"
+                    />
+                  </CCol>
+                  <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
+                    <CInput
+                      label="Total Price With Delivery"
+                      readonly
+                      :value="form.total_price_with_delivery"
+                    />
+                  </CCol>
                 </CCol>
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Tax Total" readonly :value="taxTotal" />
-                </CCol>
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput
-                    label="Total Discount"
-                    readonly
-                    :value="totalDiscount"
-                  />
-                </CCol>
-                <CCol sm="3" md="3" class="pt-2">
-                  <CInput label="Total" readonly :value="allTotal" />
-                </CCol>
-
-                <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
-                  <CInput
-                    label="Delivery"
-                    readonly
-                    :value="form.delivery_method_price"
-                  />
-                </CCol>
-                <CCol sm="3" md="3" class="pt-2" v-if="delivery_check">
-                  <CInput
-                    label="Total Price With Delivery"
-                    readonly
-                    :value="form.total_price_with_delivery"
-                  />
-                </CCol>
-
-                <CCol
-                  sm="12"
-                  md="12"
-                  class="pt-2"
-                  v-if="show.show_payment_term_on_quotation"
-                >
-                  <Label>Payment Terms </Label>
-                  <vue-editor
-                    id="editor1"
-                    v-model="form.payment_terms"
-                    :editor-toolbar="customToolbar"
-                  ></vue-editor>
-                </CCol>
-                <CCol
-                  sm="12"
-                  md="12"
-                  class="pt-2"
-                  v-if="show.show_terms_and_conditions_on_quotation"
-                >
-                  <Label>Terms And Conditions </Label>
-                  <vue-editor
-                    id="editor2"
-                    v-model="form.terms_and_conditions"
-                    :editor-toolbar="customToolbar"
-                  ></vue-editor>
-                </CCol>
-                <CCol
-                  sm="12"
-                  md="12"
-                  class="pt-2"
-                  v-if="show.show_note_on_quotation"
-                >
+              </CRow>
+              <CRow>
+                <CCol sm="6" md="6" class="pt-2" v-if="show.show_note_on_quotation">
                   <CTextarea
                     ref="Note"
                     label="Note"
@@ -192,12 +189,7 @@
                   />
                 </CCol>
 
-                <CCol
-                  sm="12"
-                  md="12"
-                  class="pt-2"
-                  v-if="show.show_attachment_on_quotation"
-                >
+                <CCol sm="6" md="6" class="pt-2" v-if="show.show_attachment_on_quotation">
                   <app-upload ref="fileUpload" @file:changed="handleFile" />
 
                   <div
@@ -211,11 +203,7 @@
                         class="display-attachment-row"
                       >
                         <CIcon :content="$options.cisFile" />
-                        <a
-                          v-bind:href="img.path"
-                          target="_blank"
-                          class="name-attachment"
-                        >
+                        <a v-bind:href="img.path" target="_blank" class="name-attachment">
                           {{ img.name }}</a
                         >
                         <a
@@ -244,12 +232,7 @@
                     timeout="2000"
                     block
                     color="danger"
-                    style="
-                      float: right;
-                      width: 140px;
-                      margin-left: 20px;
-                      margin-top: 0;
-                    "
+                    style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
                     @click="saveAndExit = true"
                     type="submit"
                     >Save & Exit</CButton
@@ -271,7 +254,7 @@ import SelectSalePerson from "@/components/general/SelectSalePerson";
 import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import QuotationService from "@/services/sale/QuotationService";
-import { cilTrash, cisFile } from "@coreui/icons-pro";
+import { cilTrash, cisFile, cilBarcode, cisBriefcase } from "@coreui/icons-pro";
 import { globalMixin } from "@/mixins/globalMixin";
 import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
 import { VueEditor } from "vue2-editor";
@@ -290,6 +273,8 @@ export default {
     Loader,
   },
   cilTrash,
+  cilBarcode,
+  cisBriefcase,
   cisFile,
   data: () => ({
     isEditing: false,
@@ -420,8 +405,7 @@ export default {
     //   this.$refs.Note.focus();
     // },
     changeDelivery(e) {
-      let rate_on_customer =
-        e.target.selectedOptions[0].getAttribute("rate_on_customer");
+      let rate_on_customer = e.target.selectedOptions[0].getAttribute("rate_on_customer");
       if (rate_on_customer == null) {
         rate_on_customer = 0;
       }
@@ -430,8 +414,7 @@ export default {
       let quotation_total = this.$store.getters.getQuotationTotal;
       let total_price_with_delivery =
         parseFloat(quotation_total) + parseFloat(rate_on_customer);
-      this.form.total_price_with_delivery =
-        total_price_with_delivery.toFixed(3);
+      this.form.total_price_with_delivery = total_price_with_delivery.toFixed(3);
 
       if (!e.target.selectedOptions[0].value) {
         this.delivery_check = false;
@@ -449,14 +432,11 @@ export default {
                 if (item.key == "show_payment_term_on_quotation") {
                   this.show.show_payment_term_on_quotation =
                     item.value == "on" ? true : false;
-                } else if (
-                  item.key == "show_terms_and_conditions_on_quotation"
-                ) {
+                } else if (item.key == "show_terms_and_conditions_on_quotation") {
                   this.show.show_terms_and_conditions_on_quotation =
                     item.value == "on" ? true : false;
                 } else if (item.key == "show_note_on_quotation") {
-                  this.show.show_note_on_quotation =
-                    item.value == "on" ? true : false;
+                  this.show.show_note_on_quotation = item.value == "on" ? true : false;
                 } else if (item.key == "show_attachment_on_quotation") {
                   this.show.show_attachment_on_quotation =
                     item.value == "on" ? true : false;
@@ -595,9 +575,7 @@ export default {
                   qty: Math.abs(item.qty),
                   description: item.description,
                   weight_unit: item.product.weight_unit,
-                  discount: item.discount_per
-                    ? item.discount + "%"
-                    : item.discount,
+                  discount: item.discount_per ? item.discount + "%" : item.discount,
                   total: total_each,
                 });
               });
@@ -607,8 +585,7 @@ export default {
               this.delivery_check = true;
               this.form.delivery_method = res.data.delivery.uuid;
               this.form.delivery_method_price = res.data.delivery_method_price;
-              this.form.total_price_with_delivery =
-                res.data.total_price_with_delivery;
+              this.form.total_price_with_delivery = res.data.total_price_with_delivery;
               this.form.address_for_delivery = res.data.address_for_delivery;
             }
 
@@ -631,10 +608,7 @@ export default {
             }
             this.$store.commit("set_quotation_sub_total", res.data.sub_total);
             this.$store.commit("set_quotation_tax_total", res.data.total_tax);
-            this.$store.commit(
-              "set_quotation_total_discount",
-              res.data.total_discount
-            );
+            this.$store.commit("set_quotation_total_discount", res.data.total_discount);
             this.$store.commit("set_quotation_total", res.data.grand_total);
           }
         })
@@ -669,21 +643,12 @@ export default {
         formData.append("items", JSON.stringify(this.form.items));
         formData.append("sub_total", this.$store.getters.getQuotationSubTotal);
         formData.append("total_tax", this.$store.getters.getQuotationTaxTotal);
-        formData.append(
-          "total_discount",
-          this.$store.getters.getQuotationDiscount
-        );
+        formData.append("total_discount", this.$store.getters.getQuotationDiscount);
         formData.append("grand_total", this.$store.getters.getQuotationTotal);
         formData.append("address_for_delivery", this.form.address_for_delivery);
         formData.append("delivery_method", this.form.delivery_method);
-        formData.append(
-          "delivery_method_price",
-          this.form.delivery_method_price
-        );
-        formData.append(
-          "total_price_with_delivery",
-          this.form.total_price_with_delivery
-        );
+        formData.append("delivery_method_price", this.form.delivery_method_price);
+        formData.append("total_price_with_delivery", this.form.total_price_with_delivery);
 
         if (this.form.images && this.form.images.length > 0) {
           this.form.images.map((image) => {
@@ -815,7 +780,7 @@ export default {
       this.$swal
         .fire({
           title: "Are You Sure You Want to Deleted This Attachment?",
-icon: "warning",
+          icon: "warning",
           text: "This will be Deleted from Database",
           showCancelButton: true,
           confirmButtonColor: "#e55353",
@@ -860,6 +825,9 @@ icon: "warning",
   height: 120px;
 }
 #editor2 {
-  height: 120px;
+  height: 250px;
+}
+.quotation-page label {
+  font-weight: bold !important;
 }
 </style>
