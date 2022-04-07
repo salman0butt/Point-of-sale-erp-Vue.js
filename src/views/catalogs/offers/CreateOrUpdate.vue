@@ -47,7 +47,10 @@
                         @input="$v.form.allowed_per_sale.$touch()"
                       />
                       <div v-if="$v.form.allowed_per_sale.$error">
-                        <p v-if="!$v.form.allowed_per_sale.required" class="errorMsg">
+                        <p
+                          v-if="!$v.form.allowed_per_sale.required"
+                          class="errorMsg"
+                        >
                           Allowed Per Sale is required
                         </p>
                       </div>
@@ -121,7 +124,10 @@
                         @input="$v.form.quantity_to_buy.$touch()"
                       />
                       <div v-if="$v.form.quantity_to_buy.$error">
-                        <p v-if="!$v.form.quantity_to_buy.required" class="errorMsg">
+                        <p
+                          v-if="!$v.form.quantity_to_buy.required"
+                          class="errorMsg"
+                        >
                           Quantity to Buy is required
                         </p>
                       </div>
@@ -142,7 +148,10 @@
                         @input="$v.form.quantity_to_get.$touch()"
                       />
                       <div v-if="$v.form.quantity_to_get.$error">
-                        <p v-if="!$v.form.quantity_to_get.required" class="errorMsg">
+                        <p
+                          v-if="!$v.form.quantity_to_get.required"
+                          class="errorMsg"
+                        >
                           Quantity to Get is required
                         </p>
                       </div>
@@ -163,7 +172,10 @@
                         @input="$v.form.spend_amount.$touch()"
                       />
                       <div v-if="$v.form.spend_amount.$error">
-                        <p v-if="!$v.form.spend_amount.required" class="errorMsg">
+                        <p
+                          v-if="!$v.form.spend_amount.required"
+                          class="errorMsg"
+                        >
                           Spend Amount is required
                         </p>
                       </div>
@@ -186,7 +198,10 @@
                         @input="$v.form.discount_type.$touch()"
                       />
                       <div v-if="$v.form.discount_type.$error">
-                        <p v-if="!$v.form.discount_type.required" class="errorMsg">
+                        <p
+                          v-if="!$v.form.discount_type.required"
+                          class="errorMsg"
+                        >
                           Discount Type is required
                         </p>
                       </div>
@@ -211,7 +226,10 @@
                         @input="$v.form.discount_amount.$touch()"
                       />
                       <div v-if="$v.form.discount_amount.$error">
-                        <p v-if="!$v.form.discount_amount.required" class="errorMsg">
+                        <p
+                          v-if="!$v.form.discount_amount.required"
+                          class="errorMsg"
+                        >
                           Discount Amount is required
                         </p>
                       </div>
@@ -380,7 +398,12 @@
                       timeout="2000"
                       block
                       color="danger"
-                      style="float: right; width: 140px; margin-left: 20px; margin-top: 0"
+                      style="
+                        float: right;
+                        width: 140px;
+                        margin-left: 20px;
+                        margin-top: 0;
+                      "
                       @click="saveAndExit = true"
                       type="submit"
                       >Save & Exit</CButton
@@ -437,9 +460,9 @@ export default {
       ],
       types: [
         { value: "", label: "Choose Type", disabled: true, selected: "" },
-        { value: "offer_buy_x_get_discount", label: "Offer Buy X Get Discount" },
-        { value: "offer_spend_x_get_discount", label: "Offer Spend X Get Discount" },
-        { value: "offer_x_get_y_free", label: "Offer X Get Y Free" },
+        // { value: "offer_buy_x_get_discount", label: "Offer Buy X Get Discount" },
+        // { value: "offer_spend_x_get_discount", label: "Offer Spend X Get Discount" },
+        // { value: "offer_x_get_y_free", label: "Offer X Get Y Free" },
         { value: "offer_discount", label: "Offer Discount" },
       ],
       discount_type: [
@@ -737,7 +760,10 @@ export default {
         this.form.tags = [];
         if (data.tags && data.tags.length > 0) {
           data.tags.forEach((element) => {
-            this.form.tags.push({ text: element.name, tiClasses: ["ti-valid"] });
+            this.form.tags.push({
+              text: element.name,
+              tiClasses: ["ti-valid"],
+            });
           });
         }
       }

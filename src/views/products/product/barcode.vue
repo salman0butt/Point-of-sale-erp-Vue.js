@@ -4,7 +4,11 @@
     <CCardHeader>
       Barcode
       <div class="float-right">
-        <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
+        <a
+          class="btn btn-sm btn-info ml-1"
+          @click.prevent="print"
+          style="color: #fff"
+        >
           <CIcon name="cil-print" class="mr-1" /> Print Me
         </a>
         <a href="#" class="btn btn-sm btn-info ml-1" @click.prevent="savePdf()">
@@ -33,7 +37,9 @@
               <thead>
                 <tr>
                   <th v-if="form.short_name_or_full_name === 'full'">Name</th>
-                  <th v-if="form.short_name_or_full_name === 'short'">Short Name</th>
+                  <th v-if="form.short_name_or_full_name === 'short'">
+                    Short Name
+                  </th>
                   <th>Barcode</th>
                   <th v-if="form.product_barcode_with_barcode_number === 'on'">
                     Barcode Number
@@ -41,15 +47,23 @@
                   <th class="center" v-if="form.product_serial_number === 'on'">
                     Serial Number
                   </th>
-                  <th class="right" v-if="form.selling_price === 'on'">Selling Price</th>
+                  <th class="right" v-if="form.selling_price === 'on'">
+                    Selling Price
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td class="left" v-if="form.short_name_or_full_name === 'full'">
+                  <td
+                    class="left"
+                    v-if="form.short_name_or_full_name === 'full'"
+                  >
                     {{ product.name }}
                   </td>
-                  <td class="left" v-if="form.short_name_or_full_name === 'short'">
+                  <td
+                    class="left"
+                    v-if="form.short_name_or_full_name === 'short'"
+                  >
                     {{ product.short_name }}
                   </td>
                   <td class="left">
@@ -127,7 +141,8 @@ export default {
             this.product.name = data.name ?? "N/A";
             this.product.short_name = data.short_name ?? "N/A";
             this.product.selling_price =
-              parseFloat(data.price?.selling_price_without_tax).toFixed(2) ?? "N/A";
+              parseFloat(data.price?.selling_price_without_tax).toFixed(2) ??
+              "N/A";
             this.product.barcode = data.barcode;
             this.product.serial_number = data.serial_number;
           }
@@ -149,6 +164,7 @@ export default {
             data.map((item) => {
               if (item.key === "product_barcode_settings") {
                 this.form = JSON.parse(item.value);
+                console.log(this.form);
               }
             });
           }

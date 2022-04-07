@@ -1,6 +1,17 @@
 <template>
   <div>
     <Loader />
+    <CRow>
+      <CCol sm="12" md="12" class="mb-2">
+        <CButton
+          color="success"
+          style="float: right; width: 150px; margin-right: 20px"
+          @click="showBarcode()"
+        >
+          Print
+        </CButton>
+      </CCol>
+    </CRow>
     <CCard>
       <CCardBody>
         <CRow>
@@ -47,19 +58,9 @@
         </CRow>
       </CCardBody>
     </CCard>
+
     <CRow>
-      <CCol sm="12" md="12" class="mb-2">
-        <CButton
-          color="success"
-          style="float: right; width: 150px; margin-right: 20px"
-          @click="showBarcode()"
-        >
-          Print
-        </CButton>
-      </CCol>
-    </CRow>
-    <CRow>
-      <CCol sm="12" md="6">
+      <CCol sm="12" md="12">
         <CCard>
           <CCardBody>
             <h6>Inventory</h6>
@@ -81,7 +82,7 @@
           </CCardBody>
         </CCard>
       </CCol>
-      <CCol sm="12" md="6">
+      <!-- <CCol sm="12" md="6">
         <CCard>
           <CCardBody>
             <h6>Units</h6>
@@ -110,7 +111,7 @@
             </CDataTable>
           </CCardBody>
         </CCard>
-      </CCol>
+      </CCol> -->
     </CRow>
   </div>
 </template>
