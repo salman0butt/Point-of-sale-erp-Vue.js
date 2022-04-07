@@ -37,7 +37,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    label: String,
+    label: {
+      type: String,
+      default: "Sales Person",
+    },
   },
   watch: {
     previousSalesPersons(newValue, oldValue) {
