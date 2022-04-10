@@ -60,17 +60,11 @@
                   />
                 </CCol>
                 <CCol v-if="form.is_expiry" sm="3" md="3" class="pt-2">
-                  <CInput
-                    label="Expiry Date"
-                    type="date"
-                    v-model="form.expiry_date"
-                  />
+                  <CInput label="Expiry Date" type="date" v-model="form.expiry_date" />
                 </CCol>
               </CRow>
 
-              <p v-if="$v.$anyError" class="errorMsg">
-                Please Fill the required data
-              </p>
+              <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
               <CRow class="mt-4 d-block">
                 <CButton
                   progress
@@ -142,17 +136,11 @@
                     />
                   </CCol>
                   <CCol v-if="input.is_expiry" sm="3" md="3" class="pt-2">
-                    <CInput
-                      label="Expiry Date"
-                      type="date"
-                      v-model="input.expiry_date"
-                    />
+                    <CInput label="Expiry Date" type="date" v-model="input.expiry_date" />
                   </CCol>
                 </CRow>
 
-                <p v-if="$v.$anyError" class="errorMsg">
-                  Please Fill the required data
-                </p>
+                <p v-if="$v.$anyError" class="errorMsg">Please Fill the required data</p>
                 <CRow class="mt-4 d-block">
                   <CButton
                     progress
@@ -170,11 +158,7 @@
             <div>
               <br />
               <br />
-              <CDataTable
-                :items="stockHistory"
-                :fields="fields"
-                :loading="loading"
-              >
+              <CDataTable :items="stockHistory" :fields="fields">
                 <template #module="{ item }">
                   <td v-if="item.module">
                     {{ item.module }}
@@ -263,8 +247,7 @@ export default {
       this.form.is_expiry = !this.form.is_expiry;
     },
     toggleVariationIsExpiry(key) {
-      this.variations_form[key].is_expiry =
-        !this.variations_form[key].is_expiry;
+      this.variations_form[key].is_expiry = !this.variations_form[key].is_expiry;
     },
     getProductInventory() {
       this.$store.commit("set_loader");
@@ -285,22 +268,15 @@ export default {
                 let module = "";
                 if (item.type == "receiving") {
                   module = "Receiving";
-                  detail =
-                    "<a href='/receivings/show/" +
-                    item.type_uuid +
-                    "'>Detail</a>";
+                  detail = "<a href='/receivings/show/" + item.type_uuid + "'>Detail</a>";
                 } else if (item.type == "sales") {
                   detail =
-                    "<a href='/sales/invoices/show/" +
-                    item.type_uuid +
-                    "'>Detail</a>";
+                    "<a href='/sales/invoices/show/" + item.type_uuid + "'>Detail</a>";
                   module = "Sales";
                 } else if (item.type == "damage") {
                   module = "Damage";
                   detail =
-                    "<a href='/catalogs/damages/show/" +
-                    item.type_uuid +
-                    "'>Detail</a>";
+                    "<a href='/catalogs/damages/show/" + item.type_uuid + "'>Detail</a>";
                 } else if (item.type == "product") {
                   module = "Opening";
                 }
