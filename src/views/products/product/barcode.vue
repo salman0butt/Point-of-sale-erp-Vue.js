@@ -16,6 +16,7 @@
         </a>
       </div>
     </CCardHeader>
+
     <CCardBody id="printMe">
       <vue-html2pdf
         :show-layout="false"
@@ -89,6 +90,11 @@
           </div>
         </section>
       </vue-html2pdf>
+
+      <div v-for="index in form">
+        <label>{{ index }} </label>
+        <CSwitch shape="pill" color="success" checked />
+      </div>
     </CCardBody>
   </CCard>
 </template>
@@ -164,7 +170,6 @@ export default {
             data.map((item) => {
               if (item.key === "product_barcode_settings") {
                 this.form = JSON.parse(item.value);
-                console.log(this.form);
               }
             });
           }
