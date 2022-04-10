@@ -327,7 +327,15 @@ export default {
                         let tax_price =
                           parseFloat(product.price.selling_price_without_tax) *
                           (parseFloat(product.price.tax.percentage) / 100);
-                        let unit_price = product.price?.selling_price_without_tax;
+
+                        let unit_price = "";
+                        if (product.price) {
+                          if (product.price.offer_price) {
+                            unit_price = product.price.offer_price;
+                          } else {
+                            unit_price = product.price?.selling_price_without_tax;
+                          }
+                        }
                         that.form.items.push({
                           uuid: product.uuid,
                           type: "product",
@@ -389,7 +397,6 @@ export default {
       }
     },
     addOptions(item) {
-      console.log("🚀 ~ item", item);
       this.form.product_id = item.value;
       this.unit_form = [];
       let option = item;
@@ -547,13 +554,18 @@ export default {
             Object.assign(option, {
               unit_cost_price: product.price.cost_price,
             });
+            let price = "";
+            if (product.price && product.price.offer_price) {
+              price = product.price.offer_price;
+            } else {
+              price = product.price.selling_price_without_tax;
+            }
             Object.assign(option, {
-              unit_selling_price: product.price.selling_price_without_tax,
+              unit_selling_price: price,
             });
             Object.assign(option, {
               tax_price:
-                parseFloat(product.price.selling_price_without_tax) *
-                (parseFloat(product.price.tax.percentage) / 100),
+                parseFloat(price) * (parseFloat(product.price.tax.percentage) / 100),
             });
           }
         }
