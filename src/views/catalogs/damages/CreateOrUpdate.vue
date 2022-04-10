@@ -187,7 +187,7 @@ export default {
         let data = this.form;
         DamageService.update(this.form.id, data)
           .then((res) => {
-            if (res.status == 200) {
+            if (res.status === 200 || res.status === 201) {
               this.$swal.fire({
                 icon: "success",
                 title: "Success",
