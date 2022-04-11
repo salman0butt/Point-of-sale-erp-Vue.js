@@ -122,7 +122,11 @@
                     label="Delivery"
                     :options="options.delivery_methods"
                     :value.sync="form.delivery_method"
-                  />
+                  >
+                    <template #prepend-content
+                      ><CIcon :content="$options.cisBriefcase"
+                    /></template>
+                  </CSelect>
                 </CCol>
                 <CCol sm="12" md="12" class="pt-2" v-if="delivery_check">
                   <CInput label="Address" v-model="form.address_for_delivery" />
@@ -247,7 +251,7 @@ import SelectSalePerson from "@/components/general/SelectSalePerson";
 import { required } from "vuelidate/lib/validators";
 import AppUpload from "@/components/uploads/Upload.vue";
 import InvoiceService from "@/services/sale/InvoiceService";
-import { cilTrash, cisFile } from "@coreui/icons-pro";
+import { cilTrash, cisFile, cisBriefcase } from "@coreui/icons-pro";
 import { globalMixin } from "@/mixins/globalMixin";
 import PaymentTermService from "@/services/paymentTerms/PaymentTermService";
 import { VueEditor } from "vue2-editor";
@@ -269,6 +273,7 @@ export default {
   },
   cilTrash,
   cisFile,
+  cisBriefcase,
   data: () => ({
     isEditing: false,
     form: {

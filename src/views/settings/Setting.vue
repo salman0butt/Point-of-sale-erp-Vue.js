@@ -41,7 +41,7 @@ import CustomerSettingForm from "@/components/settings/CustomerSettingForm";
 import DashboardSettingForm from "@/components/settings/DashboardSettingForm";
 import DeliverySettingForm from "@/components/settings/DeliverySettingForm";
 import CurrencySettingForm from "@/components/settings/CurrencySettingForm";
-import ProductSettingForm from "@/components/settings/ProductSettingForm";
+// import ProductSettingForm from "@/components/settings/ProductSettingForm";
 import { cilUser, cisCircle } from "@coreui/icons-pro";
 import SmtpSettingForm from "@/components/plugins/SmtpSettingForm";
 import SmsSettingForm from "@/components/plugins/sms/SmsSettingForm";
@@ -60,7 +60,7 @@ export default {
     CurrencySettingForm,
     SmtpSettingForm,
     SmsSettingForm,
-    ProductSettingForm,
+    // ProductSettingForm,
   },
   data() {
     return {
@@ -74,7 +74,7 @@ export default {
         // { key: "CustomerSettingForm", name: "Customer" },
         { key: "DeliverySettingForm", name: "Delivery" },
         { key: "CurrencySettingForm", name: "Currency" },
-        { key: "ProductSettingForm", name: "Product" },
+        // { key: "ProductSettingForm", name: "Product" },
       ],
     };
   },
