@@ -57,7 +57,7 @@
                   <label class="form-check-label" for="exchange"> Replacement </label>
                 </div>
 
-                <div class="form-check m-1">
+                <!-- <div class="form-check m-1">
                   <input
                     class="form-check-input"
                     type="radio"
@@ -68,7 +68,7 @@
                     @change="changeDamage()"
                   />
                   <label class="form-check-label" for="damage"> Damage </label>
-                </div>
+                </div> -->
                 <div class="form-check m-1">
                   <input
                     class="form-check-input"
@@ -87,7 +87,12 @@
                 class="mb-2"
               /> -->
 
-              <CInput v-if="showCash" class="col-md-4" readonly v-model="form.total" />
+              <CInput
+                v-if="showCash"
+                class="col-md-4"
+                readonly
+                v-model="form.total_price"
+              />
             </CCol>
           </CRow>
           <CRow>
@@ -110,6 +115,7 @@
 import { cilTrash } from "@coreui/icons-pro";
 import Loader from "@/components/layouts/Loader.vue";
 // import ProductSearchSelect from "@/components/general/search/ProductSearchSelect";
+import ReturnByProductService from "@/services/returns/ReturnByProductService";
 export default {
   name: "CreateOrUpdateReturnByInvoice",
   components: {
@@ -136,7 +142,9 @@ export default {
       id: "",
       qty: 1,
       return_note: "",
-      total: 0,
+      unit_price: 0,
+      total_price: 0,
+      return_cash: 0,
     },
   }),
   // validations() {
@@ -174,7 +182,37 @@ export default {
   },
   methods: {
     saveReturnByInvoice() {
-      alert("Return Saved");
+      alert("saveReturnByInvoice");
+
+      ReturnByProductService.create(this.form)
+        .then((res) => {
+          if (res.status === 201) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Return Added Successfully",
+              timer: 3600,
+            });
+            // this.$v.$reset();
+            // this.resetForm();
+          }
+        })
+        .catch((error) => {
+          this.isEditing = false;
+          if (error.response && error.response.status === 422) {
+            let errors = error.response.data.errors;
+            for (const err in errors) {
+              this.$toast.error(errors[err][0]);
+            }
+          } else {
+            this.$swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Something Went Wrong.",
+              timer: 3600,
+            });
+          }
+        });
     },
     changeReplacement() {
       // this.showReplacement = true;
@@ -196,7 +234,7 @@ export default {
     //   console.log(val);
     // },
     updateQty() {
-      this.form.total =
+      this.form.total_price =
         parseFloat(this.form.qty) * parseFloat(this.product.selling_price) +
         parseFloat(this.product.discount).toFixed(3);
     },

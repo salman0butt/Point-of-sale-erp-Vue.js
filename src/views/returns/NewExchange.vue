@@ -3,10 +3,10 @@
     <Loader />
 
     <div class="col-3">
-      <!-- <div>
+      <div>
         <CCard>
           <CCardHeader>
-            New Exchange
+            New Return
             <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
@@ -25,7 +25,7 @@
             </div>
           </CCardBody>
         </CCard>
-      </div> -->
+      </div>
       <div>
         <CCard>
           <CCardHeader> Payment </CCardHeader>
@@ -81,9 +81,9 @@
         <CCard>
           <CCardHeader>
             <!-- Invoice <strong># {{ invoice.invoice_ref_no }}</strong> -->
-            <strong>New Exchange</strong>
+            <strong>New Returns</strong>
             <div class="float-right buttons-box">
-              <!-- <a
+              <a
                 v-if="showWhatsappButton"
                 color="success"
                 class="btn btn-sm btn-success"
@@ -95,7 +95,7 @@
                 "
               >
                 <CIcon name="cib-whatsapp" /> Send WhatsApp</a
-              > -->
+              >
               <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
                 <CIcon name="cil-save" /> Download
               </a>
@@ -124,7 +124,6 @@
               ref="html2Pdf"
             >
               <section slot="pdf-content" md="12" style="padding: 0 20px">
-                 <form @submit.prevent="saveData()">
                 <!-- <CRow class="mb-4">
                   <CCol sm="4">
                     <CImg
@@ -287,20 +286,6 @@
           </a> -->
                   </CCol>
                 </CRow>
-
-                <CRow>
-                  <CCol md="12">
-                    <CButton
-                      progress
-                      timeout="2000"
-                      color="success"
-                      style="width: 200px; margin-left: 20px"
-                      type="submit"
-                      >Save</CButton
-                    >
-                  </CCol>
-                </CRow>
-                </form>
               </section>
             </vue-html2pdf>
           </CCardBody>
@@ -369,7 +354,6 @@ import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginMod
 import SearchProduct from "@/components/layouts/SearchProduct";
 import ProductService from "@/services/products/ProductService";
 import ReturnByInvoiceModel from "@/components/returns/ReturnByInvoiceModel";
-import ProductExchangeService from "@/services/exchanges/ProductExchangeService";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
   { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
@@ -541,28 +525,6 @@ export default {
     },
     savePdf() {
       this.$refs.html2Pdf.generatePdf();
-    },
-    saveData() {
-      let data = {
-        from_product_id: this.product_id,
-        qty:1,
-        unit_price: this.invoice.products[0].selling_price,
-        total_price: this.invoice.products[0].total,
-        items: this.invoice.items,
-        sub_total: this.invoice.sub_total,
-        total_tax: this.invoice.total_tax,
-        total_discount: this.invoice.total_discount,
-        grand_total: this.invoice.grand_total,
-        exchange_price:this.invoice.return_price
-      }
-      console.log(data)
-      ProductExchangeService.create(data)
-        .then(({data}) => {
-          console.log(data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
     },
     getServerData() {
       this.$store.commit("set_loader");

@@ -3,6 +3,7 @@
     <Loader />
     <CCardHeader>
       Barcode
+
       <div class="float-right">
         <a class="btn btn-sm btn-info ml-1" @click.prevent="print" style="color: #fff">
           <CIcon name="cil-print" class="mr-1" /> Print Me
@@ -10,6 +11,15 @@
         <a href="#" class="btn btn-sm btn-info ml-1" @click.prevent="savePdf()">
           <CIcon name="cil-save" /> Download
         </a>
+      </div>
+      <div class="float-right">
+        <CSelect
+          label="Size"
+          style="width: 200px"
+          :options="options.sizes"
+          :value.sync="size"
+          horizontal=""
+        />
       </div>
     </CCardHeader>
 
@@ -144,6 +154,7 @@ export default {
 
   data() {
     return {
+      size: "A4",
       productId: "",
       filter: [
         {
@@ -174,6 +185,18 @@ export default {
         serial_number: "",
         selling_price: "",
       },
+      options: {
+        sizes: [
+          {
+            label: "A4",
+            value: "A4",
+          },
+          {
+            label: "Landscape",
+            value: "landscape",
+          },
+        ],
+      },
     };
   },
   created() {
@@ -183,7 +206,25 @@ export default {
   },
   methods: {
     async print() {
-      await this.$htmlToPaper("printMe");
+      let obj = null;
+      if (this.size === "A4") {
+        obj = {
+          styles: [
+            "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
+            "https://unpkg.com/kidlat-css/css/kidlat.css",
+            "/css/A4.css",
+          ],
+        };
+      } else {
+        obj = {
+          styles: [
+            "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
+            "https://unpkg.com/kidlat-css/css/kidlat.css",
+            "/css/lanscape.css",
+          ],
+        };
+      }
+      await this.$htmlToPaper("printMe", obj);
     },
     checkFilter(key) {
       let result = this.filter.find((item) => {

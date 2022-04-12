@@ -45,7 +45,7 @@
                 </tbody>
               </table>
               <div class="d-flex">
-                <!-- <div class="form-check m-1">
+                <div class="form-check m-1">
                   <input
                     class="form-check-input"
                     type="radio"
@@ -58,7 +58,7 @@
                   <label class="form-check-label" for="exchange"> Replacement </label>
                 </div>
 
-                <div class="form-check m-1">
+                <!--<div class="form-check m-1">
                   <input
                     class="form-check-input"
                     type="radio"
@@ -78,23 +78,17 @@
                     @change="changeReturnCash()"
                     name="return_type"
                     id="return_cash"
-                    checked
+
                   />
                   <label class="form-check-label" for="return_cash"> Return Cash </label>
                 </div>
               </div>
               <CInput
+                v-if="showCash"
                 class="col-md-4"
                 readonly
                 v-model="form.return_cash"
-                :class="{ error: $v.form.qty.$error }"
-                @input="$v.form.return_cash.$touch()"
               />
-              <div v-if="$v.form.return_cash.$error">
-                <p v-if="!$v.form.return_cash.required" class="errorMsg">
-                  Return Cash is required
-                </p>
-              </div>
             </CCol>
           </CRow>
           <CRow>
@@ -154,7 +148,7 @@ export default {
         product_id: { required },
         unit_price: { required },
         qty: { required },
-        return_cash: { required },
+        // return_cash: { required },
         total_price: { required },
       },
     };
@@ -219,7 +213,7 @@ export default {
         });
     },
     changeReplacement() {
-      // this.showReplacement = true;
+      this.showReplacement = true;
       this.$emit("replacement-change", true);
       this.showCash = false;
     },
