@@ -74,13 +74,13 @@
                     <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     > -->
-                    <CButton
+                    <!-- <CButton
                       @click="editReturn(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
-                    /></CButton>
+                    /></CButton> -->
                     <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
@@ -159,7 +159,7 @@ export default {
     },
     editReturn(k) {
       let data = this.data.find((product) => product.uuid === k);
-      console.log("🚀 ~ data", data);
+      // console.log("🚀 ~ data", data);
       this.openProduct = {
         uuid: data.item.inventable.uuid,
         name: data.item.inventable.name,
