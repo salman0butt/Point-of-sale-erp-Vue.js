@@ -385,8 +385,8 @@ export default {
         .then(({ data }) => {
           if (data) {
             this.isEditing = true;
-            this.invoice.invoice_ref_no = data.invoice.invoice_ref_no;
-            this.invoice.uuid = data.invoice.uuid;
+            this.invoice.invoice_ref_no = data.invoice?.invoice_ref_no ?? "";
+            this.invoice.uuid = data.invoice?.uuid ?? "";
 
             if (data.customer) {
               // customer
