@@ -174,7 +174,9 @@ const router = new Router({
       path: '/',
       redirect: '/login',
       name: 'Home',
+      beforeEnter: auth,
       component: TheContainer,
+
       children: [
         {
           path: 'dashboard',
