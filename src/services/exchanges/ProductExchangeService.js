@@ -25,7 +25,7 @@ class ProductExchangeService extends Helper {
 
     update(id, data, config={}) {
       config = Object.assign(config,super.selectedBranch());
-        return http.post(`/product-exchanges/${id}`, data, config);
+        return http.patch(`/product-exchanges/${id}`, data, config);
     }
 
     delete(id) {

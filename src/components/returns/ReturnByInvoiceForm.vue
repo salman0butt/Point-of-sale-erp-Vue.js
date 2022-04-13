@@ -182,7 +182,7 @@ export default {
   },
   methods: {
     saveReturnByInvoice() {
-      alert("saveReturnByInvoice");
+      // alert("saveReturnByInvoice");
 
       ReturnByProductService.create(this.form)
         .then((res) => {

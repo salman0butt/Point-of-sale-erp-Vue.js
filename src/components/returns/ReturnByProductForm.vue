@@ -16,7 +16,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>{{ product.name }}</td>
+                    <td>{{ product ? product.name : "" }}</td>
                     <td>
                       <CInput
                         type="number"
@@ -78,7 +78,6 @@
                     @change="changeReturnCash()"
                     name="return_type"
                     id="return_cash"
-
                   />
                   <label class="form-check-label" for="return_cash"> Return Cash </label>
                 </div>
@@ -166,12 +165,20 @@ export default {
         this.$emit("reset-submit");
       }
     },
-    product() {
-      this.form.product_id = this.product.uuid;
-      this.form.unit_price = this.product.price?.selling_price_with_tax ?? 0;
-      this.form.total_price = this.form.qty * this.form.unit_price;
-      this.form.cash_return = this.form.qty * this.form.unit_price;
-
+    product(val) {
+      if (val.isEditing) {
+        this.form.product_id = val.uuid;
+        this.form.qty = val.qty;
+        this.form.unit_price = val.unit_price;
+        this.product.price.selling_price_with_tax = val.unit_price;
+        this.form.total_price = this.form.qty * this.form.unit_price;
+        this.form.cash_return = this.form.qty * this.form.unit_price;
+      } else {
+        this.form.product_id = this.product.uuid;
+        this.form.unit_price = this.product.price?.selling_price_with_tax ?? 0;
+        this.form.total_price = this.form.qty * this.form.unit_price;
+        this.form.cash_return = this.form.qty * this.form.unit_price;
+      }
       this.updateQty();
     },
   },

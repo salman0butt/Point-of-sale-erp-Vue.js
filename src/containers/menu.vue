@@ -86,6 +86,16 @@ export default {
             },
           ]);
         }
+        if (this.$can("read invoices")) {
+          this.sideBarItems_sales.push([
+            {
+              _name: "CSidebarNavItem",
+              name: "- " + 'Sale Exchange',
+              to: "/exchanges/index",
+              // icon: "cil-lan",
+            },
+          ]);
+        }
         if (this.$can("read payments")) {
           this.sideBarItems_sales.push([
             {

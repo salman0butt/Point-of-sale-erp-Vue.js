@@ -76,7 +76,7 @@ export default {
     nextReturnByProduct() {
       const id = this.product.uuid;
       this.$store.commit("set_return_by_product_model", false);
-      this.$router.push({ path: "/returns/new/" + id });
+      this.$router.push({ path: "/exchange/new/" + id });
     },
   },
 };
