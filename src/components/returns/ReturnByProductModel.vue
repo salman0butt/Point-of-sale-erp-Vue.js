@@ -64,7 +64,7 @@ export default {
     saveReturnByProduct() {
       this.isSubmit = true;
 
-      // this.$emit("update-table");
+      this.$emit("update-table");
     },
     closeModel() {
       this.isSubmit = false;

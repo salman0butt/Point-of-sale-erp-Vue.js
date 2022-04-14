@@ -78,6 +78,7 @@
                     @change="changeReturnCash()"
                     name="return_type"
                     id="return_cash"
+                    :checked="isEditing ? true : false"
                   />
                   <label class="form-check-label" for="return_cash"> Return Cash </label>
                 </div>
@@ -159,7 +160,11 @@ export default {
     submitForm() {
       // this.$v.$touch();
       if (this.submit) {
-        this.saveReturnByProduct();
+        if (this.isEditing) {
+          this.updateReturnByProduct();
+        } else {
+          this.saveReturnByProduct();
+        }
         this.$emit("reset-model");
       } else {
         this.$emit("reset-submit");
@@ -167,19 +172,25 @@ export default {
     },
     product(val) {
       if (val.isEditing) {
+        // console.log(val);
+        this.form.id = val.return_id;
         this.form.product_id = val.uuid;
         this.form.qty = val.qty;
         this.form.unit_price = val.unit_price;
         this.product.price.selling_price_with_tax = val.unit_price;
         this.form.total_price = this.form.qty * this.form.unit_price;
         this.form.cash_return = this.form.qty * this.form.unit_price;
+        this.form.note = val.note;
+        this.isEditing = true;
+        this.changeReturnCash();
       } else {
         this.form.product_id = this.product.uuid;
         this.form.unit_price = this.product.price?.selling_price_with_tax ?? 0;
         this.form.total_price = this.form.qty * this.form.unit_price;
         this.form.cash_return = this.form.qty * this.form.unit_price;
+        this.isEditing = false;
+        this.updateQty();
       }
-      this.updateQty();
     },
   },
   computed: {
@@ -196,6 +207,37 @@ export default {
               icon: "success",
               title: "Success",
               text: "Return Added Successfully",
+              timer: 3600,
+            });
+            // this.$v.$reset();
+            // this.resetForm();
+          }
+        })
+        .catch((error) => {
+          this.isEditing = false;
+          if (error.response && error.response.status === 422) {
+            let errors = error.response.data.errors;
+            for (const err in errors) {
+              this.$toast.error(errors[err][0]);
+            }
+          } else {
+            this.$swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Something Went Wrong.",
+              timer: 3600,
+            });
+          }
+        });
+    },
+    updateReturnByProduct() {
+      ReturnByProductService.update(this.form.id, this.form)
+        .then((res) => {
+          if (res.status === 200 || res.status === 201) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Return Updated Successfully",
               timer: 3600,
             });
             // this.$v.$reset();

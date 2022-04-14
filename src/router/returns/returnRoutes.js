@@ -5,6 +5,7 @@ const Exchange = () => import('@/views/returns/Exchange')
 const CreateOrUpdateExchange = () => import('@/views/exchanges/CreateOrUpdate')
 const IndexReturn = () => import('@/views/returns/Index')
 const IndexExchange = () => import('@/views/exchanges/Index')
+const ShowExchange = () => import('@/views/exchanges/Show')
 
 
 const returnRoutes = {
@@ -45,6 +46,11 @@ const returnRoutes = {
       path: '/exchange/edit/:editId',
       name: 'Edit Exchange',
       component: CreateOrUpdateExchange,
+    },
+    {
+      path: '/exchange/show/:id',
+      name: 'Show Exchange',
+      component: ShowExchange,
     },
   ]
 };

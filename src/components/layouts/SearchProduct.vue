@@ -11,6 +11,7 @@
               @input="searchProduct()"
               placeholder="Please add products to order list"
               v-on:keydown.enter.prevent="enterKey()"
+              v-if="!readOnly"
             >
               <template #prepend-content
                 ><CIcon :content="$options.cilBarcode"
@@ -130,6 +131,7 @@
                     v-model="input.qty"
                     @input="calculateQutationTotal()"
                     required
+                    :readonly="readOnly"
                   />
                   <span
                     class="input-group-text form-control mt-4 col-4"
@@ -164,6 +166,7 @@
                   placeholder="0.00 OR %"
                   :value.sync="input.discount"
                   @change="calculateQutationTotal()"
+                  :readonly="readOnly"
                 />
                 <CInput
                   label="Total"
@@ -171,17 +174,20 @@
                   step="any"
                   type="number"
                   :value.sync="input.total"
+                  :readonly="readOnly"
                 />
                 <CInput
                   class="col-md-10 col-lg-10"
                   type="text"
                   placeholder="Description of produt"
                   :value.sync="input.description"
+                  :readonly="readOnly"
                 />
                 <CButton
                   @click="removeProduct(k)"
                   class="btn-sm del-btn mt-0"
                   style="background: transparent"
+                  v-if="!readOnly"
                 >
                   <CIcon :content="$options.cilTrash" style="color: red" />
                 </CButton>
@@ -243,6 +249,10 @@ export default {
   props: {
     searchType: String,
     itemsData: Array,
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     toggleModel: false,
@@ -694,67 +704,70 @@ export default {
     },
     async calculateQutationTotal() {
       let data = this.form.items;
-      await new Promise(function (resolve, reject) {
-        let total = 0;
-        data.map((item) => {
-          if (item.qty && item.unit_price) {
-            if (item.discount && item.discount !== "") {
-              let isPercentage = /%/gi;
-              if (isPercentage.test(item.discount)) {
-                let dicount = Number(item.discount.split("%")[0]);
+      if (data) {
+        await new Promise(function (resolve, reject) {
+          let total = 0;
+          data.map((item) => {
+            if (item.qty && item.unit_price) {
+              if (item.discount && item.discount !== "") {
+                let isPercentage = /%/gi;
+                if (isPercentage.test(item.discount)) {
+                  let dicount = Number(item.discount.split("%")[0]);
+                  total =
+                    parseFloat(item.qty) *
+                    (parseFloat(item.unit_price) + parseFloat(item.tax_price));
+                  total = total - (total * dicount) / 100;
+                } else {
+                  total =
+                    (parseFloat(item.unit_price) + parseFloat(item.tax_price)) *
+                      parseFloat(item.qty) -
+                    parseFloat(item.discount);
+                }
+              } else {
                 total =
                   parseFloat(item.qty) *
                   (parseFloat(item.unit_price) + parseFloat(item.tax_price));
-                total = total - (total * dicount) / 100;
-              } else {
-                total =
-                  (parseFloat(item.unit_price) + parseFloat(item.tax_price)) *
-                    parseFloat(item.qty) -
-                  parseFloat(item.discount);
               }
-            } else {
-              total =
-                parseFloat(item.qty) *
-                (parseFloat(item.unit_price) + parseFloat(item.tax_price));
+              item.total = total.toFixed(3);
             }
-            item.total = total.toFixed(3);
-          }
-        });
-        resolve();
-      });
-      let store = this.$store;
-      await new Promise(function (resolve, reject) {
-        // calculate totals
-        let [subTotal, totalDiscount, totalSum, taxTotal] = [0, 0, 0, 0];
-        data.map((item) => {
-          // console.log(item);
-          if (item.unit_price) {
-            subTotal += parseFloat(item.unit_price) * parseFloat(item.qty);
-          }
-          if (item.tax_price) {
-            taxTotal += parseFloat(item.tax_price) * parseFloat(item.qty);
-          }
-          if (item.discount) {
-            let isPercentage = /%/gi;
-            if (isPercentage.test(item.discount)) {
-              totalDiscount +=
-                (parseFloat(item.discount.split("%")[0]) / 100) *
-                ((parseFloat(item.unit_price) + parseFloat(item.tax_price)) *
-                  parseFloat(item.qty));
-            } else {
-              totalDiscount += parseFloat(item.discount);
-            }
-          }
-          totalSum =
-            parseFloat(subTotal) + parseFloat(taxTotal) - parseFloat(totalDiscount);
-        });
+          });
 
-        store.commit("set_quotation_sub_total", subTotal.toFixed(3));
-        store.commit("set_quotation_tax_total", taxTotal.toFixed(3));
-        store.commit("set_quotation_total_discount", totalDiscount.toFixed(3) ?? 0);
-        store.commit("set_quotation_total", totalSum.toFixed(3));
-        resolve();
-      });
+          resolve();
+        });
+        let store = this.$store;
+        await new Promise(function (resolve, reject) {
+          // calculate totals
+          let [subTotal, totalDiscount, totalSum, taxTotal] = [0, 0, 0, 0];
+          data.map((item) => {
+            // console.log(item);
+            if (item.unit_price) {
+              subTotal += parseFloat(item.unit_price) * parseFloat(item.qty);
+            }
+            if (item.tax_price) {
+              taxTotal += parseFloat(item.tax_price) * parseFloat(item.qty);
+            }
+            if (item.discount) {
+              let isPercentage = /%/gi;
+              if (isPercentage.test(item.discount)) {
+                totalDiscount +=
+                  (parseFloat(item.discount.split("%")[0]) / 100) *
+                  ((parseFloat(item.unit_price) + parseFloat(item.tax_price)) *
+                    parseFloat(item.qty));
+              } else {
+                totalDiscount += parseFloat(item.discount);
+              }
+            }
+            totalSum =
+              parseFloat(subTotal) + parseFloat(taxTotal) - parseFloat(totalDiscount);
+          });
+
+          store.commit("set_quotation_sub_total", subTotal.toFixed(3));
+          store.commit("set_quotation_tax_total", taxTotal.toFixed(3));
+          store.commit("set_quotation_total_discount", totalDiscount.toFixed(3) ?? 0);
+          store.commit("set_quotation_total", totalSum.toFixed(3));
+          resolve();
+        });
+      }
     },
 
     resetSearch() {

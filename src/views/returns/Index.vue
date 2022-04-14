@@ -74,13 +74,13 @@
                     <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     > -->
-                    <!-- <CButton
+                    <CButton
                       @click="editReturn(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
-                    /></CButton> -->
+                    /></CButton>
                     <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
@@ -97,7 +97,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <ReturnByProductModel :product="openProduct" />
+    <ReturnByProductModel :product="openProduct" @update-table="updateTable()" />
   </div>
 </template>
 
@@ -160,15 +160,21 @@ export default {
     editReturn(k) {
       let data = this.data.find((product) => product.uuid === k);
       // console.log("🚀 ~ data", data);
-      this.openProduct = {
-        uuid: data.item.inventable.uuid,
-        name: data.item.inventable.name,
-        qty: data.item.qty,
-        unit_price: data.item.selling_price,
-        isEditing: true,
-      };
-
-      this.$store.commit("set_return_by_product_model", true);
+      if (data.item && data.item.inventable) {
+        this.openProduct = {
+          return_id: data.uuid,
+          uuid: data.item.inventable.uuid,
+          name: data.item.inventable.name,
+          qty: data.item.qty,
+          unit_price: data.item.selling_price,
+          isEditing: true,
+          price: {
+            selling_price_with_tax: data.item.selling_price,
+          },
+          note: data.note,
+        };
+        this.$store.commit("set_return_by_product_model", true);
+      }
     },
     addReturn() {
       this.$router.push({ path: "/returns/create" });
