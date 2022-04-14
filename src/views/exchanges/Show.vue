@@ -3,10 +3,10 @@
     <Loader />
 
     <div class="col-3">
-      <div>
+      <div  v-if="invoice.invoice_ref_no && customer.uuid">
         <CCard>
           <CCardHeader>
-            New Return
+            Invoice
             <strong style="text-align: center"># {{ invoice.invoice_ref_no }}</strong>
           </CCardHeader>
           <CCardBody>
@@ -81,9 +81,9 @@
         <CCard>
           <CCardHeader>
             <!-- Invoice <strong># {{ invoice.invoice_ref_no }}</strong> -->
-            <strong>New Returns</strong>
+            <strong>New Exchange</strong>
             <div class="float-right buttons-box">
-              <a
+              <!-- <a
                 v-if="showWhatsappButton"
                 color="success"
                 class="btn btn-sm btn-success"
@@ -95,7 +95,7 @@
                 "
               >
                 <CIcon name="cib-whatsapp" /> Send WhatsApp</a
-              >
+              > -->
               <a href="#" class="btn btn-sm btn-info" @click.prevent="savePdf()">
                 <CIcon name="cil-save" /> Download
               </a>
@@ -124,6 +124,7 @@
               ref="html2Pdf"
             >
               <section slot="pdf-content" md="12" style="padding: 0 20px">
+                 <form @submit.prevent="saveData()">
                 <!-- <CRow class="mb-4">
                   <CCol sm="4">
                     <CImg
@@ -286,6 +287,20 @@
           </a> -->
                   </CCol>
                 </CRow>
+
+                <CRow>
+                  <CCol md="12">
+                    <CButton
+                      progress
+                      timeout="2000"
+                      color="success"
+                      style="width: 200px; margin-left: 20px"
+                      type="submit"
+                      >Save</CButton
+                    >
+                  </CCol>
+                </CRow>
+                </form>
               </section>
             </vue-html2pdf>
           </CCardBody>
@@ -354,6 +369,7 @@ import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginMod
 import SearchProduct from "@/components/layouts/SearchProduct";
 import ProductService from "@/services/products/ProductService";
 import ReturnByInvoiceModel from "@/components/returns/ReturnByInvoiceModel";
+import ProductExchangeService from "@/services/exchanges/ProductExchangeService";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
   { key: "payment_no", label: "Ref No", _style: "min-width:15%;" },
@@ -384,6 +400,7 @@ export default {
       openInvoice: {},
       contact: "",
       product_id: "",
+      invoice_id: "",
       uuid: "",
       invoice: {
         product_price: 0,
@@ -489,7 +506,11 @@ export default {
   },
   created() {
     this.product_id = this.$route.params.id;
-    // this.getServerData();
+    this.invoice_id = this.$route.params.invoice_id;
+
+    if(this.invoice_id) {
+      this.getServerData();
+    }
     ProductService.get(this.product_id)
       .then((response) => {
         const { data } = response;
@@ -502,6 +523,7 @@ export default {
             qty: 1,
             tax: data.price.tax.percentage,
             total: data.price.selling_price_with_tax,
+
           });
           this.invoice.sub_total = data.price.selling_price_with_tax;
           this.invoice.total_tax = data.price.tax.percentage;
@@ -526,23 +548,52 @@ export default {
     savePdf() {
       this.$refs.html2Pdf.generatePdf();
     },
+    saveData() {
+      let data = {
+        from_product_id: this.product_id,
+        qty:1,
+        unit_price: this.invoice.products[0].selling_price,
+        total_price: this.invoice.products[0].total,
+        items: this.invoice.items,
+        sub_total: this.invoice.sub_total,
+        total_tax: this.invoice.total_tax,
+        total_discount: this.invoice.total_discount,
+        grand_total: this.invoice.grand_total,
+        exchange_price:this.invoice.return_price,
+        customer_id: this.customer?.uuid ?? null,
+        invoice_id: this.invoice_id ?? null,
+      }
+      // console.log(data)
+      ProductExchangeService.create(data)
+        .then(({data}) => {
+          if(data) {
+                  this.$swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "Exchange added Successfully",
+                timer: 3600,
+              });
+                this.$router.push({ path: "/exchanges/index" });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
     getServerData() {
       this.$store.commit("set_loader");
-
-      // Quotation Data
-      this.uuid = this.$route.params.id;
-      QuotationService.get(this.uuid)
+      QuotationService.get(this.invoice_id)
         .then(({ data }) => {
           this.invoice.quotation_ref_no = data.quotation_ref_no;
-          this.invoice.dated = data.dated;
-          this.invoice.due_date = data.due_date;
-          this.invoice.sub_total = data.sub_total;
-          this.invoice.total_tax = data.total_tax;
-          this.invoice.total_discount = data.total_discount;
-          this.invoice.grand_total = data.grand_total;
-          this.invoice.note = data.note;
-          this.invoice.payment_terms = data.payment_terms;
-          this.invoice.terms_and_conditions = data.terms_and_conditions;
+          // this.invoice.dated = data.dated;
+          // this.invoice.due_date = data.due_date;
+          // this.invoice.sub_total = data.sub_total;
+          // this.invoice.total_tax = data.total_tax;
+          // this.invoice.total_discount = data.total_discount;
+          // this.invoice.grand_total = data.grand_total;
+          // this.invoice.note = data.note;
+          // this.invoice.payment_terms = data.payment_terms;
+          // this.invoice.terms_and_conditions = data.terms_and_conditions;
           this.invoice.invoice_ref_no = data.invoice_ref_no;
 
           // customer
@@ -551,34 +602,34 @@ export default {
           this.customer.address = data.customer.default_address;
           this.customer.contact_number = data.customer.default_contact;
           this.customer.email = data.customer.default_email;
-          let serverproducts = this.invoice.products;
+          // let serverproducts = this.invoice.products;
 
-          if (
-            data.customer &&
-            data.customer.all_contacts &&
-            data.customer.all_contacts.length > 0
-          ) {
-            if (data.customer.all_contacts.length === 1) {
-              const number =
-                data.customer.contact.country.dialCode + data.customer.contact.number.en;
-              this.customer.contact_number = number;
-              this.whatsapp.name = data.customer.full_name;
-              this.whatsapp.number = number;
-            } else {
-              let contacts = this.options.contacts;
-              data.customer.all_contacts.map(function (item) {
-                contacts.push({
-                  label:
-                    item.country.dialCode + item.number.en + " (" + item.name.en + ")",
-                  value: JSON.stringify({
-                    uuid: item.uuid,
-                    name: data.customer.full_name,
-                    number: item.country.dialCode + item.number.en,
-                  }),
-                });
-              });
-            }
-          }
+          // if (
+          //   data.customer &&
+          //   data.customer.all_contacts &&
+          //   data.customer.all_contacts.length > 0
+          // ) {
+          //   if (data.customer.all_contacts.length === 1) {
+          //     const number =
+          //       data.customer.contact.country.dialCode + data.customer.contact.number.en;
+          //     this.customer.contact_number = number;
+          //     this.whatsapp.name = data.customer.full_name;
+          //     this.whatsapp.number = number;
+          //   } else {
+          //     let contacts = this.options.contacts;
+          //     data.customer.all_contacts.map(function (item) {
+          //       contacts.push({
+          //         label:
+          //           item.country.dialCode + item.number.en + " (" + item.name.en + ")",
+          //         value: JSON.stringify({
+          //           uuid: item.uuid,
+          //           name: data.customer.full_name,
+          //           number: item.country.dialCode + item.number.en,
+          //         }),
+          //       });
+          //     });
+          //   }
+          // }
 
           // delivery
           this.invoice.delivery = data.delivery;
@@ -586,9 +637,9 @@ export default {
           this.invoice.address_for_delivery = data.address_for_delivery;
           this.invoice.total_price_with_delivery = data.total_price_with_delivery;
 
-          data.products.map((item, id) => {
-            serverproducts.push(item);
-          });
+          // data.products.map((item, id) => {
+          //   serverproducts.push(item);
+          // });
           this.$store.commit("close_loader");
         })
         .catch((err) => {
@@ -597,20 +648,20 @@ export default {
         });
 
       // Business logo
-      this.$store.commit("set_loader");
-      let business_id = localStorage.getItem("business_id");
-      this.$http
-        .get("/business/" + business_id)
-        .then(({ data }) => {
-          if (data.logo && data.logo.path) {
-            this.business.logo = data.logo.path;
-          }
-          this.$store.commit("close_loader");
-        })
-        .catch((err) => {
-          this.$store.commit("close_loader");
-          console.log(err);
-        });
+      // this.$store.commit("set_loader");
+      // let business_id = localStorage.getItem("business_id");
+      // this.$http
+      //   .get("/business/" + business_id)
+      //   .then(({ data }) => {
+      //     if (data.logo && data.logo.path) {
+      //       this.business.logo = data.logo.path;
+      //     }
+      //     this.$store.commit("close_loader");
+      //   })
+      //   .catch((err) => {
+      //     this.$store.commit("close_loader");
+      //     console.log(err);
+      //   });
 
       // Payment Methods display
       let paymentMethods = this.options.paymentMethods;
@@ -630,31 +681,31 @@ export default {
         });
 
       // All Payments of invoice
-      let payments = this.payments;
-      PaymentInvoiceService.getInvoicePayments(this.uuid)
-        .then(({ data }) => {
-          if (data) {
-            data.map((value, index) => {
-              payments.push(value);
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // let payments = this.payments;
+      // PaymentInvoiceService.getInvoicePayments(this.uuid)
+      //   .then(({ data }) => {
+      //     if (data) {
+      //       data.map((value, index) => {
+      //         payments.push(value);
+      //       });
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
 
       this.$store.commit("close_loader");
     },
-    changeWhatsappContact() {
-      if (this.contact) {
-        const contact = JSON.parse(this.contact);
-        this.whatsapp.name = contact.name;
-        this.whatsapp.number = contact.number;
-      } else {
-        this.whatsapp.name = "";
-        this.whatsapp.number = "";
-      }
-    },
+    // changeWhatsappContact() {
+    //   if (this.contact) {
+    //     const contact = JSON.parse(this.contact);
+    //     this.whatsapp.name = contact.name;
+    //     this.whatsapp.number = contact.number;
+    //   } else {
+    //     this.whatsapp.name = "";
+    //     this.whatsapp.number = "";
+    //   }
+    // },
     paymentSubmit() {
       this.$v.$touch();
       if (!this.$v.$invalid) {

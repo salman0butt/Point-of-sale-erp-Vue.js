@@ -288,8 +288,12 @@ export default {
     itemsData: {
       handler: function (newValue) {
         this.form.items = newValue;
+        if (this.searchType === "quotation") {
+          this.calculateQutationTotal();
+        }
         this.$store.commit("set_search_product_items", newValue);
       },
+      immediate: true,
       deep: true,
     },
   },

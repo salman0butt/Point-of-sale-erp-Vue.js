@@ -76,8 +76,9 @@ export default {
     },
     nextReturnByInvoice() {
       const id = this.product.product.uuid;
+      const invoice_id = this.$route.params.id;
       this.$store.commit("set_return_by_invoice_model", false);
-      this.$router.push({ path: "/returns/new/" + id });
+      this.$router.push({ path: "/exchange/new/" + id+ "/" +invoice_id });
     },
   },
 };
