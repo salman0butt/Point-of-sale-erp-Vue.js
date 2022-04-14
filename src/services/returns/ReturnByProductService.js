@@ -25,7 +25,7 @@ class ReturnByProductService extends Helper {
 
     update(id, data, config={}) {
       config = Object.assign(config,super.selectedBranch());
-        return http.post(`/product-returns/${id}`, data, config);
+        return http.patch(`/product-returns/${id}`, data, config);
     }
 
     delete(id) {

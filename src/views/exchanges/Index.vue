@@ -71,9 +71,9 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
-                    > -->
+                    >
                     <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
@@ -156,7 +156,7 @@ export default {
       this.$router.push({ path: "/returns/create" });
     },
     viewRow(uuid) {
-      alert("page not ready");
+      this.$router.push({ path: "/exchange/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/exchange/edit/" + uuid });

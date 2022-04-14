@@ -3,7 +3,7 @@
     <Loader />
 
     <div class="col-3">
-      <div  v-if="invoice.invoice_ref_no && customer.uuid">
+      <div v-if="invoice.invoice_ref_no && customer.uuid">
         <CCard>
           <CCardHeader>
             Invoice
@@ -38,12 +38,12 @@
                 >
                 <CSelect
                   :options="options.paymentMethods"
-                  :value.sync="form.paymentMethod"
-                  :class="{ error: $v.form.paymentMethod.$error }"
-                  @input="$v.form.paymentMethod.$touch()"
+                  :value.sync="form.payment_method_id"
+                  :class="{ error: $v.form.payment_method_id.$error }"
+                  @input="$v.form.payment_method_id.$touch()"
                 />
-                <div v-if="$v.form.paymentMethod.$error">
-                  <p v-if="!$v.form.paymentMethod.required" class="errorMsg">
+                <div v-if="$v.form.payment_method_id.$error">
+                  <p v-if="!$v.form.payment_method_id.required" class="errorMsg">
                     Payment Method is required
                   </p>
                 </div>
@@ -124,8 +124,8 @@
               ref="html2Pdf"
             >
               <section slot="pdf-content" md="12" style="padding: 0 20px">
-                 <form @submit.prevent="saveData()">
-                <!-- <CRow class="mb-4">
+                <form @submit.prevent="saveData()">
+                  <!-- <CRow class="mb-4">
                   <CCol sm="4">
                     <CImg
                       v-bind:src="business.logo"
@@ -154,44 +154,44 @@
                     </div>
                   </CCol>
                 </CRow> -->
-                <div class="table-responsive-sm">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th class="center">#</th>
-                        <th>Item</th>
-                        <th>Description</th>
-                        <th class="center">Quantity</th>
-                        <th class="right">Unit Cost</th>
-                        <th class="right">Tax</th>
-                        <!-- <th class="right">Discount</th> -->
-                        <th class="right">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(product, index) in invoice.products"
-                        :key="product.uuid"
-                      >
-                        <td class="center">{{ index + 1 }}</td>
-                        <td class="left">{{ product.name }}</td>
-                        <td class="left">{{ product.description }}</td>
-                        <td class="center">{{ product.qty }}</td>
-                        <td class="right">{{ product.selling_price }}</td>
-                        <td class="right">{{ product.tax }}</td>
-                        <!-- <td class="right">
+                  <div class="table-responsive-sm">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th class="center">#</th>
+                          <th>Item</th>
+                          <th>Description</th>
+                          <th class="center">Quantity</th>
+                          <th class="right">Unit Cost</th>
+                          <th class="right">Tax</th>
+                          <!-- <th class="right">Discount</th> -->
+                          <th class="right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(product, index) in invoice.products"
+                          :key="product.uuid"
+                        >
+                          <td class="center">{{ index + 1 }}</td>
+                          <td class="left">{{ product.name }}</td>
+                          <td class="left">{{ product.description }}</td>
+                          <td class="center">{{ product.qty }}</td>
+                          <td class="right">{{ product.selling_price }}</td>
+                          <td class="right">{{ product.tax }}</td>
+                          <!-- <td class="right">
                           {{
                             product.discount_per
                               ? product.discount + "%"
                               : product.discount
                           }}
                         </td> -->
-                        <td class="right">{{ product.total }}</td>
-                        {{
-                          setProductPrice(product.total)
-                        }}
-                      </tr>
-                      <!-- <tr v-if="invoice.delivery">
+                          <td class="right">{{ product.total }}</td>
+                          {{
+                            setProductPrice(product.total)
+                          }}
+                        </tr>
+                        <!-- <tr v-if="invoice.delivery">
                         <td></td>
                         <td><b>Delivery</b></td>
                         <td>
@@ -206,16 +206,20 @@
                         </td>
                         <td>{{ invoice.delivery_method_price }}</td>
                       </tr> -->
-                    </tbody>
-                  </table>
-                </div>
-                <CRow>
-                  <CCol sm="12" md="12" class="pt-2">
-                    <SearchProduct searchType="quotation" :itemsData="form.items" />
-                  </CCol>
-                </CRow>
-                <CRow>
-                  <!-- <CCol lg="4" sm="5">
+                      </tbody>
+                    </table>
+                  </div>
+                  <CRow>
+                    <CCol sm="12" md="12" class="pt-2">
+                      <SearchProduct
+                        searchType="quotation"
+                        :itemsData="form.items"
+                        :readOnly="true"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <!-- <CCol lg="4" sm="5">
                     <div>
                       <label><b> Payment Terms :</b></label>
 
@@ -232,33 +236,33 @@
                     </div>
                   </CCol> -->
 
-                  <CCol lg="4" sm="5" class="ml-auto">
-                    <table class="table table-clear">
-                      <tbody>
-                        <tr v-if="invoice.return_price">
-                          <td class="left"><strong>Return</strong></td>
-                          <td class="right">{{ invoice.return_price }}</td>
-                        </tr>
-                        <tr>
-                          <td class="left"><strong>Subtotal</strong></td>
-                          <td class="right">{{ invoice.sub_total }}</td>
-                        </tr>
-                        <tr>
-                          <td class="left"><strong>VAT </strong></td>
-                          <td class="right">{{ invoice.total_tax }}</td>
-                        </tr>
-                        <!-- <tr>
+                    <CCol lg="4" sm="5" class="ml-auto">
+                      <table class="table table-clear">
+                        <tbody>
+                          <tr v-if="invoice.return_price">
+                            <td class="left"><strong>Return</strong></td>
+                            <td class="right">{{ invoice.return_price }}</td>
+                          </tr>
+                          <tr>
+                            <td class="left"><strong>Subtotal</strong></td>
+                            <td class="right">{{ invoice.sub_total }}</td>
+                          </tr>
+                          <tr>
+                            <td class="left"><strong>VAT </strong></td>
+                            <td class="right">{{ invoice.total_tax }}</td>
+                          </tr>
+                          <!-- <tr>
                           <td class="left"><strong>Discount </strong></td>
                           <td class="right">{{ invoice.total_discount }}</td>
                         </tr> -->
 
-                        <tr>
-                          <td class="left"><strong>Total</strong></td>
-                          <td class="right">
-                            <strong>{{ invoice.grand_total }}</strong>
-                          </td>
-                        </tr>
-                        <!-- <tr v-if="invoice.delivery">
+                          <tr>
+                            <td class="left"><strong>Total</strong></td>
+                            <td class="right">
+                              <strong>{{ invoice.grand_total }}</strong>
+                            </td>
+                          </tr>
+                          <!-- <tr v-if="invoice.delivery">
                           <td class="left">
                             <strong>Delivery charges</strong>
                           </td>
@@ -274,32 +278,19 @@
                             <strong>{{ invoice.total_price_with_delivery }}</strong>
                           </td>
                         </tr> -->
-                        <!-- <tr>
+                          <!-- <tr>
                       <td class="left"><strong>Payment </strong></td>
                       <td class="right">
                         <strong>{{ invoice.grand_total }}</strong>
                       </td>
                     </tr> -->
-                      </tbody>
-                    </table>
-                    <!-- <a href="#" class="btn btn-success">
+                        </tbody>
+                      </table>
+                      <!-- <a href="#" class="btn btn-success">
             <CIcon name="cil-dollar" /> Proceed to Payment
           </a> -->
-                  </CCol>
-                </CRow>
-
-                <CRow>
-                  <CCol md="12">
-                    <CButton
-                      progress
-                      timeout="2000"
-                      color="success"
-                      style="width: 200px; margin-left: 20px"
-                      type="submit"
-                      >Save</CButton
-                    >
-                  </CCol>
-                </CRow>
+                    </CCol>
+                  </CRow>
                 </form>
               </section>
             </vue-html2pdf>
@@ -331,7 +322,7 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
                     <CButton
@@ -340,7 +331,7 @@
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
-                    /></CButton>
+                    /></CButton> -->
                     <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
@@ -350,8 +341,8 @@
             </CDataTable>
           </CCardBody>
         </CCard>
-        <WhatsappPluginModel :contacts="options.contacts" type="invoice" />
-        <ReturnByInvoiceModel :product="openInvoice" />
+        <!-- <WhatsappPluginModel :contacts="options.contacts" type="invoice" />
+        <ReturnByInvoiceModel :product="openInvoice" /> -->
       </div>
     </div>
   </div>
@@ -359,16 +350,18 @@
 <script>
 import QuotationService from "@/services/sale/QuotationService";
 import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
+
+import ProductExchangePaymentService from "@/services/exchanges/ProductExchangePaymentService";
 import { cisWallet } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
 import Loader from "@/components/layouts/Loader.vue";
 import { cilPencil, cilTrash, cilEye } from "@coreui/icons-pro";
-import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
+// import { whatsappMixin } from "@/mixins/plugins/whatsappMixin";
 import VueHtml2pdf from "vue-html2pdf";
-import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
+// import WhatsappPluginModel from "@/components/plugins/whatsapp/WhatsappPluginModel";
 import SearchProduct from "@/components/layouts/SearchProduct";
-import ProductService from "@/services/products/ProductService";
-import ReturnByInvoiceModel from "@/components/returns/ReturnByInvoiceModel";
+// import ProductService from "@/services/products/ProductService";
+// import ReturnByInvoiceModel from "@/components/returns/ReturnByInvoiceModel";
 import ProductExchangeService from "@/services/exchanges/ProductExchangeService";
 const fields = [
   { key: "created_by", label: "Created By", _style: "min-width:15%;" },
@@ -388,11 +381,11 @@ export default {
   components: {
     Loader,
     VueHtml2pdf,
-    WhatsappPluginModel,
-    ReturnByInvoiceModel,
+    // WhatsappPluginModel,
+    // ReturnByInvoiceModel,
     SearchProduct,
   },
-  mixins: [whatsappMixin],
+  // mixins: [whatsappMixin],
   data() {
     return {
       fields,
@@ -435,10 +428,12 @@ export default {
         email: "",
       },
       form: {
-        paymentMethod: "",
+        payment_method_id: "",
         amount: "",
-        customer: "",
+        customer_id: "",
         invoice: "",
+        product_exchange_id: "",
+        items: [],
       },
       options: {
         paymentMethods: [{ label: "Choose Payment Method", value: "" }],
@@ -451,7 +446,7 @@ export default {
   validations() {
     return {
       form: {
-        paymentMethod: { required },
+        payment_method_id: { required },
         amount: { required },
       },
     };
@@ -505,37 +500,40 @@ export default {
     },
   },
   created() {
-    this.product_id = this.$route.params.id;
-    this.invoice_id = this.$route.params.invoice_id;
+    // this.product_id = this.$route.params.id;
+    this.exchange_id = this.$route.params.id;
+    this.form.product_exchange_id = this.exchange_id;
 
-    if(this.invoice_id) {
-      this.getServerData();
+    if (this.exchange_id) {
+      this.getExchange();
     }
-    ProductService.get(this.product_id)
-      .then((response) => {
-        const { data } = response;
-        if (data) {
-          this.invoice.products.push({
-            name: data.name,
-            uuid: data.uuid,
-            description: data.description,
-            selling_price: data.price.selling_price_with_tax,
-            qty: 1,
-            tax: data.price.tax.percentage,
-            total: data.price.selling_price_with_tax,
 
-          });
-          this.invoice.sub_total = data.price.selling_price_with_tax;
-          this.invoice.total_tax = data.price.tax.percentage;
-          this.invoice.product_price = data.price.selling_price_with_tax;
-          this.invoice.grand_total = data.price.selling_price_with_tax;
+    this.getPaymentMethods();
+    this.getAllPayments();
+    // ProductService.get(this.product_id)
+    //   .then((response) => {
+    //     const { data } = response;
+    //     if (data) {
+    //       this.invoice.products.push({
+    //         name: data.name,
+    //         uuid: data.uuid,
+    //         description: data.description,
+    //         selling_price: data.price.selling_price_with_tax,
+    //         qty: 1,
+    //         tax: data.price.tax.percentage,
+    //         total: data.price.selling_price_with_tax,
+    //       });
+    //       this.invoice.sub_total = data.price.selling_price_with_tax;
+    //       this.invoice.total_tax = data.price.tax.percentage;
+    //       this.invoice.product_price = data.price.selling_price_with_tax;
+    //       this.invoice.grand_total = data.price.selling_price_with_tax;
 
-          this.$forceUpdate();
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    //       this.$forceUpdate();
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //   });
   },
   methods: {
     setProductPrice(val) {
@@ -551,7 +549,7 @@ export default {
     saveData() {
       let data = {
         from_product_id: this.product_id,
-        qty:1,
+        qty: 1,
         unit_price: this.invoice.products[0].selling_price,
         total_price: this.invoice.products[0].total,
         items: this.invoice.items,
@@ -559,21 +557,21 @@ export default {
         total_tax: this.invoice.total_tax,
         total_discount: this.invoice.total_discount,
         grand_total: this.invoice.grand_total,
-        exchange_price:this.invoice.return_price,
+        exchange_price: this.invoice.return_price,
         customer_id: this.customer?.uuid ?? null,
         invoice_id: this.invoice_id ?? null,
-      }
+      };
       // console.log(data)
       ProductExchangeService.create(data)
-        .then(({data}) => {
-          if(data) {
-                  this.$swal.fire({
-                icon: "success",
-                title: "Success",
-                text: "Exchange added Successfully",
-                timer: 3600,
-              });
-                this.$router.push({ path: "/exchanges/index" });
+        .then(({ data }) => {
+          if (data) {
+            this.$swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Exchange added Successfully",
+              timer: 3600,
+            });
+            this.$router.push({ path: "/exchanges/index" });
           }
         })
         .catch((e) => {
@@ -597,6 +595,7 @@ export default {
           this.invoice.invoice_ref_no = data.invoice_ref_no;
 
           // customer
+          this.form.customer_id = data.customer.uuid;
           this.customer.uuid = data.customer.uuid;
           this.customer.name = data.customer.full_name;
           this.customer.address = data.customer.default_address;
@@ -632,10 +631,10 @@ export default {
           // }
 
           // delivery
-          this.invoice.delivery = data.delivery;
-          this.invoice.delivery_method_price = data.delivery_method_price;
-          this.invoice.address_for_delivery = data.address_for_delivery;
-          this.invoice.total_price_with_delivery = data.total_price_with_delivery;
+          // this.invoice.delivery = data.delivery;
+          // this.invoice.delivery_method_price = data.delivery_method_price;
+          // this.invoice.address_for_delivery = data.address_for_delivery;
+          // this.invoice.total_price_with_delivery = data.total_price_with_delivery;
 
           // data.products.map((item, id) => {
           //   serverproducts.push(item);
@@ -662,7 +661,8 @@ export default {
       //     this.$store.commit("close_loader");
       //     console.log(err);
       //   });
-
+    },
+    getPaymentMethods() {
       // Payment Methods display
       let paymentMethods = this.options.paymentMethods;
       this.$store.commit("set_loader");
@@ -679,23 +679,86 @@ export default {
           this.$store.commit("close_loader");
           console.log(err);
         });
+    },
+    getAllPayments() {
+      // All Payments of exchanges
+      this.$store.commit("set_loader");
+      let payments = this.payments;
+      ProductExchangePaymentService.getExchangePayments(this.exchange_id)
+        .then(({ data }) => {
+          if (data) {
+            data.map((value, index) => {
+              payments.push(value);
+            });
+          }
+          this.$store.commit("close_loader");
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$store.commit("close_loader");
+        });
+    },
+    getExchange() {
+      this.$store.commit("set_loader");
+      ProductExchangeService.get(this.exchange_id)
+        .then(({ data }) => {
+          if (data) {
+            // this.isEditing = true;
+            this.invoice.invoice_ref_no = data.invoice?.invoice_ref_no ?? "";
+            this.invoice.uuid = data.invoice?.uuid ?? "";
 
-      // All Payments of invoice
-      // let payments = this.payments;
-      // PaymentInvoiceService.getInvoicePayments(this.uuid)
-      //   .then(({ data }) => {
-      //     if (data) {
-      //       data.map((value, index) => {
-      //         payments.push(value);
-      //       });
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+            if (data.customer) {
+              // customer
+              this.customer.uuid = data.customer.uuid;
+              this.form.customer_id = data.customer.uuid;
+              this.customer.name = data.customer.full_name;
+            }
+
+            if (data.items && data.items.length > 0) {
+              let items = this.form.items;
+              let products = this.invoice.products;
+              data.items.map((item) => {
+                if (item.qty < 0) {
+                  this.product_id = item.inventable.uuid;
+                  products.push({
+                    name: item.inventable.name,
+                    uuid: item.inventable.uuid,
+                    description: item.inventable.description,
+                    selling_price: item.inventable.price.selling_price_with_tax,
+                    qty: Math.abs(item.qty),
+                    tax: item.inventable.price.tax.percentage,
+                    total: item.total,
+                  });
+                } else {
+                  console.log(item);
+                  items.push({
+                    uuid: item.inventable.uuid,
+                    type: "product",
+                    name: item.inventable.name,
+                    unit_price: item.selling_price ?? 0,
+                    tax_price: item.tax ?? 0,
+                    qty: Math.abs(item.qty),
+                    description: item.description,
+                    weight_unit: item.inventable.weight_unit,
+                    discount: item.discount,
+                    total: item.total,
+                  });
+                }
+              });
+            }
+          }
+
+          this.$store.commit("close_loader");
+        })
+        .catch((err) => {
+          this.isEditing = false;
+          this.$store.commit("close_loader");
+          console.log(err);
+        });
 
       this.$store.commit("close_loader");
     },
+
     // changeWhatsappContact() {
     //   if (this.contact) {
     //     const contact = JSON.parse(this.contact);
@@ -713,7 +776,7 @@ export default {
         this.$store.commit("set_loader");
         this.form.customer = this.customer.uuid;
         this.form.invoice = this.uuid;
-        PaymentInvoiceService.store(this.form)
+        ProductExchangePaymentService.store(this.form)
           .then(({ data }) => {
             payments.unshift(data);
             this.$swal.fire({
@@ -734,9 +797,11 @@ export default {
     },
     resetForm() {
       this.$v.$reset();
-      for (let index in this.form) {
-        this.form[index] = "";
-      }
+      // for (let index in this.form) {
+      //   this.form[index] = "";
+      // }
+      this.form.payment_method_id = "";
+      this.form.amount = "";
     },
     viewRow(uuid) {
       this.$router.push({ path: "/sales/invoices/reciept/show/" + uuid });
@@ -759,31 +824,29 @@ export default {
           confirmButtonText: "Yes, remove it it!",
         })
         .then((result) => {
-          // if (result.isConfirmed) {
-          //   InvoiceService.delete(this.deleteRows)
-          //     .then((res) => {
-          //       if (res.status == 200) {
-          //         this.$swal.fire({
-          //           icon: "success",
-          //           title: "Success",
-          //           text: "Quotation Deleted Successfully",
-          //           timer: 3600,
-          //         });
-          //         this.serverData = this.serverData.filter(
-          //           (item) => item.uuid != uuid
-          //         );
-          //       }
-          //     })
-          //     .catch((error) => {
-          //       this.$swal.fire({
-          //         icon: "error",
-          //         title: "Error",
-          //         text: "Something went Wrong",
-          //         timer: 3600,
-          //       });
-          //     });
-          //   this.deleteRows = [];
-          // }
+          if (result.isConfirmed) {
+            ProductExchangePaymentService.delete(this.deleteRows)
+              .then((res) => {
+                if (res.status == 200) {
+                  this.$swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "Payment Deleted Successfully",
+                    timer: 3600,
+                  });
+                  this.payments = this.payments.filter((item) => item.uuid != uuid);
+                }
+              })
+              .catch((error) => {
+                this.$swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: "Something went Wrong",
+                  timer: 3600,
+                });
+              });
+            this.deleteRows = [];
+          }
         });
     },
   },
