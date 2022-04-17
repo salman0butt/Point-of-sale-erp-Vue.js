@@ -325,13 +325,13 @@
                     <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
-                    <!--  <CButton
-                      @click="editRow(item.uuid)"
+                    <CButton
+                      @click="editRow(item)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
-                    /></CButton> -->
+                    /></CButton>
                     <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
@@ -345,12 +345,13 @@
         <ReturnByInvoiceModel :product="openInvoice" /> -->
       </div>
     </div>
+    <ExchangePaymentModel @update-table="updateTable" :editData="editData" />
   </div>
 </template>
 <script>
 import QuotationService from "@/services/sale/QuotationService";
 import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
-
+import ExchangePaymentModel from "@/components/exchanges/payment/ExchangePaymentModel";
 import ProductExchangePaymentService from "@/services/exchanges/ProductExchangePaymentService";
 import { cisWallet } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
@@ -384,6 +385,7 @@ export default {
     // WhatsappPluginModel,
     // ReturnByInvoiceModel,
     SearchProduct,
+    ExchangePaymentModel,
   },
   // mixins: [whatsappMixin],
   data() {
@@ -391,6 +393,7 @@ export default {
       fields,
       output: null,
       openInvoice: {},
+      editData: {},
       contact: "",
       product_id: "",
       invoice_id: "",
@@ -546,6 +549,11 @@ export default {
     savePdf() {
       this.$refs.html2Pdf.generatePdf();
     },
+    updateTable() {
+      setTimeout(() => {
+        this.getAllPayments();
+      }, 1000);
+    },
     saveData() {
       let data = {
         from_product_id: this.product_id,
@@ -683,6 +691,7 @@ export default {
     getAllPayments() {
       // All Payments of exchanges
       this.$store.commit("set_loader");
+      this.payments = [];
       let payments = this.payments;
       ProductExchangePaymentService.getExchangePayments(this.exchange_id)
         .then(({ data }) => {
@@ -806,8 +815,9 @@ export default {
     viewRow(uuid) {
       this.$router.push({ path: "/exchange/payment/reciept/show/" + uuid });
     },
-    editRow(uuid) {
-      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    editRow(item) {
+      this.editData = item;
+      this.$store.commit("set_exchange_payment_model", true);
     },
     addReturn(k) {
       this.openInvoice = this.invoice.products[k];
