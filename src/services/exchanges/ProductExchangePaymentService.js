@@ -15,7 +15,7 @@ class ProductExchangePaymentService extends Helper {
     }
 
     getExchangePayments(id) {
-      return http.get(`/product-exchange-payments/exchange/${id}`);
+      return http.get(`/product-exchange-payments/exchange/${id}`, super.selectedBranch());
     }
 
     get(id) {
@@ -23,11 +23,11 @@ class ProductExchangePaymentService extends Helper {
     }
 
     store(data) {
-        return http.post("/product-exchange-payments", data);
+        return http.post("/product-exchange-payments", data, super.selectedBranch());
     }
 
     update(id, data) {
-        return http.patch(`/product-exchange-payments/${id}`, data);
+        return http.patch(`/product-exchange-payments/${id}`, data, super.selectedBranch());
     }
 
     delete(id) {
