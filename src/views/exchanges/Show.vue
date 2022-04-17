@@ -322,10 +322,10 @@
               <template #actions="{ item }">
                 <td>
                   <CButtonGroup>
-                    <!-- <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
+                    <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
-                    <CButton
+                    <!--  <CButton
                       @click="editRow(item.uuid)"
                       class="btn-sm text-white"
                       color="warning"
@@ -373,7 +373,7 @@ const fields = [
 ];
 
 export default {
-  name: "NewReturn",
+  name: "ShowExchange",
   cisWallet,
   cilPencil,
   cilTrash,
@@ -804,7 +804,7 @@ export default {
       this.form.amount = "";
     },
     viewRow(uuid) {
-      this.$router.push({ path: "/sales/invoices/reciept/show/" + uuid });
+      this.$router.push({ path: "/exchange/payment/reciept/show/" + uuid });
     },
     editRow(uuid) {
       this.$router.push({ path: "/sales/invoices/edit/" + uuid });
