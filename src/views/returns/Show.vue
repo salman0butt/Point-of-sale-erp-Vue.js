@@ -207,13 +207,13 @@
                     <CButton @click="viewRow(item.uuid)" class="btn-sm" color="success"
                       >View</CButton
                     >
-                    <!-- <CButton
-                      @click="editRow(item.uuid)"
+                    <CButton
+                      @click="editRow(item)"
                       class="btn-sm text-white"
                       color="warning"
                     >
                       <CIcon :content="$options.cilPencil"
-                    /></CButton> -->
+                    /></CButton>
                     <CButton @click="deleteRow(item.uuid)" class="btn-sm" color="danger">
                       <CIcon :content="$options.cilTrash" />
                     </CButton>
@@ -224,13 +224,14 @@
           </CCardBody>
         </CCard>
       </div>
+      <ReturnPaymentModel @update-table="updateTable" :editData="editData" />
     </div>
   </div>
 </template>
 <script>
 // import QuotationService from "@/services/sale/QuotationService";
 import PaymentInvoiceService from "@/services/sale/PaymentInvoiceService";
-
+import ReturnPaymentModel from "@/components/returns/payment/ReturnPaymentModel";
 import ProductReturnPaymentService from "@/services/returns/ProductReturnPaymentService";
 import { cisWallet } from "@coreui/icons-pro";
 import { required } from "vuelidate/lib/validators";
@@ -257,11 +258,14 @@ export default {
   components: {
     Loader,
     VueHtml2pdf,
+    ReturnPaymentModel,
   },
   data() {
     return {
       fields,
       openInvoice: {},
+      editData: {},
+      deleteRows: [],
       product_id: "",
       uuid: "",
       returns: {
@@ -368,9 +372,15 @@ export default {
           console.log(err);
         });
     },
+    updateTable() {
+      setTimeout(() => {
+        this.getAllPayments();
+      }, 1000);
+    },
     getAllPayments() {
       // All Payments of Returns
       this.$store.commit("set_loader");
+      this.payments = [];
       let payments = this.payments;
       ProductReturnPaymentService.getReturnPayments(this.return_id)
         .then(({ data }) => {
@@ -463,8 +473,9 @@ export default {
     viewRow(uuid) {
       this.$router.push({ path: "/returns/payment/reciept/show/" + uuid });
     },
-    editRow(uuid) {
-      this.$router.push({ path: "/sales/invoices/edit/" + uuid });
+    editRow(item) {
+      this.editData = item;
+      this.$store.commit("set_return_payment_model", true);
     },
     addReturn(k) {
       this.openInvoice = this.invoice.products[k];
