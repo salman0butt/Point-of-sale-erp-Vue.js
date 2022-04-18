@@ -116,6 +116,7 @@ export default {
           this.$store.commit("close_loader");
         })
         .catch((err) => {
+          this.$store.commit("close_loader");
           console.log(err);
         });
     },

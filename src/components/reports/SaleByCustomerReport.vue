@@ -1,5 +1,123 @@
 <template>
   <div>
+    <CCard>
+      <CCardHeader>
+        Customer Report
+        <CButton
+          @click="toggleSection()"
+          style="float: right; border: none; box-shadow: none"
+          >{{ toggleOptions ? "-" : "+" }}</CButton
+        ></CCardHeader
+      >
+      <CCardBody v-if="toggleOptions">
+        <CRow>
+          <CCol xs="12" lg="12">
+            <form @submit.prevent="">
+              <CRow>
+                <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Date Range"
+                    :options="options.date_ranges"
+                    :value.sync="form.date_range"
+                    :class="{ error: $v.form.date_range.$error }"
+                    @input="$v.form.date_range.$touch()"
+                  />
+                  <div v-if="$v.form.date_range.$error">
+                    <p v-if="!$v.form.date_range.required" class="errorMsg">
+                      Date Range is required
+                    </p>
+                  </div>
+                </CCol>
+
+                <CCol
+                  v-if="form.date_range === 'custom_date_range'"
+                  sm="6"
+                  md="4"
+                  class="pt-2"
+                >
+                  <CInput
+                    label="From Date"
+                    type="date"
+                    :value.sync="form.from_date"
+                    :class="{ error: $v.form.from_date.$error }"
+                    @input="$v.form.from_date.$touch()"
+                  />
+                  <div v-if="$v.form.from_date.$error">
+                    <p v-if="!$v.form.from_date.required" class="errorMsg">
+                      From Date is required
+                    </p>
+                  </div>
+                </CCol>
+                <CCol
+                  v-if="form.date_range === 'custom_date_range'"
+                  sm="6"
+                  md="4"
+                  class="pt-2"
+                >
+                  <CInput
+                    label="To Date"
+                    type="date"
+                    :value.sync="form.to_date"
+                    :class="{ error: $v.form.to_date.$error }"
+                    @input="$v.form.to_date.$touch()"
+                  />
+                  <div v-if="$v.form.to_date.$error">
+                    <p v-if="!$v.form.to_date.required" class="errorMsg">
+                      TO Date is required
+                    </p>
+                  </div>
+                </CCol>
+
+                <!-- <CCol sm="6" md="4" class="pt-2">
+                  <CSelect
+                    label="Customer"
+                    :options="options.customers"
+                    :value.sync="form.customer"
+                  />
+                </CCol> -->
+                <CCol sm="6" md="4" class="pt-2">
+                  <label class="typo__label">Branches</label>
+                  <multiselect
+                    v-model="form.branches"
+                    :options="options.branches"
+                    :multiple="true"
+                    :close-on-select="false"
+                    :clear-on-select="false"
+                    :preserve-search="true"
+                    placeholder="Select Branches"
+                    label="label"
+                    track-by="label"
+                    :preselect-first="true"
+                  >
+                    <template slot="selection" slot-scope="{ values, search, isOpen }">
+                      <span
+                        class="multiselect__single"
+                        v-if="values.value &amp;&amp; !isOpen"
+                        >{{ values.length }} options selected</span
+                      ></template
+                    >
+                  </multiselect>
+                </CCol>
+              </CRow>
+
+              <CRow>
+                <CCol sm="6" md="3" class="pt-2">
+                  <CButton
+                    progress
+                    timeout="2000"
+                    block
+                    color="success"
+                    style="margin-top: 30px"
+                    @click="getServerData()"
+                    >Genrate Report</CButton
+                  >
+                </CCol>
+              </CRow>
+            </form>
+          </CCol>
+        </CRow>
+      </CCardBody>
+    </CCard>
     <CRow style="display: flex; justify-content: flex-end; margin-bottom: 20px">
       <CCol sm="2" md="2">
         <CButton color="success" class="btn-block"> Download PDF</CButton>
@@ -32,12 +150,18 @@
                 {{ item.full_name.en ? item.full_name.en : item.full_name }}
               </td>
             </template>
+            <template #sales_total="{ item }">
+              <td>
+                {{ item.sales_total ? item.sales_total : "" }}
+              </td>
+            </template>
+            <template #sales_total_with_tax="{ item }">
+              <td>
+                {{ item.sales_total_with_tax ? item.sales_total_with_tax : "" }}
+              </td>
+            </template>
           </CDataTable>
-          <CPagination
-            v-show="pages > 1"
-            :pages="pages"
-            :active-page.sync="activePage"
-          />
+          <CPagination v-show="pages > 1" :pages="pages" :active-page.sync="activePage" />
         </div>
       </CCardBody>
     </CCard>
@@ -50,6 +174,7 @@ import { tableMixin } from "@/mixins/tableMixin";
 import Multiselect from "vue-multiselect";
 import SaleReportService from "@/services/reports/SaleReportService";
 import Loader from "@/components/layouts/Loader";
+import { required } from "vuelidate/lib/validators";
 
 const fields = [
   { key: "full_name", label: "Customer" },
@@ -103,18 +228,7 @@ export default {
         { value: "returns", label: "Returns" },
         { value: "all", label: "All" },
       ],
-      branches: [
-        { value: "branch1", label: "Branch 1" },
-        { value: "branch2", label: "Branch 2" },
-        { value: "branch3", label: "Branch 3" },
-        { value: "branch4", label: "Branch 4" },
-        { value: "branch5", label: "Branch 5" },
-        { value: "branch6", label: "Branch 6" },
-        { value: "branch7", label: "Branch 7" },
-        { value: "branch8", label: "Branch 8" },
-        { value: "branch9", label: "Branch 9" },
-        { value: "branch10", label: "Branch 10" },
-      ],
+      branches: [],
       sold_by: [
         { value: "", label: "Choose Sold By", disabled: true, selected: "" },
         { value: "user1", label: "User 1" },
@@ -155,6 +269,24 @@ export default {
   }),
   created() {
     this.getServerData();
+    this.getBranches();
+  },
+  validations() {
+    if (this.form.date_range === "custom_date_range") {
+      return {
+        form: {
+          date_range: { required },
+          from_date: { required },
+          to_date: { required },
+        },
+      };
+    } else {
+      return {
+        form: {
+          date_range: { required },
+        },
+      };
+    }
   },
   computed: {
     items() {
@@ -162,19 +294,51 @@ export default {
     },
   },
   methods: {
+    getBranches() {
+      this.$store.commit("set_loader");
+      this.$http
+        .get("/branches", {
+          headers: {
+            "selected-branches": localStorage.getItem("selected_branches"),
+          },
+        })
+        .then(({ data }) => {
+          data.map((item, id) => {
+            this.options.branches.push({
+              value: item.uuid,
+              label: item.name,
+            });
+          });
+          this.$store.commit("close_loader");
+        })
+        .catch((err) => {
+          this.$store.commit("close_loader");
+          console.log(err);
+        });
+    },
     getServerData() {
       this.$store.commit("set_loader");
-
+      let that = this;
+      this.data = [];
       let serverData = this.data;
-      SaleReportService.getSalesByCustomer()
+      let branches = [];
+      branches = this.form.branches.map((item) => {
+        return item.value;
+      });
+      SaleReportService.getSalesByCustomer(
+        this.form.date_range,
+        this.form.from_date,
+        this.form.to_date,
+        JSON.stringify(branches)
+      )
         .then(function ({ data }) {
           data.map(function (value) {
             serverData.push(value);
           });
-          this.$store.commit("close_loader");
+          that.$store.commit("close_loader");
         })
         .catch((error) => {
-          this.$store.commit("close_loader");
+          that.$store.commit("close_loader");
 
           console.log(error);
         });
