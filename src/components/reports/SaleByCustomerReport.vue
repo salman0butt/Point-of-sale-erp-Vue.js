@@ -108,7 +108,7 @@
                     block
                     color="success"
                     style="margin-top: 30px"
-                    @click="getServerData()"
+                    @click="[getServerData(), (toggleOptions = false)]"
                     >Genrate Report</CButton
                   >
                 </CCol>
@@ -222,49 +222,49 @@ export default {
         { value: "all_times", label: "All Times" },
         { value: "custom_date_range", label: "Custom Date Range" },
       ],
-      sale_types: [
-        { value: "", label: "Choose Sale Type", disabled: true, selected: "" },
-        { value: "sales", label: "Sales" },
-        { value: "returns", label: "Returns" },
-        { value: "all", label: "All" },
-      ],
+      // sale_types: [
+      //   { value: "", label: "Choose Sale Type", disabled: true, selected: "" },
+      //   { value: "sales", label: "Sales" },
+      //   { value: "returns", label: "Returns" },
+      //   { value: "all", label: "All" },
+      // ],
       branches: [],
-      sold_by: [
-        { value: "", label: "Choose Sold By", disabled: true, selected: "" },
-        { value: "user1", label: "User 1" },
-        { value: "user2", label: "User 2" },
-        { value: "user3", label: "User 3" },
-        { value: "user4", label: "User 4" },
-        { value: "user5", label: "User 5" },
-        { value: "user6", label: "User 6" },
-        { value: "user7", label: "User 7" },
-        { value: "user8", label: "User 8" },
-        { value: "user9", label: "User 9" },
-        { value: "user10", label: "User 10" },
-      ],
-      customers: [
-        { value: "", label: "Choose Customer", disabled: true, selected: "" },
-        { value: "customer1", label: "Customer 1" },
-        { value: "customer2", label: "Customer 2" },
-        { value: "customer3", label: "Customer 3" },
-        { value: "customer4", label: "Customer 4" },
-        { value: "customer5", label: "Customer 5" },
-        { value: "customer6", label: "Customer 6" },
-        { value: "customer7", label: "Customer 7" },
-        { value: "customer8", label: "Customer 8" },
-        { value: "customer9", label: "Customer 9" },
-        { value: "customer10", label: "Customer 10" },
-      ],
-      payment_types: [
-        {
-          value: "",
-          label: "Choose Payment Type",
-          disabled: true,
-          selected: "",
-        },
-        { value: "cash", label: "Cash" },
-        { value: "credit_card", label: "Credit Card" },
-      ],
+      // sold_by: [
+      //   { value: "", label: "Choose Sold By", disabled: true, selected: "" },
+      //   { value: "user1", label: "User 1" },
+      //   { value: "user2", label: "User 2" },
+      //   { value: "user3", label: "User 3" },
+      //   { value: "user4", label: "User 4" },
+      //   { value: "user5", label: "User 5" },
+      //   { value: "user6", label: "User 6" },
+      //   { value: "user7", label: "User 7" },
+      //   { value: "user8", label: "User 8" },
+      //   { value: "user9", label: "User 9" },
+      //   { value: "user10", label: "User 10" },
+      // ],
+      // customers: [
+      //   { value: "", label: "Choose Customer", disabled: true, selected: "" },
+      //   { value: "customer1", label: "Customer 1" },
+      //   { value: "customer2", label: "Customer 2" },
+      //   { value: "customer3", label: "Customer 3" },
+      //   { value: "customer4", label: "Customer 4" },
+      //   { value: "customer5", label: "Customer 5" },
+      //   { value: "customer6", label: "Customer 6" },
+      //   { value: "customer7", label: "Customer 7" },
+      //   { value: "customer8", label: "Customer 8" },
+      //   { value: "customer9", label: "Customer 9" },
+      //   { value: "customer10", label: "Customer 10" },
+      // ],
+      // payment_types: [
+      //   {
+      //     value: "",
+      //     label: "Choose Payment Type",
+      //     disabled: true,
+      //     selected: "",
+      //   },
+      //   { value: "cash", label: "Cash" },
+      //   { value: "credit_card", label: "Credit Card" },
+      // ],
     },
   }),
   created() {
