@@ -232,6 +232,12 @@ export default {
               data.customer.all_contacts.length > 0
             ) {
               if (data.customer.all_contacts.length === 1) {
+                if (
+                  !data.customer.contact.country.dialCode ||
+                  !data.customer.contact.number.en
+                ) {
+                  return;
+                }
                 const number =
                   data.customer.contact.country.dialCode +
                   data.customer.contact.number.en;
@@ -244,6 +250,9 @@ export default {
               } else {
                 let contacts = this.options.contacts;
                 data.customer.all_contacts.map(function (item) {
+                  if (!item.country.dialCode || !item.number.en) {
+                    return;
+                  }
                   contacts.push({
                     label:
                       item.country.dialCode + item.number.en + " (" + item.name.en + ")",
