@@ -2,7 +2,7 @@
   <div>
     <CCard>
       <CCardHeader>
-        Customer Report
+        Sales By Customer
         <CButton
           @click="toggleSection()"
           style="float: right; border: none; box-shadow: none"

@@ -18,8 +18,19 @@ class SaleReportService extends Helper {
     return http.get(url);
   }
 
-  getSalesByItem() {
-    return http.get(`/sales-by-item-report`);
+  getSalesByItem(date_range, start_date, end_date, branches) {
+    let url = `/sales-by-item-report`;
+    if (date_range)
+      url = super.updateQueryStringParameter(url, "date_range", date_range);
+    if (start_date)
+      url = super.updateQueryStringParameter(url, "start_date", start_date);
+    if (end_date)
+      url = super.updateQueryStringParameter(url, "end_date", end_date);
+
+    if (branches)
+      url = super.updateQueryStringParameter(url, "branches", branches);
+
+    return http.get(url);
   }
   getSalesBySalesPerson() {
     return http.get(`/sales-by-sales-person-report`);

@@ -43,7 +43,6 @@ export const whatsappMixin = {
         return;
       }
 
-      console.log("we are ftsa");
 
       if (this.whatsapp.number && this.whatsapp.name) {
         this.whatsapp.link =
