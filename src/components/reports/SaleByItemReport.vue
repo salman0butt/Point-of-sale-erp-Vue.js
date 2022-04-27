@@ -152,17 +152,17 @@
             </template>
             <template #quantity_sold="{ item }">
               <td>
-                {{ item.quantity_sold ? item.quantity_sold : "" }}
+                {{ item.quantity_sold ? item.quantity_sold : "-" }}
               </td>
             </template>
             <template #amount="{ item }">
               <td>
-                {{ item.amount ? item.amount : "" }}
+                {{ item.amount ? item.amount : "-" }}
               </td>
             </template>
             <template #average_price="{ item }">
               <td>
-                {{ item.average_price ? item.average_price : "" }}
+                {{ item.average_price ? item.average_price : "-" }}
               </td>
             </template>
           </CDataTable>
@@ -205,9 +205,9 @@ export default {
       to_date: "",
       sale_type: "",
       branches: [],
-      sold_by: "",
-      customer: "",
-      payment_type: "",
+      // sold_by: "",
+      // customer: "",
+      // payment_type: "",
     },
     options: {
       date_ranges: [

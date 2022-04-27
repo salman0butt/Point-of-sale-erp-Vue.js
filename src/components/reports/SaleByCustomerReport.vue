@@ -152,12 +152,12 @@
             </template>
             <template #sales_total="{ item }">
               <td>
-                {{ item.sales_total ? item.sales_total : "" }}
+                {{ item.sales_total ? item.sales_total : "-" }}
               </td>
             </template>
             <template #sales_total_with_tax="{ item }">
               <td>
-                {{ item.sales_total_with_tax ? item.sales_total_with_tax : "" }}
+                {{ item.sales_total_with_tax ? item.sales_total_with_tax : "-" }}
               </td>
             </template>
           </CDataTable>
@@ -200,9 +200,9 @@ export default {
       to_date: "",
       sale_type: "",
       branches: [],
-      sold_by: "",
-      customer: "",
-      payment_type: "",
+      // sold_by: "",
+      // customer: "",
+      // payment_type: "",
     },
     options: {
       date_ranges: [
