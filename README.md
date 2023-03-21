@@ -146,3 +146,4 @@ Some of projects created by community but not maintained by CoreUI team.
 ## Support CoreUI Development
 
 If you are a business that is building core products using CoreUI, we are open to conversations regarding custom sponsorship / consulting arrangements. Get in touch on [Twitter](https://twitter.com/lukaszholeczek).
+# Point-of-sale-erp-Vue.js
